@@ -4,33 +4,36 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame{
-
-
+public class MainWindow extends JFrame
+{
+	public MainPanel panel;
 	MainWindow()
 	{
 		super("Main Window");
 
-		try {
+		try 
+		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		
-		//TODO: remove this line
-		System.out.println("Test!");
-
-		setSize(640,480);
-
+		setSize(800,600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("J-MC2OBJ - v0.1");
+		setLocationRelativeTo(null);
+		
+		panel = new MainPanel();
+		
+		add(panel);
+		
 		setVisible(true);
+		
 	}
-
 	public static MainWindow main;
-
-	public static void main(String[] args) {
-
-		main=new MainWindow();
-
+	public static void main(String[] args)
+	{
+		main = new MainWindow();
 	}
-
 }
