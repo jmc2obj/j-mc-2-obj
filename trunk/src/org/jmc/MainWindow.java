@@ -16,7 +16,7 @@ public class MainWindow extends JFrame{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		System.out.println("Test!");
 
 		setSize(640,480);
 
