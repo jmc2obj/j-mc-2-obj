@@ -24,8 +24,7 @@ public class MainWindow extends JFrame
 		setTitle("J-MC2OBJ - v0.1");
 		setLocationRelativeTo(null);
 		
-		panel = new MainPanel();
-		
+		panel = new MainPanel();		
 		add(panel);
 		
 		setVisible(true);
