@@ -67,6 +67,9 @@ public abstract class NBT_Tag {
 		case 10:
 			ret=new TAG_Compound(name);
 			break;
+		case 11:
+			ret=new TAG_IntArray(name);
+			break;
 		default:
 			throw(new Exception("NBT_Tag type error: "+type));
 		}

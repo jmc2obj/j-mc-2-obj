@@ -15,6 +15,12 @@ public class TAG_List extends NBT_Tag {
 	public byte ID() {
 		return 9;
 	}
+	
+	public NBT_Tag getElement(int idx)
+	{
+		if(idx<0 || idx>=elements.length) return null;
+		return elements[idx];
+	}
 
 	protected void parse(DataInputStream stream) throws Exception {
 		type=stream.readByte();

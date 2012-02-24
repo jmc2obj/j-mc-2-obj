@@ -8,6 +8,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_List;
 
 public class LevelDat {
 	
@@ -21,7 +22,7 @@ public class LevelDat {
 	
 	public boolean open()
 	{
-		File levelFile=new File(levelDir.getAbsoluteFile()+"/level.dat");
+		File levelFile=new File(levelDir.getAbsolutePath()+"/level.dat");
 		
 		if(!levelFile.exists()) return false;
 			
@@ -44,6 +45,13 @@ public class LevelDat {
 		}			
 	
 		return true;
+	}
+	
+	public TAG_List getPosition()
+	{
+		TAG_Compound data=(TAG_Compound) root.getElement("Data");
+		TAG_Compound player=(TAG_Compound) data.getElement("Player");
+		return (TAG_List)player.getElement("Pos");
 	}
 	
 	public String toString()

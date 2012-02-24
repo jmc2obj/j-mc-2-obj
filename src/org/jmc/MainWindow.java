@@ -6,7 +6,7 @@ import javax.swing.UIManager;
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame
 {
-	public MainPanel panel;
+	private MainPanel panel;
 	MainWindow()
 	{
 		super("Main Window");
@@ -30,9 +30,14 @@ public class MainWindow extends JFrame
 		setVisible(true);
 		
 	}
-	public static MainWindow main;
+	public static MainWindow main=null;
 	public static void main(String[] args)
 	{
 		main = new MainWindow();
+	}
+	
+	public static void log(String msg)
+	{
+		if(main!=null) main.panel.log(msg);
 	}
 }
