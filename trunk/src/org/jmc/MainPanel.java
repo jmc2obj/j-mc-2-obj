@@ -99,12 +99,10 @@ public class MainPanel extends JPanel
 							log("Chunk couldn't be loaded.");
 							return;
 						}
-
-						//BufferedImage img=chunk.getHeightImage();
-						BufferedImage img=chunk.getBlocks();
-						
-						preview.addImage(img, ix*64, iy*64);
-						
+						BufferedImage imgh = chunk.getHeightImage();
+						BufferedImage img = chunk.getBlocks();
+						BufferedImage blend = preview.blend(img, imgh, 0.4);
+						preview.addImage(blend, ix*64, iy*64);
 						preview.repaint();
 					
 					}
@@ -113,6 +111,12 @@ public class MainPanel extends JPanel
 
 	}
 	
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		repaint();
+	}
+
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");

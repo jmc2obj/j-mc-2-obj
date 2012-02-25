@@ -4,24 +4,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.Arrays;
-
 import org.jmc.NBT.NBT_Tag;
-import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_IntArray;
 import org.jmc.NBT.TAG_List;
 
-  //induce conflict :)
-
 public class Chunk {
 
 	TAG_Compound root;
+	Colors colors;
 	
 	public Chunk(InputStream is) throws Exception
 	{
 		root=(TAG_Compound) NBT_Tag.make(is);
+		colors = new Colors();
 		
 		is.close();
 	}
@@ -47,39 +44,31 @@ public class Chunk {
 		{
 			TAG_Compound c_section = (TAG_Compound) section;
 			TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-			TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
+			TAG_Byte_Array data = (TAG_Byte_Array) c_section.getElement("Data");
+			TAG_Byte_Array tiles = (TAG_Byte_Array) c_section.getElement("TileEntities");
+			TAG_Byte_Array light = (TAG_Byte_Array) c_section.getElement("SkyLight");
+			//TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 			
 			int x,y,z;
-			for(x = 0; x < 16; x++)
+			for(z = 0; z < 16; z++)
 			{
-				for(z = 0; z < 16; z++)
+				for(x = 0; x < 16; x++)
 				{
 					for(y = 0; y < 16; y++)
 					{
-						byte BlockID = blocks.data[y + (z * 16) + (x * 16) * 16];
-						g.setColor(new Color(BlockID*2,BlockID*2,BlockID*2));
-						if(BlockID == 0)
+						byte BlockID = blocks.data[x + (z * 16) + (y * 16) * 16];
+						byte DataID = data.data[(x + (z * 16) + (y * 16) * 16)/2];
+						byte LightID = light.data[(x + (z * 16) + (y * 16) * 16)/2];
+						
+						if(BlockID > 0)
 						{
-							g.setColor(Color.white);
+							g.setColor(colors.getColor(BlockID));
+							g.fillRect(x*4, z*4, 4, 4);
+							if(DataID > 0)
+							{
+								//System.out.println(BlockID + "\t" + DataID + "\t" + LightID + "\t" + (x + (z * 16) + (y * 16) * 16));
+							}
 						}
-						if(BlockID == 1)
-						{
-							g.setColor(Color.gray);
-						}
-						if(BlockID == 2)
-						{
-							g.setColor(Color.green);
-						}
-						if(BlockID == 3)
-						{
-							g.setColor(Color.red);
-						}
-						if(BlockID == 5)
-						{
-							g.setColor(Color.blue);
-						}
-						g.fillRect(x*4, z*4, 4,4);
-						//System.out.println(BlockID);
 					}
 				}
 			}
