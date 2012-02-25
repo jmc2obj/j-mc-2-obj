@@ -1,5 +1,6 @@
 package org.jmc;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -7,18 +8,15 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class PreviewPanel extends JPanel {
-
-
+public class PreviewPanel extends JPanel
+{
 	private BufferedImage main_img=null;
 
-	public PreviewPanel() {
-
-
+	public PreviewPanel() 
+	{
+		
 	}
 
-
-	@Override
 	public void paint(Graphics g) {
 
 		if(main_img!=null)
@@ -51,9 +49,20 @@ public class PreviewPanel extends JPanel {
 			g.drawImage(main_img, 0, 0, null);
 			main_img=new_image;
 		}
-
 		Graphics2D g=main_img.createGraphics();
 		g.drawImage(img, x, y, null);
 
+	}
+	
+	public BufferedImage blend(BufferedImage blocks, BufferedImage alpha, double amount)
+	{
+		BufferedImage output = new BufferedImage(blocks.getWidth(), blocks.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = output.createGraphics();
+		g.drawImage(blocks, null, 0, 0);
+		g.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (1.0-amount)));
+		g.drawImage(alpha, null, 0, 0);
+		g.dispose();
+		
+		return output;
 	}
 }
