@@ -31,8 +31,8 @@ public class Chunk {
 	
 	public BufferedImage getBlocks()
 	{
-		int width = 4 * 16;
-		int height = 4 * 16;
+		int width = 16;
+		int height = 16;
 		BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		
 		Graphics2D g = ret.createGraphics();
@@ -64,7 +64,7 @@ public class Chunk {
 						if(BlockID > 0)
 						{
 							g.setColor(colors.getColor(BlockID));
-							g.fillRect(x*4, z*4, 4, 4);
+							g.fillRect(x, z, 1, 1);
 							if(DataID > 0)
 							{
 								//System.out.println(BlockID + "\t" + DataID + "\t" + LightID + "\t" + (x + (z * 16) + (y * 16) * 16));
@@ -81,8 +81,8 @@ public class Chunk {
 	
 	public BufferedImage getHeightImage()
 	{
-		int width=4*16;
-		int height=4*16;
+		int width=16;
+		int height=16;
 		BufferedImage ret=new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		
 		Graphics2D g=ret.createGraphics();
@@ -98,7 +98,7 @@ public class Chunk {
 			{
 				h=heightMap.data[i];
 				g.setColor(new Color(h,h,h));
-				g.fillRect(x*4, z*4, 4, 4);
+				g.fillRect(x, z, 1, 1);
 			}
 		
 		return ret;
