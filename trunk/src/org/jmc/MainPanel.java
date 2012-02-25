@@ -113,12 +113,6 @@ public class MainPanel extends JPanel
 
 	}
 	
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-		repaint();
-	}
-
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");
