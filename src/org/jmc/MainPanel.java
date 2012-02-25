@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.plaf.synth.Region;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
@@ -77,7 +80,18 @@ public class MainPanel extends JPanel
 				//convert from player coords to chunk coords
 				x=x/16;
 				z=z/16;				
+				
+				
+				/* WORK IN PROGRESS
+				try {
+					Vector<AnvilRegion> regions=AnvilRegion.loadAllRegions(savepath);
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(null, "Couldn't load regions: "+e1);
+					return;
+				}				
+				*/
 
+				preview.clearImages();
 				for(int cx=x-3, ix=0; cx<=x+3; cx++, ix++)
 					for(int cz=z-3, iy=0; cz<=z+3; cz++, iy++)
 					{
@@ -93,16 +107,18 @@ public class MainPanel extends JPanel
 							return;
 						}							
 
-						if(chunk!=null) log(chunk.toString());
-						else 
+						if(chunk==null)
 						{
 							log("Chunk couldn't be loaded.");
 							return;
 						}
-						BufferedImage imgh = chunk.getHeightImage();
-						BufferedImage img = chunk.getBlocks();
-						BufferedImage blend = preview.blend(img, imgh, 0.4);
+
+						BufferedImage height_img=chunk.getHeightImage();
+						BufferedImage img=chunk.getBlocks();						
+						BufferedImage blend=preview.blend(img, height_img, 0.4);
+						
 						preview.addImage(blend, ix*64, iy*64);
+						
 						preview.repaint();
 					
 					}
@@ -111,12 +127,6 @@ public class MainPanel extends JPanel
 
 	}
 	
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-		repaint();
-	}
-
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");
