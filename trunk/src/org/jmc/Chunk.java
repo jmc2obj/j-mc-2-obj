@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
