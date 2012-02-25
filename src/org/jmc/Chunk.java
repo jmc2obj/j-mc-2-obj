@@ -8,20 +8,41 @@ import java.io.InputStream;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_IntArray;
 import org.jmc.NBT.TAG_List;
 
 public class Chunk {
 
-	TAG_Compound root;
-	Colors colors;
+	private TAG_Compound root;
+	private Colors colors;
+	
+	private int pos_x,pos_z;
 	
 	public Chunk(InputStream is) throws Exception
 	{
-		root=(TAG_Compound) NBT_Tag.make(is);
+		root=(TAG_Compound) NBT_Tag.make(is);		
+		is.close();
+		
 		colors = new Colors();
 		
-		is.close();
+		TAG_Compound level = (TAG_Compound) root.getElement("Level");
+		
+		TAG_Int xPos=(TAG_Int) level.getElement("xPos");
+		TAG_Int zPos=(TAG_Int) level.getElement("zPos");
+		
+		pos_x = xPos.value;
+		pos_z = zPos.value;
+	}
+	
+	public int getPosX()
+	{
+		return pos_x;
+	}
+	
+	public int getPosZ()
+	{
+		return pos_z;
 	}
 	
 	public String toString()

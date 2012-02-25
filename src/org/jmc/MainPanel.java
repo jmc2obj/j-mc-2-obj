@@ -2,13 +2,9 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.plaf.synth.Region;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
@@ -74,59 +69,19 @@ public class MainPanel extends JPanel
 				log(levelDat.toString());
 
 				TAG_List pos=levelDat.getPosition();
-				int x=(int)((TAG_Double)pos.getElement(0)).value;
-				int z=(int)((TAG_Double)pos.getElement(2)).value;
-
-				//convert from player coords to chunk coords
-				x=x/16;
-				z=z/16;				
+				int player_x=(int)((TAG_Double)pos.getElement(0)).value;
+				int player_z=(int)((TAG_Double)pos.getElement(2)).value;	
 				
-				
-				/* WORK IN PROGRESS
-				try {
-					Vector<AnvilRegion> regions=AnvilRegion.loadAllRegions(savepath);
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "Couldn't load regions: "+e1);
-					return;
-				}				
-				*/
-
 				preview.clearImages();
-				for(int cx=x-3, ix=0; cx<=x+3; cx++, ix++)
-					for(int cz=z-3, iy=0; cz<=z+3; cz++, iy++)
-					{
+				preview.setPosition(player_x*4,player_z*4);
+				preview.setMark(player_x*4,player_z*4);
 
-						AnvilRegion region=null;
-						Chunk chunk=null;
-						try {
-							region = AnvilRegion.findRegion(savepath, cx, cz);
-							chunk=region.getChunk(cx, cz);				
-						} catch (Exception ex) {
-							ex.printStackTrace();
-							log("Error: "+ex);
-							return;
-						}							
-
-						if(chunk==null)
-						{
-							log("Chunk couldn't be loaded.");
-							return;
-						}
-
-						BufferedImage height_img=chunk.getHeightImage();
-						BufferedImage img=chunk.getBlocks();						
-						BufferedImage blend=preview.blend(img, height_img, 0.4);
-						
-						preview.addImage(blend, ix*64, iy*64);
-						
-						preview.repaint();
-					
-					}
+				(new ChunkLoaderThread(preview, savepath)).start();
 			}
 		});
 
 	}
-	
+
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");

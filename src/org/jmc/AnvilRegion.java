@@ -8,14 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.Vector;
-import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
-public class AnvilRegion {
+public class AnvilRegion implements Iterable<Chunk> {
 
-	File region_file;
+	private File region_file;
 	private ByteBuffer offset,timestamp;
 
 	public AnvilRegion(File file) throws IOException
@@ -64,9 +64,9 @@ public class AnvilRegion {
 		for(File f:files)
 		{
 			String name=f.getName();
-			if(name.matches("r.[0-9-].[0-9-].mca"))
+			if(name.matches("r\\.[0-9[-]]+\\.[0-9[-]]+\\.mca"))
 			{
-				ret.add(new AnvilRegion(f));
+				ret.add(new AnvilRegion(f));				
 			}
 		}
 
@@ -75,15 +75,21 @@ public class AnvilRegion {
 
 	public Chunk getChunk(int x, int z) throws Exception
 	{
-		int loc = 4 * ( (x % 32) + (z % 32) * 32 );
-		int off = offset.getInt(loc);
+		int loc = (x % 32) + (z % 32) * 32;
+		return getChunk(loc);
+	}
+
+
+	public Chunk getChunk(int idx) throws Exception
+	{
+		int off = offset.getInt(idx*4);
 		int sec = off >> 8;
 		int len = off & 0xff;
-		int ts = timestamp.getInt(loc);
-		
+		int ts = timestamp.getInt(idx*4);
+
 		if(sec<2)
 			return null;
-		
+
 		RandomAccessFile raf=new RandomAccessFile(region_file, "r");
 		raf.seek(sec*4096);
 
@@ -92,24 +98,24 @@ public class AnvilRegion {
 		if(compression_type==1) //GZIP
 		{
 			byte[] buf = new byte[len - 1];
-            raf.read(buf);
-            raf.close();
-            InputStream is=new GZIPInputStream(new ByteArrayInputStream(buf));
-            return new Chunk(is);
+			raf.read(buf);
+			raf.close();
+			InputStream is=new GZIPInputStream(new ByteArrayInputStream(buf));
+			return new Chunk(is);
 		}
 		else if(compression_type==2)//Inflate
 		{
 			byte[] buf = new byte[len - 1];
-            raf.read(buf);
-            raf.close();
-            InputStream is=new InflaterInputStream(new ByteArrayInputStream(buf));
-            return new Chunk(is);
+			raf.read(buf);
+			raf.close();
+			InputStream is=new InflaterInputStream(new ByteArrayInputStream(buf));
+			return new Chunk(is);
 		}
 		else
 			throw new Exception("Wrong compression type!");
-		
+
 	}
-	
+
 	public void printAvailableChunks()
 	{
 		int i=0;
@@ -124,4 +130,60 @@ public class AnvilRegion {
 			}
 	}
 
+	class ChunkIterator implements Iterator<Chunk>
+	{
+
+		AnvilRegion region;
+		int pos;
+
+		public ChunkIterator(AnvilRegion region) {
+			this.region=region;
+			pos=0;
+		}
+
+		@Override
+		public boolean hasNext() {
+			for(int x=pos+1;x<1024;x++)
+				if(region.offset.getInt(x*4)!=0)
+					return true;
+
+			return false;
+		}
+
+		@Override
+		public Chunk next() {
+
+			Chunk ret=null;
+
+			while(offset.getInt(pos*4)==0)
+			{				
+				pos++;
+			}
+
+			try {
+				ret=getChunk(pos);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			pos++;
+
+			return ret;
+		}
+
+		@Override
+		public void remove() {
+
+			//TODO: not yet supported
+			
+		}
+
+	}
+
+	@Override
+	public Iterator<Chunk> iterator() 
+	{
+		Iterator<Chunk> ret=new ChunkIterator(this);
+		return ret;
+	}
 }
