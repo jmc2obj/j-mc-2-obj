@@ -102,13 +102,14 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		
 		shift_x=0;
 		shift_y=0;
-		zoom_level_pos=7;
+		zoom_level_pos=5;
 		zoom_level=1;
 
 	}
 
-	private int zoom_level_pos=7;
-	private final float zoom_levels[]={0.1f, 0.25f, 0.35f, 0.5f, 0.65f, 0.75f, 0.85f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f}; 
+	private int zoom_level_pos=5;
+	private final float zoom_levels[]={ 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 
+			1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 6.0f, 8.0f, 10.0f, 14.0f, 16.0f}; 
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {

@@ -2,13 +2,10 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.plaf.synth.Region;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
@@ -117,7 +113,7 @@ public class MainPanel extends JPanel
 						BufferedImage img=chunk.getBlocks();						
 						BufferedImage blend=preview.blend(img, height_img, 0.4);
 						
-						preview.addImage(blend, ix*64, iy*64);
+						preview.addImage(blend, ix*16, iy*16);
 						
 						preview.repaint();
 					
