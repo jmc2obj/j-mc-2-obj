@@ -2,7 +2,7 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -22,7 +22,7 @@ import org.jmc.NBT.TAG_List;
 public class MainPanel extends JPanel
 {
 	private JButton bLoad;
-	private JComboBox<String> cbPath;
+	private JComboBox cbPath;
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private PreviewPanel preview;
@@ -34,7 +34,7 @@ public class MainPanel extends JPanel
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110,150,100));
 		bLoad = new JButton("Load");
-		cbPath = new JComboBox<String>();		
+		cbPath = new JComboBox();		
 		taLog = new JTextArea(5,1);
 		spPane = new JScrollPane(taLog);
 
@@ -100,23 +100,29 @@ public class MainPanel extends JPanel
 							return;
 						}
 
-						BufferedImage img=chunk.getHeightImage();
+						//BufferedImage img=chunk.getHeightImage();
+						BufferedImage img=chunk.getBlocks();
 						
 						preview.addImage(img, ix*64, iy*64);
 						
 						preview.repaint();
 					
 					}
-
 			}
 		});
 
+	}
+	
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		repaint();
 	}
 
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");
-		System.out.println(msg);
+		//System.out.println(msg);
 	}
 
 	private void populateLoadList()
