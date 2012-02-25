@@ -97,7 +97,11 @@ public class Chunk {
 			for(int x=0; x<16; x++,i++)
 			{
 				h=heightMap.data[i];
-				g.setColor(new Color(h,h,h));
+				int a = h % 55;
+				a = a * 7;
+				if(a > 255){a = 255;}
+				if(a < 0){a = 0;}
+				g.setColor(new Color(a,a,a));
 				g.fillRect(x*4, z*4, 4, 4);
 			}
 		
