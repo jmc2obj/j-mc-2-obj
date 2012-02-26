@@ -70,11 +70,15 @@ public class MainPanel extends JPanel
 
 				TAG_List pos=levelDat.getPosition();
 				int player_x=(int)((TAG_Double)pos.getElement(0)).value;
-				int player_z=(int)((TAG_Double)pos.getElement(2)).value;	
+				int player_z=(int)((TAG_Double)pos.getElement(2)).value;
+				
+				int spawn_x=levelDat.getSpawnX();
+				int spawn_z=levelDat.getSpawnZ();
 				
 				preview.clearImages();
 				preview.setPosition(player_x*4,player_z*4);
-				preview.setMark(player_x*4,player_z*4);
+				preview.addMarker(player_x*4,player_z*4,Color.red);
+				preview.addMarker(spawn_x*4,spawn_z*4,Color.green);
 
 				(new ChunkLoaderThread(preview, savepath)).start();
 			}
