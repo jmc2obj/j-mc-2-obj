@@ -74,9 +74,22 @@ public class AnvilRegion implements Iterable<Chunk> {
 	}
 
 	public Chunk getChunk(int x, int z) throws Exception
-	{
-		int loc = (x % 32) + (z % 32) * 32;
-		return getChunk(loc);
+	{			
+		int cx=x%32;
+		int cz=z%32;
+		if(cz<0) 
+			cz=32+z;
+		if(cx<0) 
+			cx=32+x;
+		int loc = cx + cz * 32;		
+		Chunk chunk = getChunk(loc);
+		
+		if(chunk!=null && (chunk.getPosX()!=x || chunk.getPosZ()!=z))
+		{
+			throw new Exception("Chunk coord don't match!");
+		}
+		 
+		return chunk;
 	}
 
 
