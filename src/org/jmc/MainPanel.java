@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -24,6 +25,7 @@ public class MainPanel extends JPanel
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private PreviewPanel preview;
+	private MemoryMonitor memory_monitor;
 	
 	private ChunkLoaderThread chunk_loader=null;
 
@@ -34,11 +36,14 @@ public class MainPanel extends JPanel
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110,150,100));
 		bLoad = new JButton("Load");
-		cbPath = new JComboBox();		
+		cbPath = new JComboBox();	
+		JPanel jpBottom = new JPanel();
 		taLog = new JTextArea(5,1);
 		spPane = new JScrollPane(taLog);
+		memory_monitor=new MemoryMonitor();
 
 		cbPath.setEditable(true);
+		jpBottom.setLayout(new BoxLayout(jpBottom, BoxLayout.Y_AXIS));
 
 		populateLoadList();
 
@@ -46,7 +51,9 @@ public class MainPanel extends JPanel
 		buttons.add(bLoad);
 		add(buttons, BorderLayout.NORTH);
 		add(preview);
-		add(spPane, BorderLayout.SOUTH);
+		jpBottom.add(spPane);
+		jpBottom.add(memory_monitor);
+		add(jpBottom, BorderLayout.SOUTH);
 		taLog.setLineWrap(true);
 		bLoad.addActionListener(new ActionListener()
 		{
@@ -91,6 +98,9 @@ public class MainPanel extends JPanel
 			}
 		});
 
+		
+		(new Thread(memory_monitor)).start();
+		
 	}
 
 	public void log(String msg)
