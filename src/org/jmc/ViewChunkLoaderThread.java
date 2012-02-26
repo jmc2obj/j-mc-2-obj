@@ -70,6 +70,9 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 					
 					if(cx<cxs || cx>cxe || cz<czs || cz>cze)
 					{
+						if(!loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz))
+							System.out.println("THIS IS THE ERROR");
+						
 						loaded_chunks.remove(cx*MAX_CHUNK_NUM+cz);
 						iter.remove();
 					}
@@ -82,27 +85,26 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 					}
 					
 					if(!running) return;
-				}		
+				}	
 				
 				preview.redraw();
 
 				for(int cx=cxs; cx<=cxe && !stop_iter; cx++)
 				{
 					for(int cz=czs; cz<=cze && !stop_iter; cz++)
-					{					
-
+					{										
 						if(loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz)) continue;
-
-						loaded_chunks.add(cx*MAX_CHUNK_NUM+cz);
 
 						try {
 							region=AnvilRegion.findRegion(savepath, cx, cz);
 							chunk=region.getChunk(cx, cz);
 						} catch (Exception e) {
+							//e.printStackTrace();
 							continue;
 						}
 
 						if(chunk==null) continue;
+						
 
 						int ix=chunk.getPosX();
 						int iy=chunk.getPosZ();
@@ -112,10 +114,12 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						BufferedImage blend=preview.blend(img, height_img, 0.4);					
 
 						preview.addImage(blend, ix*64, iy*64);
+						loaded_chunks.add(cx*MAX_CHUNK_NUM+cz);			
 
 						repaint_counter--;
 						if(repaint_counter<=0)
 						{
+							preview.redraw();
 							preview.repaint();
 							repaint_counter=REPAINT_FREQUENCY;
 						}
