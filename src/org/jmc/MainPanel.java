@@ -24,6 +24,8 @@ public class MainPanel extends JPanel
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private PreviewPanel preview;
+	
+	private ChunkLoaderThread chunk_loader=null;
 
 	public MainPanel()
 	{
@@ -80,7 +82,12 @@ public class MainPanel extends JPanel
 				preview.addMarker(player_x*4,player_z*4,Color.red);
 				preview.addMarker(spawn_x*4,spawn_z*4,Color.green);
 
-				(new ChunkLoaderThread(preview, savepath)).start();
+				if(chunk_loader!=null && chunk_loader.isRunning())
+					chunk_loader.stopRunning();
+				
+				//chunk_loader=new FullChunkLoaderThread(preview, savepath);
+				chunk_loader=new ViewChunkLoaderThread(preview, savepath);
+				(new Thread(chunk_loader)).start();
 			}
 		});
 
