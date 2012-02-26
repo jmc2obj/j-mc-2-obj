@@ -92,22 +92,16 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		int z_p=100-(zoom_level_pos*100/(zoom_levels.length-1));
 		
-		//TODO: fix these
-		int px=-1;
-		int py=-1;
+		int mx=getWidth()/2;
+		int my=getHeight()/2;
+		int px=(int) ((mx/zoom_level-shift_x)/4);
+		int py=(int) ((my/zoom_level-shift_y)/4);
 
 		g2d.setColor(gui_color);
 		g2d.drawRect(20, 20, 20, 100);
 		g2d.drawRect(17, 18+z_p, 26, 5);
 		g2d.drawString(zoom_level+"x", 20, 135);
 		g2d.drawString("("+px+","+py+")", 20, 155);
-
-		//crosshair:
-		int mx=getWidth()/2;
-		int my=getHeight()/2;
-		g2d.setColor(Color.white);
-		g2d.drawLine(mx-100, my, mx+100, my);
-		g2d.drawLine(mx, my-100, mx, my+100);
 		
 	}
 
