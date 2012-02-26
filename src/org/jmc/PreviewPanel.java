@@ -2,7 +2,9 @@ package org.jmc;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -25,18 +27,27 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	private final int MAX_HEIGHT=1080;
 
 	private int shift_x,shift_y;
-	private int mark_x, mark_y;
 	private float zoom_level;
 
 	private BufferedImage main_img;
+	
+	private Font gui_font;
+	private Color gui_color;
 
 	class ChunkImage
 	{
 		public BufferedImage image;
 		public int x, y;
 	}
+	
+	class MapMarker
+	{
+		int x, y;
+		Color color;
+	}
 
 	Vector<ChunkImage> chunks;
+	Vector<MapMarker> markers;
 
 	public PreviewPanel() {
 
@@ -45,6 +56,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		setMaximumSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
 
 		chunks=new Vector<ChunkImage>();
+		markers=new Vector<MapMarker>();
 
 		shift_x=0;
 		shift_y=0;
@@ -53,6 +65,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
+		
+		setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		
+		gui_font=new Font("Courier",Font.BOLD,14);
+		gui_color=new Color(150,145,215);
 
 	}
 
@@ -60,12 +77,28 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public void paint(Graphics g) {
 
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.setFont(gui_font);
+		
 		g2d.drawImage(main_img, 0, 0, null);
 		
-		int x=(int) ((shift_x+mark_x)*zoom_level);
-		int y=(int) ((shift_y+mark_y)*zoom_level);
-		g2d.setColor(Color.red);
-		g2d.fillOval(x-2, y-2, 4, 4);
+		for(MapMarker marker:markers)
+		{
+			int x=(int) ((shift_x+marker.x)*zoom_level);
+			int y=(int) ((shift_y+marker.y)*zoom_level);
+			g2d.setColor(marker.color);
+			g2d.fillOval(x-2, y-2, 4, 4);
+		}
+		
+		int z_p=100-(zoom_level_pos*100/(zoom_levels.length-1));
+		int px=(int) ((getWidth()/2-shift_x)/(4*zoom_level));
+		int py=(int) ((getHeight()/2-shift_y)/(4*zoom_level));
+		
+		g2d.setColor(gui_color);
+		g2d.drawRect(20, 20, 20, 100);
+		g2d.drawRect(17, 18+z_p, 26, 5);
+		g2d.drawString(zoom_level+"x", 20, 135);
+		g2d.drawString("("+px+","+py+")", 20, 155);
+		
 	}
 
 	void redraw()
@@ -108,6 +141,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public void clearImages()
 	{
 		chunks.clear();
+		markers.clear();
 		redraw();
 
 		shift_x=0;
@@ -123,15 +157,18 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		shift_y=getHeight()/2-z;
 	}
 	
-	public void setMark(int x, int z)
+	public void addMarker(int x, int z, Color color)
 	{
-		mark_x=x;
-		mark_y=z;
+		MapMarker marker=new MapMarker();
+		marker.x=x;
+		marker.y=z;
+		marker.color=color;
+		markers.add(marker);
 	}
 	
 
 	private int zoom_level_pos=7;
-	private final float zoom_levels[]={0.1f, 0.25f, 0.35f, 0.5f, 0.65f, 0.75f, 0.85f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f}; 
+	private final float zoom_levels[]={0.125f, 0.25f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f}; 
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -197,7 +234,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public void mouseClicked(MouseEvent e) {
 	}
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e) {		
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {

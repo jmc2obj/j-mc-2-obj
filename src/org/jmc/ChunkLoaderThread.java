@@ -12,6 +12,8 @@ public class ChunkLoaderThread extends Thread {
 	private PreviewPanel preview;
 	private File savepath;
 	
+	private final int REPAINT_FREQUENCY=4;
+	
 	public ChunkLoaderThread(PreviewPanel preview, File savepath) {
 		this.preview=preview;
 		this.savepath=savepath;
@@ -28,12 +30,11 @@ public class ChunkLoaderThread extends Thread {
 			return;
 		}				
 
-		System.out.println("Found "+regions.size()+" regions");
-
 
 		for(AnvilRegion region:regions)
 		{
 
+			int repaint_counter=REPAINT_FREQUENCY;
 			for(Chunk chunk:region)
 			{											
 				if(chunk==null)
@@ -50,7 +51,13 @@ public class ChunkLoaderThread extends Thread {
 				int iy=chunk.getPosZ();
 				
 				preview.addImage(blend, ix*64, iy*64);
-				preview.repaint();
+				
+				repaint_counter--;
+				if(repaint_counter<=0)
+				{
+					preview.repaint();
+					repaint_counter=REPAINT_FREQUENCY;
+				}
 			}
 
 		}
