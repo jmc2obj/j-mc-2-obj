@@ -109,20 +109,28 @@ public class MainPanel extends JPanel
 		//System.out.println(msg);
 	}
 
+	class PopulateLoadListThread extends Thread
+	{
+		public void run()
+		{
+			//TODO: this works in windows only! check other OSs and fix accordingly
+			File save_dir=new File(System.getenv("appdata")+"\\.minecraft\\saves");
+
+			if(!save_dir.exists())
+				return;
+
+			File [] saves=save_dir.listFiles();
+
+			for(File f:saves)
+			{
+				if(f.isDirectory())
+					cbPath.addItem(f.getAbsolutePath());
+			}
+		}
+	}
+	
 	private void populateLoadList()
 	{
-		//TODO: this works in windows only! check other OSs and fix accordingly
-		File save_dir=new File(System.getenv("appdata")+"\\.minecraft\\saves");
-
-		if(!save_dir.exists())
-			return;
-
-		File [] saves=save_dir.listFiles();
-
-		for(File f:saves)
-		{
-			if(f.isDirectory())
-				cbPath.addItem(f.getAbsolutePath());
-		}
+		(new PopulateLoadListThread()).start();
 	}
 }
