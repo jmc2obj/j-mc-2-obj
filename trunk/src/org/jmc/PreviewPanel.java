@@ -27,7 +27,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	private final int MAX_WIDTH=1920;
 	private final int MAX_HEIGHT=1080;
 
-	private int selected_chunk_x=0, selected_chunk_y=0;
+	private int selected_chunk_x=0, selected_chunk_z=0;
 	private int shift_x,shift_y;
 	private float zoom_level;
 
@@ -128,7 +128,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 				g.drawImage(chunk.image, x, y, w, h, null);
 							
-				if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_y)
+				if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_z)
 				{
 					g.setColor(Color.red);
 					g.drawRect(x, y, w-1, h-1);
@@ -228,7 +228,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		if(e.getButton()==MouseEvent.BUTTON3)
 		{
 			selected_chunk_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/64);
-			selected_chunk_y=(int) Math.floor((e.getY()/zoom_level-shift_y)/64);
+			selected_chunk_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/64);
 			redraw();
 			repaint();
 		}
@@ -287,4 +287,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		return output;
 	}
+	
+	public int getSelectedChunkX() { return selected_chunk_x; }
+	public int getSelectedChunkZ() { return selected_chunk_z; }
 }
