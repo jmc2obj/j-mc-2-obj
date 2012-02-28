@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -105,6 +107,36 @@ public class MainPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
+				File savepath=new File((String)cbPath.getSelectedItem());
+				if(!savepath.exists() || !savepath.isDirectory())
+				{
+					JOptionPane.showMessageDialog(null, "Enter correct dir!");
+					return;
+				}
+				
+				try {
+					FileWriter file=new FileWriter("out.obj");
+					PrintWriter writer=new PrintWriter(file);
+					
+					MTLFile mtl=new MTLFile();
+					
+					int x=preview.getSelectedChunkX();
+					int z=preview.getSelectedChunkZ();
+					
+					AnvilRegion region=AnvilRegion.findRegion(savepath, x, z);					
+					Chunk chunk=region.getChunk(x, z);
+					
+					OBJFile obj=chunk.getOBJ(mtl);
+								
+					mtl.header(writer);
+					obj.append(writer);
+					
+					writer.close();
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				
 			}
 		});
