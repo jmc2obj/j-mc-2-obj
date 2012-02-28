@@ -28,7 +28,7 @@ public class MainPanel extends JPanel
 	private JScrollPane spPane;
 	private PreviewPanel preview;
 	private MemoryMonitor memory_monitor;
-	
+
 	private ChunkLoaderThread chunk_loader=null;
 
 	public MainPanel()
@@ -84,10 +84,10 @@ public class MainPanel extends JPanel
 				TAG_List pos=levelDat.getPosition();
 				int player_x=(int)((TAG_Double)pos.getElement(0)).value;
 				int player_z=(int)((TAG_Double)pos.getElement(2)).value;
-				
+
 				int spawn_x=levelDat.getSpawnX();
 				int spawn_z=levelDat.getSpawnZ();
-				
+
 				preview.clearImages();
 				preview.setPosition(player_x*4,player_z*4);
 				preview.addMarker(player_x*4,player_z*4,Color.red);
@@ -95,55 +95,61 @@ public class MainPanel extends JPanel
 
 				if(chunk_loader!=null && chunk_loader.isRunning())
 					chunk_loader.stopRunning();
-				
+
 				//chunk_loader=new FullChunkLoaderThread(preview, savepath);
 				chunk_loader=new ViewChunkLoaderThread(preview, savepath);
 				(new Thread(chunk_loader)).start();
 			}
 		});
-		
+
 		bSave.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				File savepath=new File((String)cbPath.getSelectedItem());
 				if(!savepath.exists() || !savepath.isDirectory())
 				{
 					JOptionPane.showMessageDialog(null, "Enter correct dir!");
 					return;
 				}
-				
+
 				try {
 					FileWriter file=new FileWriter("out.obj");
 					PrintWriter writer=new PrintWriter(file);
-					
+
 					MTLFile mtl=new MTLFile();
-					
+
+					mtl.header(writer);
+
 					int x=preview.getSelectedChunkX();
 					int z=preview.getSelectedChunkZ();
-					
-					AnvilRegion region=AnvilRegion.findRegion(savepath, x, z);					
-					Chunk chunk=region.getChunk(x, z);
-					
-					OBJFile obj=chunk.getOBJ(mtl);
-								
-					mtl.header(writer);
-					obj.append(writer);
-					
+
+					for(int cx=x-1,ox=-1; cx<=x+1; cx++,ox++)
+						for(int cz=z-1,oz=-1; cz<=z+1; cz++,oz++)
+						{
+							AnvilRegion region=AnvilRegion.findRegion(savepath, cx, cz);					
+							Chunk chunk=region.getChunk(cx, cz);
+
+							OBJFile obj=chunk.getOBJ(mtl);
+							obj.setOffset(ox*16, oz*16);
+
+							obj.append(writer);
+						}
+
 					writer.close();
-					
-					
+
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 			}
 		});
 
-		
+
 		(new Thread(memory_monitor)).start();
-		
+
 	}
 
 	public void log(String msg)
@@ -171,7 +177,7 @@ public class MainPanel extends JPanel
 			}
 		}
 	}
-	
+
 	private void populateLoadList()
 	{
 		(new PopulateLoadListThread()).start();
