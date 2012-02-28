@@ -156,8 +156,8 @@ public class Chunk {
 
 	private final int getValue(byte [] array, int x, int y, int z)
 	{
+		if(x<0 || x>15 || y<0 || y>15 || z<0 || z>15) return -1;
 		int idx=x + (z * 16) + (y * 16) * 16;
-		if(idx<0 || idx>=array.length) return -1;
 		return array[idx];
 	}
 	

@@ -27,6 +27,7 @@ public class MTLFile {
 		materials.put(3, "grass-bottom");
 		materials.put(4, "grass-side");
 		materials.put(5, "dirt");
+		materials.put(6, "water");
 	}
 	
 	public int getMaterialId(int id, Side side)
@@ -43,6 +44,9 @@ public class MTLFile {
 			else return 4;
 		case 3:
 			return 5;
+		case 8:
+		case 9:
+			return 6;
 		default:
 			return -1;
 		}
