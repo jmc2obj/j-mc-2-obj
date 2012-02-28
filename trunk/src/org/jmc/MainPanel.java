@@ -20,7 +20,7 @@ import org.jmc.NBT.TAG_List;
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
-	private JButton bLoad;
+	private JButton bLoad,bSave;
 	private JComboBox cbPath;
 	private JTextArea taLog;
 	private JScrollPane spPane;
@@ -36,6 +36,7 @@ public class MainPanel extends JPanel
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110,150,100));
 		bLoad = new JButton("Load");
+		bSave = new JButton("Save chunk");
 		cbPath = new JComboBox();	
 		JPanel jpBottom = new JPanel();
 		taLog = new JTextArea(5,1);
@@ -49,6 +50,7 @@ public class MainPanel extends JPanel
 
 		buttons.add(cbPath);
 		buttons.add(bLoad);
+		buttons.add(bSave);
 		add(buttons, BorderLayout.NORTH);
 		add(preview);
 		jpBottom.add(spPane);
@@ -95,6 +97,15 @@ public class MainPanel extends JPanel
 				//chunk_loader=new FullChunkLoaderThread(preview, savepath);
 				chunk_loader=new ViewChunkLoaderThread(preview, savepath);
 				(new Thread(chunk_loader)).start();
+			}
+		});
+		
+		bSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
 			}
 		});
 
