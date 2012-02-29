@@ -185,22 +185,39 @@ public class Chunk {
 		else
 			byteHeightMap=(TAG_Byte_Array)level.getElement("HeightMap");
 
-		int i=0,h;
+		int h,oh;				
+		
 		for(int z=0; z<16; z++)
-			for(int x=0; x<16; x++,i++)
+		{
+			for(int x=0; x<16; x++)
 			{
 				if(is_anvil)
-					h=intHeightMap.data[i];
+				{					
+					h=intHeightMap.data[z*16+x];
+					if(z>0 && x>0) oh=intHeightMap.data[(z-1)*16+(x-1)];
+					else oh=h;
+				}
 				else
-					h=byteHeightMap.data[i];
+				{
+					h=byteHeightMap.data[z*16+x];
+					if(z>0 && x>0) oh=byteHeightMap.data[(z-1)*16+(x-1)];
+					else oh=h;
+				}
 					
-				int a = h % 55;
-				a = a * 7;
+				/*int a = h % 55;
+				a = a * 7;*/
+				
+				int a=h-oh;
+				a=100+a*20;
+				oh=h;
+				
 				if(a > 255){a = 255;}
 				if(a < 0){a = 0;}
+				
 				g.setColor(new Color(a,a,a));
 				g.fillRect(x*4, z*4, 4, 4);
 			}
+		}
 
 		return ret;
 	}
