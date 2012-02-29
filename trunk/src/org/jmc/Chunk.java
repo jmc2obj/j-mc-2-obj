@@ -208,7 +208,7 @@ public class Chunk {
 				a = a * 7;*/
 				
 				int a=h-oh;
-				a=100+a*20;
+				a=h+a*20;
 				oh=h;
 				
 				if(a > 255){a = 255;}
