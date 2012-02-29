@@ -14,6 +14,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -31,7 +33,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	private int shift_x,shift_y;
 	private float zoom_level;
 
-	private BufferedImage main_img;
+	private BufferedImage main_img,base_img,height_img;
 
 	private Font gui_font;
 	private Color gui_color;
@@ -39,6 +41,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	class ChunkImage
 	{
 		public BufferedImage image;
+		public BufferedImage height_map;
 		public int x, y;
 	}
 
@@ -54,6 +57,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public PreviewPanel() {
 
 		main_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
+		base_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
+		height_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
 
 		setMaximumSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
 
@@ -110,42 +115,80 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 	void redraw()
 	{
+
+		int win_w=getWidth();
+		int win_h=getHeight();
+
+		Graphics2D bg=base_img.createGraphics();	
+		bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
+		bg.setColor(Color.black);			
+		bg.clearRect(0, 0, win_w, win_h);			
+
+		Graphics2D hg=height_img.createGraphics();
+		hg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		hg.setColor(Color.black);
+		hg.clearRect(0, 0, win_w, win_h);
+
+		synchronized (chunks) {
+			for(ChunkImage chunk:chunks)
+			{
+				int x=(int) ((chunk.x+shift_x)*zoom_level);
+				int y=(int) ((chunk.y+shift_y)*zoom_level);
+				int w=(int) (chunk.image.getWidth()*zoom_level);
+				int h=(int) (chunk.image.getHeight()*zoom_level);
+
+				if(x>win_w || y>win_h) continue;
+				if(x+w<0 || y+h<0) continue;
+
+				bg.drawImage(chunk.image, x, y, w, h, null);
+				hg.drawImage(chunk.height_map, x, y, w, h, null);
+
+
+				if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_z)
+				{
+					bg.setColor(Color.red);
+					bg.drawRect(x, y, w-1, h-1);
+				}
+			}		
+		}					
+
+		WritableRaster height_raster = height_img.getRaster();
+		int h,oh;
+		for(int x=0; x<win_w; x++)
+			for(int y=0; y<win_h; y++)
+			{
+				h=height_raster.getSample(x, y, 0);
+				if(x<(win_w-1) && y<(win_h-1)) oh=height_raster.getSample(x+1, y+1, 0);
+				else oh=h;
+				
+				h=h+50+(oh-h)*20;
+				if(h<0) h=0;
+				if (h>255) h=255;
+				
+				height_raster.setSample(x, y, 0, h);
+			}
+		
 		synchronized (main_img) {
 
-			int win_w=getWidth();
-			int win_h=getHeight();
+			Graphics2D mg=main_img.createGraphics();	
+			mg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
+			mg.setColor(Color.black);			
+			mg.clearRect(0, 0, win_w, win_h);			
+			
+			mg.drawImage(base_img,0,0,null);
+			mg.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (0.6)));
+			mg.drawImage(height_img,0,0,null);	
 
-			Graphics2D g=main_img.createGraphics();	
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g.setColor(Color.black);
-			g.clearRect(0, 0, main_img.getWidth(), main_img.getHeight());
-			synchronized (chunks) {
-				for(ChunkImage chunk:chunks)
-				{
-					int x=(int) ((chunk.x+shift_x)*zoom_level);
-					int y=(int) ((chunk.y+shift_y)*zoom_level);
-					int w=(int) (chunk.image.getWidth()*zoom_level);
-					int h=(int) (chunk.image.getHeight()*zoom_level);
-
-					if(x>win_w || y>win_h) continue;
-					if(x+w<0 || y+h<0) continue;
-
-					g.drawImage(chunk.image, x, y, w, h, null);
-
-					if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_z)
-					{
-						g.setColor(Color.red);
-						g.drawRect(x, y, w-1, h-1);
-					}
-				}		
-			}
 		}
+		
+		
 	}
 
-	public void addImage(BufferedImage img, int x, int y)
+	public void addImage(BufferedImage img, BufferedImage height, int x, int y)
 	{		
 		ChunkImage chunk=new ChunkImage();
 		chunk.image=img;
+		chunk.height_map=height;
 		chunk.x=x;
 		chunk.y=y;
 		synchronized (chunks) {			
@@ -217,7 +260,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	}
 
 
-	private boolean pressed=false;
+	private boolean left_pressed=false;
+	private boolean right_pressed=false;
 	private int last_x,last_y;
 
 	@Override
@@ -226,12 +270,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		{
 			last_x=e.getX();
 			last_y=e.getY();
-			pressed=true;
+			left_pressed=true;
 			//			System.out.println("SET "+last_x+"/"+last_y);
 		}
 
 		if(e.getButton()==MouseEvent.BUTTON3)
 		{
+			right_pressed=true;
 			selected_chunk_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/64);
 			selected_chunk_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/64);
 			redraw();
@@ -241,13 +286,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		pressed=false;
+		left_pressed=false;
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {		
 
-		if(pressed)
+		if(left_pressed)
 		{
 			int x,y;
 
@@ -276,19 +321,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
-	}
-
-
-	public BufferedImage blend(BufferedImage blocks, BufferedImage alpha, double amount)
-	{
-		BufferedImage output = new BufferedImage(blocks.getWidth(), blocks.getHeight(), BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = output.createGraphics();
-		g.drawImage(blocks, null, 0, 0);
-		g.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (1.0-amount)));
-		g.drawImage(alpha, null, 0, 0);
-		g.dispose();
-
-		return output;
 	}
 
 	public int getSelectedChunkX() { return selected_chunk_x; }

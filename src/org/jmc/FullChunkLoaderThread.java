@@ -46,13 +46,12 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 				}
 
 				BufferedImage height_img=chunk.getHeightImage();
-				BufferedImage img=chunk.getBlockImage();						
-				BufferedImage blend=preview.blend(img, height_img, 0.4);
+				BufferedImage img=chunk.getBlockImage();										
 
 				int ix=chunk.getPosX();
 				int iy=chunk.getPosZ();
 				
-				preview.addImage(blend, ix*64, iy*64);
+				preview.addImage(img, height_img, ix*64, iy*64);
 				
 				repaint_counter--;
 				if(repaint_counter<=0)
