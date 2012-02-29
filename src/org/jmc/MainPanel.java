@@ -119,6 +119,8 @@ public class MainPanel extends JPanel
 					PrintWriter writer=new PrintWriter(file);
 
 					MTLFile mtl=new MTLFile();
+					
+					mtl.saveMTLFile(new File("minecraft.mtl"));
 
 					mtl.header(writer);
 

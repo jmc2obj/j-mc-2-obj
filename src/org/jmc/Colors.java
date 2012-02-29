@@ -67,7 +67,7 @@ public class Colors
 	
 	public Color getColor(int id)
 	{
-		if(colors[id] != null)
+		if(id>=0 && id<colors.length && colors[id] != null)
 		{
 			return colors[id];
 		}

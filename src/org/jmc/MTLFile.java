@@ -1,8 +1,10 @@
 package org.jmc;
 
+import java.awt.Color;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class MTLFile {
 	
@@ -16,60 +18,60 @@ public class MTLFile {
 		BACK
 	}
 	
-	Map<Integer,String> materials;
+	Colors colors;
 	
 	public MTLFile()//default texture
 	{
-		materials=new TreeMap<Integer, String>();
-		
-		materials.put(1, "stone");
-		materials.put(2, "grass-top");
-		materials.put(3, "grass-bottom");
-		materials.put(4, "grass-side");
-		materials.put(5, "dirt");
-		materials.put(6, "water");
-		materials.put(7, "wood");
-		materials.put(8, "leaves");
+		colors=new Colors();
 	}
 	
 	public int getMaterialId(int id, Side side)
 	{
-		switch(id)
+		if(colors.getColor(id)!=null)
 		{
-		case 1:
-			return 1;
-		case 2:
-			if(side==Side.TOP)
-				return 2;
-			else if(side==Side.BOTTOM)
-				return 3;
-			else return 4;
-		case 3:
-			return 5;
-		case 8:
-		case 9:
-			return 6;
-		case 17:
-			return 7;
-		case 18:
-			return 8;
-		default:
-			return -1;
+			return id;
 		}
+		return -1;
 	}
 	
 	
 	public String getMaterial(int id)
 	{
-		if(!materials.containsKey(id))
-			return "unknown";
-		else return materials.get(id);
+		if(colors.getColor(id)!=null)
+			return "material-"+id;
+		else return "unknown";
 	}
 	
 	public void header(PrintWriter out)
 	{
 		out.println("mtllib minecraft.mtl");
 		out.println();
+	}
+	
+	public void saveMTLFile(File file) throws IOException
+	{		
+		PrintWriter writer=new PrintWriter(new FileWriter(file));
+		
+		writer.println("newmtl unknown");
+		writer.println("Kd 1 0 1");
+		writer.println();
+		
+		Color c;
+		for(int i=0; i<256; i++)
+		{
+			c=colors.getColor(i);
+			if(c!=null)
+			{
+				float r=c.getRed()/256.0f;
+				float g=c.getGreen()/256.0f;				
+				float b=c.getBlue()/256.0f;
+				writer.println("newmtl material-"+i);
+				writer.format("Kd %2.2f %2.2f %2.2f\n",r,g,b);
+				writer.println();
+			}
+		}
+		
+		writer.close();
 	}
 
 }
