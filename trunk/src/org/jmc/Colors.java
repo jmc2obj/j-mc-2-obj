@@ -7,7 +7,7 @@ public class Colors
 	private final Color[] colors;
 	public Colors()
 	{
-		colors = new Color[124];
+		colors = new Color[256];
 		colors[0] = null;
 		colors[1] = new Color(0x686868);
 		colors[2] = new Color(0x5F9F35);

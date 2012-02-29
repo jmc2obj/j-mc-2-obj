@@ -128,7 +128,7 @@ public class MainPanel extends JPanel
 					for(int cx=x-1,ox=-1; cx<=x+1; cx++,ox++)
 						for(int cz=z-1,oz=-1; cz<=z+1; cz++,oz++)
 						{
-							AnvilRegion region=AnvilRegion.findRegion(savepath, cx, cz);					
+							Region region=Region.findRegion(savepath, cx, cz);					
 							Chunk chunk=region.getChunk(cx, cz);
 
 							OBJFile obj=chunk.getOBJ(mtl);

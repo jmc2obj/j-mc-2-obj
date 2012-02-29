@@ -26,16 +26,16 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 	
 		running=true;
 		
-		Vector<AnvilRegion> regions=null;
+		Vector<Region> regions=null;
 		try {
-			regions=AnvilRegion.loadAllRegions(savepath);
+			regions=Region.loadAllRegions(savepath);
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Couldn't load regions: "+e1);
 			return;
 		}				
 
 		int repaint_counter=REPAINT_FREQUENCY;
-		for(AnvilRegion region:regions)
+		for(Region region:regions)
 		{
 			for(Chunk chunk:region)
 			{											
@@ -46,7 +46,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 				}
 
 				BufferedImage height_img=chunk.getHeightImage();
-				BufferedImage img=chunk.getBlocks();						
+				BufferedImage img=chunk.getBlockImage();						
 				BufferedImage blend=preview.blend(img, height_img, 0.4);
 
 				int ix=chunk.getPosX();
