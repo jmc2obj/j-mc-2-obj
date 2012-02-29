@@ -38,7 +38,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 
 		running=true;
 		
-		AnvilRegion region=null;
+		Region region=null;
 		Chunk chunk=null;
 
 		Rectangle prev_bounds=new Rectangle();
@@ -96,21 +96,21 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						if(loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz)) continue;
 
 						try {
-							region=AnvilRegion.findRegion(savepath, cx, cz);
+							region=Region.findRegion(savepath, cx, cz);
 							chunk=region.getChunk(cx, cz);
 						} catch (Exception e) {
 							//e.printStackTrace();
 							continue;
 						}
 
-						if(chunk==null) continue;
+						if(chunk==null) continue;					
 						
 
 						int ix=chunk.getPosX();
 						int iy=chunk.getPosZ();
 
 						BufferedImage height_img=chunk.getHeightImage();
-						BufferedImage img=chunk.getBlocks();						
+						BufferedImage img=chunk.getBlockImage();						
 						BufferedImage blend=preview.blend(img, height_img, 0.4);					
 
 						preview.addImage(blend, ix*64, iy*64);

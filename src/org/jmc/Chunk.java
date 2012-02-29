@@ -12,7 +12,7 @@ import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_IntArray;
+import org.jmc.NBT.TAG_Int_Array;
 import org.jmc.NBT.TAG_List;
 
 public class Chunk {
@@ -24,7 +24,9 @@ public class Chunk {
 
 	private Set<Integer> transparent_blocks;
 
-	public Chunk(InputStream is) throws Exception
+	private boolean is_anvil;
+
+	public Chunk(InputStream is, boolean is_anvil) throws Exception
 	{
 		transparent_blocks=new TreeSet<Integer>();
 		transparent_blocks.add(-1);
@@ -49,6 +51,8 @@ public class Chunk {
 		transparent_blocks.add(55);
 		transparent_blocks.add(59);
 		transparent_blocks.add(63);
+
+		this.is_anvil=is_anvil;
 
 		root=(TAG_Compound) NBT_Tag.make(is);		
 		is.close();
@@ -79,7 +83,45 @@ public class Chunk {
 		return "Chunk:\n"+root.toString();
 	}
 
-	public BufferedImage getBlocks()
+	private byte [] getBlockData()
+	{
+		if(is_anvil)
+		{
+			int ymax=0;
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			TAG_List sections = (TAG_List) level.getElement("Sections");
+			for(NBT_Tag section: sections.elements)
+			{
+				TAG_Compound c_section = (TAG_Compound) section;					
+				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
+				if(yval.value>ymax) ymax=yval.value;
+			}
+
+			ymax=(ymax+1)*16;
+
+			byte block_buf[]=new byte[16*16*ymax];
+
+			for(NBT_Tag section: sections.elements)
+			{
+				TAG_Compound c_section = (TAG_Compound) section;
+				TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");			
+				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
+
+				System.arraycopy(blocks.data, 0, block_buf, yval.value*16*16*16 , 16*16*16);
+			}
+
+			return block_buf;
+		}
+		else
+		{
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
+			return blocks.data;			
+		}
+	}
+
+
+	public BufferedImage getBlockImage()
 	{
 		int width = 4 * 16;
 		int height = 4 * 16;
@@ -89,38 +131,36 @@ public class Chunk {
 		g.setColor(Color.white);
 		g.fillRect(0, 0, width, height);
 
-		TAG_Compound level = (TAG_Compound) root.getElement("Level");
-		TAG_List sections = (TAG_List) level.getElement("Sections");
-		for(NBT_Tag section: sections.elements)
+		byte BlockID=0;
+		byte blocks[]=getBlockData();
+
+		int ymax=0;
+		if(is_anvil)
+			ymax=blocks.length/(16*16);
+		else 
+			ymax=128;
+		
+		int x,y,z;
+		for(z = 0; z < 16; z++)
 		{
-			TAG_Compound c_section = (TAG_Compound) section;
-			TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-			//TAG_Byte_Array data = (TAG_Byte_Array) c_section.getElement("Data");
-			//TAG_Byte_Array tiles = (TAG_Byte_Array) c_section.getElement("TileEntities");
-			//TAG_Byte_Array light = (TAG_Byte_Array) c_section.getElement("SkyLight");
-			//TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-
-			int x,y,z;
-			for(z = 0; z < 16; z++)
+			for(x = 0; x < 16; x++)
 			{
-				for(x = 0; x < 16; x++)
+				for(y = 0; y < ymax; y++)
 				{
-					for(y = 0; y < 16; y++)
-					{
-						byte BlockID = blocks.data[x + (z * 16) + (y * 16) * 16];
-						//byte DataID = data.data[(x + (z * 16) + (y * 16) * 16)/2];
-						//byte LightID = light.data[(x + (z * 16) + (y * 16) * 16)/2];
+					if(is_anvil)
+						BlockID = blocks[x + (z * 16) + (y * 16) * 16];
+					else
+						BlockID = blocks[y + (z * 128) + (x * 128) * 16];
 
-						if(BlockID > 0)
-						{
-							g.setColor(colors.getColor(BlockID));
-							g.fillRect(x*4, z*4, 4, 4);
-						}
+					if(BlockID > 0)
+					{
+						g.setColor(colors.getColor(BlockID));
+						g.fillRect(x*4, z*4, 4, 4);
 					}
 				}
 			}
-
 		}
+
 
 		return ret;
 	}
@@ -136,13 +176,24 @@ public class Chunk {
 		g.fillRect(0, 0, width, height);
 
 		TAG_Compound level=(TAG_Compound)root.getElement("Level");
-		TAG_IntArray heightMap=(TAG_IntArray)level.getElement("HeightMap");
+		
+		TAG_Int_Array intHeightMap=null;
+		TAG_Byte_Array byteHeightMap=null;
+		
+		if(is_anvil)
+			intHeightMap=(TAG_Int_Array)level.getElement("HeightMap");
+		else
+			byteHeightMap=(TAG_Byte_Array)level.getElement("HeightMap");
 
 		int i=0,h;
 		for(int z=0; z<16; z++)
 			for(int x=0; x<16; x++,i++)
 			{
-				h=heightMap.data[i];
+				if(is_anvil)
+					h=intHeightMap.data[i];
+				else
+					h=byteHeightMap.data[i];
+					
 				int a = h % 55;
 				a = a * 7;
 				if(a > 255){a = 255;}
@@ -154,72 +205,58 @@ public class Chunk {
 		return ret;
 	}
 
-	private final int getValue(byte [] array, int x, int y, int z, int yconst)
+	private final int getValue(byte [] array, int x, int y, int z, int ymax)
 	{
-		if(x<0 || x>15 || y<0 || y>=yconst || z<0 || z>15) return -1;
-		int idx=x + (z * 16) + (y * 16) * 16;
-		return array[idx];
+		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
+		if(is_anvil)
+			return array[x + (z * 16) + (y * 16) * 16];
+		else
+			return array[y + (z * 128) + (x * 128) * 16];
 	}
-	
+
 	public OBJFile getOBJ(MTLFile material)
 	{
 		OBJFile ret=new OBJFile("chunk."+pos_x+"."+pos_z,material);
 
 		boolean drawside[]=new boolean[6];
-		
 
+		int BlockID;
+		byte blocks[] = getBlockData();
+		
 		int ymax=0;
+		if(is_anvil)
+			ymax=blocks.length/(16*16);
+		else 
+			ymax=128;
 		
-		TAG_Compound level = (TAG_Compound) root.getElement("Level");
-		TAG_List sections = (TAG_List) level.getElement("Sections");
-		for(NBT_Tag section: sections.elements)
+		int x,y,z;
+		for(z = 0; z < 16; z++)
 		{
-			TAG_Compound c_section = (TAG_Compound) section;					
-			TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-			if(yval.value>ymax) ymax=yval.value;
-		}
-		
-		ymax=(ymax+1)*16;
-		
-		byte block_buf[]=new byte[16*16*ymax];
-		
-		for(NBT_Tag section: sections.elements)
-		{
-			TAG_Compound c_section = (TAG_Compound) section;
-			TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");			
-			TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-			
-			System.arraycopy(blocks.data, 0, block_buf, yval.value*16*16*16 , 16*16*16);
-		}
-		
-			int x,y,z;
-			for(z = 0; z < 16; z++)
+			for(x = 0; x < 16; x++)
 			{
-				for(x = 0; x < 16; x++)
-				{
-					for(y = 0; y < ymax; y++)
-					{						
-						byte BlockID = block_buf[x + (z * 16) + (y * 16) * 16];
+				for(y = 0; y < ymax; y++)
+				{						
+					BlockID=getValue(blocks, x, y, z, ymax);
 
-						if(BlockID==0) continue;
+					if(BlockID==0) continue;
 
-						if(isDrawable(BlockID,getValue(block_buf,x,y+1,z,ymax)))
-							drawside[0]=true; else drawside[0]=false;
-						if(isDrawable(BlockID,getValue(block_buf,x,y-1,z,ymax)))
-							drawside[1]=true; else drawside[1]=false;
-						if(isDrawable(BlockID,getValue(block_buf,x-1,y,z,ymax)))
-							drawside[2]=true; else drawside[2]=false;
-						if(isDrawable(BlockID,getValue(block_buf,x+1,y,z,ymax)))
-							drawside[3]=true; else drawside[3]=false;
-						if(isDrawable(BlockID,getValue(block_buf,x,y,z-1,ymax)))
-							drawside[4]=true; else drawside[4]=false;
-						if(isDrawable(BlockID,getValue(block_buf,x,y,z+1,ymax)))
-							drawside[5]=true; else drawside[5]=false;
+					if(isDrawable(BlockID,getValue(blocks,x,y+1,z,ymax)))
+						drawside[0]=true; else drawside[0]=false;
+					if(isDrawable(BlockID,getValue(blocks,x,y-1,z,ymax)))
+						drawside[1]=true; else drawside[1]=false;
+					if(isDrawable(BlockID,getValue(blocks,x-1,y,z,ymax)))
+						drawside[2]=true; else drawside[2]=false;
+					if(isDrawable(BlockID,getValue(blocks,x+1,y,z,ymax)))
+						drawside[3]=true; else drawside[3]=false;
+					if(isDrawable(BlockID,getValue(blocks,x,y,z-1,ymax)))
+						drawside[4]=true; else drawside[4]=false;
+					if(isDrawable(BlockID,getValue(blocks,x,y,z+1,ymax)))
+						drawside[5]=true; else drawside[5]=false;
 
-						ret.addCube(x, y, z, BlockID, drawside);						
-					}									
-				}
-			}		
+					ret.addCube(x, y, z, BlockID, drawside);						
+				}									
+			}
+		}		
 
 		return ret;
 	}
@@ -228,10 +265,10 @@ public class Chunk {
 	{
 		if(block_id==8 && neighbour_id!=0) return false;
 		if(block_id==9 && neighbour_id!=0) return false;			
-		
+
 		if(transparent_blocks.contains(neighbour_id))
 			return true;
-		
+
 		return false;
 	}
 }

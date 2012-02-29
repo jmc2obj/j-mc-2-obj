@@ -3,11 +3,11 @@ package org.jmc.NBT;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class TAG_IntArray extends NBT_Tag {
+public class TAG_Int_Array extends NBT_Tag {
 
 	public int [] data;
 	
-	public TAG_IntArray(String name) {
+	public TAG_Int_Array(String name) {
 		super(name);
 	}
 	

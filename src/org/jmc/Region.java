@@ -13,15 +13,23 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
-public class AnvilRegion implements Iterable<Chunk> {
+public class Region implements Iterable<Chunk> {
 
 	private File region_file;
 	private ByteBuffer offset,timestamp;
+	boolean is_anvil;
 
-	public AnvilRegion(File file) throws IOException
+	public Region(File file) throws IOException
 	{
 		if(!file.exists())
 			throw new FileNotFoundException(file.getAbsolutePath());
+		
+		if(file.getName().endsWith("mcr"))
+			is_anvil=false;
+		else if(file.getName().endsWith("mca"))
+			is_anvil=true;
+		else
+			throw new IOException("Unknown file extension! Only .mcr or .mca supported!");
 
 		region_file=file;
 
@@ -37,9 +45,9 @@ public class AnvilRegion implements Iterable<Chunk> {
 
 		fis.close();
 
-	}
-
-	public static AnvilRegion findRegion(File saveFolder, int chunk_x, int chunk_z) throws IOException
+	}	
+	
+	public static Region findRegion(File saveFolder, int chunk_x, int chunk_z) throws IOException
 	{
 		int rx,rz;
 
@@ -48,13 +56,16 @@ public class AnvilRegion implements Iterable<Chunk> {
 		rz = chunk_z >> 5;
 
 		File file= new File(saveFolder.getAbsolutePath()+"/region/r."+rx+"."+rz+".mca");
+		
+		if(!file.exists())
+			file= new File(saveFolder.getAbsolutePath()+"/region/r."+rx+"."+rz+".mcr");
 
-		return new AnvilRegion(file);
+		return new Region(file);
 	}
-
-	public static Vector<AnvilRegion> loadAllRegions(File saveFolder) throws IOException
+	
+	public static Vector<Region> loadAllRegions(File saveFolder) throws IOException
 	{
-		Vector<AnvilRegion> ret=new Vector<AnvilRegion>();
+		Vector<Region> ret=new Vector<Region>();
 
 		File dir=new File(saveFolder.getAbsoluteFile()+"/region");
 		if(!dir.exists() || !dir.isDirectory())
@@ -66,13 +77,25 @@ public class AnvilRegion implements Iterable<Chunk> {
 			String name=f.getName();
 			if(name.matches("r\\.[0-9[-]]+\\.[0-9[-]]+\\.mca"))
 			{
-				ret.add(new AnvilRegion(f));				
+				ret.add(new Region(f));				
+			}
+		}
+		
+		if(ret.size()==0)
+		{
+			for(File f:files)
+			{
+				String name=f.getName();
+				if(name.matches("r\\.[0-9[-]]+\\.[0-9[-]]+\\.mcr"))
+				{
+					ret.add(new Region(f));				
+				}
 			}
 		}
 
 		return ret;
 	}
-
+	
 	public Chunk getChunk(int x, int z) throws Exception
 	{			
 		int cx=x%32;
@@ -114,7 +137,7 @@ public class AnvilRegion implements Iterable<Chunk> {
 			raf.read(buf);
 			raf.close();
 			InputStream is=new GZIPInputStream(new ByteArrayInputStream(buf));
-			return new Chunk(is);
+			return new Chunk(is,is_anvil);
 		}
 		else if(compression_type==2)//Inflate
 		{
@@ -122,7 +145,7 @@ public class AnvilRegion implements Iterable<Chunk> {
 			raf.read(buf);
 			raf.close();
 			InputStream is=new InflaterInputStream(new ByteArrayInputStream(buf));
-			return new Chunk(is);
+			return new Chunk(is,is_anvil);
 		}
 		else
 			throw new Exception("Wrong compression type!");
@@ -146,10 +169,10 @@ public class AnvilRegion implements Iterable<Chunk> {
 	class ChunkIterator implements Iterator<Chunk>
 	{
 
-		AnvilRegion region;
+		Region region;
 		int pos;
 
-		public ChunkIterator(AnvilRegion region) {
+		public ChunkIterator(Region region) {
 			this.region=region;
 			pos=0;
 		}
