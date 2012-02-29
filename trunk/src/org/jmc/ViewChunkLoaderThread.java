@@ -3,6 +3,7 @@ package org.jmc;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -87,8 +88,8 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 					if(!running) return;
 				}	
 				
-				preview.redraw();
-
+				preview.redraw();			
+				
 				for(int cx=cxs; cx<=cxe && !stop_iter; cx++)
 				{
 					for(int cz=czs; cz<=cze && !stop_iter; cz++)
@@ -99,7 +100,6 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 							region=Region.findRegion(savepath, cx, cz);
 							chunk=region.getChunk(cx, cz);
 						} catch (Exception e) {
-							//e.printStackTrace();
 							continue;
 						}
 
@@ -110,10 +110,9 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						int iy=chunk.getPosZ();
 
 						BufferedImage height_img=chunk.getHeightImage();
-						BufferedImage img=chunk.getBlockImage();						
-						BufferedImage blend=preview.blend(img, height_img, 0.4);					
+						BufferedImage img=chunk.getBlockImage();											
 
-						preview.addImage(blend, ix*64, iy*64);
+						preview.addImage(img, height_img, ix*64, iy*64);
 						loaded_chunks.add(cx*MAX_CHUNK_NUM+cz);			
 
 						repaint_counter--;
