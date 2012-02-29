@@ -113,7 +113,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 	}
 
-	void redraw()
+	void redraw(boolean fast)
 	{
 
 		int win_w=getWidth();
@@ -124,10 +124,14 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		bg.setColor(Color.black);			
 		bg.clearRect(0, 0, win_w, win_h);			
 
-		Graphics2D hg=height_img.createGraphics();
-		hg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		hg.setColor(Color.black);
-		hg.clearRect(0, 0, win_w, win_h);
+		Graphics2D hg=null;
+		if(!fast)
+		{
+			hg=height_img.createGraphics();
+			hg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			hg.setColor(Color.black);
+			hg.clearRect(0, 0, win_w, win_h);
+		}
 
 		synchronized (chunks) {
 			for(ChunkImage chunk:chunks)
@@ -141,7 +145,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				if(x+w<0 || y+h<0) continue;
 
 				bg.drawImage(chunk.image, x, y, w, h, null);
-				hg.drawImage(chunk.height_map, x, y, w, h, null);
+				if(!fast)
+					hg.drawImage(chunk.height_map, x, y, w, h, null);
 
 
 				if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_z)
@@ -152,36 +157,40 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			}		
 		}					
 
-		WritableRaster height_raster = height_img.getRaster();
-		int h,oh;
-		for(int x=0; x<win_w; x++)
-			for(int y=0; y<win_h; y++)
-			{
-				h=height_raster.getSample(x, y, 0);
-				if(x<(win_w-1) && y<(win_h-1)) oh=height_raster.getSample(x+1, y+1, 0);
-				else oh=h;
-				
-				h=h+50+(oh-h)*20;
-				if(h<0) h=0;
-				if (h>255) h=255;
-				
-				height_raster.setSample(x, y, 0, h);
-			}
-		
+		if(!fast)
+		{
+			WritableRaster height_raster = height_img.getRaster();
+			int h,oh;
+			for(int x=0; x<win_w; x++)
+				for(int y=0; y<win_h; y++)
+				{
+					h=height_raster.getSample(x, y, 0);
+					if(x<(win_w-1) && y<(win_h-1)) oh=height_raster.getSample(x+1, y+1, 0);
+					else oh=h;
+
+					h=h+50+(oh-h)*20;
+					if(h<0) h=0;
+					if (h>255) h=255;
+
+					height_raster.setSample(x, y, 0, h);
+				}
+		}
+
 		synchronized (main_img) {
 
 			Graphics2D mg=main_img.createGraphics();	
 			mg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
 			mg.setColor(Color.black);			
 			mg.clearRect(0, 0, win_w, win_h);			
-			
+
 			mg.drawImage(base_img,0,0,null);
-			mg.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (0.6)));
-			mg.drawImage(height_img,0,0,null);	
+			if(!fast)
+			{
+				mg.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (0.6)));
+				mg.drawImage(height_img,0,0,null);
+			}
 
 		}
-		
-		
 	}
 
 	public void addImage(BufferedImage img, BufferedImage height, int x, int y)
@@ -194,7 +203,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		synchronized (chunks) {			
 			chunks.add(chunk);
 		}
-		redraw();	
+		redraw(true);	
 	}
 
 	public Vector<ChunkImage> getChunkImages()
@@ -206,7 +215,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	{
 		chunks.clear();
 		markers.clear();
-		redraw();
+		redraw(true);
 
 		shift_x=0;
 		shift_y=0;
@@ -254,7 +263,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		zoom_level=zoom_levels[zoom_level_pos];
 
-		redraw();
+		redraw(false);
 		repaint();
 
 	}
@@ -279,7 +288,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			right_pressed=true;
 			selected_chunk_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/64);
 			selected_chunk_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/64);
-			redraw();
+			redraw(true);
 			repaint();
 		}
 	}
@@ -305,7 +314,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			last_x=x;
 			last_y=y;
 
-			redraw();
+			redraw(true);
 			repaint();
 		}		
 	}

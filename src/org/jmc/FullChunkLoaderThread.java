@@ -65,6 +65,9 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 
 		}
 		
+		preview.redraw(false);
+		preview.repaint();
+		
 		running=false;
 		
 	}
