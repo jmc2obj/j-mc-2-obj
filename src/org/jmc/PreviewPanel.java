@@ -81,7 +81,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setFont(gui_font);
 
-		g2d.drawImage(main_img, 0, 0, null);
+		synchronized (main_img) {
+			g2d.drawImage(main_img, 0, 0, null);
+		}		
 
 		for(MapMarker marker:markers)
 		{
@@ -92,7 +94,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		}
 
 		int z_p=100-(zoom_level_pos*100/(zoom_levels.length-1));
-		
+
 		int mx=getWidth()/2;
 		int my=getHeight()/2;
 		int px=(int) ((mx/zoom_level-shift_x)/4);
@@ -103,37 +105,40 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		g2d.drawRect(17, 18+z_p, 26, 5);
 		g2d.drawString(zoom_level+"x", 20, 135);
 		g2d.drawString("("+px+","+py+")", 20, 155);
-		
+
 	}
 
 	void redraw()
 	{
-		int win_w=getWidth();
-		int win_h=getHeight();
+		synchronized (main_img) {
 
-		Graphics2D g=main_img.createGraphics();	
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.setColor(Color.black);
-		g.clearRect(0, 0, main_img.getWidth(), main_img.getHeight());
-		synchronized (chunks) {
-			for(ChunkImage chunk:chunks)
-			{
-				int x=(int) ((chunk.x+shift_x)*zoom_level);
-				int y=(int) ((chunk.y+shift_y)*zoom_level);
-				int w=(int) (chunk.image.getWidth()*zoom_level);
-				int h=(int) (chunk.image.getHeight()*zoom_level);
+			int win_w=getWidth();
+			int win_h=getHeight();
 
-				if(x>win_w || y>win_h) continue;
-				if(x+w<0 || y+h<0) continue;
-
-				g.drawImage(chunk.image, x, y, w, h, null);
-							
-				if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_z)
+			Graphics2D g=main_img.createGraphics();	
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g.setColor(Color.black);
+			g.clearRect(0, 0, main_img.getWidth(), main_img.getHeight());
+			synchronized (chunks) {
+				for(ChunkImage chunk:chunks)
 				{
-					g.setColor(Color.red);
-					g.drawRect(x, y, w-1, h-1);
-				}
-			}		
+					int x=(int) ((chunk.x+shift_x)*zoom_level);
+					int y=(int) ((chunk.y+shift_y)*zoom_level);
+					int w=(int) (chunk.image.getWidth()*zoom_level);
+					int h=(int) (chunk.image.getHeight()*zoom_level);
+
+					if(x>win_w || y>win_h) continue;
+					if(x+w<0 || y+h<0) continue;
+
+					g.drawImage(chunk.image, x, y, w, h, null);
+
+					if(chunk.x/64==selected_chunk_x && chunk.y/64==selected_chunk_z)
+					{
+						g.setColor(Color.red);
+						g.drawRect(x, y, w-1, h-1);
+					}
+				}		
+			}
 		}
 	}
 
@@ -153,7 +158,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	{
 		return chunks;
 	}
-	
+
 	public void clearImages()
 	{
 		chunks.clear();
@@ -224,7 +229,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			pressed=true;
 			//			System.out.println("SET "+last_x+"/"+last_y);
 		}
-		
+
 		if(e.getButton()==MouseEvent.BUTTON3)
 		{
 			selected_chunk_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/64);
@@ -257,8 +262,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 			redraw();
 			repaint();
-
-			//System.out.println("DRAG "+last_x+"/"+last_y+" -> "+shift_x+"/"+shift_y);
 		}		
 	}
 
@@ -287,7 +290,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		return output;
 	}
-	
+
 	public int getSelectedChunkX() { return selected_chunk_x; }
 	public int getSelectedChunkZ() { return selected_chunk_z; }
 }
