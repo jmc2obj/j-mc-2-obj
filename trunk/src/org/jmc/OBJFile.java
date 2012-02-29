@@ -153,6 +153,8 @@ public class OBJFile {
 		int vertices_num=vertices.size();
 		for(Face f:faces)
 		{
+			if(f.mtl_id<0) continue; //TODO: temporary modification - skip unknown materials  
+			
 			if(f.mtl_id!=last_id)
 			{
 				out.println();
