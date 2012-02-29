@@ -88,7 +88,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 					if(!running) return;
 				}	
 				
-				preview.redraw();			
+				preview.redraw(true);			
 				
 				for(int cx=cxs; cx<=cxe && !stop_iter; cx++)
 				{
@@ -118,7 +118,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						repaint_counter--;
 						if(repaint_counter<=0)
 						{
-							preview.redraw();
+							preview.redraw(true);
 							preview.repaint();
 							repaint_counter=REPAINT_FREQUENCY;
 						}
@@ -131,6 +131,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 					}
 				}			
 
+				preview.redraw(false);
 				preview.repaint();
 			}
 
