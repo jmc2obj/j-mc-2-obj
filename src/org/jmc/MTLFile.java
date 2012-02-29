@@ -28,6 +28,8 @@ public class MTLFile {
 		materials.put(4, "grass-side");
 		materials.put(5, "dirt");
 		materials.put(6, "water");
+		materials.put(7, "wood");
+		materials.put(8, "leaves");
 	}
 	
 	public int getMaterialId(int id, Side side)
@@ -47,6 +49,10 @@ public class MTLFile {
 		case 8:
 		case 9:
 			return 6;
+		case 17:
+			return 7;
+		case 18:
+			return 8;
 		default:
 			return -1;
 		}

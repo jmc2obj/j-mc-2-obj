@@ -154,9 +154,9 @@ public class Chunk {
 		return ret;
 	}
 
-	private final int getValue(byte [] array, int x, int y, int z)
+	private final int getValue(byte [] array, int x, int y, int z, int yconst)
 	{
-		if(x<0 || x>15 || y<0 || y>15 || z<0 || z>15) return -1;
+		if(x<0 || x>15 || y<0 || y>=yconst || z<0 || z>15) return -1;
 		int idx=x + (z * 16) + (y * 16) * 16;
 		return array[idx];
 	}
@@ -166,44 +166,60 @@ public class Chunk {
 		OBJFile ret=new OBJFile("chunk."+pos_x+"."+pos_z,material);
 
 		boolean drawside[]=new boolean[6];
+		
 
+		int ymax=0;
+		
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 		TAG_List sections = (TAG_List) level.getElement("Sections");
+		for(NBT_Tag section: sections.elements)
+		{
+			TAG_Compound c_section = (TAG_Compound) section;					
+			TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
+			if(yval.value>ymax) ymax=yval.value;
+		}
+		
+		ymax=(ymax+1)*16;
+		
+		byte block_buf[]=new byte[16*16*ymax];
+		
 		for(NBT_Tag section: sections.elements)
 		{
 			TAG_Compound c_section = (TAG_Compound) section;
 			TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");			
 			TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-
+			
+			System.arraycopy(blocks.data, 0, block_buf, yval.value*16*16*16 , 16*16*16);
+		}
+		
 			int x,y,z;
 			for(z = 0; z < 16; z++)
 			{
 				for(x = 0; x < 16; x++)
 				{
-					for(y = 0; y < 16; y++)
+					for(y = 0; y < ymax; y++)
 					{						
-						byte BlockID = blocks.data[x + (z * 16) + (y * 16) * 16];
+						byte BlockID = block_buf[x + (z * 16) + (y * 16) * 16];
 
 						if(BlockID==0) continue;
 
-						if(isDrawable(BlockID,getValue(blocks.data,x,y+1,z)))
+						if(isDrawable(BlockID,getValue(block_buf,x,y+1,z,ymax)))
 							drawside[0]=true; else drawside[0]=false;
-						if(isDrawable(BlockID,getValue(blocks.data,x,y-1,z)))
+						if(isDrawable(BlockID,getValue(block_buf,x,y-1,z,ymax)))
 							drawside[1]=true; else drawside[1]=false;
-						if(isDrawable(BlockID,getValue(blocks.data,x-1,y,z)))
+						if(isDrawable(BlockID,getValue(block_buf,x-1,y,z,ymax)))
 							drawside[2]=true; else drawside[2]=false;
-						if(isDrawable(BlockID,getValue(blocks.data,x+1,y,z)))
+						if(isDrawable(BlockID,getValue(block_buf,x+1,y,z,ymax)))
 							drawside[3]=true; else drawside[3]=false;
-						if(isDrawable(BlockID,getValue(blocks.data,x,y,z-1)))
+						if(isDrawable(BlockID,getValue(block_buf,x,y,z-1,ymax)))
 							drawside[4]=true; else drawside[4]=false;
-						if(isDrawable(BlockID,getValue(blocks.data,x,y,z+1)))
+						if(isDrawable(BlockID,getValue(block_buf,x,y,z+1,ymax)))
 							drawside[5]=true; else drawside[5]=false;
 
-						ret.addCube(x, y+yval.value*16, z, BlockID, drawside);						
+						ret.addCube(x, y, z, BlockID, drawside);						
 					}									
 				}
-			}
-		}
+			}		
 
 		return ret;
 	}
