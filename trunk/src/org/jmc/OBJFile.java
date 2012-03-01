@@ -60,7 +60,7 @@ public class OBJFile {
 	Map<Vertex, Integer> vertex_map;
 	List<Face> faces;
 	
-	float x_offset, z_offset;
+	float x_offset, y_offset, z_offset;
 	
 	public OBJFile(String ident, MTLFile mtl)
 	{
@@ -70,12 +70,14 @@ public class OBJFile {
 		vertex_map=new TreeMap<Vertex, Integer>();
 		faces=new LinkedList<OBJFile.Face>();
 		x_offset=0;
+		y_offset=0;
 		z_offset=0;
 	}
 	
-	public void setOffset(int x, int z)
+	public void setOffset(int x, int y, int z)
 	{
 		x_offset=x;
+		y_offset=y;
 		z_offset=z;
 	}
 	
@@ -141,7 +143,7 @@ public class OBJFile {
 		
 		for(Vertex vertex:vertices)
 		{
-			out.format("v %2.2f %2.2f %2.2f",vertex.x+x_offset,vertex.y,vertex.z+z_offset);
+			out.format("v %2.2f %2.2f %2.2f",vertex.x+x_offset,vertex.y+y_offset,vertex.z+z_offset);
 			out.println();
 		}
 		

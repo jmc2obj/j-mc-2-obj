@@ -19,7 +19,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	private File savepath;
 	private Vector<ChunkImage> chunk_images;
 
-	private final int REPAINT_FREQUENCY=4;
+	private final int REPAINT_FREQUENCY=100;
 
 	public final int MAX_CHUNK_NUM=32768;
 
@@ -43,10 +43,11 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		Chunk chunk=null;
 
 		Rectangle prev_bounds=new Rectangle();
+		
+		long last_time=System.currentTimeMillis(),this_time;
 
 		loaded_chunks.clear();
 
-		int repaint_counter=REPAINT_FREQUENCY;
 		while(running)
 		{
 			Rectangle bounds=preview.getChunkBounds();
@@ -115,12 +116,12 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						preview.addImage(img, height_img, ix*64, iy*64);
 						loaded_chunks.add(cx*MAX_CHUNK_NUM+cz);			
 
-						repaint_counter--;
-						if(repaint_counter<=0)
+						
+						this_time=System.currentTimeMillis();
+						if(this_time-last_time>REPAINT_FREQUENCY)
 						{
-							preview.redraw(true);
 							preview.repaint();
-							repaint_counter=REPAINT_FREQUENCY;
+							last_time=this_time;
 						}
 
 						Rectangle new_bounds=preview.getChunkBounds();
