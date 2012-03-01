@@ -12,7 +12,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 	private PreviewPanel preview;
 	private File savepath;
 	
-	private final int REPAINT_FREQUENCY=4;
+	private final int REPAINT_FREQUENCY=100;
 	
 	boolean running;
 	
@@ -34,7 +34,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 			return;
 		}				
 
-		int repaint_counter=REPAINT_FREQUENCY;
+		long last_time=System.currentTimeMillis(),this_time;
 		for(Region region:regions)
 		{
 			for(Chunk chunk:region)
@@ -53,11 +53,11 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 				
 				preview.addImage(img, height_img, ix*64, iy*64);
 				
-				repaint_counter--;
-				if(repaint_counter<=0)
+				this_time=System.currentTimeMillis();
+				if(this_time-last_time>REPAINT_FREQUENCY)
 				{
 					preview.repaint();
-					repaint_counter=REPAINT_FREQUENCY;
+					last_time=this_time;
 				}
 				
 				if(!running) return;

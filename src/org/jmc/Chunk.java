@@ -2,6 +2,7 @@ package org.jmc;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Set;
@@ -215,8 +216,20 @@ public class Chunk {
 			return array[y + (z * 128) + (x * 128) * 16];
 	}
 
-	public OBJFile getOBJ(MTLFile material)
+	public OBJFile getOBJ(MTLFile material, Rectangle bounds, int ymin)
 	{
+		int xmin=bounds.x-pos_x*16;
+		int zmin=bounds.y-pos_z*16;
+		int xmax=bounds.x+bounds.width-pos_x*16;
+		int zmax=bounds.y+bounds.height-pos_z*16;
+		
+		if(xmin>15 || zmin>15 || xmax<0 || zmax<0) return null;
+		
+		if(xmin<0) xmin=0;
+		if(zmin<0) zmin=0;
+		if(xmax>15) xmax=15;
+		if(zmax>15) zmax=15;
+		
 		OBJFile ret=new OBJFile("chunk."+pos_x+"."+pos_z,material);
 
 		boolean drawside[]=new boolean[6];
@@ -231,11 +244,11 @@ public class Chunk {
 			ymax=128;
 		
 		int x,y,z;
-		for(z = 0; z < 16; z++)
+		for(z = zmin; z <= zmax; z++)
 		{
-			for(x = 0; x < 16; x++)
+			for(x = xmin; x <= xmax; x++)
 			{
-				for(y = 0; y < ymax; y++)
+				for(y = ymin; y < ymax; y++)
 				{						
 					BlockID=getValue(blocks, x, y, z, ymax);
 
@@ -245,13 +258,13 @@ public class Chunk {
 						drawside[0]=true; else drawside[0]=false;
 					if(isDrawable(BlockID,getValue(blocks,x,y-1,z,ymax)))
 						drawside[1]=true; else drawside[1]=false;
-					if(isDrawable(BlockID,getValue(blocks,x-1,y,z,ymax)))
+					if(x==xmin || isDrawable(BlockID,getValue(blocks,x-1,y,z,ymax)))
 						drawside[2]=true; else drawside[2]=false;
-					if(isDrawable(BlockID,getValue(blocks,x+1,y,z,ymax)))
+					if(x==xmax || isDrawable(BlockID,getValue(blocks,x+1,y,z,ymax)))
 						drawside[3]=true; else drawside[3]=false;
-					if(isDrawable(BlockID,getValue(blocks,x,y,z-1,ymax)))
+					if(z==zmin || isDrawable(BlockID,getValue(blocks,x,y,z-1,ymax)))
 						drawside[4]=true; else drawside[4]=false;
-					if(isDrawable(BlockID,getValue(blocks,x,y,z+1,ymax)))
+					if(z==zmax || isDrawable(BlockID,getValue(blocks,x,y,z+1,ymax)))
 						drawside[5]=true; else drawside[5]=false;
 
 					ret.addCube(x, y, z, BlockID, drawside);						
@@ -268,6 +281,10 @@ public class Chunk {
 		if(block_id==9 && neighbour_id!=0) return false;			
 
 		if(transparent_blocks.contains(neighbour_id))
+			return true;
+		
+		//TODO: this is linked to not drawing unknown chunks - remove when removing other comment
+		if(colors.getColor(block_id)==null)
 			return true;
 
 		return false;
