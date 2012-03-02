@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
+@SuppressWarnings("serial")
 public class OBJExportThread extends JFrame implements Runnable {
 
 	File savepath;

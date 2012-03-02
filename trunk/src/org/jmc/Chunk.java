@@ -5,15 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.jmc.OBJFile.MeshType;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_Int_Array;
 import org.jmc.NBT.TAG_List;
 
 public class Chunk {
@@ -24,8 +26,11 @@ public class Chunk {
 	private int pos_x,pos_z;
 
 	private Set<Integer> transparent_blocks;
+	private Map<Integer, MeshType> mesh_types;
 
 	private boolean is_anvil;
+
+	private BufferedImage block_image, height_image;
 
 	public Chunk(InputStream is, boolean is_anvil) throws Exception
 	{
@@ -53,6 +58,72 @@ public class Chunk {
 		transparent_blocks.add(59);
 		transparent_blocks.add(63);
 
+		mesh_types=new TreeMap<Integer, OBJFile.MeshType>();
+		mesh_types.put(1, MeshType.BLOCK);
+		mesh_types.put(2, MeshType.BLOCK);
+		mesh_types.put(3, MeshType.BLOCK);
+		mesh_types.put(4, MeshType.BLOCK);
+		mesh_types.put(5, MeshType.BLOCK);
+		mesh_types.put(7, MeshType.BLOCK);
+		mesh_types.put(8, MeshType.BLOCK);
+		mesh_types.put(9, MeshType.BLOCK);
+		mesh_types.put(10, MeshType.BLOCK);//LAVA F
+		mesh_types.put(11, MeshType.BLOCK);//LAVA S
+		mesh_types.put(12, MeshType.BLOCK);		
+		mesh_types.put(13, MeshType.BLOCK);
+		mesh_types.put(14, MeshType.BLOCK);
+		mesh_types.put(15, MeshType.BLOCK);
+		mesh_types.put(16, MeshType.BLOCK);
+		mesh_types.put(17, MeshType.BLOCK);
+		mesh_types.put(18, MeshType.BLOCK);//LEAVES(alpha)
+		mesh_types.put(19, MeshType.BLOCK);
+		mesh_types.put(20, MeshType.BLOCK);//GLASS(alpha)
+		mesh_types.put(21, MeshType.BLOCK);
+		mesh_types.put(22, MeshType.BLOCK);
+		mesh_types.put(23, MeshType.BLOCK);
+		mesh_types.put(24, MeshType.BLOCK);
+		mesh_types.put(25, MeshType.BLOCK);
+		mesh_types.put(35, MeshType.BLOCK);//WOOL
+		mesh_types.put(41, MeshType.BLOCK);
+		mesh_types.put(42, MeshType.BLOCK);
+		mesh_types.put(43, MeshType.BLOCK);
+		mesh_types.put(45, MeshType.BLOCK);
+		mesh_types.put(46, MeshType.BLOCK);
+		mesh_types.put(47, MeshType.BLOCK);
+		mesh_types.put(48, MeshType.BLOCK);
+		mesh_types.put(49, MeshType.BLOCK);
+		mesh_types.put(52, MeshType.BLOCK);//SPAWNER(alpha)
+		mesh_types.put(54, MeshType.BLOCK);
+		mesh_types.put(56, MeshType.BLOCK);
+		mesh_types.put(57, MeshType.BLOCK);
+		mesh_types.put(58, MeshType.BLOCK);
+		mesh_types.put(60, MeshType.BLOCK);
+		mesh_types.put(61, MeshType.BLOCK);
+		mesh_types.put(62, MeshType.BLOCK);
+		mesh_types.put(73, MeshType.BLOCK);
+		mesh_types.put(74, MeshType.BLOCK);
+		mesh_types.put(79, MeshType.BLOCK);//ICE(alpha?)
+		mesh_types.put(80, MeshType.BLOCK);
+		mesh_types.put(81, MeshType.BLOCK);
+		mesh_types.put(82, MeshType.BLOCK);
+		mesh_types.put(84, MeshType.BLOCK);
+		mesh_types.put(86, MeshType.BLOCK);
+		mesh_types.put(87, MeshType.BLOCK);
+		mesh_types.put(88, MeshType.BLOCK);
+		mesh_types.put(89, MeshType.BLOCK);
+		mesh_types.put(91, MeshType.BLOCK);
+		mesh_types.put(95, MeshType.BLOCK);
+		mesh_types.put(97, MeshType.BLOCK);
+		mesh_types.put(98, MeshType.BLOCK);
+		mesh_types.put(103, MeshType.BLOCK);
+		mesh_types.put(110, MeshType.BLOCK);
+		mesh_types.put(112, MeshType.BLOCK);
+		mesh_types.put(121, MeshType.BLOCK);
+		mesh_types.put(123, MeshType.BLOCK);
+		mesh_types.put(124, MeshType.BLOCK);				
+
+
+
 		this.is_anvil=is_anvil;
 
 		root=(TAG_Compound) NBT_Tag.make(is);		
@@ -67,6 +138,9 @@ public class Chunk {
 
 		pos_x = xPos.value;
 		pos_z = zPos.value;
+
+		block_image=null;
+		height_image=null;
 	}
 
 	public int getPosX()
@@ -122,17 +196,23 @@ public class Chunk {
 	}
 
 
-	public BufferedImage getBlockImage()
+	public void renderImages()
 	{
 		int width = 4 * 16;
 		int height = 4 * 16;
-		BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		block_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		height_image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 
-		Graphics2D g = ret.createGraphics();
-		g.setColor(Color.white);
-		g.fillRect(0, 0, width, height);
+		Graphics2D gb = block_image.createGraphics();
+		gb.setColor(Color.white);
+		gb.fillRect(0, 0, width, height);
+
+		Graphics2D gh = height_image.createGraphics();
+		gb.setColor(Color.black);
+		gb.fillRect(0, 0, width, height);
 
 		byte BlockID=0;
+		Color c;
 		byte blocks[]=getBlockData();
 
 		int ymax=0;
@@ -140,12 +220,18 @@ public class Chunk {
 			ymax=blocks.length/(16*16);
 		else 
 			ymax=128;
-		
+
+
+		byte image[]=new byte[16*16];
+		int himage[]=new int[16*16];
+
 		int x,y,z;
 		for(z = 0; z < 16; z++)
 		{
 			for(x = 0; x < 16; x++)
 			{
+				image[z*16+x]=0;
+
 				for(y = 0; y < ymax; y++)
 				{
 					if(is_anvil)
@@ -153,58 +239,50 @@ public class Chunk {
 					else
 						BlockID = blocks[y + (z * 128) + (x * 128) * 16];
 
-					if(BlockID > 0)
+					c=colors.getColor(BlockID);
+					if(c != null)
 					{
-						g.setColor(colors.getColor(BlockID));
-						g.fillRect(x*4, z*4, 4, 4);
+						image[z*16+x]=BlockID;
+						himage[z*16+x]=y;
 					}
 				}
 			}
 		}
 
 
-		return ret;
+		for(z = 0; z < 16; z++)
+		{
+			for(x = 0; x < 16; x++)
+			{				
+				c=colors.getColor(image[z*16+x]);
+				if(c!=null)
+				{
+					gb.setColor(c);
+					gb.fillRect(x*4, z*4, 4, 4);
+				}				
+			}
+		}
+
+		int h;
+		for(z = 0; z < 16; z++)
+		{
+			for(x = 0; x < 16; x++)
+			{				
+				h=himage[z*16+x]%256;
+				gh.setColor(new Color(h,h,h));
+				gh.fillRect(x*4, z*4, 4, 4);				
+			}
+		}
+	}
+
+	public BufferedImage getBlockImage()
+	{
+		return block_image;
 	}
 
 	public BufferedImage getHeightImage()
 	{
-		int width=16*4;
-		int height=16*4;
-		BufferedImage ret=new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-
-		Graphics2D g=ret.createGraphics();
-		g.setColor(Color.white);
-		g.fillRect(0, 0, width, height);
-
-		TAG_Compound level=(TAG_Compound)root.getElement("Level");
-		
-		TAG_Int_Array intHeightMap=null;
-		TAG_Byte_Array byteHeightMap=null;
-		
-		if(is_anvil)
-			intHeightMap=(TAG_Int_Array)level.getElement("HeightMap");
-		else
-			byteHeightMap=(TAG_Byte_Array)level.getElement("HeightMap");
-
-		int h;
-	
-		for(int z=0,i=0; z<16; z++)
-		{
-			for(int x=0; x<16; x++,i++)
-			{
-				if(is_anvil)				
-					h=intHeightMap.data[i];
-				else
-					h=byteHeightMap.data[i];
-				
-				h=h%256;
-				
-				g.setColor(new Color(h,h,h));
-				g.fillRect(x*4, z*4, 4, 4);
-			}
-		}
-
-		return ret;
+		return height_image;
 	}
 
 	private final int getValue(byte [] array, int x, int y, int z, int ymax)
@@ -222,27 +300,27 @@ public class Chunk {
 		int zmin=bounds.y-pos_z*16;
 		int xmax=bounds.x+bounds.width-pos_x*16;
 		int zmax=bounds.y+bounds.height-pos_z*16;
-		
+
 		if(xmin>15 || zmin>15 || xmax<0 || zmax<0) return null;
-		
+
 		if(xmin<0) xmin=0;
 		if(zmin<0) zmin=0;
 		if(xmax>15) xmax=15;
 		if(zmax>15) zmax=15;
-		
+
 		OBJFile ret=new OBJFile("chunk."+pos_x+"."+pos_z,material);
 
 		boolean drawside[]=new boolean[6];
 
 		int BlockID;
 		byte blocks[] = getBlockData();
-		
+
 		int ymax=0;
 		if(is_anvil)
 			ymax=blocks.length/(16*16);
 		else 
 			ymax=128;
-		
+
 		int x,y,z;
 		for(z = zmin; z <= zmax; z++)
 		{
@@ -254,9 +332,9 @@ public class Chunk {
 
 					if(BlockID==0) continue;
 
-					if(isDrawable(BlockID,getValue(blocks,x,y+1,z,ymax)))
+					if(y==ymax-1 || isDrawable(BlockID,getValue(blocks,x,y+1,z,ymax)))
 						drawside[0]=true; else drawside[0]=false;
-					if(isDrawable(BlockID,getValue(blocks,x,y-1,z,ymax)))
+					if(y==ymin || isDrawable(BlockID,getValue(blocks,x,y-1,z,ymax)))
 						drawside[1]=true; else drawside[1]=false;
 					if(x==xmin || isDrawable(BlockID,getValue(blocks,x-1,y,z,ymax)))
 						drawside[2]=true; else drawside[2]=false;
@@ -267,7 +345,17 @@ public class Chunk {
 					if(z==zmax || isDrawable(BlockID,getValue(blocks,x,y,z+1,ymax)))
 						drawside[5]=true; else drawside[5]=false;
 
-					ret.addCube(x, y, z, BlockID, drawside);						
+					MeshType mt=mesh_types.get(BlockID);
+					if(mt!=null)
+					{
+						switch(mt)
+						{
+						case BLOCK:
+							ret.addCube(x, y, z, BlockID, drawside);
+							break;
+						default:
+						}
+					}
 				}									
 			}
 		}		
@@ -277,12 +365,15 @@ public class Chunk {
 
 	private boolean isDrawable(int block_id, int neighbour_id)
 	{
-		if(block_id==8 && neighbour_id!=0) return false;
-		if(block_id==9 && neighbour_id!=0) return false;			
+		Color nc=colors.getColor(neighbour_id);
+		MeshType nm=mesh_types.get(neighbour_id);
 
-		if(transparent_blocks.contains(neighbour_id))
+		if(block_id==8 && nc!=null && nm==MeshType.BLOCK) return false;
+		if(block_id==9 && nc!=null && nm==MeshType.BLOCK) return false;			
+
+		if(transparent_blocks.contains(neighbour_id) || nc==null || nm!=MeshType.BLOCK)
 			return true;
-		
+
 		//TODO: this is linked to not drawing unknown chunks - remove when removing other comment
 		if(colors.getColor(block_id)==null)
 			return true;

@@ -45,6 +45,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 					return;
 				}
 
+				chunk.renderImages();
 				BufferedImage height_img=chunk.getHeightImage();
 				BufferedImage img=chunk.getBlockImage();										
 

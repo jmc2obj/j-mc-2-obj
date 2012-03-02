@@ -19,6 +19,15 @@ public class OBJFile {
 		BOTTOMLEFT
 	}
 	
+	public enum MeshType
+	{
+		BLOCK,
+		IMAGE,
+		TORCH,
+		FENCE
+		//TODO: complete this
+	}
+	
 	private class Vertex implements Comparable<Vertex>
 	{
 		float x,y,z;
