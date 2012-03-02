@@ -6,21 +6,24 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 @SuppressWarnings("serial")
 public class OBJExportThread extends JFrame implements Runnable {
 
+	File objfile;
 	File savepath;
 	Rectangle bounds;
 	int ymin;
 
 	JProgressBar progress;
 
-	public OBJExportThread(File savepath, Rectangle bounds, int ymin) 
+	public OBJExportThread(File objfile, File savepath, Rectangle bounds, int ymin) 
 	{		
 		super("Export in progress...");		
 
+		this.objfile=objfile;
 		this.savepath=savepath;
 		this.bounds=bounds;
 		this.ymin=ymin;
@@ -38,12 +41,24 @@ public class OBJExportThread extends JFrame implements Runnable {
 		setVisible(true);
 
 		try {
-			FileWriter file=new FileWriter("out.obj");
+			FileWriter file=new FileWriter(objfile);
 			PrintWriter writer=new PrintWriter(file);
 
 			MTLFile mtl=new MTLFile();
 
-			mtl.saveMTLFile(new File("minecraft.mtl"));
+			File mtlfile=new File(objfile.getParent()+"/minecraft.mtl");
+			
+			if(mtlfile.exists())
+			{
+				int ret=JOptionPane.showConfirmDialog(MainWindow.main, "This folder already contains the linked minecraft.mtl file. Do you want to overwrite it?");
+				if(ret!=JOptionPane.YES_OPTION)
+				{
+					setVisible(false);
+					return;
+				}
+			}
+			
+			mtl.saveMTLFile(mtlfile);
 
 			mtl.header(writer);
 
