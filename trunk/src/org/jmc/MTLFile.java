@@ -66,7 +66,8 @@ public class MTLFile {
 				float g=c.getGreen()/256.0f;				
 				float b=c.getBlue()/256.0f;
 				writer.println("newmtl material-"+i);
-				writer.format("Kd %2.2f %2.2f %2.2f\n",r,g,b);
+				writer.format("Kd %2.2f %2.2f %2.2f",r,g,b);
+				writer.println();
 				writer.println();
 			}
 		}

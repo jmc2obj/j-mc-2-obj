@@ -10,6 +10,7 @@ import java.io.File;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -122,6 +123,27 @@ public class MainPanel extends JPanel
 					return;
 				}
 				
+				JFileChooser jfcSave=new JFileChooser();
+				jfcSave.setDialogTitle("Save OBJ file");
+				if(jfcSave.showSaveDialog(MainWindow.main)!=JFileChooser.APPROVE_OPTION)
+				{
+					return;
+				}
+				
+				File objfile=jfcSave.getSelectedFile();
+				if(!objfile.getName().endsWith(".obj"))
+				{
+					objfile=new File(objfile.getAbsolutePath()+".obj");
+				}
+				
+				if(objfile.exists())
+				{
+					if(JOptionPane.showConfirmDialog(MainWindow.main, "File exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+					{
+						return;
+					}
+				}
+				
 				int ymin=0;
 				Rectangle rect=preview.getSelectionBounds();
 				
@@ -136,7 +158,7 @@ public class MainPanel extends JPanel
 				}catch (NumberFormatException e) {}
 
 
-				OBJExportThread export_thread = new OBJExportThread(loaded_file, rect, ymin);
+				OBJExportThread export_thread = new OBJExportThread(objfile,loaded_file, rect, ymin);
 								
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;
