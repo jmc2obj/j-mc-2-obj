@@ -122,20 +122,20 @@ public class MainPanel extends JPanel
 					JOptionPane.showMessageDialog(null, "You have to load a file first!");
 					return;
 				}
-				
+
 				JFileChooser jfcSave=new JFileChooser();
 				jfcSave.setDialogTitle("Save OBJ file");
 				if(jfcSave.showSaveDialog(MainWindow.main)!=JFileChooser.APPROVE_OPTION)
 				{
 					return;
 				}
-				
+
 				File objfile=jfcSave.getSelectedFile();
 				if(!objfile.getName().endsWith(".obj"))
 				{
 					objfile=new File(objfile.getAbsolutePath()+".obj");
 				}
-				
+
 				if(objfile.exists())
 				{
 					if(JOptionPane.showConfirmDialog(MainWindow.main, "File exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
@@ -143,10 +143,10 @@ public class MainPanel extends JPanel
 						return;
 					}
 				}
-				
+
 				int ymin=0;
 				Rectangle rect=preview.getSelectionBounds();
-				
+
 				if(rect.width==0 || rect.height==0)
 				{
 					JOptionPane.showMessageDialog(null, "Click and drag the right mouse button to make a selection first!");
@@ -159,12 +159,12 @@ public class MainPanel extends JPanel
 
 
 				OBJExportThread export_thread = new OBJExportThread(objfile,loaded_file, rect, ymin);
-								
+
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;
 				int my=win_bounds.y+win_bounds.height/2;
 				export_thread.setBounds(mx-100, my-25, 200, 50);
-								
+
 				(new Thread(export_thread)).start();
 
 			}
@@ -185,8 +185,9 @@ public class MainPanel extends JPanel
 	{
 		public void run()
 		{
-			//TODO: this works in windows only! check other OSs and fix accordingly
-			File save_dir=new File(System.getenv("appdata")+"\\.minecraft\\saves");
+			File minecraft_dir=getMinecraftDir();
+			if(minecraft_dir==null) return;
+			File save_dir=new File(minecraft_dir.getAbsolutePath()+"/saves");
 
 			if(!save_dir.exists())
 				return;
@@ -205,4 +206,35 @@ public class MainPanel extends JPanel
 	{
 		(new PopulateLoadListThread()).start();
 	}
+
+	public static File getMinecraftDir()
+	{
+		String minecraft="minecraft";
+		String osname = System.getProperty("os.name").toLowerCase();
+		String default_home = System.getProperty("user.home", ".");
+		if(osname.contains("solaris") || osname.contains("sunos") || osname.contains("linux") || osname.contains("unix"))
+		{
+			return new File(default_home, (new StringBuilder()).append('.').append(minecraft).append('/').toString());
+		}
+
+		if(osname.contains("win"))
+		{
+			String win_home = System.getenv("APPDATA");
+			if(win_home != null)
+			{
+				return new File(win_home, (new StringBuilder()).append(".").append(minecraft).append('/').toString());
+			} else
+			{
+				return new File(default_home, (new StringBuilder()).append('.').append(minecraft).append('/').toString());
+			}
+		}
+
+		if(osname.contains("mac"))
+		{
+			return new File(default_home, (new StringBuilder()).append("Library/Application Support/").append(minecraft).toString());
+		}
+
+		return null;
+	}
+
 }
