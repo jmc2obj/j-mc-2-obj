@@ -3,7 +3,6 @@ package org.jmc;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -110,6 +109,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						int ix=chunk.getPosX();
 						int iy=chunk.getPosZ();
 
+						chunk.renderImages();
 						BufferedImage height_img=chunk.getHeightImage();
 						BufferedImage img=chunk.getBlockImage();											
 

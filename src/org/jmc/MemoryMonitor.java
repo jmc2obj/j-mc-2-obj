@@ -1,7 +1,6 @@
 package org.jmc;
 
 import java.awt.Dimension;
-import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -9,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 
 @SuppressWarnings("serial")
 public class MemoryMonitor extends JPanel implements Runnable {

@@ -20,7 +20,6 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.SliderUI;
 
 
 
@@ -300,18 +299,19 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton()==MouseEvent.BUTTON1)
 		{
-			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-			last_x=e.getX();
-			last_y=e.getY();
+			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			selection_start_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
+			selection_start_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
 			left_pressed=true;
 		}
 
 		if(e.getButton()==MouseEvent.BUTTON3)
 		{
-			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+			last_x=e.getX();
+			last_y=e.getY();			
 			right_pressed=true;
-			selection_start_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
-			selection_start_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
+			
 		}
 	}
 
@@ -320,7 +320,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		
-		if(right_pressed)
+		if(left_pressed)
 		{
 			
 			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
@@ -338,6 +338,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		if(left_pressed)
 		{
+			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
+			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
+			repaint();			
+		}	
+		
+		if(right_pressed)
+		{
 			int x,y;
 
 			x=e.getX();
@@ -350,14 +357,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			last_y=y;
 
 			redraw(true);
-			repaint();
-		}	
-		
-		if(right_pressed)
-		{
-			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
-			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
-			repaint();
+			repaint();		
 		}
 	}
 
