@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 public class MTLFile {
 	
@@ -51,6 +52,7 @@ public class MTLFile {
 	public void saveMTLFile(File file) throws IOException
 	{		
 		PrintWriter writer=new PrintWriter(new FileWriter(file));
+		Locale l=null;
 		
 		writer.println("newmtl unknown");
 		writer.println("Kd 1 0 1");
@@ -66,7 +68,7 @@ public class MTLFile {
 				float g=c.getGreen()/256.0f;				
 				float b=c.getBlue()/256.0f;
 				writer.println("newmtl material-"+i);
-				writer.format("Kd %2.2f %2.2f %2.2f",r,g,b);
+				writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
 				writer.println();
 				writer.println();
 			}
