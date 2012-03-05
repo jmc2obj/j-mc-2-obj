@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -147,12 +148,13 @@ public class OBJFile {
 	
 	public void append(PrintWriter out)
 	{
+		Locale l=null;
 		out.println("g "+identifier);
 		out.println();
 		
 		for(Vertex vertex:vertices)
 		{
-			out.format("v %2.2f %2.2f %2.2f",vertex.x+x_offset,vertex.y+y_offset,vertex.z+z_offset);
+			out.format(l,"v %2.2f %2.2f %2.2f",vertex.x+x_offset,vertex.y+y_offset,vertex.z+z_offset);
 			out.println();
 		}
 		
@@ -176,10 +178,11 @@ public class OBJFile {
 			normal_idx=sideToNormalIndex(f.side);
 			
 			out.print("f ");
-			out.print((-vertices_num+f.vertices[0])+"/-4/"+normal_idx+" ");
-			out.print((-vertices_num+f.vertices[1])+"/-3/"+normal_idx+" ");
-			out.print((-vertices_num+f.vertices[2])+"/-2/"+normal_idx+" ");
-			out.println((-vertices_num+f.vertices[3])+"/-1/"+normal_idx+" ");
+			out.format(l,"%d/-4/%d ",(-vertices_num+f.vertices[0]),normal_idx);
+			out.format(l,"%d/-3/%d ",(-vertices_num+f.vertices[1]),normal_idx);
+			out.format(l,"%d/-2/%d ",(-vertices_num+f.vertices[2]),normal_idx);
+			out.format(l,"%d/-1/%d ",(-vertices_num+f.vertices[3]),normal_idx);
+			out.println();
 		}				
 	}
 	
