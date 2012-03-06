@@ -1,0 +1,237 @@
+newmtl unknown
+Kd 1 0 1
+
+newmtl material-1
+Kd 0.76 0.76 0.76
+
+newmtl material-2
+Kd 0.30 0.67 0.26
+
+newmtl material-3
+Kd 0.59 0.42 0.29
+
+newmtl material-4
+Kd 0.47 0.47 0.47
+
+newmtl material-5
+Kd 0.79 0.64 0.43
+
+newmtl material-7
+Kd 0.34 0.34 0.34
+
+newmtl material-8
+Kd 0.26 0.50 1.00
+
+newmtl material-9
+Kd 0.26 0.50 1.00
+
+newmtl material-10
+Kd 0.81 0.15 0.00
+
+newmtl material-11
+Kd 0.81 0.15 0.00
+
+newmtl material-12
+Kd 0.82 0.79 0.58
+
+newmtl material-13
+Kd 0.67 0.67 0.67
+
+newmtl material-14
+Kd 0.98 0.82 0.00
+
+newmtl material-15
+Kd 0.68 0.55 0.46
+
+newmtl material-16
+Kd 0.25 0.25 0.25
+
+newmtl material-17
+Kd 0.41 0.33 0.20
+
+newmtl material-18
+Kd 0.06 0.32 0.06
+
+newmtl material-19
+Kd 0.74 0.74 0.21
+
+newmtl material-20
+Kd 0.82 0.98 1.00
+
+newmtl material-21
+Kd 0.16 0.31 0.55
+
+newmtl material-22
+Kd 0.11 0.34 0.77
+
+newmtl material-23
+Kd 0.45 0.45 0.45
+
+newmtl material-24
+Kd 0.75 0.73 0.47
+
+newmtl material-25
+Kd 0.58 0.37 0.27
+
+newmtl material-27
+Kd 0.63 0.00 0.01
+
+newmtl material-28
+Kd 0.66 0.66 0.66
+
+newmtl material-29
+Kd 0.57 0.76 0.49
+
+newmtl material-31
+Kd 0.21 0.48 0.06
+
+newmtl material-32
+Kd 0.58 0.39 0.16
+
+newmtl material-33
+Kd 0.73 0.59 0.38
+
+newmtl material-34
+Kd 0.73 0.59 0.38
+
+newmtl material-35
+Kd 0.71 0.71 0.71
+
+newmtl material-37
+Kd 0.94 0.97 0.01
+
+newmtl material-38
+Kd 0.82 0.02 0.04
+
+newmtl material-39
+Kd 0.45 0.34 0.26
+
+newmtl material-40
+Kd 0.88 0.07 0.07
+
+newmtl material-41
+Kd 0.98 0.88 0.25
+
+newmtl material-42
+Kd 0.90 0.90 0.90
+
+newmtl material-43
+Kd 0.61 0.61 0.61
+
+newmtl material-44
+Kd 0.50 0.50 0.50
+
+newmtl material-45
+Kd 0.61 0.34 0.26
+
+newmtl material-46
+Kd 0.75 0.23 0.09
+
+newmtl material-47
+Kd 0.07 0.55 0.42
+
+newmtl material-48
+Kd 0.24 0.45 0.24
+
+newmtl material-49
+Kd 0.14 0.12 0.19
+
+newmtl material-50
+Kd 1.00 1.00 0.59
+
+newmtl material-51
+Kd 0.98 0.34 0.00
+
+newmtl material-52
+Kd 0.10 0.13 0.15
+
+newmtl material-53
+Kd 0.68 0.52 0.29
+
+newmtl material-54
+Kd 0.65 0.43 0.12
+
+newmtl material-56
+Kd 0.46 0.56 0.58
+
+newmtl material-57
+Kd 0.07 0.68 0.69
+
+newmtl material-58
+Kd 0.49 0.32 0.09
+
+newmtl material-60
+Kd 0.32 0.20 0.03
+
+newmtl material-61
+Kd 0.45 0.45 0.45
+
+newmtl material-62
+Kd 0.45 0.38 0.38
+
+newmtl material-73
+Kd 0.56 0.28 0.28
+
+newmtl material-74
+Kd 0.67 0.20 0.20
+
+newmtl material-78
+Kd 1.00 1.00 1.00
+
+newmtl material-79
+Kd 0.73 0.81 1.00
+
+newmtl material-80
+Kd 1.00 1.00 1.00
+
+newmtl material-81
+Kd 0.24 0.46 0.00
+
+newmtl material-82
+Kd 0.67 0.67 0.67
+
+newmtl material-84
+Kd 0.26 0.13 0.00
+
+newmtl material-86
+Kd 0.92 0.52 0.13
+
+newmtl material-87
+Kd 0.61 0.30 0.30
+
+newmtl material-88
+Kd 1.00 0.61 0.61
+
+newmtl material-89
+Kd 0.93 0.77 0.13
+
+newmtl material-91
+Kd 1.00 0.23 0.00
+
+newmtl material-95
+Kd 0.65 0.43 0.12
+
+newmtl material-97
+Kd 0.76 0.76 0.76
+
+newmtl material-98
+Kd 0.61 0.61 0.61
+
+newmtl material-103
+Kd 0.69 0.87 0.23
+
+newmtl material-110
+Kd 0.81 0.57 0.57
+
+newmtl material-112
+Kd 0.48 0.00 0.00
+
+newmtl material-121
+Kd 0.84 0.83 0.70
+
+newmtl material-123
+Kd 0.71 0.56 0.12
+
+newmtl material-124
+Kd 0.96 0.80 0.34
+
