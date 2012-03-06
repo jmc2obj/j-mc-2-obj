@@ -108,9 +108,9 @@ public class Region implements Iterable<Chunk> {
 		int cx=x%32;
 		int cz=z%32;
 		if(cz<0) 
-			cz=32+z;
+			cz=32+cz;
 		if(cx<0) 
-			cx=32+x;
+			cx=32+cx;
 		int loc = cx + cz * 32;		
 		Chunk chunk = getChunk(loc);
 		
