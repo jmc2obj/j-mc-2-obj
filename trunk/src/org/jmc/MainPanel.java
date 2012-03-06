@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ ******************************************************************************/
 package org.jmc;
 
 import java.awt.BorderLayout;
@@ -21,21 +28,49 @@ import javax.swing.JTextField;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
 
+
+/**
+ * Main Panel containing all the content of the window.
+ * 
+ * @author danijel
+ *
+ */
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
+	//UI elements (not described separately)
 	private JButton bLoad,bSave;
 	private JComboBox cbPath;
 	private JTextArea taLog;
 	private JScrollPane spPane;
-	private PreviewPanel preview;
-	private MemoryMonitor memory_monitor;
 	private JTextField tfGroundLevel;
+	
+	/**
+	 * Main map preview panel. 
+	 */
+	private PreviewPanel preview;
 
+	/**
+	 * Panel containing the memory state information.
+	 * Also a thread constantly making memory measurements.
+	 */
+	private MemoryMonitor memory_monitor;
+	
+	/**
+	 * Thread object used for monitoring the state of the chunk loading thread.
+	 * Necessary for restarting the thread when loading a new map.
+	 */
 	private ChunkLoaderThread chunk_loader=null;
 
+	/**
+	 * Reference to the loaded file used by the export function to
+	 * be able to save the last loaded file.
+	 */
 	private File loaded_file=null;
 
+	/**
+	 * Panel contructor.
+	 */
 	public MainPanel()
 	{
 		setLayout(new BorderLayout());
@@ -70,7 +105,7 @@ public class MainPanel extends JPanel
 		add(jpBottom, BorderLayout.SOUTH);
 		taLog.setLineWrap(true);
 		bLoad.addActionListener(new ActionListener()
-		{
+		{			
 			public void actionPerformed(ActionEvent e)
 			{
 				loaded_file=new File((String)cbPath.getSelectedItem());
@@ -175,12 +210,23 @@ public class MainPanel extends JPanel
 
 	}
 
+	/**
+	 * Main log method.
+	 * Adds the string to the log at the bottom of the window.
+	 * @param msg line to be added to the log
+	 */
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");
 		//System.out.println(msg);
 	}
 
+	/**
+	 * A small thread to speed up window startup.
+	 * It is used to find saves in the minecraft save directory.
+	 * @author danijel
+	 *
+	 */
 	class PopulateLoadListThread extends Thread
 	{
 		public void run()
@@ -202,11 +248,19 @@ public class MainPanel extends JPanel
 		}
 	}
 
+	/**
+	 * Runs the populate list thread.
+	 */
 	private void populateLoadList()
 	{
 		(new PopulateLoadListThread()).start();
 	}
 
+	/**
+	 * Gets the directory that Minecraft keeps its save files in.
+	 * It works on all systems that Minecraft 1.2 works in.
+	 * @return path to the Minecraft dir
+	 */
 	public static File getMinecraftDir()
 	{
 		String minecraft="minecraft";
