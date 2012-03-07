@@ -16,12 +16,23 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.BevelBorder;
 
+/**
+ * Memory monitor panel and thread.
+ * This class describes a thread and a GUI component that monitors the memory usage
+ * of the Java program.
+ * @author danijel
+ *
+ */
 @SuppressWarnings("serial")
 public class MemoryMonitor extends JPanel implements Runnable {
 
+	//UI elements (not described)
 	JLabel label;
 	JProgressBar bar1,bar2;
 	
+	/**
+	 * Main constructor.
+	 */
 	public MemoryMonitor() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
@@ -41,6 +52,11 @@ public class MemoryMonitor extends JPanel implements Runnable {
 		add(bar2);
 	}
 	
+	/**
+	 * Method used to convert size in bytes into a descriptive string in KB, MB or GB.
+	 * @param mem size in bytes
+	 * @return string in KB, MB or GB
+	 */
 	private String toSize(long mem)
 	{
 		if(mem>=1024)
@@ -59,6 +75,9 @@ public class MemoryMonitor extends JPanel implements Runnable {
 		return ""+mem;		
 	}
 	
+	/**
+	 * Main thread method.
+	 */
 	@Override
 	public void run() {
 		

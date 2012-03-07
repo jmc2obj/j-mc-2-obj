@@ -17,20 +17,52 @@ import java.util.Vector;
 
 import org.jmc.PreviewPanel.ChunkImage;
 
+/**
+ * Chunk loader that loads only the chunks visible on the screen and
+ * removes the chunks that go off screen. 
+ * @author danijel
+ *
+ */
 public class ViewChunkLoaderThread implements ChunkLoaderThread {
 
+	/**
+	 * Used by isRunning and stopRunning methods.
+	 */
 	private boolean running;
 	
+	/**
+	 * Reference to preview panel so we can change the preview.
+	 */
 	private PreviewPanel preview;
+	/**
+	 * Path to world save.
+	 */
 	private File savepath;
+	/**
+	 * Collection of chunk images from the preview panel.
+	 */
 	private Vector<ChunkImage> chunk_images;
 
+	/**
+	 * Frequency of repainting in ms.
+	 */
 	private final int REPAINT_FREQUENCY=100;
 
+	/**
+	 * Maximum number of chunks loaded.
+	 */
 	public final int MAX_CHUNK_NUM=32768;
 
+	/**
+	 * A collection of loaded chunk IDs.
+	 */
 	Set<Integer> loaded_chunks;
 
+	/**
+	 * Main constructor.
+	 * @param preview reference to the preview panel
+	 * @param savepath path to the world save
+	 */
 	public ViewChunkLoaderThread(PreviewPanel preview, File savepath) {
 		this.preview=preview;
 		this.savepath=savepath;
@@ -40,6 +72,9 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		loaded_chunks=new HashSet<Integer>();
 	}
 
+	/**
+	 * Main thread method.
+	 */
 	@Override
 	public void run() {		
 
@@ -155,11 +190,17 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 
 	}
 
+	/**
+	 * Interface override.
+	 */
 	@Override
 	public boolean isRunning() {
 		return running;
 	}
-
+	
+	/**
+	 * Interface override.
+	 */
 	@Override
 	public void stopRunning() {
 		running=false;

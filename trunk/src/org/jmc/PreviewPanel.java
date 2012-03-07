@@ -32,23 +32,59 @@ import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 
-
+/**
+ * Panel used for displaying the preview of the map.
+ * @author danijel
+ *
+ */
 @SuppressWarnings("serial")
 public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWheelListener, MouseInputListener {
 
+	/**
+	 * Maximum width of the panel.
+	 */
 	private final int MAX_WIDTH=1920;
+	/**
+	 * Maximum height of the panel.
+	 */
 	private final int MAX_HEIGHT=1080;
 
+	/**
+	 * Selection boundaries.
+	 */
 	private int selection_start_x=0, selection_start_z=0,selection_end_x=0, selection_end_z=0;
+	/**
+	 * Offset of the map, as set by dragging the map around.
+	 */
 	private int shift_x,shift_y;
+	/**
+	 * Zoom level of the map.
+	 */
 	private float zoom_level;
 
+	/**
+	 * Back buffers used for drawing the preview.
+	 */
 	private BufferedImage main_img,base_img,height_img;
 
+	/**
+	 * Font used in the preview.
+	 */
 	private Font gui_font;
+	/**
+	 * Foreground and background colors for the UI.
+	 */
 	private Color gui_color,gui_bg_color;
+	/**
+	 * Alpha of the background for the UI.
+	 */
 	private float gui_bg_alpha;
 
+	/**
+	 * Small internal class describing an image of a single chunk this preview is comprised of.
+	 * @author danijel
+	 *
+	 */
 	class ChunkImage
 	{
 		public BufferedImage image;
@@ -56,15 +92,29 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		public int x, y;
 	}
 
+	/**
+	 * Small internal class for map markers.
+	 * @author danijel
+	 *
+	 */
 	class MapMarker
 	{
 		int x, z;
 		Color color;
 	}
 
+	/**
+	 * Collection of chunks.
+	 */
 	private Vector<ChunkImage> chunks;
+	/**
+	 * Collection of markers.
+	 */
 	private Vector<MapMarker> markers;
 
+	/**
+	 * Main constructor.
+	 */
 	public PreviewPanel() {
 
 		main_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -91,6 +141,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 	}
 
+	/**
+	 * Main repaint procedure (run as much as possible).
+	 */
 	@Override
 	public void paint(Graphics g) {
 
@@ -152,6 +205,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 	}
 
+	/**
+	 * Main redraw procedure (run only when something changes).
+	 * @param fast if true use only block images; if false also draw height map
+	 */
 	void redraw(boolean fast)
 	{
 
@@ -225,6 +282,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		}
 	}
 
+	/**
+	 * Add a chunk image to the preview.
+	 * @param img image of the individual blocks
+	 * @param height height map
+	 * @param x x location of the chunk on the screen
+	 * @param y y location of the chunk on the screen
+	 */
 	public void addImage(BufferedImage img, BufferedImage height, int x, int y)
 	{		
 		ChunkImage chunk=new ChunkImage();
@@ -238,11 +302,18 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		redraw(true);	
 	}
 
+	/**
+	 * Get the collection of chunks. Allows its manipulation by external loaders.
+	 * @return collection of chunks
+	 */
 	public Vector<ChunkImage> getChunkImages()
 	{
 		return chunks;
 	}
 
+	/**
+	 * Clears all the images in the preview.
+	 */
 	public void clearImages()
 	{
 		chunks.clear();
@@ -256,12 +327,23 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 	}
 
+	/**
+	 * Sets the offset.
+	 * @param x x position
+	 * @param z z position
+	 */
 	public void setPosition(int x, int z)
 	{
 		shift_x=getWidth()/2-(x*4);
 		shift_y=getHeight()/2-(z*4);
 	}
 
+	/**
+	 * Adds a marker to the map.
+	 * @param x x position
+	 * @param z z position
+	 * @param color color of the marker
+	 */
 	public void addMarker(int x, int z, Color color)
 	{
 		MapMarker marker=new MapMarker();
@@ -271,6 +353,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		markers.add(marker);
 	}
 
+	/**
+	 * Retrieves the coordinate boundaries of chunks that are visible on the preview.
+	 * Used by some loaders to determine which chunks to load. 
+	 * @return bounds of drawn chunks
+	 */
 	public Rectangle getChunkBounds()
 	{
 		Rectangle ret=new Rectangle();
@@ -286,6 +373,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	private int zoom_level_pos=7;
 	private final float zoom_levels[]={0.125f, 0.25f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f}; 
 
+	/**
+	 * Event fired when mouse is scrolled inside the preview. 
+	 */
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int z=e.getWheelRotation();
@@ -315,6 +405,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	private boolean right_pressed=false;
 	private int last_x,last_y;
 
+	/**
+	 * Event fired when mouse button is pressed down inside the preview. 
+	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton()==MouseEvent.BUTTON1)
@@ -335,6 +428,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		}
 	}
 
+	/**
+	 * Event fired when mouse button is released inside the preview. 
+	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		
@@ -353,6 +449,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		repaint();
 	}
 
+	/**
+	 * Event fired when mouse is moved with the button pressed inside the preview. 
+	 */
 	@Override
 	public void mouseDragged(MouseEvent e) {		
 
@@ -381,19 +480,35 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		}
 	}
 
+	/**
+	 * Unused.
+	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
 	}
+	/**
+	 * Unused.
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {	
 	}
+	/**
+	 * Unused.
+	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {		
 	}
+	/**
+	 * Unused.
+	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
+	/**
+	 * Get the boundaries selected with the left mouse click.
+	 * @return selection boundaries
+	 */
 	public Rectangle getSelectionBounds()
 	{
 		Rectangle rect=new Rectangle();

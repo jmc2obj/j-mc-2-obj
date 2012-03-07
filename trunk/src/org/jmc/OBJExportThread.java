@@ -16,16 +16,43 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+/**
+ * A thread used and UI for saving an OBJ file.
+ * When run it saves the file and shows a small window that shows the progress of
+ * saving the file.
+ * @author danijel
+ *
+ */
 @SuppressWarnings("serial")
 public class OBJExportThread extends JFrame implements Runnable {
 
+	/**
+	 * Path to the OBJ file.
+	 */
 	File objfile;
+	/**
+	 * Path to the world save.
+	 */
 	File savepath;
+	/**
+	 * Region of the map to be saved.
+	 */
 	Rectangle bounds;
+	/**
+	 * Altitude above which we are saving.
+	 */
 	int ymin;
 
+	//UI elements (not described)
 	JProgressBar progress;
 
+	/**
+	 * Main constructor.
+	 * @param objfile path to OBJ file
+	 * @param savepath path to world save
+	 * @param bounds region being saved
+	 * @param ymin minimum altitude being saved
+	 */
 	public OBJExportThread(File objfile, File savepath, Rectangle bounds, int ymin) 
 	{		
 		super("Export in progress...");		
@@ -42,6 +69,9 @@ public class OBJExportThread extends JFrame implements Runnable {
 		add(progress);
 	}
 
+	/**
+	 * Main thread method.
+	 */
 	@Override
 	public void run() {
 

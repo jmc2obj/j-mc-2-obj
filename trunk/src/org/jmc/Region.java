@@ -20,12 +20,37 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
+/**
+ * Region file class.
+ * This file contains individual chunks. It can be either the old MCRegion format or
+ * the new Anvil format.
+ * @author danijel
+ *
+ */
 public class Region implements Iterable<Chunk> {
 
+	/**
+	 * Path to the file.
+	 */
 	private File region_file;
-	private ByteBuffer offset,timestamp;
+	/**
+	 * Buffer of offsets of individual chunks.
+	 */
+	private ByteBuffer offset;
+	/**
+	 * Buffer of timestamps of individual chunks.
+	 */
+	private ByteBuffer timestamp;
+	/**
+	 * Is the file in anvil or old mcregion format.
+	 */
 	boolean is_anvil;
 
+	/**
+	 * Main constructor.
+	 * @param file path to file
+	 * @throws IOException if error occurs
+	 */
 	public Region(File file) throws IOException
 	{
 		if(!file.exists())
@@ -54,6 +79,14 @@ public class Region implements Iterable<Chunk> {
 
 	}	
 	
+	/**
+	 * Find a region file containing the chunk with given coordinates.
+	 * @param saveFolder path to the world save
+	 * @param chunk_x x coordinate of chunk
+	 * @param chunk_z z coordinate of chunk
+	 * @return region file object
+	 * @throws IOException of error occurs
+	 */
 	public static Region findRegion(File saveFolder, int chunk_x, int chunk_z) throws IOException
 	{
 		int rx,rz;
@@ -70,6 +103,12 @@ public class Region implements Iterable<Chunk> {
 		return new Region(file);
 	}
 	
+	/**
+	 * Get the list of all regions in the given save.
+	 * @param saveFolder path to the world save
+	 * @return collection of region file objects
+	 * @throws IOException if error occurs
+	 */
 	public static Vector<Region> loadAllRegions(File saveFolder) throws IOException
 	{
 		Vector<Region> ret=new Vector<Region>();
@@ -103,6 +142,13 @@ public class Region implements Iterable<Chunk> {
 		return ret;
 	}
 	
+	/**
+	 * Retrieve the given chunk.
+	 * @param x x coordinate of the chunk
+	 * @param z z coordinate of the chunk
+	 * @return chunk object
+	 * @throws Exception if error occurs while reading the chunk
+	 */
 	public Chunk getChunk(int x, int z) throws Exception
 	{			
 		int cx=x%32;
@@ -123,6 +169,12 @@ public class Region implements Iterable<Chunk> {
 	}
 
 
+	/**
+	 * Get the Nth chunk in this file.
+	 * @param idx index of the chunk
+	 * @return chunk object
+	 * @throws Exception if error occurs while reading the chunk
+	 */
 	public Chunk getChunk(int idx) throws Exception
 	{
 		int off = offset.getInt(idx*4);
@@ -159,6 +211,9 @@ public class Region implements Iterable<Chunk> {
 
 	}
 
+	/**
+	 * Prints a list of available chunks to the stnadard output.
+	 */
 	public void printAvailableChunks()
 	{
 		int i=0;
@@ -173,17 +228,35 @@ public class Region implements Iterable<Chunk> {
 			}
 	}
 
+	/**
+	 * Small internal class for iterating chunks in the region file.
+	 * @author danijel
+	 *
+	 */
 	class ChunkIterator implements Iterator<Chunk>
 	{
 
+		/**
+		 * Reference to the region file.
+		 */
 		Region region;
+		/**
+		 * Position of the iterator within the file.
+		 */
 		int pos;
 
+		/**
+		 * Main constructor.
+		 * @param region reference to the region file
+		 */
 		public ChunkIterator(Region region) {
 			this.region=region;
 			pos=0;
 		}
 
+		/**
+		 * Interface override.
+		 */
 		@Override
 		public boolean hasNext() {
 			for(int x=pos+1;x<1024;x++)
@@ -193,6 +266,9 @@ public class Region implements Iterable<Chunk> {
 			return false;
 		}
 
+		/**
+		 * Interface override.
+		 */
 		@Override
 		public Chunk next() {
 
@@ -214,6 +290,9 @@ public class Region implements Iterable<Chunk> {
 			return ret;
 		}
 
+		/**
+		 * Interface override. Not implemented!
+		 */
 		@Override
 		public void remove() {
 
@@ -223,6 +302,11 @@ public class Region implements Iterable<Chunk> {
 
 	}
 
+	/**
+	 * Returns the chunk iterator for the given file.
+	 * It allows to iterate the chunks within the file in the following manner:
+	 * <pre>for(Chunk chunk:region) {} </pre>
+	 */
 	@Override
 	public Iterator<Chunk> iterator() 
 	{
