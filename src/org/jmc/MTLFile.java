@@ -14,8 +14,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+/**
+ * Material file class.
+ * This class describes the file which contains a library of all materials in the
+ * model. It is saved into a .MTL file that is linked from within the .OBJ file. 
+ * @author danijel
+ *
+ */
 public class MTLFile {
 	
+	/**
+	 * A small enum for describing the sides of a cube.
+	 * @author danijel
+	 *
+	 */
 	public enum Side
 	{
 		TOP,
@@ -26,13 +38,25 @@ public class MTLFile {
 		BACK
 	}
 	
-	Colors colors;
+	/**
+	 * Reference to a colors object.
+	 */
+	private Colors colors;
 	
-	public MTLFile()//default texture
+	/**
+	 * Main constructor.
+	 */
+	public MTLFile()
 	{
 		colors=new Colors();
 	}
 	
+	/**
+	 * Returns the material ID for a given side of a block.
+	 * @param id ID of the block
+	 * @param side side of the block
+	 * @return material ID
+	 */
 	public int getMaterialId(int id, Side side)
 	{
 		if(colors.getColor(id)!=null)
@@ -42,7 +66,11 @@ public class MTLFile {
 		return -1;
 	}
 	
-	
+	/**
+	 * Returns a name for a material with the given ID.
+	 * @param id material ID
+	 * @return name of material
+	 */
 	public String getMaterial(int id)
 	{
 		if(colors.getColor(id)!=null)
@@ -50,12 +78,22 @@ public class MTLFile {
 		else return "unknown";
 	}
 	
+	/**
+	 * Prints a header with the name of the MTL file. This is used by the OBJ class
+	 * to print a header in the OBJ file.
+	 * @param out OBJ file writer
+	 */
 	public void header(PrintWriter out)
 	{
 		out.println("mtllib minecraft.mtl");
 		out.println();
 	}
 	
+	/**
+	 * Saves the MTL file.
+	 * @param file destination of the file
+	 * @throws IOException exception if an error occurs during writing
+	 */
 	public void saveMTLFile(File file) throws IOException
 	{		
 		PrintWriter writer=new PrintWriter(new FileWriter(file));

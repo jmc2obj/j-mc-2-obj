@@ -6,9 +6,20 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
 package org.jmc;
-
+/**
+ * Chunk loader interface. Defines minimum methods required for a chunk loading thread.
+ * @author danijel
+ *
+ */
 public interface ChunkLoaderThread extends Runnable {
 
+	/**
+	 * Is the thread still running?
+	 * @return if the thread is still running
+	 */
 	public boolean isRunning();
+	/**
+	 * Stops the thread.
+	 */
 	public void stopRunning();
 }

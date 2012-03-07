@@ -24,21 +24,61 @@ import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
-
+/**
+ * Class describing a chunk. A chunk is a 16x16 group of blocks of 
+ * varying heights (in Anvil) or 128 (in Region).
+ * @author danijel
+ *
+ */
 public class Chunk {
 
+	/**
+	 * Root of the loaded chunk structure.
+	 */
 	private TAG_Compound root;
+	/**
+	 * Color scheme used for the given chunk.
+	 */
 	private Colors colors;
 
+	/**
+	 * Position of chunk.
+	 */
 	private int pos_x,pos_z;
 
+	/**
+	 * Collection of IDs of transparent blocks.
+	 * These blocks allow us to see what's behind them.
+	 * Non-transparent blocks make the sides of neighboring blocks not render.
+	 */
 	private Set<Integer> transparent_blocks;
+	/**
+	 * A map of mesh types for given block IDs.
+	 */
 	private Map<Integer, MeshType> mesh_types;
 
+	/**
+	 * Is the chunk type new Anvil or not.
+	 * Used to determine how to properly analyze the data.
+	 */
 	private boolean is_anvil;
 
-	private BufferedImage block_image, height_image;
+	
+	/**
+	 * 64x64 color image of topmost blocks in chunk.  
+	 */
+	private BufferedImage block_image;
+	/**
+	 * 64x64 grey-scale image of height of topmost blocks.
+	 */
+	private BufferedImage height_image;
 
+	/**
+	 * Main constructor of chunks. 
+	 * @param is input stream located at the place in the file where the chunk begins 
+	 * @param is_anvil is the file new Anvil or old Region format
+	 * @throws Exception throws errors while parsing the chunk
+	 */
 	public Chunk(InputStream is, boolean is_anvil) throws Exception
 	{
 		transparent_blocks=new TreeSet<Integer>();
@@ -150,21 +190,36 @@ public class Chunk {
 		height_image=null;
 	}
 
+	/**
+	 * Gets X position of chunk.
+	 * @return position in X coordinate
+	 */
 	public int getPosX()
 	{
 		return pos_x;
 	}
 
+	/**
+	 * Gets Z position of chunk.
+	 * @return position in Z coordinate
+	 */
 	public int getPosZ()
 	{
 		return pos_z;
 	}
 
+	/**
+	 * Prints the description and contents of the chunk.
+	 */
 	public String toString()
 	{
 		return "Chunk:\n"+root.toString();
 	}
 
+	/**
+	 * Private method for retrieving block data from within chunk datastrcture.
+	 * @return block data as a byte array
+	 */
 	private byte [] getBlockData()
 	{
 		if(is_anvil)
@@ -203,6 +258,9 @@ public class Chunk {
 	}
 
 
+	/**
+	 * Renders the block and height images.
+	 */
 	public void renderImages()
 	{
 		int width = 4 * 16;
@@ -282,16 +340,33 @@ public class Chunk {
 		}
 	}
 
+	/**
+	 * Retrieves block image. Must run renderImages first!
+	 * @return image of topmost blocks
+	 */
 	public BufferedImage getBlockImage()
 	{
 		return block_image;
 	}
 
+	/**
+	 * Retrieves height image. Must run renderImages first!
+	 * @return image of topmost block heights
+	 */
 	public BufferedImage getHeightImage()
 	{
 		return height_image;
 	}
 
+	/**
+	 * Private method for retrieving values from the byte array containing block data.
+	 * @param array the block id array
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param z Z coordinate
+	 * @param ymax height of chunk
+	 * @return ID of the block at given coordinates
+	 */
 	private final int getValue(byte [] array, int x, int y, int z, int ymax)
 	{
 		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
@@ -301,6 +376,13 @@ public class Chunk {
 			return array[y + (z * 128) + (x * 128) * 16];
 	}
 
+	/**
+	 * Creates and retrieves an OBJ file object.
+	 * @param material MTL file object used in this OBJ file generation
+	 * @param bounds X and Z limits in player coordinates
+	 * @param ymin height level above which the export is performed
+	 * @return OBJ file object
+	 */
 	public OBJFile getOBJ(MTLFile material, Rectangle bounds, int ymin)
 	{
 		int xmin=bounds.x-pos_x*16;
@@ -370,6 +452,13 @@ public class Chunk {
 		return ret;
 	}
 
+	/**
+	 * Private method used for checking if the given block ID is drawable 
+	 * from the point of view of of a neighboring block.
+	 * @param block_id block id of block being checked
+	 * @param neighbour_id block id of its neighbor
+	 * @return is it drawable
+	 */
 	private boolean isDrawable(int block_id, int neighbour_id)
 	{
 		Color nc=colors.getColor(neighbour_id);

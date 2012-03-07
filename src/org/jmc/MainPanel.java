@@ -32,7 +32,7 @@ import org.jmc.NBT.TAG_List;
 /**
  * Main Panel containing all the content of the window.
  * 
- * @author danijel
+ * @author max, danijel
  *
  */
 @SuppressWarnings("serial")

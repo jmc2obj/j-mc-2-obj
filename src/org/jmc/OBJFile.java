@@ -17,8 +17,21 @@ import java.util.TreeMap;
 
 import org.jmc.MTLFile.Side;
 
+/**
+ * OBJ file class.
+ * This file contains the geometry of the whole world we are trying to export.
+ * It also contains the links to the materials saved in the MTL file.
+ * @author danijel
+ *
+ */
 public class OBJFile {
 	
+	/**
+	 * Small enum describing the UV location of the texture for simple rectangular
+	 * textures.
+	 * @author danijel
+	 *
+	 */
 	public enum TexCoordinate
 	{
 		TOPLEFT,
@@ -27,6 +40,12 @@ public class OBJFile {
 		BOTTOMLEFT
 	}
 	
+	/**
+	 * Small enum describing the mesh types.
+	 * Currently only blocks are supported.
+	 * @author danijel
+	 *
+	 */
 	public enum MeshType
 	{
 		BLOCK,
@@ -36,10 +55,21 @@ public class OBJFile {
 		//TODO: complete this
 	}
 	
+	/**
+	 * Small internal class for describing Vertices in a sortable fashion.
+	 * @author danijel
+	 *
+	 */
 	private class Vertex implements Comparable<Vertex>
 	{
 		float x,y,z;
 		
+		/**
+		 * Vertex constructor.
+		 * @param x x coordinate
+		 * @param y y coordinate
+		 * @param z z coordinate
+		 */
 		Vertex(float x, float y, float z)
 		{
 			this.x=x;
@@ -47,6 +77,9 @@ public class OBJFile {
 			this.z=z;
 		}
 
+		/**
+		 * Comparator that sorts vertices first along the X, then Y and finally Z axis.
+		 */
 		@Override
 		public int compareTo(Vertex o) {
 			if(this.x>o.x) return 1;
@@ -60,6 +93,11 @@ public class OBJFile {
 		
 	}
 	
+	/**
+	 * Small internal class for describing a simple rectangular face of an object.
+	 * @author danijel
+	 *
+	 */
 	private class Face implements Comparable<Face>
 	{
 		int [] vertices;
@@ -71,14 +109,40 @@ public class OBJFile {
 		}
 	}
 	
+	/**
+	 * Identifier of the file.
+	 * Since many OBJ class objects are created by different chunks,
+	 * this helps differentiate them and assign them a name. It's
+	 * usually just the coordinates of the chunk.
+	 */
 	String identifier;
+	/**
+	 * Reference to the MTL file used in this OBJ.
+	 */
 	MTLFile material;
+	/**
+	 * List of vertices in the file.
+	 */
 	List<Vertex> vertices;
+	/**
+	 * Map of vertices to their respective IDs used in the faces of the mesh.
+	 */
 	Map<Vertex, Integer> vertex_map;
+	/**
+	 * List of faces in the file.
+	 */
 	List<Face> faces;
 	
+	/**
+	 * Offsets of the file. Used to position the chunk in its right location.
+	 */
 	float x_offset, y_offset, z_offset;
 	
+	/**
+	 * Main constructor.
+	 * @param ident identifier of the OBJ
+	 * @param mtl reference to the MTL
+	 */
 	public OBJFile(String ident, MTLFile mtl)
 	{
 		identifier=ident;
@@ -91,6 +155,13 @@ public class OBJFile {
 		z_offset=0;
 	}
 	
+	/**
+	 * Offset all the vertices by these amounts.
+	 * Used to position the chunk in its right location.
+	 * @param x x offset
+	 * @param y y offset
+	 * @param z z offset
+	 */
 	public void setOffset(int x, int y, int z)
 	{
 		x_offset=x;
@@ -98,6 +169,14 @@ public class OBJFile {
 		z_offset=z;
 	}
 	
+	/**
+	 * Add a cube at the given location. 
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @param id block id
+	 * @param drawside 6-element array describing which sides are to be drawn
+	 */
 	public void addCube(float x, float y, float z, int id, boolean [] drawside)
 	{
 		Vertex vertices[]=new Vertex[4];
@@ -152,7 +231,10 @@ public class OBJFile {
 		}
 	}
 
-	
+	/**
+	 * Append this object to the OBJ file.
+	 * @param out writer of the OBJ file
+	 */
 	public void append(PrintWriter out)
 	{
 		Locale l=null;
@@ -193,7 +275,10 @@ public class OBJFile {
 		}				
 	}
 	
-	
+	/**
+	 * Write texture coordinates and normals. These are usually the same for all chunks.
+	 * @param out writer of the OBJ file
+	 */
 	private void printTexturesAndNormals(PrintWriter out)
 	{
 		out.println("vt 0 0");
@@ -210,7 +295,11 @@ public class OBJFile {
 		
 	}
 	
-	
+	/**
+	 * Converts the side to the normal index as printed by the printTexturesAndNormals method
+	 * @param side side of the block
+	 * @return index of the normal
+	 */
 	private int sideToNormalIndex(Side side)
 	{
 		switch(side)
@@ -225,6 +314,13 @@ public class OBJFile {
 		}
 	}
 	
+	/**
+	 * Add a face with the given vertices to the appropriate lists.
+	 * Also create vertices if necessary.
+	 * @param verts vertices of the face
+	 * @param side side of the object
+	 * @param id block id
+	 */
 	private void addFace(Vertex [] verts, Side side, int id)
 	{
 		Face face=new Face();

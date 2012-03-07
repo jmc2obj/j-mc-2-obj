@@ -13,21 +13,45 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-
+/**
+ * Chunk loader that loads all the chunks for the chosen save.
+ * @author danijel
+ *
+ */
 public class FullChunkLoaderThread implements ChunkLoaderThread {
 
+	/**
+	 * Reference to the preview panel used for image refreshing.
+	 */
 	private PreviewPanel preview;
+	/**
+	 * Path to save file.
+	 */
 	private File savepath;
 	
+	/**
+	 * Frequency of repainting in ms.
+	 */
 	private final int REPAINT_FREQUENCY=100;
 	
-	boolean running;
+	/**
+	 * Variable used by isRunning and stopRunning.  
+	 */
+	private boolean running;
 	
+	/**
+	 * Constructor.
+	 * @param preview reference to preview panel
+	 * @param savepath path to the save
+	 */
 	public FullChunkLoaderThread(PreviewPanel preview, File savepath) {
 		this.preview=preview;
 		this.savepath=savepath;
 	}
 	
+	/**
+	 * Main thread method.
+	 */
 	@Override
 	public void run() {
 	
@@ -80,11 +104,17 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 		
 	}
 
+	/**
+	 * Implementation of interface method.
+	 */
 	@Override
 	public boolean isRunning() {
 		return running;
 	}
 
+	/**
+	 * Implementation of interface method.
+	 */
 	@Override
 	public void stopRunning() {
 		running=false;		

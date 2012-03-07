@@ -18,16 +18,37 @@ import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 
+/**
+ * Class used for loading the level.dat file from the world save.
+ * This file contains useful information about the save like the
+ * player position and state in the game, his inventory etc.
+ * @author danijel
+ *
+ */
 public class LevelDat {
 	
+	/**
+	 * Path to the save.
+	 */
 	private File levelDir;
-	TAG_Compound root;
+	/**
+	 * The root of the NBT structure for this file. 
+	 */
+	private TAG_Compound root;
 	
+	/**
+	 * Main constructor.
+	 * @param levelDir path to the save
+	 */
 	public LevelDat(File levelDir)
 	{
 		this.levelDir=levelDir;
 	}
 	
+	/**
+	 * Opens the file.
+	 * @return returns true if the operation was successful or false if the file doesn't exist or there is another error
+	 */
 	public boolean open()
 	{
 		File levelFile=new File(levelDir.getAbsolutePath()+"/level.dat");
@@ -55,6 +76,10 @@ public class LevelDat {
 		return true;
 	}
 	
+	/**
+	 * Gets the position of the player.
+	 * @return returns a list of X,Y,Z NBT_Float values
+	 */
 	public TAG_List getPosition()
 	{
 		TAG_Compound data=(TAG_Compound) root.getElement("Data");
@@ -62,18 +87,29 @@ public class LevelDat {
 		return (TAG_List)player.getElement("Pos");
 	}
 	
+	/**
+	 * Gets the X location of the spawn. 
+	 * @return x coordinate
+	 */
 	public int getSpawnX()
 	{
 		TAG_Compound data=(TAG_Compound) root.getElement("Data");
 		return ((TAG_Int)data.getElement("SpawnX")).value;
 	}
 	
+	/**
+	 * Gets the Z location of the spawn.
+	 * @return z coordinate
+	 */
 	public int getSpawnZ()
 	{
 		TAG_Compound data=(TAG_Compound) root.getElement("Data");
 		return ((TAG_Int)data.getElement("SpawnZ")).value;
 	}
 	
+	/**
+	 * Prints the description and content of the file into a String.
+	 */
 	public String toString()
 	{
 		return "DAT file "+levelDir.getAbsolutePath()+"/level.dat:\n"+root;

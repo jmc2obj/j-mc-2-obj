@@ -9,6 +9,11 @@ package org.jmc;
 
 import java.awt.Color;
 
+/**
+ * Color class
+ * @author max, danijel
+ *
+ */
 public class Colors
 {
 	private final Color[] colors;
