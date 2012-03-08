@@ -11,21 +11,47 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
+/**
+ * Notch's Binary Tag class.
+ * This is the main NBT class defining the minimum requirements of other tags
+ * and containing the main loading/saving routines.
+ * @author danijel
+ *
+ */
 public abstract class NBT_Tag {
 
+	/**
+	 * Name of the tag.
+	 * Most tags have a name describing their contents.
+	 */
 	protected String name;
 	
+	/**
+	 * Get the name of the Tag.
+	 * @return name of the tag
+	 */
 	public String getName()
 	{
 		return name;
 	}
 	
+	/**
+	 * Main constructor.
+	 * @param name name of the tag
+	 */
 	public NBT_Tag(String name)
 	{
 		this.name=name;
 	}	
 	
+	/**
+	 * Main loading routine. 
+	 * Reads the tag starting from the current point in the input stream.
+	 * If the tag is a collection, it also recursively reads the internal items.
+	 * @param is input stream located at the start of the tag
+	 * @return tag object
+	 * @throws Exception if there is an error parsing the file
+	 */
 	public static NBT_Tag make(InputStream is) throws Exception
 	{
 		NBT_Tag ret=null;
@@ -86,6 +112,12 @@ public abstract class NBT_Tag {
 		return ret;
 	}
 	
+	/**
+	 * Main saving routine.
+	 * Saves the tag and if it's a collection, saves its contents as well.
+	 * @param os output stream pointing at the location where to save the tag
+	 * @throws Exception if there is an error saving the tag
+	 */
 	public void save(OutputStream os) throws Exception
 	{
 		DataOutputStream out=new DataOutputStream(os);
@@ -100,8 +132,25 @@ public abstract class NBT_Tag {
 		write(out);
 	}
 	
+	/**
+	 * Type dependent method used for loading the tag contents.
+	 * @param stream stream at the location where the tag begins
+	 * @throws Exception in case there is an error parsing the tag
+	 */
 	protected abstract void parse(DataInputStream stream) throws Exception;
+	/**
+	 * Type dependent method used for saving the tag contents.
+	 * @param stream stream at the location where the tag is to be written
+	 * @throws Exception in case there is an error saving the tag
+	 */
 	protected abstract void write(DataOutputStream stream) throws Exception;
+	/**
+	 * Type dependent method for retrieving the type of the tag.
+	 * @return type ID of the tag
+	 */
 	public abstract byte ID();
+	/**
+	 * Debug method for printing the description of the tag and its contents.
+	 */
 	public abstract String toString();
 }

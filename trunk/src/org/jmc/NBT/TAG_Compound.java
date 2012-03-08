@@ -12,16 +12,32 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * NBT compound collection tag.
+ * Used to store a collection of data of various types. 
+ * Tag contains the name and a collection of other tags until the end tag. 
+ * @author danijel
+ *
+ */
 public class TAG_Compound extends NBT_Tag {
 
+	/**
+	 * List of items stored in this tag.
+	 */
 	public List<NBT_Tag> elements;
 	
+	/**
+	 * Main constructor.
+	 * @param name name of tag
+	 */
 	TAG_Compound(String name) {
 		super(name);
 		elements=new LinkedList<NBT_Tag>();
 	}
 
+	/**
+	 * Loading method. (see NBT_Tag)
+	 */
 	protected void parse(DataInputStream stream) throws Exception {
 		
 		while(true)
@@ -33,10 +49,18 @@ public class TAG_Compound extends NBT_Tag {
 		
 	}
 
+	/**
+	 * Id of tag. (see NBT_Tag)
+	 */
 	public byte ID() {
 		return 10;
 	}	
 	
+	/**
+	 * Retrieves the tag element with the given name from within this collection
+	 * @param name name of the element we wish to retrieve
+	 * @return element with the given name or null of no such element exists
+	 */
 	public NBT_Tag getElement(String name)
 	{	
 		Iterator<NBT_Tag> iter=elements.iterator();
@@ -48,6 +72,9 @@ public class TAG_Compound extends NBT_Tag {
 		return null;
 	}
 
+	/**
+	 * Saving method.  (see NBT_Tag)
+	 */
 	protected void write(DataOutputStream stream) throws Exception {
 		Iterator<NBT_Tag> iter=elements.iterator();
 		while(iter.hasNext())
@@ -59,6 +86,9 @@ public class TAG_Compound extends NBT_Tag {
 		end.save(stream);
 	}
 	
+	/**
+	 * Debug output.  (see NBT_Tag)
+	 */
 	public String toString() {
 		String ret="TAG_Compound(\""+name+"\"): count="+elements.size()+"\n";
 		Iterator<NBT_Tag> iter=elements.iterator();
