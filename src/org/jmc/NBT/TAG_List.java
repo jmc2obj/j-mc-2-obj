@@ -10,25 +10,48 @@ package org.jmc.NBT;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+ * NBT list tag.
+ * Used to store a collection of tags of the same type.
+ * Tag contains the name, an ID denoting the type of items contained,
+ * number of items and the sequence of these items. 
+ * @author danijel
+ *
+ */
 public class TAG_List extends NBT_Tag {
 
 	public byte type;
 	public NBT_Tag[] elements;
 
+	/**
+	 * Main constructor.
+	 * @param name name of tag
+	 */
 	public TAG_List(String name) {
 		super(name);
 	}
 
+	/**
+	 * Id of tag. (see NBT_Tag)
+	 */
 	public byte ID() {
 		return 9;
 	}
 	
+	/**
+	 * Retrieves the element at the given index.
+	 * @param idx index of the given element
+	 * @return element at the index or null if wrong index used
+	 */
 	public NBT_Tag getElement(int idx)
 	{
 		if(idx<0 || idx>=elements.length) return null;
 		return elements[idx];
 	}
 
+	/**
+	 * Loading method. (see NBT_Tag)
+	 */
 	protected void parse(DataInputStream stream) throws Exception {
 		type=stream.readByte();
 		int size=stream.readInt();
@@ -79,6 +102,9 @@ public class TAG_List extends NBT_Tag {
 
 	}
 
+	/**
+	 * Saving method.  (see NBT_Tag)
+	 */
 	protected void write(DataOutputStream stream) throws Exception {
 		stream.writeByte(type);
 		stream.writeInt(elements.length);
@@ -90,6 +116,9 @@ public class TAG_List extends NBT_Tag {
 		
 	}
 
+	/**
+	 * Debug output.  (see NBT_Tag)
+	 */
 	public String toString() {
 		String ret="TAG_List(\""+name+"\"): count="+elements.length+" type="+(int)type+"\n";
 		for(int i=0; i<elements.length; i++)
