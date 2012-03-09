@@ -22,6 +22,7 @@ import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 /**
@@ -67,7 +68,7 @@ public class Chunk {
 	/**
 	 * 64x64 color image of topmost blocks in chunk.  
 	 */
-	private BufferedImage block_image;
+	private BufferedImage block_image;	
 	/**
 	 * 64x64 grey-scale image of height of topmost blocks.
 	 */
@@ -215,13 +216,41 @@ public class Chunk {
 	{
 		return "Chunk:\n"+root.toString();
 	}
+	
+	/**
+	 * Small internal class defining the return values of getBlocks method. 
+	 * @author danijel
+	 *
+	 */
+	class Blocks
+	{
+		/**
+		 * Main constructor.
+		 * @param num number of blocks to allocate
+		 */
+		public Blocks(int num)
+		{
+			id=new int[num];
+			data=new byte[num];
+		}
+		/**
+		 * Block IDs.
+		 */
+		public int [] id;
+		/**
+		 * Block meta-data.
+		 */
+		public byte [] data;
+	}
 
 	/**
-	 * Private method for retrieving block data from within chunk datastrcture.
+	 * Private method for retrieving block data from within chunk data structure.
 	 * @return block data as a byte array
 	 */
-	private byte [] getBlockData()
-	{
+	private Blocks getBlocks()
+	{		
+		Blocks ret=null;
+		
 		if(is_anvil)
 		{
 			int ymax=0;
@@ -235,28 +264,67 @@ public class Chunk {
 			}
 
 			ymax=(ymax+1)*16;
-
-			byte block_buf[]=new byte[16*16*ymax];
+			
+			ret=new Blocks(16*16*ymax);
+			
+			byte add1,add2;
 
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
+				TAG_Byte_Array data = (TAG_Byte_Array) c_section.getElement("Data");
 				TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");			
+				TAG_Byte_Array add = (TAG_Byte_Array) c_section.getElement("AddBlocks");
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 
-				System.arraycopy(blocks.data, 0, block_buf, yval.value*16*16*16 , 16*16*16);
-			}
-
-			return block_buf;
+				int base=yval.value*16*16*16;
+				for(int i=0; i<blocks.data.length; i++)
+					ret.id[base+i]=blocks.data[i];
+				
+				if(add!=null)
+				{
+					for(int i=0; i<add.data.length; i++)
+					{
+						add1=(byte) (add.data[i]&0x0f);
+						add2=(byte) (add.data[i]>>4);
+						ret.id[base+2*i]+=(add1<<8);
+						ret.id[base+2*i+1]+=(add2<<8);
+						//TODO: not sure if this works until there are block IDs higher than 256 limit
+					}
+				}
+				
+				for(int i=0; i<data.data.length; i++)
+				{
+					add1=(byte) (data.data[i]&0x0f);
+					add2=(byte) (data.data[i]>>4);
+					ret.data[base+2*i]=add1;
+					ret.data[base+2*i+1]=add2;
+				}
+			}			
 		}
 		else
 		{
 			TAG_Compound level = (TAG_Compound) root.getElement("Level");
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
-			return blocks.data;			
+			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
+			
+			byte add1,add2;
+			ret=new Blocks(blocks.data.length);
+						
+			for(int i=0; i<blocks.data.length; i++)
+				ret.id[i]=blocks.data[i];
+			
+			for(int i=0; i<data.data.length; i++)
+			{
+				add1=(byte) (data.data[i]&0x0f);
+				add2=(byte) (data.data[i]>>4);
+				ret.data[2*i]=add1;
+				ret.data[2*i+1]=add2;
+			}
 		}
-	}
-
+		
+		return ret;
+	}	
 
 	/**
 	 * Renders the block and height images.
@@ -276,18 +344,26 @@ public class Chunk {
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
-		byte BlockID=0;
+		int BlockID=0;
+		byte BlockData=0;
 		Color c;
-		byte blocks[]=getBlockData();
+		Blocks bd=getBlocks();
+		
+		/*for(int i=0; i<bd.id.length; i++)
+			System.out.print(bd.id[i]+"/"+bd.data[i]+",");
+		System.out.println();*/
+		
+		
 
 		int ymax=0;
 		if(is_anvil)
-			ymax=blocks.length/(16*16);
+			ymax=bd.id.length/(16*16);
 		else 
 			ymax=128;
 
 
-		byte image[]=new byte[16*16];
+		int ids[]=new int[16*16];
+		byte data[]=new byte[16*16];
 		int himage[]=new int[16*16];
 
 		int x,y,z;
@@ -295,19 +371,26 @@ public class Chunk {
 		{
 			for(x = 0; x < 16; x++)
 			{
-				image[z*16+x]=0;
+				ids[z*16+x]=0;
 
 				for(y = 0; y < ymax; y++)
 				{
 					if(is_anvil)
-						BlockID = blocks[x + (z * 16) + (y * 16) * 16];
+					{
+						BlockID = bd.id[x + (z * 16) + (y * 16) * 16];
+						BlockData = bd.data[x + (z * 16) + (y * 16) * 16];
+					}
 					else
-						BlockID = blocks[y + (z * 128) + (x * 128) * 16];
+					{
+						BlockID = bd.id[y + (z * 128) + (x * 128) * 16];
+						BlockData = bd.data[y + (z * 128) + (x * 128) * 16];
+					}
 
-					c=colors.getColor(BlockID);
+					c=colors.getColor(BlockID,BlockData);
 					if(c != null)
 					{
-						image[z*16+x]=BlockID;
+						ids[z*16+x]=BlockID;
+						data[z*16+x]=BlockData;
 						himage[z*16+x]=y;
 					}
 				}
@@ -319,7 +402,7 @@ public class Chunk {
 		{
 			for(x = 0; x < 16; x++)
 			{				
-				c=colors.getColor(image[z*16+x]);
+				c=colors.getColor(ids[z*16+x],data[z*16+x]);
 				if(c!=null)
 				{
 					gb.setColor(c);
@@ -359,7 +442,7 @@ public class Chunk {
 	}
 
 	/**
-	 * Private method for retrieving values from the byte array containing block data.
+	 * Private method for retrieving integer values from the array containing block IDs.
 	 * @param array the block id array
 	 * @param x X coordinate
 	 * @param y Y coordinate
@@ -367,7 +450,25 @@ public class Chunk {
 	 * @param ymax height of chunk
 	 * @return ID of the block at given coordinates
 	 */
-	private final int getValue(byte [] array, int x, int y, int z, int ymax)
+	private final int getValue(int [] array, int x, int y, int z, int ymax)
+	{
+		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
+		if(is_anvil)
+			return array[x + (z * 16) + (y * 16) * 16];
+		else
+			return array[y + (z * 128) + (x * 128) * 16];
+	}
+	
+	/**
+	 * Private method for retrieving byte values from the array containing block data.
+	 * @param array the block data array
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param z Z coordinate
+	 * @param ymax height of chunk
+	 * @return meta-data of the block at given coordinates
+	 */
+	private final byte getValue(byte [] array, int x, int y, int z, int ymax)
 	{
 		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
 		if(is_anvil)
@@ -402,7 +503,10 @@ public class Chunk {
 		boolean drawside[]=new boolean[6];
 
 		int BlockID;
-		byte blocks[] = getBlockData();
+		byte BlockData;
+		Blocks bd=getBlocks();
+		int blocks[]=bd.id;
+		byte data[]=bd.data;
 
 		int ymax=0;
 		if(is_anvil)
@@ -418,6 +522,7 @@ public class Chunk {
 				for(y = ymin; y < ymax; y++)
 				{						
 					BlockID=getValue(blocks, x, y, z, ymax);
+					BlockData=getValue(data, x, y, z, ymax);
 
 					if(BlockID==0) continue;
 
@@ -440,7 +545,7 @@ public class Chunk {
 						switch(mt)
 						{
 						case BLOCK:
-							ret.addCube(x, y, z, BlockID, drawside);
+							ret.addCube(x, y, z, BlockID, BlockData, drawside);
 							break;
 						default:
 						}
@@ -461,7 +566,7 @@ public class Chunk {
 	 */
 	private boolean isDrawable(int block_id, int neighbour_id)
 	{
-		Color nc=colors.getColor(neighbour_id);
+		Color nc=colors.getColor(neighbour_id,(byte) 0);
 		MeshType nm=mesh_types.get(neighbour_id);
 
 		if(block_id==8 && nc!=null && nm==MeshType.BLOCK) return false;
@@ -471,7 +576,7 @@ public class Chunk {
 			return true;
 
 		//TODO: this is linked to not drawing unknown chunks - remove when removing other comment
-		if(colors.getColor(block_id)==null)
+		if(colors.getColor(block_id,(byte) 0)==null)
 			return true;
 
 		return false;

@@ -211,7 +211,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 */
 	void redraw(boolean fast)
 	{
-
 		int win_w=getWidth();
 		int win_h=getHeight();
 

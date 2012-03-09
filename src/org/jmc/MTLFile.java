@@ -22,7 +22,7 @@ import java.util.Locale;
  *
  */
 public class MTLFile {
-	
+
 	/**
 	 * A small enum for describing the sides of a cube.
 	 * @author danijel
@@ -37,12 +37,12 @@ public class MTLFile {
 		FRONT,
 		BACK
 	}
-	
+
 	/**
 	 * Reference to a colors object.
 	 */
 	private Colors colors;
-	
+
 	/**
 	 * Main constructor.
 	 */
@@ -50,22 +50,22 @@ public class MTLFile {
 	{
 		colors=new Colors();
 	}
-	
+
 	/**
 	 * Returns the material ID for a given side of a block.
 	 * @param id ID of the block
 	 * @param side side of the block
 	 * @return material ID
 	 */
-	public int getMaterialId(int id, Side side)
+	public int getMaterialId(int id, byte data, Side side)
 	{
-		if(colors.getColor(id)!=null)
+		if(colors.getColor(id,data)!=null)
 		{
-			return id;
+			return data<<16+id;
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns a name for a material with the given ID.
 	 * @param id material ID
@@ -73,11 +73,19 @@ public class MTLFile {
 	 */
 	public String getMaterial(int id)
 	{
-		if(colors.getColor(id)!=null)
+		if(id>0xFFFF)
+		{
+			byte data=(byte) (id>>16);
+			id=id&0xffff;
+			if(colors.getColor(id,data)!=null)
+				return "material-"+id+"_"+data;
+		}
+		else if(colors.getColor(id,(byte) 0)!=null)
 			return "material-"+id;
-		else return "unknown";
+		
+		return "unknown";
 	}
-	
+
 	/**
 	 * Prints a header with the name of the MTL file. This is used by the OBJ class
 	 * to print a header in the OBJ file.
@@ -88,7 +96,7 @@ public class MTLFile {
 		out.println("mtllib minecraft.mtl");
 		out.println();
 	}
-	
+
 	/**
 	 * Saves the MTL file.
 	 * @param file destination of the file
@@ -98,27 +106,48 @@ public class MTLFile {
 	{		
 		PrintWriter writer=new PrintWriter(new FileWriter(file));
 		Locale l=null;
-		
+
 		writer.println("newmtl unknown");
 		writer.println("Kd 1 0 1");
 		writer.println();
-		
+
 		Color c;
 		for(int i=0; i<256; i++)
 		{
-			c=colors.getColor(i);
-			if(c!=null)
+			if(colors.hasData(i))
 			{
-				float r=c.getRed()/256.0f;
-				float g=c.getGreen()/256.0f;				
-				float b=c.getBlue()/256.0f;
-				writer.println("newmtl material-"+i);
-				writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
-				writer.println();
-				writer.println();
+				for(int j=0; j<16; j++)
+				{
+					c=colors.getColor(i,(byte) j);
+					if(c!=null)
+					{
+						float r=c.getRed()/256.0f;
+						float g=c.getGreen()/256.0f;				
+						float b=c.getBlue()/256.0f;
+						writer.println("newmtl material-"+i+"_"+j);
+						writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
+						writer.println();
+						writer.println();
+					}
+				}
+			}
+			else
+			{
+				c=colors.getColor(i,(byte) 0);
+
+				if(c!=null)
+				{
+					float r=c.getRed()/256.0f;
+					float g=c.getGreen()/256.0f;				
+					float b=c.getBlue()/256.0f;
+					writer.println("newmtl material-"+i);
+					writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
+					writer.println();
+					writer.println();
+				}
 			}
 		}
-		
+
 		writer.close();
 	}
 

@@ -52,7 +52,7 @@ public class Colors
 		colors[32] = new Color(0x946428);	//dead bush 
 		colors[33] = new Color(0xBC9862);	//piston (has data value)
 		colors[34] = new Color(0xBC9862);	//piston extension (data)
-		colors[35] = new Color(0xB7B7B7);	//wool.. need data values for these..
+		colors[35] = new Color(0xFFFFFF);	//wool.. need data values for these..
 		colors[37] = new Color(0xF1F902); 	//dandelion
 		colors[38] = new Color(0xD10609); 	//rose
 		colors[39] = new Color(0x725643); 	//brown shroom
@@ -101,12 +101,59 @@ public class Colors
 		colors[124] = new Color(0xF5CE58);	//redstone lamp lit
 	}
 	
-	public Color getColor(int id)
+	public boolean hasData(int id)
 	{
+		if(id==35) return true;
+		else return false;
+	}
+	
+	public Color getColor(int id, byte data)
+	{
+		if(id==35)
+		{
+			int uval=data;
+			if(uval<0) uval=16+uval;
+			switch(uval)
+			{
+			default:
+			case 0:
+				return new Color(0xFFFFFF);
+			case 1:
+				return new Color(0xFF9900);				
+			case 2:
+				return new Color(0xCC00CC);
+			case 3:
+				return new Color(0x99CCFF);
+			case 4:
+				return new Color(0xFFFF66);
+			case 5:
+				return new Color(0x99FF33);
+			case 6:
+				return new Color(0xCC52A3);
+			case 7:
+				return new Color(0x555555);
+			case 8:
+				return new Color(0xCCCCCC);
+			case 9:
+				return new Color(0x009999);
+			case 10:
+				return new Color(0xCC3399);
+			case 11:
+				return new Color(0x000099);
+			case 12:
+				return new Color(0x4A1900);
+			case 13:
+				return new Color(0x336600);
+			case 14:
+				return new Color(0x990000);
+			case 15:
+				return new Color(0x000000);				
+			}
+		}
 		if(id>=0 && id<colors.length && colors[id] != null)
 		{
 			return colors[id];
-		}
+		}		
 		return null;
 	}
 }
