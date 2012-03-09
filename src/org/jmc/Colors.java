@@ -111,11 +111,12 @@ public class Colors
 	{
 		if(id==35)
 		{
+			//TODO: don't like the unsigned conversion here; needs fixing
 			int uval=data;
 			if(uval<0) uval=16+uval;
 			switch(uval)
 			{
-			default:
+			default:				
 			case 0:
 				return new Color(0xFFFFFF);
 			case 1:
@@ -147,7 +148,7 @@ public class Colors
 			case 14:
 				return new Color(0x990000);
 			case 15:
-				return new Color(0x000000);				
+				return new Color(0x000000);		
 			}
 		}
 		if(id>=0 && id<colors.length && colors[id] != null)
