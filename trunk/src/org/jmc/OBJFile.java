@@ -177,7 +177,7 @@ public class OBJFile {
 	 * @param id block id
 	 * @param drawside 6-element array describing which sides are to be drawn
 	 */
-	public void addCube(float x, float y, float z, int id, boolean [] drawside)
+	public void addCube(float x, float y, float z, int id, byte data, boolean [] drawside)
 	{
 		Vertex vertices[]=new Vertex[4];
 		
@@ -187,7 +187,7 @@ public class OBJFile {
 			vertices[1]=new Vertex(x-0.5f,y+0.5f,z+0.5f);
 			vertices[2]=new Vertex(x+0.5f,y+0.5f,z+0.5f);
 			vertices[3]=new Vertex(x+0.5f,y+0.5f,z-0.5f);
-			addFace(vertices,Side.TOP,id);
+			addFace(vertices,Side.TOP,id,data);
 		}
 		if(drawside[1])
 		{
@@ -195,7 +195,7 @@ public class OBJFile {
 			vertices[1]=new Vertex(x+0.5f,y-0.5f,z+0.5f);
 			vertices[2]=new Vertex(x-0.5f,y-0.5f,z+0.5f);
 			vertices[3]=new Vertex(x-0.5f,y-0.5f,z-0.5f);
-			addFace(vertices,Side.BOTTOM,id);
+			addFace(vertices,Side.BOTTOM,id,data);
 		}
 		if(drawside[2])
 		{
@@ -203,7 +203,7 @@ public class OBJFile {
 			vertices[1]=new Vertex(x-0.5f,y+0.5f,z+0.5f);
 			vertices[2]=new Vertex(x-0.5f,y+0.5f,z-0.5f);
 			vertices[3]=new Vertex(x-0.5f,y-0.5f,z-0.5f);
-			addFace(vertices,Side.LEFT,id);
+			addFace(vertices,Side.LEFT,id,data);
 		}
 		if(drawside[3])
 		{
@@ -211,7 +211,7 @@ public class OBJFile {
 			vertices[1]=new Vertex(x+0.5f,y+0.5f,z-0.5f);
 			vertices[2]=new Vertex(x+0.5f,y+0.5f,z+0.5f);
 			vertices[3]=new Vertex(x+0.5f,y-0.5f,z+0.5f);
-			addFace(vertices,Side.RIGHT,id);
+			addFace(vertices,Side.RIGHT,id,data);
 		}
 		if(drawside[4])
 		{
@@ -219,7 +219,7 @@ public class OBJFile {
 			vertices[1]=new Vertex(x-0.5f,y+0.5f,z-0.5f);
 			vertices[2]=new Vertex(x+0.5f,y+0.5f,z-0.5f);
 			vertices[3]=new Vertex(x+0.5f,y-0.5f,z-0.5f);
-			addFace(vertices,Side.FRONT,id);
+			addFace(vertices,Side.FRONT,id,data);
 		}
 		if(drawside[5])
 		{
@@ -227,7 +227,7 @@ public class OBJFile {
 			vertices[1]=new Vertex(x+0.5f,y+0.5f,z+0.5f);
 			vertices[2]=new Vertex(x-0.5f,y+0.5f,z+0.5f);
 			vertices[3]=new Vertex(x-0.5f,y-0.5f,z+0.5f);
-			addFace(vertices,Side.BACK,id);
+			addFace(vertices,Side.BACK,id,data);
 		}
 	}
 
@@ -321,11 +321,11 @@ public class OBJFile {
 	 * @param side side of the object
 	 * @param id block id
 	 */
-	private void addFace(Vertex [] verts, Side side, int id)
+	private void addFace(Vertex [] verts, Side side, int id, byte data)
 	{
 		Face face=new Face();
 		face.side=side;
-		face.mtl_id=material.getMaterialId(id, side);
+		face.mtl_id=material.getMaterialId(id, data, side);		
 		face.vertices=new int[4];
 		for(int i=0; i<4; i++)
 		{
