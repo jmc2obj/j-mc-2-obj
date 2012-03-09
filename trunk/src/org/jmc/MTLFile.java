@@ -61,7 +61,7 @@ public class MTLFile {
 	{
 		if(colors.getColor(id,data)!=null)
 		{
-			return data<<16+id;
+			return (((int)data)&0xff)<<16|id;
 		}
 		return -1;
 	}
@@ -71,18 +71,19 @@ public class MTLFile {
 	 * @param id material ID
 	 * @return name of material
 	 */
-	public String getMaterial(int id)
+	public String getMaterial(int mtl_id)
 	{
-		if(id>0xFFFF)
+		int id=mtl_id&0xFFFF;
+		if(colors.hasData(id))
 		{
-			byte data=(byte) (id>>16);
-			id=id&0xffff;
+			byte data=(byte) (mtl_id>>16);
+			int dataval=(mtl_id>>16)&0x0F;
 			if(colors.getColor(id,data)!=null)
-				return "material-"+id+"_"+data;
+				return "material-"+id+"_"+dataval;
 		}
 		else if(colors.getColor(id,(byte) 0)!=null)
 			return "material-"+id;
-		
+
 		return "unknown";
 	}
 
@@ -98,14 +99,29 @@ public class MTLFile {
 	}
 
 	/**
+	 * Writes a line with the diffuse color.
+	 * @param writer writer of the MTL file
+	 * @param c color to write
+	 */
+	private void writeDiffuse(PrintWriter writer, Color c)
+	{
+		Locale l=null;
+		float r=c.getRed()/256.0f;
+		float g=c.getGreen()/256.0f;				
+		float b=c.getBlue()/256.0f;
+		writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
+		writer.println();
+		writer.println();
+	}
+	
+	/**
 	 * Saves the MTL file.
 	 * @param file destination of the file
 	 * @throws IOException exception if an error occurs during writing
 	 */
 	public void saveMTLFile(File file) throws IOException
 	{		
-		PrintWriter writer=new PrintWriter(new FileWriter(file));
-		Locale l=null;
+		PrintWriter writer=new PrintWriter(new FileWriter(file));		
 
 		writer.println("newmtl unknown");
 		writer.println("Kd 1 0 1");
@@ -120,32 +136,21 @@ public class MTLFile {
 				{
 					c=colors.getColor(i,(byte) j);
 					if(c!=null)
-					{
-						float r=c.getRed()/256.0f;
-						float g=c.getGreen()/256.0f;				
-						float b=c.getBlue()/256.0f;
+					{						
 						writer.println("newmtl material-"+i+"_"+j);
-						writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
-						writer.println();
-						writer.println();
+						writeDiffuse(writer, c);
 					}
 				}
 			}
-			else
-			{
-				c=colors.getColor(i,(byte) 0);
 
-				if(c!=null)
-				{
-					float r=c.getRed()/256.0f;
-					float g=c.getGreen()/256.0f;				
-					float b=c.getBlue()/256.0f;
-					writer.println("newmtl material-"+i);
-					writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
-					writer.println();
-					writer.println();
-				}
+			c=colors.getColor(i,(byte) 0);
+
+			if(c!=null)
+			{
+				writer.println("newmtl material-"+i);
+				writeDiffuse(writer, c);
 			}
+
 		}
 
 		writer.close();
