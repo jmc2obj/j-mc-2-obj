@@ -77,6 +77,7 @@ public class Colors
 		colors[60] = new Color(0x523308);	//farmland
 		colors[61] = new Color(0x737373);	//furnace
 		colors[62] = new Color(0x736262);	//furnace lit
+		colors[67] = new Color(0x787878); 	//cobble stairs
 		colors[73] = new Color(0x8F4747);	//redstone ore
 		colors[74] = new Color(0xAB3333);	//redstone ore lit
 		colors[78] = new Color(0xFFFFFF);	//snow layer
@@ -93,9 +94,12 @@ public class Colors
 		colors[95] = new Color(0xA76E1F);	//locked chest
 		colors[97] = new Color(0xC2C2C2);	//hidden silverfish
 		colors[98] = new Color(0x9C9C9C);	//stone brick
+		colors[102] = new Color(0x9B5643);	//brick stairs		
+		colors[98] = new Color(0x9C9C9C);	//stone brick stairs		
 		colors[103] = new Color(0xB0DE3C);	//melon
 		colors[110] = new Color(0xCF9191);	//mycelium
 		colors[112] = new Color(0x7A0000);	//netherbrick
+		colors[114] = new Color(0x7A0000);	//netherbrick stairs		
 		colors[121] = new Color(0xD6D5B4);	//endstone
 		colors[123] = new Color(0xB58F1F);	//redstone lamp
 		colors[124] = new Color(0xF5CE58);	//redstone lamp lit

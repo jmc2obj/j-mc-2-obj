@@ -168,7 +168,14 @@ public class Chunk {
 		mesh_types.put(112, MeshType.BLOCK);
 		mesh_types.put(121, MeshType.BLOCK);
 		mesh_types.put(123, MeshType.BLOCK);
-		mesh_types.put(124, MeshType.BLOCK);				
+		mesh_types.put(124, MeshType.BLOCK);		
+		
+		mesh_types.put(53, MeshType.STAIRS);//wood
+		mesh_types.put(67, MeshType.STAIRS);//cobble
+		mesh_types.put(108, MeshType.STAIRS);//brick
+		mesh_types.put(109, MeshType.STAIRS);//stone brick
+		mesh_types.put(114, MeshType.STAIRS);//nether brick
+		
 
 
 
@@ -545,7 +552,10 @@ public class Chunk {
 						switch(mt)
 						{
 						case BLOCK:
-							ret.addCube(x, y, z, BlockID, BlockData, drawside);
+							ret.addCube(x, y, z, BlockID, BlockData, drawside,1.0f,1.0f,1.0f);
+							break;
+						case STAIRS:
+							ret.addStairs(x, y, z, BlockID, BlockData, drawside);
 							break;
 						default:
 						}

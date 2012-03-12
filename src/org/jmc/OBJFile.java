@@ -25,7 +25,7 @@ import org.jmc.MTLFile.Side;
  *
  */
 public class OBJFile {
-	
+
 	/**
 	 * Small enum describing the UV location of the texture for simple rectangular
 	 * textures.
@@ -39,7 +39,7 @@ public class OBJFile {
 		BOTTOMRIGHT,
 		BOTTOMLEFT
 	}
-	
+
 	/**
 	 * Small enum describing the mesh types.
 	 * Currently only blocks are supported.
@@ -49,12 +49,13 @@ public class OBJFile {
 	public enum MeshType
 	{
 		BLOCK,
+		STAIRS,
 		IMAGE,
 		TORCH,
 		FENCE
 		//TODO: complete this
 	}
-	
+
 	/**
 	 * Small internal class for describing Vertices in a sortable fashion.
 	 * @author danijel
@@ -63,7 +64,7 @@ public class OBJFile {
 	private class Vertex implements Comparable<Vertex>
 	{
 		float x,y,z;
-		
+
 		/**
 		 * Vertex constructor.
 		 * @param x x coordinate
@@ -90,9 +91,9 @@ public class OBJFile {
 			if(this.z<o.z) return -1;
 			return 0;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Small internal class for describing a simple rectangular face of an object.
 	 * @author danijel
@@ -108,7 +109,7 @@ public class OBJFile {
 			return this.mtl_id-o.mtl_id;
 		}
 	}
-	
+
 	/**
 	 * Identifier of the file.
 	 * Since many OBJ class objects are created by different chunks,
@@ -132,12 +133,12 @@ public class OBJFile {
 	 * List of faces in the file.
 	 */
 	List<Face> faces;
-	
+
 	/**
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
 	float x_offset, y_offset, z_offset;
-	
+
 	/**
 	 * Main constructor.
 	 * @param ident identifier of the OBJ
@@ -154,7 +155,7 @@ public class OBJFile {
 		y_offset=0;
 		z_offset=0;
 	}
-	
+
 	/**
 	 * Offset all the vertices by these amounts.
 	 * Used to position the chunk in its right location.
@@ -168,66 +169,157 @@ public class OBJFile {
 		y_offset=y;
 		z_offset=z;
 	}
-	
+
 	/**
-	 * Add a cube at the given location. 
+	 * Add a cube at the given location.
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 * @param z z coordinate
 	 * @param id block id
+	 * @param data
 	 * @param drawside 6-element array describing which sides are to be drawn
+	 * @param sx scale in x axis
+	 * @param sy scale in y axis
+	 * @param sz scale in z axis
 	 */
-	public void addCube(float x, float y, float z, int id, byte data, boolean [] drawside)
+	public void addCube(float x, float y, float z, int id, byte data, boolean [] drawside, float sx, float sy, float sz)
 	{
 		Vertex vertices[]=new Vertex[4];
 		
+		sx/=2;
+		sy/=2;
+		sz/=2;
+
 		if(drawside[0])
 		{
-			vertices[0]=new Vertex(x-0.5f,y+0.5f,z-0.5f);
-			vertices[1]=new Vertex(x-0.5f,y+0.5f,z+0.5f);
-			vertices[2]=new Vertex(x+0.5f,y+0.5f,z+0.5f);
-			vertices[3]=new Vertex(x+0.5f,y+0.5f,z-0.5f);
+			vertices[0]=new Vertex(x-sx,y+sy,z-sz);
+			vertices[1]=new Vertex(x-sx,y+sy,z+sz);
+			vertices[2]=new Vertex(x+sx,y+sy,z+sz);
+			vertices[3]=new Vertex(x+sx,y+sy,z-sz);
 			addFace(vertices,Side.TOP,id,data);
 		}
 		if(drawside[1])
 		{
-			vertices[0]=new Vertex(x+0.5f,y-0.5f,z-0.5f);
-			vertices[1]=new Vertex(x+0.5f,y-0.5f,z+0.5f);
-			vertices[2]=new Vertex(x-0.5f,y-0.5f,z+0.5f);
-			vertices[3]=new Vertex(x-0.5f,y-0.5f,z-0.5f);
+			vertices[0]=new Vertex(x+sx,y-sy,z-sz);
+			vertices[1]=new Vertex(x+sx,y-sy,z+sz);
+			vertices[2]=new Vertex(x-sx,y-sy,z+sz);
+			vertices[3]=new Vertex(x-sx,y-sy,z-sz);
 			addFace(vertices,Side.BOTTOM,id,data);
 		}
 		if(drawside[2])
 		{
-			vertices[0]=new Vertex(x-0.5f,y-0.5f,z+0.5f);
-			vertices[1]=new Vertex(x-0.5f,y+0.5f,z+0.5f);
-			vertices[2]=new Vertex(x-0.5f,y+0.5f,z-0.5f);
-			vertices[3]=new Vertex(x-0.5f,y-0.5f,z-0.5f);
+			vertices[0]=new Vertex(x-sx,y-sy,z+sz);
+			vertices[1]=new Vertex(x-sx,y+sy,z+sz);
+			vertices[2]=new Vertex(x-sx,y+sy,z-sz);
+			vertices[3]=new Vertex(x-sx,y-sy,z-sz);
 			addFace(vertices,Side.LEFT,id,data);
 		}
 		if(drawside[3])
 		{
-			vertices[0]=new Vertex(x+0.5f,y-0.5f,z-0.5f);
-			vertices[1]=new Vertex(x+0.5f,y+0.5f,z-0.5f);
-			vertices[2]=new Vertex(x+0.5f,y+0.5f,z+0.5f);
-			vertices[3]=new Vertex(x+0.5f,y-0.5f,z+0.5f);
+			vertices[0]=new Vertex(x+sx,y-sy,z-sz);
+			vertices[1]=new Vertex(x+sx,y+sy,z-sz);
+			vertices[2]=new Vertex(x+sx,y+sy,z+sz);
+			vertices[3]=new Vertex(x+sx,y-sy,z+sz);
 			addFace(vertices,Side.RIGHT,id,data);
 		}
 		if(drawside[4])
 		{
-			vertices[0]=new Vertex(x-0.5f,y-0.5f,z-0.5f);
-			vertices[1]=new Vertex(x-0.5f,y+0.5f,z-0.5f);
-			vertices[2]=new Vertex(x+0.5f,y+0.5f,z-0.5f);
-			vertices[3]=new Vertex(x+0.5f,y-0.5f,z-0.5f);
+			vertices[0]=new Vertex(x-sx,y-sy,z-sz);
+			vertices[1]=new Vertex(x-sx,y+sy,z-sz);
+			vertices[2]=new Vertex(x+sx,y+sy,z-sz);
+			vertices[3]=new Vertex(x+sx,y-sy,z-sz);
 			addFace(vertices,Side.FRONT,id,data);
 		}
 		if(drawside[5])
 		{
-			vertices[0]=new Vertex(x+0.5f,y-0.5f,z+0.5f);
-			vertices[1]=new Vertex(x+0.5f,y+0.5f,z+0.5f);
-			vertices[2]=new Vertex(x-0.5f,y+0.5f,z+0.5f);
-			vertices[3]=new Vertex(x-0.5f,y-0.5f,z+0.5f);
+			vertices[0]=new Vertex(x+sx,y-sy,z+sz);
+			vertices[1]=new Vertex(x+sx,y+sy,z+sz);
+			vertices[2]=new Vertex(x-sx,y+sy,z+sz);
+			vertices[3]=new Vertex(x-sx,y-sy,z+sz);
 			addFace(vertices,Side.BACK,id,data);
+		}
+	}
+
+	/**
+	 * Add stars at the given location
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param data
+	 * @param drawside
+	 */
+	public void addStairs(float x, float y, float z, int id, byte data, boolean [] drawside)
+	{
+		int dir=data&3;
+		int up=data&4;
+		
+		switch(dir)
+		{
+		case 0:
+			if(up==0)
+			{
+				boolean b=drawside[0]; drawside[0]=true;
+				addCube(x, y-0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[0]=b; drawside[2]=true;
+				addCube(x+0.25f, y+0.25f, z, id, data, drawside, 0.5f, 0.5f, 1.0f);
+			}
+			else
+			{
+				boolean b=drawside[1]; drawside[1]=true;
+				addCube(x, y+0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[1]=b; drawside[2]=true;
+				addCube(x+0.25f, y-0.25f, z, id, data, drawside, 0.5f, 0.5f, 1.0f);
+			}
+			break;
+		case 1:
+			if(up==0)
+			{
+				boolean b=drawside[0]; drawside[0]=true;
+				addCube(x, y-0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[0]=b; drawside[3]=true;
+				addCube(x-0.25f, y+0.25f, z, id, data, drawside, 0.5f, 0.5f, 1.0f);
+			}
+			else
+			{
+				boolean b=drawside[1]; drawside[1]=true;
+				addCube(x, y+0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[1]=b; drawside[3]=true;
+				addCube(x-0.25f, y-0.25f, z, id, data, drawside, 0.5f, 0.5f, 1.0f);
+			}
+			break;
+		case 2:
+			if(up==0)
+			{
+				boolean b=drawside[0]; drawside[0]=true;
+				addCube(x, y-0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[0]=b; drawside[4]=true;
+				addCube(x, y+0.25f, z+0.25f, id, data, drawside, 1.0f, 0.5f, 0.5f);
+			}
+			else
+			{
+				boolean b=drawside[1]; drawside[1]=true;
+				addCube(x, y+0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[1]=b; drawside[4]=true;
+				addCube(x, y-0.25f, z+0.25f, id, data, drawside, 1.0f, 0.5f, 0.5f);
+			}
+			break;
+		case 3:
+			if(up==0)
+			{
+				boolean b=drawside[0]; drawside[0]=true;
+				addCube(x, y-0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[0]=b; drawside[5]=true;
+				addCube(x, y+0.25f, z-0.25f, id, data, drawside, 1.0f, 0.5f, 0.5f);
+			}
+			else
+			{
+				boolean b=drawside[1]; drawside[1]=true;
+				addCube(x, y+0.25f, z, id, data, drawside, 1.0f, 0.5f, 1.0f);
+				drawside[1]=b; drawside[5]=true;
+				addCube(x, y-0.25f, z-0.25f, id, data, drawside, 1.0f, 0.5f, 0.5f);
+			}
+			break;		
 		}
 	}
 
@@ -240,15 +332,15 @@ public class OBJFile {
 		Locale l=null;
 		out.println("g "+identifier);
 		out.println();
-		
+
 		for(Vertex vertex:vertices)
 		{
 			out.format(l,"v %2.2f %2.2f %2.2f",vertex.x+x_offset,vertex.y+y_offset,vertex.z+z_offset);
 			out.println();
 		}
-		
+
 		printTexturesAndNormals(out);
-		
+
 		Collections.sort(faces);
 		int last_id=-2;	
 		int normal_idx;
@@ -256,16 +348,16 @@ public class OBJFile {
 		for(Face f:faces)
 		{
 			if(f.mtl_id<0) continue; //TODO: temporary modification - skip unknown materials  
-			
+
 			if(f.mtl_id!=last_id)
 			{
 				out.println();
 				out.println("usemtl "+material.getMaterial(f.mtl_id));
 				last_id=f.mtl_id;
 			}
-			
+
 			normal_idx=sideToNormalIndex(f.side);
-			
+
 			out.print("f ");
 			out.format(l,"%d/-4/%d ",(-vertices_num+f.vertices[0]),normal_idx);
 			out.format(l,"%d/-3/%d ",(-vertices_num+f.vertices[1]),normal_idx);
@@ -274,7 +366,7 @@ public class OBJFile {
 			out.println();
 		}				
 	}
-	
+
 	/**
 	 * Write texture coordinates and normals. These are usually the same for all chunks.
 	 * @param out writer of the OBJ file
@@ -292,9 +384,9 @@ public class OBJFile {
 		out.println("vn 0 0 1");
 		out.println("vn 0 1 0");
 		//TODO: finish printing normals
-		
+
 	}
-	
+
 	/**
 	 * Converts the side to the normal index as printed by the printTexturesAndNormals method
 	 * @param side side of the block
@@ -313,7 +405,7 @@ public class OBJFile {
 		default: return -1;
 		}
 	}
-	
+
 	/**
 	 * Add a face with the given vertices to the appropriate lists.
 	 * Also create vertices if necessary.
@@ -336,7 +428,7 @@ public class OBJFile {
 			}
 			face.vertices[i]=vertex_map.get(verts[i]);
 		}
-		
+
 		faces.add(face);
 	}
 
