@@ -1,3 +1,7 @@
 Revision r42 - Blender
 
 <a href="http://imgur.com/oBzkV"><img src="http://i.imgur.com/oBzkV.png" alt="" width=640 /></a>
+
+Revision r59 - Blender - displaying new stairs code and colored wool with the wool and a pillar in the foreground
+
+<a href="http://imgur.com/pq4mK"><img src="http://i.imgur.com/pq4mK.png" alt="" title="Hosted by imgur.com" /></a>
