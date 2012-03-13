@@ -38,6 +38,7 @@ import org.jmc.NBT.TAG_List;
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
+	private JButton tex;
 	//UI elements (not described separately)
 	private JButton bLoad,bSave;
 	private JComboBox cbPath;
@@ -92,7 +93,16 @@ public class MainPanel extends JPanel
 		jpBottom.setLayout(new BoxLayout(jpBottom, BoxLayout.Y_AXIS));
 
 		populateLoadList();
-
+		
+		buttons.add(tex = new JButton("tex"));
+		tex.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				Texsplit a = new Texsplit();
+			}
+		});
+		
 		buttons.add(cbPath);
 		buttons.add(bLoad);
 		buttons.add(bSave);

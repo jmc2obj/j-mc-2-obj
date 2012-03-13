@@ -43,12 +43,14 @@ public class MTLFile {
 	 */
 	private Colors colors;
 
+	private Textures textures;//added
 	/**
 	 * Main constructor.
 	 */
 	public MTLFile()
 	{
 		colors=new Colors();
+		textures = new Textures(); //added
 	}
 
 	/**
@@ -111,7 +113,30 @@ public class MTLFile {
 		float b=c.getBlue()/256.0f;
 		writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
 		writer.println();
-		writer.println();
+	}
+	
+	private void writeDiffuseTexture(PrintWriter writer, String s)//added
+	{
+		Locale l = null;
+		String path = s;
+		if(s != null)
+		{
+			writer.format(l , "map_Kd %s", path);
+			writer.println();
+		}
+		
+	}
+	
+	private void writeAlphaTexture(PrintWriter writer, String s)//added
+	{
+		Locale l = null;
+		String path = s;
+		if(s != null)
+		{
+			writer.format(l , "map_d %s", path);
+			writer.println();
+		}
+		
 	}
 	
 	/**
@@ -139,6 +164,7 @@ public class MTLFile {
 					{						
 						writer.println("newmtl material-"+i+"_"+j);
 						writeDiffuse(writer, c);
+						writer.println();
 					}
 				}
 			}
@@ -149,6 +175,12 @@ public class MTLFile {
 			{
 				writer.println("newmtl material-"+i);
 				writeDiffuse(writer, c);
+				writeDiffuseTexture(writer, textures.getTexture(i));//added
+				if(i == 20)//if glass
+				{
+					writeAlphaTexture(writer, textures.getTexture(i));//added
+				}
+				writer.println();
 			}
 
 		}

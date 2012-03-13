@@ -7,7 +7,6 @@
  ******************************************************************************/
 package org.jmc;
 
-import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -16,10 +15,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
