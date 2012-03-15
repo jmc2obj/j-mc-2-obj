@@ -9,11 +9,13 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -38,13 +40,11 @@ import org.jmc.NBT.TAG_List;
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
-	private JButton tex;
 	//UI elements (not described separately)
-	private JButton bLoad,bSave;
+	private JButton bLoad,bSave,bSettings;
 	private JComboBox cbPath;
 	private JTextArea taLog;
 	private JScrollPane spPane;
-	private JTextField tfGroundLevel;
 	
 	/**
 	 * Main map preview panel. 
@@ -80,9 +80,7 @@ public class MainPanel extends JPanel
 		preview.setBackground(new Color(110,150,100));
 		bLoad = new JButton("Load");
 		bSave = new JButton("Export selection");
-		JLabel lGroundLevel = new JLabel("Ground: ");
-		tfGroundLevel = new JTextField(5);
-		tfGroundLevel.setText("0");
+		bSettings = new JButton("Settings");
 		cbPath = new JComboBox();	
 		JPanel jpBottom = new JPanel();
 		taLog = new JTextArea(5,1);
@@ -92,22 +90,12 @@ public class MainPanel extends JPanel
 		cbPath.setEditable(true);
 		jpBottom.setLayout(new BoxLayout(jpBottom, BoxLayout.Y_AXIS));
 
-		populateLoadList();
-		
-		buttons.add(tex = new JButton("tex"));
-		tex.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				Texsplit a = new Texsplit();
-			}
-		});
+		populateLoadList();		
 		
 		buttons.add(cbPath);
 		buttons.add(bLoad);
 		buttons.add(bSave);
-		buttons.add(lGroundLevel);
-		buttons.add(tfGroundLevel);
+		buttons.add(bSettings);
 		add(buttons, BorderLayout.NORTH);
 		add(preview);
 		jpBottom.add(spPane);
@@ -118,13 +106,13 @@ public class MainPanel extends JPanel
 		{			
 			public void actionPerformed(ActionEvent e)
 			{
-				loaded_file=new File((String)cbPath.getSelectedItem());
+				String map=(String) cbPath.getSelectedItem();				
+				loaded_file=new File(map);
 				if(!loaded_file.exists() || !loaded_file.isDirectory())
 				{
 					JOptionPane.showMessageDialog(null, "Enter correct dir!");
 					return;
 				}
-
 
 				LevelDat levelDat=new LevelDat(loaded_file);
 
@@ -154,6 +142,8 @@ public class MainPanel extends JPanel
 				//chunk_loader=new FullChunkLoaderThread(preview, savepath);
 				chunk_loader=new ViewChunkLoaderThread(preview, loaded_file);
 				(new Thread(chunk_loader)).start();
+				
+				MainWindow.settings.setLastLoadedMap(map);
 			}
 		});
 
@@ -198,10 +188,7 @@ public class MainPanel extends JPanel
 					return;
 				}
 
-				try{
-					ymin=Integer.parseInt(tfGroundLevel.getText());
-				}catch (NumberFormatException e) {}
-
+				ymin=MainWindow.settings.getGroundLevel();
 
 				OBJExportThread export_thread = new OBJExportThread(objfile,loaded_file, rect, ymin);
 
@@ -212,6 +199,18 @@ public class MainPanel extends JPanel
 
 				(new Thread(export_thread)).start();
 
+			}
+		});
+		
+		bSettings.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Point p=MainWindow.main.getLocation();
+				p.x+=(MainWindow.main.getWidth()-MainWindow.settings.getWidth())/2;
+				p.y+=(MainWindow.main.getHeight()-MainWindow.settings.getHeight())/2;
+				MainWindow.settings.setLocation(p);
+				MainWindow.settings.setVisible(true);
+				
 			}
 		});
 
@@ -248,13 +247,24 @@ public class MainPanel extends JPanel
 			if(!save_dir.exists())
 				return;
 
+			String last_map=MainWindow.settings.getLastLoadedMap();
+			boolean use_last_map=false;
+			
 			File [] saves=save_dir.listFiles();
 
+			String p;
 			for(File f:saves)
 			{
 				if(f.isDirectory())
-					cbPath.addItem(f.getAbsolutePath());
+				{
+					p=f.getAbsolutePath();
+					cbPath.addItem(p);
+					if(p.equals(last_map)) use_last_map=true;
+				}
 			}
+			
+			if(use_last_map)
+				cbPath.setSelectedItem(last_map);
 		}
 	}
 
