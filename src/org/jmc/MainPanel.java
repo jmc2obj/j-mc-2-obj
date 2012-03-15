@@ -9,6 +9,7 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -16,16 +17,14 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
@@ -74,34 +73,38 @@ public class MainPanel extends JPanel
 	 */
 	public MainPanel()
 	{
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout());		
 		JPanel buttons = new JPanel();
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110,150,100));
 		bLoad = new JButton("Load");
 		bSave = new JButton("Export selection");
 		bSettings = new JButton("Settings");
-		cbPath = new JComboBox();	
-		JPanel jpBottom = new JPanel();
+		cbPath = new JComboBox();			
 		taLog = new JTextArea(5,1);
+		taLog.setLineWrap(true);
+		taLog.setFont(new Font("Courier", 0, 14));
 		spPane = new JScrollPane(taLog);
 		memory_monitor=new MemoryMonitor();
 
-		cbPath.setEditable(true);
-		jpBottom.setLayout(new BoxLayout(jpBottom, BoxLayout.Y_AXIS));
+		cbPath.setEditable(true);		
 
 		populateLoadList();		
+		
+		JSplitPane spMainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, preview, spPane);
+		spMainSplit.setDividerLocation(400);
+		spMainSplit.setResizeWeight(1);
 		
 		buttons.add(cbPath);
 		buttons.add(bLoad);
 		buttons.add(bSave);
 		buttons.add(bSettings);
-		add(buttons, BorderLayout.NORTH);
-		add(preview);
-		jpBottom.add(spPane);
-		jpBottom.add(memory_monitor);
-		add(jpBottom, BorderLayout.SOUTH);
-		taLog.setLineWrap(true);
+		
+		add(buttons, BorderLayout.NORTH);		
+		add(spMainSplit);		
+		add(memory_monitor, BorderLayout.SOUTH);		
+		
+		
 		bLoad.addActionListener(new ActionListener()
 		{			
 			public void actionPerformed(ActionEvent e)
