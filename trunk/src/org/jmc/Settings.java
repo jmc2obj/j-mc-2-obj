@@ -2,11 +2,11 @@ package org.jmc;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -71,12 +72,26 @@ public class Settings extends JFrame implements WindowListener {
 		pGround.add(tfGround);
 		pGround.add(lGroundValidation);
 
-		JButton tex=new JButton("Split textures");		
-		tex.addActionListener(new AbstractAction() {			
+		JButton tex_mc=new JButton("Split textures from minecraft");		
+		tex_mc.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new Texsplit();
-
+				Texsplit split = new Texsplit();
+				split.splitTextures(chooseTextureDestination());
+			}
+		});
+		JButton tex_custom=new JButton("Split custom textures");		
+		tex_custom.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser jfc=new JFileChooser();
+				jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+				int retval=jfc.showDialog(Settings.this,"Choose your terrain.png file");
+				if(retval==JFileChooser.APPROVE_OPTION)
+				{					
+					Texsplit split = new Texsplit(jfc.getSelectedFile());
+					split.splitTextures(chooseTextureDestination());
+				}
 			}
 		});
 		
@@ -91,12 +106,14 @@ public class Settings extends JFrame implements WindowListener {
 		});
 
 		pGround.setAlignmentX(Component.LEFT_ALIGNMENT);
-		tex.setAlignmentX(Component.LEFT_ALIGNMENT);
+		tex_mc.setAlignmentX(Component.LEFT_ALIGNMENT);
+		tex_custom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		reset.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		mp.add(pGround);
 		mp.add(Box.createRigidArea(new Dimension(0, 10)));
-		mp.add(tex);
+		mp.add(tex_mc);
+		mp.add(tex_custom);
 		mp.add(Box.createVerticalGlue());
 		mp.add(reset);		
 		
@@ -162,6 +179,18 @@ public class Settings extends JFrame implements WindowListener {
 		} catch (BackingStoreException e) {}
 		loadSettings();
 		setFields();
+	}
+	
+	private File chooseTextureDestination()
+	{
+		JFileChooser jfc=new JFileChooser();
+		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int retval=jfc.showDialog(Settings.this,"Choose texture files' destination");
+		if(retval==JFileChooser.APPROVE_OPTION)
+			return jfc.getSelectedFile();
+		else
+			return null;
 	}
 
 	private DocumentListener document_listener=new DocumentListener() {	
