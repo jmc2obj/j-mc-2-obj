@@ -32,14 +32,6 @@ public class MainWindow extends JFrame
 	MainWindow()
 	{
 		super("Main Window");
-
-		try 
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 		
 		setSize(800,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,6 +50,11 @@ public class MainWindow extends JFrame
 	 */
 	public static MainWindow main=null;
 	
+	/**
+	 * Global main settings and settings window reference.
+	 */
+	public static Settings settings=null;
+	
 	
 	/**
 	 * Start of program.
@@ -66,6 +63,15 @@ public class MainWindow extends JFrame
 	 */
 	public static void main(String[] args)
 	{
+		try 
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		settings = new Settings();
 		main = new MainWindow();
 	}
 	

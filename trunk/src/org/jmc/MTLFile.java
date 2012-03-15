@@ -49,8 +49,8 @@ public class MTLFile {
 	 */
 	public MTLFile()
 	{
-		colors=new Colors();
-		textures = new Textures(); //added
+		colors=MainWindow.settings.minecraft_colors;
+		textures = MainWindow.settings.minecraft_textures;
 	}
 
 	/**

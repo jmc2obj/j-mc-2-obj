@@ -184,7 +184,7 @@ public class Chunk {
 		root=(TAG_Compound) NBT_Tag.make(is);		
 		is.close();
 
-		colors = new Colors();
+		colors = MainWindow.settings.minecraft_colors;
 
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 
