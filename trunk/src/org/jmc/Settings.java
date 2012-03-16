@@ -1,6 +1,5 @@
 package org.jmc;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -17,10 +16,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -28,7 +25,6 @@ public class Settings extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
 
-	private int ground_level;
 	private String last_loaded_map;
 	
 	public Colors minecraft_colors; 
@@ -36,9 +32,6 @@ public class Settings extends JFrame implements WindowListener {
 
 
 	private Preferences prefs;
-
-	private JTextField tfGround;
-	private JLabel lGroundValidation;
 
 	@SuppressWarnings("serial")
 	public Settings()
@@ -58,19 +51,6 @@ public class Settings extends JFrame implements WindowListener {
 		add(mp);
 
 		mp.setLayout(new BoxLayout(mp, BoxLayout.PAGE_AXIS));
-
-		JPanel pGround=new JPanel();
-		pGround.setLayout(new BoxLayout(pGround, BoxLayout.LINE_AXIS));
-		pGround.setMaximumSize(new Dimension(Short.MAX_VALUE,20));
-		JLabel lGround=new JLabel("Ground level: ");
-		tfGround=new JTextField(""+ground_level);
-		tfGround.getDocument().addDocumentListener(document_listener);
-		lGroundValidation=new JLabel("Wrong value entered!");
-		lGroundValidation.setForeground(Color.red);
-		lGroundValidation.setVisible(false);
-		pGround.add(lGround);
-		pGround.add(tfGround);
-		pGround.add(lGroundValidation);
 
 		JButton tex_mc=new JButton("Split textures from minecraft");		
 		tex_mc.addActionListener(new AbstractAction() {			
@@ -105,12 +85,10 @@ public class Settings extends JFrame implements WindowListener {
 			}
 		});
 
-		pGround.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tex_mc.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tex_custom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		reset.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		mp.add(pGround);
 		mp.add(Box.createRigidArea(new Dimension(0, 10)));
 		mp.add(tex_mc);
 		mp.add(tex_custom);
@@ -122,12 +100,6 @@ public class Settings extends JFrame implements WindowListener {
 		addWindowListener(this);
 	}
 
-	
-	public int getGroundLevel()
-	{
-		return ground_level;
-	}
-	
 	public void setLastLoadedMap(String path)
 	{
 		last_loaded_map=path;
@@ -141,34 +113,21 @@ public class Settings extends JFrame implements WindowListener {
 	
 	private void getFields()
 	{
-		if(tfGround.getText().length()>0)
-		{
-			try{			
-				ground_level=Integer.parseInt(tfGround.getText());
-				lGroundValidation.setVisible(false);
-			}catch (NumberFormatException e) {
-				lGroundValidation.setVisible(true);
-				tfGround.requestFocusInWindow();
-			}
-		}
-
 		saveSettings();
 	}
 	
 	private void setFields()
 	{
-		tfGround.setText(""+ground_level);
+		
 	}
 
 	private void loadSettings()
 	{
-		ground_level=prefs.getInt("GROUND_LEVEL", 0);	
 		last_loaded_map=prefs.get("LAST_MAP", "");
 	}
 
 	private void saveSettings()
 	{
-		prefs.putInt("GROUND_LEVEL", ground_level);
 		prefs.put("LAST_MAP", last_loaded_map);
 	}
 	

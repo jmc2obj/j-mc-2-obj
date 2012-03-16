@@ -41,7 +41,7 @@ public class OBJExportThread extends JFrame implements Runnable {
 	/**
 	 * Altitude above which we are saving.
 	 */
-	int ymin;
+	int ymin,ymax;
 
 	//UI elements (not described)
 	JProgressBar progress;
@@ -53,7 +53,7 @@ public class OBJExportThread extends JFrame implements Runnable {
 	 * @param bounds region being saved
 	 * @param ymin minimum altitude being saved
 	 */
-	public OBJExportThread(File objfile, File savepath, Rectangle bounds, int ymin) 
+	public OBJExportThread(File objfile, File savepath, Rectangle bounds, int ymin, int ymax) 
 	{		
 		super("Export in progress...");		
 
@@ -61,6 +61,7 @@ public class OBJExportThread extends JFrame implements Runnable {
 		this.savepath=savepath;
 		this.bounds=bounds;
 		this.ymin=ymin;
+		this.ymax=ymax;
 
 		setSize(200,50);
 
@@ -124,7 +125,7 @@ public class OBJExportThread extends JFrame implements Runnable {
 						continue;
 					}
 
-					OBJFile obj=chunk.getOBJ(mtl,bounds,ymin);
+					OBJFile obj=chunk.getOBJ(mtl,bounds,ymin, ymax);
 
 					if(obj==null) continue;
 

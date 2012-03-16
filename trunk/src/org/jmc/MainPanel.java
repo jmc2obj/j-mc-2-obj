@@ -17,14 +17,18 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
@@ -41,9 +45,12 @@ public class MainPanel extends JPanel
 {
 	//UI elements (not described separately)
 	private JButton bLoad,bSave,bSettings;
+	//this suppression is for compatibility wiht java 1.6
+	@SuppressWarnings("rawtypes")
 	private JComboBox cbPath;
 	private JTextArea taLog;
 	private JScrollPane spPane;
+	private JSlider sFloor,sCeil;
 	
 	/**
 	 * Main map preview panel. 
@@ -70,7 +77,8 @@ public class MainPanel extends JPanel
 
 	/**
 	 * Panel contructor.
-	 */
+	 */	
+	@SuppressWarnings("rawtypes")
 	public MainPanel()
 	{
 		setLayout(new BorderLayout());		
@@ -83,15 +91,33 @@ public class MainPanel extends JPanel
 		cbPath = new JComboBox();			
 		taLog = new JTextArea(5,1);
 		taLog.setLineWrap(true);
+		taLog.setEditable(false);
 		taLog.setFont(new Font("Courier", 0, 14));
 		spPane = new JScrollPane(taLog);
 		memory_monitor=new MemoryMonitor();
+		JPanel preview_alts=new JPanel();
+		preview_alts.setLayout(new BorderLayout());
+		JPanel alts=new JPanel();
+		alts.setLayout(new BoxLayout(alts, BoxLayout.PAGE_AXIS));
+		sFloor=new JSlider();
+		sFloor.setOrientation(JSlider.VERTICAL);
+		sFloor.setToolTipText("Export floor");
+		sFloor.setMinimum(0);
+		sFloor.setMaximum(256);//TODO: this should really be read from the file, IMO
+		sFloor.setValue(0);
+		sCeil=new JSlider();
+		sCeil.setOrientation(JSlider.VERTICAL);
+		sCeil.setToolTipText("Export ceiling");
+		sCeil.setMinimum(0);
+		sCeil.setMaximum(256);
+		sCeil.setValue(256);
+		
 
 		cbPath.setEditable(true);		
 
 		populateLoadList();		
 		
-		JSplitPane spMainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, preview, spPane);
+		JSplitPane spMainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, preview_alts, spPane);
 		spMainSplit.setDividerLocation(400);
 		spMainSplit.setResizeWeight(1);
 		
@@ -100,10 +126,38 @@ public class MainPanel extends JPanel
 		buttons.add(bSave);
 		buttons.add(bSettings);
 		
+		alts.add(sCeil);
+		alts.add(sFloor);
+		
+		preview_alts.add(preview);
+		preview_alts.add(alts,BorderLayout.EAST);
+		
 		add(buttons, BorderLayout.NORTH);		
 		add(spMainSplit);		
-		add(memory_monitor, BorderLayout.SOUTH);		
+		add(memory_monitor, BorderLayout.SOUTH);	
 		
+		
+		ChangeListener slider_listener=new ChangeListener() {			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(e.getSource().equals(sCeil))
+				{
+					if(sFloor.getValue()>=sCeil.getValue())
+						sFloor.setValue(sCeil.getValue()-1);
+				}
+				else
+				{
+					if(sCeil.getValue()<=sFloor.getValue())
+						sCeil.setValue(sFloor.getValue()+1);
+				}
+				preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
+				preview.repaint();
+			}
+		};
+		
+		sCeil.addChangeListener(slider_listener);
+		sFloor.addChangeListener(slider_listener);
+		preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
 		
 		bLoad.addActionListener(new ActionListener()
 		{			
@@ -183,6 +237,7 @@ public class MainPanel extends JPanel
 				}
 
 				int ymin=0;
+				int ymax=256;
 				Rectangle rect=preview.getSelectionBounds();
 
 				if(rect.width==0 || rect.height==0)
@@ -191,9 +246,10 @@ public class MainPanel extends JPanel
 					return;
 				}
 
-				ymin=MainWindow.settings.getGroundLevel();
+				ymin=sFloor.getValue();
+				ymax=sCeil.getValue();
 
-				OBJExportThread export_thread = new OBJExportThread(objfile,loaded_file, rect, ymin);
+				OBJExportThread export_thread = new OBJExportThread(objfile,loaded_file, rect, ymin, ymax);
 
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;
@@ -241,6 +297,7 @@ public class MainPanel extends JPanel
 	 */
 	class PopulateLoadListThread extends Thread
 	{
+		@SuppressWarnings("unchecked")
 		public void run()
 		{
 			File minecraft_dir=getMinecraftDir();

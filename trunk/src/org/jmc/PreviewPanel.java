@@ -51,6 +51,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 */
 	private int selection_start_x=0, selection_start_z=0,selection_end_x=0, selection_end_z=0;
 	/**
+	 * Altitude ranges.
+	 */
+	private int alt_floor, alt_ceil;
+	/**
 	 * Offset of the map, as set by dragging the map around.
 	 */
 	private int shift_x,shift_y;
@@ -76,6 +80,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * Alpha of the background for the UI.
 	 */
 	private float gui_bg_alpha;
+	/**
+	 * Buffer of text lines drawn in the GUI.
+	 */
+	private Vector<String> gui_text;
 
 	/**
 	 * Small internal class describing an image of a single chunk this preview is comprised of.
@@ -131,10 +139,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
 
-		gui_font=new Font("Courier",Font.BOLD,14);
+		gui_font=new Font("Verdana",Font.BOLD,10);
 		gui_color=Color.white;
 		gui_bg_color=Color.black;
 		gui_bg_alpha=0.3f;		
+		gui_text=new Vector<String>();
 
 	}
 
@@ -188,18 +197,30 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			g2d.fillRect(sx, sz, ex-sx, ez-sz);
 		}
 		
+		gui_text.clear();
+		gui_text.add(zoom_level+"x");
+		gui_text.add("("+px+","+py+")");
+		gui_text.add("Selection:");
+		gui_text.add("("+selection_start_x+","+selection_start_z+")");
+		gui_text.add("("+selection_end_x+","+selection_end_z+")");
+		gui_text.add("Floor: "+alt_floor);
+		gui_text.add("Ceiling: "+alt_ceil);
+		
+		
 		
 		g2d.setColor(gui_bg_color);
-		g2d.fillRect(0, 0, 80, 140+2*fh);
+		g2d.fillRect(0, 0, 100, 130+gui_text.size()*(fh+5));
 		g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,1));
 		g2d.setColor(gui_color);
-		g2d.drawRect(30, 20, 20, 100);
-		g2d.drawRect(27, 18+z_p, 26, 5);
-		fw=metrics.stringWidth(zoom_level+"x");
-		g2d.drawString(zoom_level+"x", 40-fw/2, 125+fh);
-		fw=metrics.stringWidth("("+px+","+py+")");
-		g2d.drawString("("+px+","+py+")", 40-fw/2, 130+2*fh);
-
+		g2d.drawRect(40, 20, 20, 100);
+		g2d.drawRect(37, 18+z_p, 26, 5);
+		int start=125+fh;
+		for(String s:gui_text)
+		{
+			fw=metrics.stringWidth(s);
+			g2d.drawString(s, 50-fw/2, start);
+			start+=5+fh;
+		}
 	}
 
 	/**
@@ -523,5 +544,16 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		rect.height=ez-sz;
 		
 		return rect;
+	}
+	
+	/**
+	 * Sets the altitude ranges that are to be painted in the GUI.
+	 * @param floor altitude floor
+	 * @param ceil altitude ceiling
+	 */
+	public void setAltitudes(int floor, int ceil)
+	{
+		alt_ceil=ceil;
+		alt_floor=floor;
 	}
 }

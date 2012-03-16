@@ -22,7 +22,6 @@ import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 /**
@@ -491,7 +490,7 @@ public class Chunk {
 	 * @param ymin height level above which the export is performed
 	 * @return OBJ file object
 	 */
-	public OBJFile getOBJ(MTLFile material, Rectangle bounds, int ymin)
+	public OBJFile getOBJ(MTLFile material, Rectangle bounds, int ymin, int ymax)
 	{
 		int xmin=bounds.x-pos_x*16;
 		int zmin=bounds.y-pos_z*16;
@@ -515,11 +514,14 @@ public class Chunk {
 		int blocks[]=bd.id;
 		byte data[]=bd.data;
 
-		int ymax=0;
+		int ymax_f;
 		if(is_anvil)
-			ymax=blocks.length/(16*16);
+			ymax_f=blocks.length/(16*16);
 		else 
-			ymax=128;
+			ymax_f=128;
+		
+		if(ymax>ymax_f)
+			ymax=ymax_f;
 
 		int x,y,z;
 		for(z = zmin; z <= zmax; z++)
