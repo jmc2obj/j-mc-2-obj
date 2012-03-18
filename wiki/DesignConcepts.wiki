@@ -1,0 +1,6 @@
+= Mesh design =
+
+Made a diagram for a scalable mesh interface:
+http://www.gliffy.com/publish/3407669/
+
+Moro to come...
