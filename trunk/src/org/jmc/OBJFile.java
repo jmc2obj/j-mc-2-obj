@@ -50,9 +50,11 @@ public class OBJFile {
 	{
 		BLOCK,
 		STAIRS,
-		IMAGE,
-		TORCH,
-		FENCE
+		HALFBLOCK,
+		CROSS,
+		SNOW,
+		LIQUID,
+		TORCH
 		//TODO: complete this
 	}
 
@@ -241,7 +243,97 @@ public class OBJFile {
 	}
 
 	/**
-	 * Add stars at the given location
+	 * Adds two crossed faces
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param data
+	 */
+	public void addCross(float x, float y, float z, int id, byte data)
+	{
+		Vertex vertices[]=new Vertex[4];
+		vertices[0]=new Vertex(x-0.5f,y-0.5f,z);
+		vertices[1]=new Vertex(x-0.5f,y+0.5f,z);
+		vertices[2]=new Vertex(x+0.5f,y+0.5f,z);
+		vertices[3]=new Vertex(x+0.5f,y-0.5f,z);
+		addFace(vertices,Side.FRONT,id,data);
+		
+		vertices[0]=new Vertex(x,y-0.5f,z-0.5f);
+		vertices[1]=new Vertex(x,y+0.5f,z-0.5f);
+		vertices[2]=new Vertex(x,y+0.5f,z+0.5f);
+		vertices[3]=new Vertex(x,y-0.5f,z+0.5f);
+		addFace(vertices,Side.LEFT,id,data);						
+	}
+	
+	/**
+	 * Adds a halfblock at the given location 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param data
+	 * @param drawside
+	 */
+	public void addHalfblock(float x, float y, float z, int id, byte data, boolean [] drawside)
+	{
+		drawside[0]=true;
+		addCube(x,y,z,id,data,drawside,1.0f,0.5f,1.0f);
+	}
+	
+	/**
+	 * Adds a torch
+	 * WORK IN PROGRESS!!
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param data
+	 * @param drawside
+	 */
+	public void addTorch(float x, float y, float z, int id, byte data, boolean [] drawside)
+	{
+		//TODO: complete torches on walls, etc
+		for(int i=0; i<6; i++) drawside[i]=true;
+		addCube(x,y,z,id,data,drawside,0.2f,0.9f,0.2f);
+	}
+	
+	/**
+	 * Adds a liquid block at the given location
+	 * This is still a work in progress! 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param data
+	 * @param drawside
+	 */
+	public void addLiquid(float x, float y, float z, int id, byte data, boolean [] drawside)
+	{
+		//TODO: complete this
+		drawside[0]=true;
+		if(data>8) data-=8;
+		if(data==0) data=8;
+		addCube(x,y,z,id,data,drawside,1.0f,data/8.0f,1.0f);
+	}
+	
+	/**
+	 * Adds a snow layer at the given location
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param id
+	 * @param data
+	 * @param drawside
+	 */
+	public void addSnow(float x, float y, float z, int id, byte data, boolean [] drawside)
+	{
+		drawside[0]=true;
+		addCube(x,y,z,id,data,drawside,1.0f,(1.0f+data)/8.0f,1.0f);
+	}
+	
+	/**
+	 * Add stairs at the given location
 	 * @param x
 	 * @param y
 	 * @param z

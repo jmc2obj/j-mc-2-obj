@@ -45,6 +45,7 @@ public class Colors
 		colors[23] = new Color(0x747474);	//dispenser (has data / tile value)
 		colors[24] = new Color(0xC0BA78);	//sandstone
 		colors[25] = new Color(0x945F44);	//noteblock (tile value)
+		colors[26] = new Color(0xFF0000);	//bed
 		colors[27] = new Color(0xA00002);	//powered rail (data)
 		colors[28] = new Color(0xA8A8A8);	//detector rail (data)
 		colors[29] = new Color(0x91C37D);	//sticky piston (data)
@@ -74,6 +75,7 @@ public class Colors
 		colors[56] = new Color(0x759094);	//diamond ore
 		colors[57] = new Color(0x13ADB0);	//diamond block
 		colors[58] = new Color(0x7D5216);	//crafting table
+		colors[59] = new Color(0xF7E05E);	//wheat
 		colors[60] = new Color(0x523308);	//farmland
 		colors[61] = new Color(0x737373);	//furnace
 		colors[62] = new Color(0x736262);	//furnace lit

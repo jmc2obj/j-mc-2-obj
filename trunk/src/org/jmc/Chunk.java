@@ -112,9 +112,9 @@ public class Chunk {
 		mesh_types.put(4, MeshType.BLOCK);
 		mesh_types.put(5, MeshType.BLOCK);
 		mesh_types.put(7, MeshType.BLOCK);
-		mesh_types.put(8, MeshType.BLOCK);
-		mesh_types.put(9, MeshType.BLOCK);
-		mesh_types.put(10, MeshType.BLOCK);//LAVA F
+		mesh_types.put(8, MeshType.LIQUID);//WATER F
+		mesh_types.put(9, MeshType.BLOCK);//WATER S
+		mesh_types.put(10, MeshType.LIQUID);//LAVA F
 		mesh_types.put(11, MeshType.BLOCK);//LAVA S
 		mesh_types.put(12, MeshType.BLOCK);		
 		mesh_types.put(13, MeshType.BLOCK);
@@ -130,29 +130,45 @@ public class Chunk {
 		mesh_types.put(23, MeshType.BLOCK);
 		mesh_types.put(24, MeshType.BLOCK);
 		mesh_types.put(25, MeshType.BLOCK);
+		mesh_types.put(30, MeshType.CROSS);//COBWEB
+		mesh_types.put(31, MeshType.CROSS);//TALL GRASS
+		mesh_types.put(32, MeshType.CROSS);//DEAD BUSH
 		mesh_types.put(35, MeshType.BLOCK);//WOOL
+		mesh_types.put(37, MeshType.CROSS);//FLOWER 1
+		mesh_types.put(38, MeshType.CROSS);//FLOWER 2
+		mesh_types.put(39, MeshType.CROSS);//MUSHROOM 1
+		mesh_types.put(40, MeshType.CROSS);//MUSHROOM 2		
 		mesh_types.put(41, MeshType.BLOCK);
 		mesh_types.put(42, MeshType.BLOCK);
 		mesh_types.put(43, MeshType.BLOCK);
+		mesh_types.put(44, MeshType.HALFBLOCK);//SLABS
 		mesh_types.put(45, MeshType.BLOCK);
 		mesh_types.put(46, MeshType.BLOCK);
 		mesh_types.put(47, MeshType.BLOCK);
 		mesh_types.put(48, MeshType.BLOCK);
 		mesh_types.put(49, MeshType.BLOCK);
+		mesh_types.put(50, MeshType.TORCH);//TORCH
+		mesh_types.put(51, MeshType.CROSS);//FIRE
 		mesh_types.put(52, MeshType.BLOCK);//SPAWNER(alpha)
+		mesh_types.put(53, MeshType.STAIRS);//WOOD STAIRS
 		mesh_types.put(54, MeshType.BLOCK);
 		mesh_types.put(56, MeshType.BLOCK);
 		mesh_types.put(57, MeshType.BLOCK);
 		mesh_types.put(58, MeshType.BLOCK);
+		mesh_types.put(59, MeshType.CROSS);//WHEAT
 		mesh_types.put(60, MeshType.BLOCK);
 		mesh_types.put(61, MeshType.BLOCK);
 		mesh_types.put(62, MeshType.BLOCK);
+		mesh_types.put(67, MeshType.STAIRS);//cobble stairs
 		mesh_types.put(73, MeshType.BLOCK);
 		mesh_types.put(74, MeshType.BLOCK);
+		mesh_types.put(75, MeshType.TORCH);//REDSTONE TORCH OFF
+		mesh_types.put(76, MeshType.TORCH);//REDSTONE TORCH ON
 		mesh_types.put(79, MeshType.BLOCK);//ICE(alpha?)
 		mesh_types.put(80, MeshType.BLOCK);
 		mesh_types.put(81, MeshType.BLOCK);
 		mesh_types.put(82, MeshType.BLOCK);
+		mesh_types.put(83, MeshType.CROSS);//SUGAR CANE
 		mesh_types.put(84, MeshType.BLOCK);
 		mesh_types.put(86, MeshType.BLOCK);
 		mesh_types.put(87, MeshType.BLOCK);
@@ -163,19 +179,18 @@ public class Chunk {
 		mesh_types.put(97, MeshType.BLOCK);
 		mesh_types.put(98, MeshType.BLOCK);
 		mesh_types.put(103, MeshType.BLOCK);
+		mesh_types.put(104, MeshType.CROSS);//PUMPKIN  STALK
+		mesh_types.put(105, MeshType.CROSS);//MELON STALK
+		mesh_types.put(106, MeshType.CROSS);//VINE
+		mesh_types.put(108, MeshType.STAIRS);//brick stairs
+		mesh_types.put(109, MeshType.STAIRS);//stone brick stairs
 		mesh_types.put(110, MeshType.BLOCK);
 		mesh_types.put(112, MeshType.BLOCK);
+		mesh_types.put(114, MeshType.STAIRS);//nether brick stairs
+		mesh_types.put(115, MeshType.CROSS);//NETHERWART
 		mesh_types.put(121, MeshType.BLOCK);
 		mesh_types.put(123, MeshType.BLOCK);
 		mesh_types.put(124, MeshType.BLOCK);		
-		
-		mesh_types.put(53, MeshType.STAIRS);//wood
-		mesh_types.put(67, MeshType.STAIRS);//cobble
-		mesh_types.put(108, MeshType.STAIRS);//brick
-		mesh_types.put(109, MeshType.STAIRS);//stone brick
-		mesh_types.put(114, MeshType.STAIRS);//nether brick
-		
-
 
 
 		this.is_anvil=is_anvil;
@@ -558,6 +573,20 @@ public class Chunk {
 							break;
 						case STAIRS:
 							ret.addStairs(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case HALFBLOCK:
+							ret.addHalfblock(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case LIQUID:
+							ret.addLiquid(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case SNOW:
+							ret.addSnow(x, y, z, BlockID, BlockData, drawside);
+						case CROSS:
+							ret.addCross(x, y, z, BlockID, BlockData);
+							break;
+						case TORCH:
+							ret.addTorch(x, y, z, BlockID, BlockData, drawside);
 							break;
 						default:
 						}
