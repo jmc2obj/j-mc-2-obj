@@ -563,13 +563,14 @@ public class Chunk {
 					if(z==zmax || isDrawable(BlockID,getValue(blocks,x,y,z+1,ymax)))
 						drawside[5]=true; else drawside[5]=false;
 
+					Transform identity=new Transform();
 					MeshType mt=mesh_types.get(BlockID);
 					if(mt!=null)
 					{
 						switch(mt)
 						{
 						case BLOCK:
-							ret.addCube(x, y, z, BlockID, BlockData, drawside,1.0f,1.0f,1.0f);
+							ret.addCube(x, y, z, BlockID, BlockData, drawside,identity);
 							break;
 						case STAIRS:
 							ret.addStairs(x, y, z, BlockID, BlockData, drawside);
@@ -583,7 +584,7 @@ public class Chunk {
 						case SNOW:
 							ret.addSnow(x, y, z, BlockID, BlockData, drawside);
 						case CROSS:
-							ret.addCross(x, y, z, BlockID, BlockData);
+							ret.addCross(x, y, z, BlockID, BlockData,identity);
 							break;
 						case TORCH:
 							ret.addTorch(x, y, z, BlockID, BlockData, drawside);
