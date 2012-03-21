@@ -215,49 +215,27 @@ public class MainPanel extends JPanel
 					return;
 				}
 
-				JFileChooser jfcSave=new JFileChooser();
-				jfcSave.setDialogTitle("Save OBJ file");
-				if(jfcSave.showSaveDialog(MainWindow.main)!=JFileChooser.APPROVE_OPTION)
-				{
-					return;
-				}
-
-				File objfile=jfcSave.getSelectedFile();
-				if(!objfile.getName().endsWith(".obj"))
-				{
-					objfile=new File(objfile.getAbsolutePath()+".obj");
-				}
-
-				if(objfile.exists())
-				{
-					if(JOptionPane.showConfirmDialog(MainWindow.main, "File exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
-					{
-						return;
-					}
-				}
-
 				int ymin=0;
 				int ymax=256;
 				Rectangle rect=preview.getSelectionBounds();
 
 				if(rect.width==0 || rect.height==0)
 				{
-					JOptionPane.showMessageDialog(null, "Click and drag the right mouse button to make a selection first!");
+					JOptionPane.showMessageDialog(null, "Click and drag the left mouse button to make a selection first!");
 					return;
 				}
 
 				ymin=sFloor.getValue();
 				ymax=sCeil.getValue();
 
-				OBJExportThread export_thread = new OBJExportThread(objfile,loaded_file, rect, ymin, ymax);
+				OBJExportPanel export_thread = new OBJExportPanel(loaded_file, rect, ymin, ymax);
 
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;
 				int my=win_bounds.y+win_bounds.height/2;
-				export_thread.setBounds(mx-100, my-25, 200, 50);
-
-				(new Thread(export_thread)).start();
-
+				int xw=export_thread.getWidth();
+				int xh=export_thread.getHeight();
+				export_thread.setBounds(mx-xw/2, my-xh/2, xw, xh);
 			}
 		});
 		

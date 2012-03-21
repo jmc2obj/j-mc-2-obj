@@ -42,15 +42,18 @@ public class MTLFile {
 	 * Reference to a colors object.
 	 */
 	private Colors colors;
+	
+	private File mtl_file;
 
 	private Textures textures;//added
 	/**
 	 * Main constructor.
 	 */
-	public MTLFile()
+	public MTLFile(File mtl_file)
 	{
 		colors=MainWindow.settings.minecraft_colors;
 		textures = MainWindow.settings.minecraft_textures;
+		this.mtl_file=mtl_file;
 	}
 
 	/**
@@ -94,9 +97,12 @@ public class MTLFile {
 	 * to print a header in the OBJ file.
 	 * @param out OBJ file writer
 	 */
-	public void header(PrintWriter out)
+	public void header(PrintWriter out, File objfile)
 	{
-		out.println("mtllib minecraft.mtl");
+		if(objfile.getParent()!=null && mtl_file.getParent()!=null && objfile.getParent().equals(mtl_file.getParent()))
+			out.println("mtllib "+mtl_file.getName());
+		else
+			out.println("mtllib "+mtl_file.getAbsolutePath());
 		out.println();
 	}
 
@@ -144,9 +150,9 @@ public class MTLFile {
 	 * @param file destination of the file
 	 * @throws IOException exception if an error occurs during writing
 	 */
-	public void saveMTLFile(File file) throws IOException
+	public void saveMTLFile() throws IOException
 	{		
-		PrintWriter writer=new PrintWriter(new FileWriter(file));		
+		PrintWriter writer=new PrintWriter(new FileWriter(mtl_file));		
 
 		writer.println("newmtl unknown");
 		writer.println("Kd 1 0 1");
