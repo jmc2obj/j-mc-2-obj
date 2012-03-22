@@ -4,4 +4,8 @@ Revision r42 - Blender
 
 Revision r60 - Blender - displaying new stairs code and colored wool with the wool and a pillar in the foreground
 
-<a href="http://imgur.com/pq4mK"><img src="http://i.imgur.com/pq4mK.png" width=500 /></a>
+<a href="http://imgur.com/pq4mK"><img src="http://i.imgur.com/pq4mK.png" width=640 /></a>
+
+Revision r71 - Belnder - lame attempt of using defocus
+
+<a href="http://imgur.com/KIcyP"><img src="http://i.imgur.com/KIcyP.png" widht=640 /></a>
