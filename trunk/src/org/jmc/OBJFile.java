@@ -102,6 +102,8 @@ public class OBJFile {
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
 	float x_offset, y_offset, z_offset;
+	
+	float file_scale;
 
 	/**
 	 * Main constructor.
@@ -118,6 +120,7 @@ public class OBJFile {
 		x_offset=0;
 		y_offset=0;
 		z_offset=0;
+		file_scale=1.0f;
 	}
 
 	/**
@@ -132,6 +135,11 @@ public class OBJFile {
 		x_offset=x;
 		y_offset=y;
 		z_offset=z;
+	}
+	
+	public void setScale(float scale)
+	{
+		file_scale=scale;
 	}
 
 	/**
@@ -424,7 +432,7 @@ public class OBJFile {
 
 		for(Vertex vertex:vertices)
 		{
-			out.format(l,"v %2.2f %2.2f %2.2f",vertex.x+x_offset,vertex.y+y_offset,vertex.z+z_offset);
+			out.format(l,"v %2.2f %2.2f %2.2f",(vertex.x+x_offset)*file_scale,(vertex.y+y_offset)*file_scale,(vertex.z+z_offset)*file_scale);
 			out.println();
 		}
 
