@@ -334,6 +334,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 					if(obj==null) continue;
 
 					obj.setOffset(ox*16, -ymin, oz*16);
+					obj.setScale(scale);
 
 					obj.append(writer);
 				}
