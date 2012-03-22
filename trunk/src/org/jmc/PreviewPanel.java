@@ -50,6 +50,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * Selection boundaries.
 	 */
 	private int selection_start_x=0, selection_start_z=0,selection_end_x=0, selection_end_z=0;
+	private int screen_sx=-1, screen_sz=-1, screen_ex=-1, screen_ez=-1;
 	/**
 	 * Altitude ranges.
 	 */
@@ -168,7 +169,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			g2d.drawLine(x-3, y-3, x+3, y+3);
 			g2d.drawLine(x+3, y-3, x-3, y+3);
 		}
-		
+
 		int z_p=100-(zoom_level_pos*100/(zoom_levels.length-1));
 
 		int mx=getWidth()/2;
@@ -179,24 +180,50 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		FontMetrics metrics=g2d.getFontMetrics(gui_font);
 		int fw;
 		int fh=metrics.getHeight();
-		
+
 		g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,gui_bg_alpha));
-		
+
 		if(selection_start_x!=selection_end_x && selection_start_z!=selection_end_z)
 		{
-			int sx=(int) ((shift_x+selection_start_x*4)*zoom_level);
-			int sz=(int) ((shift_y+selection_start_z*4)*zoom_level);
-			int ex=(int) ((shift_x+selection_end_x*4)*zoom_level);
-			int ez=(int) ((shift_y+selection_end_z*4)*zoom_level);
+			screen_sx=(int) ((shift_x+selection_start_x*4)*zoom_level);
+			screen_sz=(int) ((shift_y+selection_start_z*4)*zoom_level);
+			screen_ex=(int) ((shift_x+selection_end_x*4)*zoom_level);
+			screen_ez=(int) ((shift_y+selection_end_z*4)*zoom_level);
 			int t;
-			
-			if(ex<sx) {t=sx;sx=ex;ex=t;} 
-			if(ez<sz) {t=sz;sz=ez;ez=t;}
-			
+
+			if(screen_ex<screen_sx) {t=screen_sx;screen_sx=screen_ex;screen_ex=t;} 
+			if(screen_ez<screen_sz) {t=screen_sz;screen_sz=screen_ez;screen_ez=t;}
+
+			g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,gui_bg_alpha));
 			g2d.setColor(Color.red);			
-			g2d.fillRect(sx, sz, ex-sx, ez-sz);
+			g2d.fillRect(screen_sx, screen_sz, screen_ex-screen_sx, screen_ez-screen_sz);
+
+			g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,1));
+			g2d.setColor(Color.black);			
+			g2d.drawRect(screen_sx, screen_sz, screen_ex-screen_sx, screen_ez-screen_sz);
+
+			g2d.setColor(Color.white);
+			g2d.fillRect(screen_sx-2, screen_sz-2, 4, 4);
+			g2d.fillRect(screen_sx-2, screen_ez-2, 4, 4);
+			g2d.fillRect(screen_ex-2, screen_sz-2, 4, 4);
+			g2d.fillRect(screen_ex-2, screen_ez-2, 4, 4);
+
+			g2d.setColor(Color.black);
+			g2d.drawRect(screen_sx-2, screen_sz-2, 4, 4);
+			g2d.drawRect(screen_sx-2, screen_ez-2, 4, 4);
+			g2d.drawRect(screen_ex-2, screen_sz-2, 4, 4);
+			g2d.drawRect(screen_ex-2, screen_ez-2, 4, 4);
 		}
-		
+		else
+		{
+			screen_sx=-1;
+			screen_ex=-1;
+			screen_sz=-1;
+			screen_ez=-1;
+		}
+
+
+		g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,gui_bg_alpha));
 		gui_text.clear();
 		gui_text.add(zoom_level+"x");
 		gui_text.add("("+px+","+py+")");
@@ -205,9 +232,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		gui_text.add("("+selection_end_x+","+selection_end_z+")");
 		gui_text.add("Floor: "+alt_floor);
 		gui_text.add("Ceiling: "+alt_ceil);
-		
-		
-		
+
+
+
 		g2d.setColor(gui_bg_color);
 		g2d.fillRect(0, 0, 100, 130+gui_text.size()*(fh+5));
 		g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,1));
@@ -399,40 +426,129 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		zoom_level_pos-=z;
 		if(zoom_level_pos<0) zoom_level_pos=0;
 		if(zoom_level_pos>=zoom_levels.length) zoom_level_pos=zoom_levels.length-1;
-		
+
 		int x=e.getX();
 		int y=e.getY();
-		
+
 		float old_zoom_level=zoom_level;
-		
+
 		zoom_level=zoom_levels[zoom_level_pos];
-		
+
 		float ratio=zoom_level/old_zoom_level;
 
 		shift_x-=(x-x/ratio)/old_zoom_level;
 		shift_y-=(y-y/ratio)/old_zoom_level;			
-		
+
 		redraw(false);
 		repaint();
 
 	}
 
+	enum CursorSelectionPosition
+	{
+		INSIDE,
+		NE_CORNER,
+		NW_CORNER,
+		SE_CORNER,
+		SW_CORNER,
+		N_SIDE,
+		E_SIDE,
+		S_SIDE,
+		W_SIDE,
+		OUTSIDE
+	}
+
+	private CursorSelectionPosition getCursorSelectionPosition(int x, int y)
+	{
+		if(x>screen_sx+4 && x<screen_ex-4 && y>screen_sz+4 && y<screen_ez-4)
+		{			
+			return CursorSelectionPosition.INSIDE;
+		}
+
+		if(x>=screen_sx-4 && x<=screen_sx+4 && y>=screen_sz-4 && y<=screen_sz+4)
+		{
+			return CursorSelectionPosition.NW_CORNER;
+		}
+
+		if(x>=screen_ex-4 && x<=screen_ex+4 && y>=screen_sz-4 && y<=screen_sz+4)
+		{
+			return CursorSelectionPosition.NE_CORNER;
+		}
+
+		if(x>=screen_sx-4 && x<=screen_sx+4 && y>=screen_ez-4 && y<=screen_ez+4)
+		{
+			return CursorSelectionPosition.SW_CORNER;
+		}
+
+		if(x>=screen_ex-4 && x<=screen_ex+4 && y>=screen_ez-4 && y<=screen_ez+4)
+		{
+			return CursorSelectionPosition.SE_CORNER;
+		}
+
+		if(x>=screen_sx-4 && x<=screen_sx+4 && y>screen_sz+4 && y<screen_ez-4)
+		{
+			return CursorSelectionPosition.W_SIDE;
+		}
+
+		if(x>=screen_ex-4 && x<=screen_ex+4 && y>screen_sz+4 && y<screen_ez-4)
+		{
+			return CursorSelectionPosition.E_SIDE;
+		}
+
+		if(x>screen_sx+4 && x<screen_ex-4 && y>=screen_sz-4 && y<=screen_sz+4)
+		{
+			return CursorSelectionPosition.N_SIDE;
+		}
+
+		if(x>screen_sx+4 && x<screen_ex-4 && y>=screen_ez-4 && y<=screen_ez+4)
+		{
+			return CursorSelectionPosition.S_SIDE;
+		}
+
+		return CursorSelectionPosition.OUTSIDE;
+	}
+
 
 	private boolean left_pressed=false;
 	private boolean right_pressed=false;
+	private boolean shaping_selection=false;
+	private CursorSelectionPosition shaping_action;
 	private int last_x,last_y;
+	private int origin_x,origin_y;
+	private int ssx,ssz,sex,sez;
 
 	/**
 	 * Event fired when mouse button is pressed down inside the preview. 
 	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
+
+		int x=e.getX();
+		int y=e.getY();
+
 		if(e.getButton()==MouseEvent.BUTTON1)
 		{
+			left_pressed=true;
+
+			shaping_action=getCursorSelectionPosition(x, y);
+			if(shaping_action!=CursorSelectionPosition.OUTSIDE)
+			{
+				shaping_selection=true;
+				origin_x=x;
+				origin_y=y;
+				ssx=selection_start_x;
+				ssz=selection_start_z;
+				sex=selection_end_x;
+				sez=selection_end_z;				
+				return;
+			}
+
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			selection_start_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_start_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
-			left_pressed=true;
+
+			return;
+
 		}
 
 		if(e.getButton()==MouseEvent.BUTTON3)
@@ -441,7 +557,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			last_x=e.getX();
 			last_y=e.getY();			
 			right_pressed=true;
-			
+
 		}
 	}
 
@@ -450,18 +566,18 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		
-		if(left_pressed)
-		{
-			
+
+		if(left_pressed && !shaping_selection)
+		{			
 			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);		
 		}
-		
+
 		left_pressed=false;
 		right_pressed=false;
+		shaping_selection=false;
 		redraw(false);
 		repaint();
 	}
@@ -470,22 +586,55 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * Event fired when mouse is moved with the button pressed inside the preview. 
 	 */
 	@Override
-	public void mouseDragged(MouseEvent e) {		
+	public void mouseDragged(MouseEvent e) {
+
+		int x=e.getX();
+		int y=e.getY();
 
 		if(left_pressed)
 		{
+			if(shaping_selection)
+			{				
+				int dx=(x-origin_x)/4;
+				int dy=(y-origin_y)/4;
+
+
+				if(shaping_action==CursorSelectionPosition.INSIDE 
+						|| shaping_action==CursorSelectionPosition.W_SIDE 
+						|| shaping_action==CursorSelectionPosition.NW_CORNER 
+						|| shaping_action==CursorSelectionPosition.SW_CORNER)
+					selection_start_x=(int) (ssx+dx/zoom_level);
+				if(shaping_action==CursorSelectionPosition.INSIDE 
+						|| shaping_action==CursorSelectionPosition.N_SIDE 
+						|| shaping_action==CursorSelectionPosition.NW_CORNER 
+						|| shaping_action==CursorSelectionPosition.NE_CORNER)
+					selection_start_z=(int) (ssz+dy/zoom_level);
+				if(shaping_action==CursorSelectionPosition.INSIDE 
+						|| shaping_action==CursorSelectionPosition.E_SIDE 
+						|| shaping_action==CursorSelectionPosition.NE_CORNER 
+						|| shaping_action==CursorSelectionPosition.SE_CORNER)
+					selection_end_x=(int) (sex+dx/zoom_level);
+				if(shaping_action==CursorSelectionPosition.INSIDE 
+						|| shaping_action==CursorSelectionPosition.S_SIDE 
+						|| shaping_action==CursorSelectionPosition.SW_CORNER 
+						|| shaping_action==CursorSelectionPosition.SE_CORNER)
+					selection_end_z=(int) (sez+dy/zoom_level);												
+
+
+
+				repaint();		
+				return;
+			}
+
 			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
-			repaint();			
+			repaint();		
+
+			return;
 		}	
-		
+
 		if(right_pressed)
-		{
-			int x,y;
-
-			x=e.getX();
-			y=e.getY();
-
+		{		
 			shift_x+=(x-last_x)/zoom_level;
 			shift_y+=(y-last_y)/zoom_level;
 
@@ -502,6 +651,43 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
+
+		int x=e.getX();
+		int y=e.getY();
+
+		switch(getCursorSelectionPosition(x, y))
+		{
+		case INSIDE:
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			break;
+		case NW_CORNER:
+			setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+			break;
+		case NE_CORNER:
+			setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
+			break;
+		case SW_CORNER:
+			setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
+			break;
+		case SE_CORNER:
+			setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
+			break;
+		case N_SIDE:
+			setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+			break;
+		case W_SIDE:
+			setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+			break;
+		case S_SIDE:
+			setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+			break;
+		case E_SIDE:
+			setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+			break;
+		default:
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+
 	}
 	/**
 	 * Unused.
@@ -534,18 +720,18 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		int ex=selection_end_x;
 		int ez=selection_end_z;
 		int t;
-		
+
 		if(ex<sx) {t=sx;sx=ex;ex=t;} 
 		if(ez<sz) {t=sz;sz=ez;ez=t;}
-		
+
 		rect.x=sx;
 		rect.y=sz;
 		rect.width=ex-sx;
 		rect.height=ez-sz;
-		
+
 		return rect;
 	}
-	
+
 	/**
 	 * Sets the altitude ranges that are to be painted in the GUI.
 	 * @param floor altitude floor
