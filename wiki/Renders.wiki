@@ -8,4 +8,4 @@ Revision r60 - Blender - displaying new stairs code and colored wool with the wo
 
 Revision r71 - Belnder - lame attempt of using defocus
 
-<a href="http://imgur.com/KIcyP"><img src="http://i.imgur.com/KIcyP.png" widht=640 /></a>
+<a href="http://imgur.com/KIcyP"><img src="http://i.imgur.com/KIcyP.png" width=640 /></a>
