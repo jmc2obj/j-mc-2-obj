@@ -104,10 +104,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		pSavePath.add(bObj);
 		main.add(pSavePath);
 		
-		File cwd=new File(".");
-		try{
-		tfSavePath.setText(cwd.getCanonicalPath());
-		}catch(Exception e){}
+		tfSavePath.setText(MainWindow.settings.getLastExportPath());
 		
 		JPanel pOptions=new JPanel();
 		pOptions.setLayout(new BoxLayout(pOptions, BoxLayout.LINE_AXIS));
@@ -204,21 +201,6 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	@Override
 	public void run() {
 
-		OffsetType offset_type=options.getOffsetType();
-		Point offset_point=options.getCustomOffset();
-		switch(offset_type)
-		{
-		case NO_OFFSET:
-			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
-			break;
-		case CENTER_OFFSET:
-			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
-			break;
-		case CUSTOM_OFFSET:
-			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
-			break;
-		}
-		
 		File exportpath=new File(tfSavePath.getText());
 		
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
@@ -247,6 +229,22 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			JOptionPane.showMessageDialog(this, "Cannot write to the chosen location!");
 			return;
 		}
+		
+		OffsetType offset_type=options.getOffsetType();
+		Point offset_point=options.getCustomOffset();
+		switch(offset_type)
+		{
+		case NO_OFFSET:
+			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
+			break;
+		case CENTER_OFFSET:
+			MainWindow.settings.setOffset(1,offset_point.x,offset_point.y);
+			break;
+		case CUSTOM_OFFSET:
+			MainWindow.settings.setOffset(2,offset_point.x,offset_point.y);
+			break;
+		}
+		MainWindow.settings.setLastExportPath(tfSavePath.getText());
 
 		running=true;
 		
@@ -273,21 +271,25 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			
 			if(offset_type==OffsetType.NO_OFFSET)
 			{
-				oxs=cxs;
-				ozs=czs;
+				oxs=0;
+				ozs=0;
 			}
 			else if(offset_type==OffsetType.CENTER_OFFSET)
 			{
-				oxs=(cxe-cxs)/-2;
-				ozs=(cze-czs)/-2;
+				oxs=cxs+(cxe-cxs)/2;
+				ozs=czs+(cze-czs)/2;
 			}
 			else if(offset_type==OffsetType.CUSTOM_OFFSET)
 			{
-				oxs=cxs+offset_point.x;
-				ozs=czs+offset_point.y;
+				oxs=offset_point.x;
+				ozs=offset_point.y;
 			}
 
 			progress.setMaximum((cxe-cxs)*(cze-czs));
+			
+			OBJFile obj=new OBJFile("minecraft", mtl);
+			obj.setOffset(-oxs*16, -ymin, -ozs*16);
+			obj.setScale(scale);
 
 			int progress_count=0;
 			for(int cx=cxs,ox=oxs; cx<=cxe && running; cx++,ox++)
@@ -304,17 +306,11 @@ public class OBJExportPanel extends JFrame implements Runnable {
 					}catch (Exception e) {
 						continue;
 					}
-
-					OBJFile obj=chunk.getOBJ(mtl,bounds,ymin, ymax);
-
-					if(obj==null) continue;
-
-					obj.setOffset(ox*16, -ymin, oz*16);
-					obj.setScale(scale);
-
-					obj.append(writer);
+					
+					obj.addChunk(chunk,bounds,ymin, ymax);					
 				}
 
+			obj.append(writer);
 			writer.close();
 			
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());

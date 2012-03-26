@@ -7,14 +7,19 @@
  ******************************************************************************/
 package org.jmc;
 
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import org.jmc.Chunk.Blocks;
 import org.jmc.MTLFile.Side;
 
 /**
@@ -73,7 +78,20 @@ public class OBJFile {
 			return this.mtl_id-o.mtl_id;
 		}
 	}
-
+	
+	/**
+	 * Collection of IDs of transparent blocks.
+	 * These blocks allow us to see what's behind them.
+	 * Non-transparent blocks make the sides of neighboring blocks not render.
+	 */
+	private Set<Integer> transparent_blocks;
+	/**
+	 * A map of mesh types for given block IDs.
+	 */
+	private Map<Integer, MeshType> mesh_types;
+	
+	private Colors colors;
+	
 	/**
 	 * Identifier of the file.
 	 * Since many OBJ class objects are created by different chunks,
@@ -112,8 +130,121 @@ public class OBJFile {
 	 */
 	public OBJFile(String ident, MTLFile mtl)
 	{
+		transparent_blocks=new TreeSet<Integer>();
+		transparent_blocks.add(-1);
+		transparent_blocks.add(0);
+		transparent_blocks.add(8);
+		transparent_blocks.add(9);
+		transparent_blocks.add(20);
+		transparent_blocks.add(26);
+		transparent_blocks.add(27);
+		transparent_blocks.add(30);
+		transparent_blocks.add(31);
+		transparent_blocks.add(32);
+		transparent_blocks.add(34);
+		transparent_blocks.add(37);
+		transparent_blocks.add(38);
+		transparent_blocks.add(39);
+		transparent_blocks.add(40);
+		transparent_blocks.add(50);
+		transparent_blocks.add(51);
+		transparent_blocks.add(52);
+		transparent_blocks.add(53);
+		transparent_blocks.add(55);
+		transparent_blocks.add(59);
+		transparent_blocks.add(63);
+
+		mesh_types=new TreeMap<Integer, OBJFile.MeshType>();
+		mesh_types.put(1, MeshType.BLOCK);
+		mesh_types.put(2, MeshType.BLOCK);
+		mesh_types.put(3, MeshType.BLOCK);
+		mesh_types.put(4, MeshType.BLOCK);
+		mesh_types.put(5, MeshType.BLOCK);
+		mesh_types.put(7, MeshType.BLOCK);
+		mesh_types.put(8, MeshType.LIQUID);//WATER F
+		mesh_types.put(9, MeshType.BLOCK);//WATER S
+		mesh_types.put(10, MeshType.LIQUID);//LAVA F
+		mesh_types.put(11, MeshType.BLOCK);//LAVA S
+		mesh_types.put(12, MeshType.BLOCK);		
+		mesh_types.put(13, MeshType.BLOCK);
+		mesh_types.put(14, MeshType.BLOCK);
+		mesh_types.put(15, MeshType.BLOCK);
+		mesh_types.put(16, MeshType.BLOCK);
+		mesh_types.put(17, MeshType.BLOCK);
+		mesh_types.put(18, MeshType.BLOCK);//LEAVES(alpha)
+		mesh_types.put(19, MeshType.BLOCK);
+		mesh_types.put(20, MeshType.BLOCK);//GLASS(alpha)
+		mesh_types.put(21, MeshType.BLOCK);
+		mesh_types.put(22, MeshType.BLOCK);
+		mesh_types.put(23, MeshType.BLOCK);
+		mesh_types.put(24, MeshType.BLOCK);
+		mesh_types.put(25, MeshType.BLOCK);
+		mesh_types.put(30, MeshType.CROSS);//COBWEB
+		mesh_types.put(31, MeshType.CROSS);//TALL GRASS
+		mesh_types.put(32, MeshType.CROSS);//DEAD BUSH
+		mesh_types.put(35, MeshType.BLOCK);//WOOL
+		mesh_types.put(37, MeshType.CROSS);//FLOWER 1
+		mesh_types.put(38, MeshType.CROSS);//FLOWER 2
+		mesh_types.put(39, MeshType.CROSS);//MUSHROOM 1
+		mesh_types.put(40, MeshType.CROSS);//MUSHROOM 2		
+		mesh_types.put(41, MeshType.BLOCK);
+		mesh_types.put(42, MeshType.BLOCK);
+		mesh_types.put(43, MeshType.BLOCK);
+		mesh_types.put(44, MeshType.HALFBLOCK);//SLABS
+		mesh_types.put(45, MeshType.BLOCK);
+		mesh_types.put(46, MeshType.BLOCK);
+		mesh_types.put(47, MeshType.BLOCK);
+		mesh_types.put(48, MeshType.BLOCK);
+		mesh_types.put(49, MeshType.BLOCK);
+		mesh_types.put(50, MeshType.TORCH);//TORCH
+		mesh_types.put(51, MeshType.CROSS);//FIRE
+		mesh_types.put(52, MeshType.BLOCK);//SPAWNER(alpha)
+		mesh_types.put(53, MeshType.STAIRS);//WOOD STAIRS
+		mesh_types.put(54, MeshType.BLOCK);
+		mesh_types.put(56, MeshType.BLOCK);
+		mesh_types.put(57, MeshType.BLOCK);
+		mesh_types.put(58, MeshType.BLOCK);
+		mesh_types.put(59, MeshType.CROSS);//WHEAT
+		mesh_types.put(60, MeshType.BLOCK);
+		mesh_types.put(61, MeshType.BLOCK);
+		mesh_types.put(62, MeshType.BLOCK);
+		mesh_types.put(67, MeshType.STAIRS);//cobble stairs
+		mesh_types.put(73, MeshType.BLOCK);
+		mesh_types.put(74, MeshType.BLOCK);
+		mesh_types.put(75, MeshType.TORCH);//REDSTONE TORCH OFF
+		mesh_types.put(76, MeshType.TORCH);//REDSTONE TORCH ON
+		mesh_types.put(79, MeshType.BLOCK);//ICE(alpha?)
+		mesh_types.put(80, MeshType.BLOCK);
+		mesh_types.put(81, MeshType.BLOCK);
+		mesh_types.put(82, MeshType.BLOCK);
+		mesh_types.put(83, MeshType.CROSS);//SUGAR CANE
+		mesh_types.put(84, MeshType.BLOCK);
+		mesh_types.put(86, MeshType.BLOCK);
+		mesh_types.put(87, MeshType.BLOCK);
+		mesh_types.put(88, MeshType.BLOCK);
+		mesh_types.put(89, MeshType.BLOCK);
+		mesh_types.put(91, MeshType.BLOCK);
+		mesh_types.put(95, MeshType.BLOCK);
+		mesh_types.put(97, MeshType.BLOCK);
+		mesh_types.put(98, MeshType.BLOCK);
+		mesh_types.put(103, MeshType.BLOCK);
+		mesh_types.put(104, MeshType.CROSS);//PUMPKIN  STALK
+		mesh_types.put(105, MeshType.CROSS);//MELON STALK
+		mesh_types.put(106, MeshType.CROSS);//VINE
+		mesh_types.put(108, MeshType.STAIRS);//brick stairs
+		mesh_types.put(109, MeshType.STAIRS);//stone brick stairs
+		mesh_types.put(110, MeshType.BLOCK);
+		mesh_types.put(112, MeshType.BLOCK);
+		mesh_types.put(114, MeshType.STAIRS);//nether brick stairs
+		mesh_types.put(115, MeshType.CROSS);//NETHERWART
+		mesh_types.put(121, MeshType.BLOCK);
+		mesh_types.put(123, MeshType.BLOCK);
+		mesh_types.put(124, MeshType.BLOCK);		
+
+		
 		identifier=ident;
 		material=mtl;
+		colors = MainWindow.settings.minecraft_colors;
 		vertices=new LinkedList<Vertex>();
 		vertex_map=new TreeMap<Vertex, Integer>();
 		faces=new LinkedList<OBJFile.Face>();
@@ -532,6 +663,147 @@ public class OBJFile {
 		faces.add(face);
 	}
 
+	private final int getValue(boolean is_anvil, int [] array, int x, int y, int z, int ymax)
+	{
+		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
+		if(is_anvil)
+			return array[x + (z * 16) + (y * 16) * 16];
+		else
+			return array[y + (z * 128) + (x * 128) * 16];
+	}
+	
+	
+	private final byte getValue(boolean is_anvil, byte [] array, int x, int y, int z, int ymax)
+	{
+		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
+		if(is_anvil)
+			return array[x + (z * 16) + (y * 16) * 16];
+		else
+			return array[y + (z * 128) + (x * 128) * 16];
+	}
+
+	
+	public void addChunk(Chunk chunk, Rectangle bounds, int ymin, int ymax)
+	{
+		int pos_x=chunk.getPosX();
+		int pos_z=chunk.getPosZ();
+		int xmin=bounds.x-pos_x*16;
+		int zmin=bounds.y-pos_z*16;
+		int xmax=bounds.x+bounds.width-pos_x*16;
+		int zmax=bounds.y+bounds.height-pos_z*16;
+
+		if(xmin>15 || zmin>15 || xmax<0 || zmax<0) return;
+
+		if(xmin<0) xmin=0;
+		if(zmin<0) zmin=0;
+		if(xmax>15) xmax=15;
+		if(zmax>15) zmax=15;
+		
+		boolean is_anvil=chunk.isAnvil();
+
+		boolean drawside[]=new boolean[6];
+
+		int BlockID;
+		byte BlockData;
+		Blocks bd=chunk.getBlocks();
+		int blocks[]=bd.id;
+		byte data[]=bd.data;
+
+		int ymax_f;
+		if(is_anvil)
+			ymax_f=blocks.length/(16*16);
+		else 
+			ymax_f=128;
+		
+		if(ymax>ymax_f)
+			ymax=ymax_f;
+
+		int x,y,z,rx,rz;
+		for(z = zmin; z <= zmax; z++)
+		{
+			for(x = xmin; x <= xmax; x++)
+			{
+				for(y = ymin; y < ymax; y++)
+				{						
+					BlockID=getValue(is_anvil,blocks, x, y, z, ymax);
+					BlockData=getValue(is_anvil,data, x, y, z, ymax);
+
+					if(BlockID==0) continue;
+
+					if(y==ymax-1 || isDrawable(BlockID,getValue(is_anvil,blocks,x,y+1,z,ymax)))
+						drawside[0]=true; else drawside[0]=false;
+					if(y==ymin || isDrawable(BlockID,getValue(is_anvil,blocks,x,y-1,z,ymax)))
+						drawside[1]=true; else drawside[1]=false;
+					if(x==xmin || isDrawable(BlockID,getValue(is_anvil,blocks,x-1,y,z,ymax)))
+						drawside[2]=true; else drawside[2]=false;
+					if(x==xmax || isDrawable(BlockID,getValue(is_anvil,blocks,x+1,y,z,ymax)))
+						drawside[3]=true; else drawside[3]=false;
+					if(z==zmin || isDrawable(BlockID,getValue(is_anvil,blocks,x,y,z-1,ymax)))
+						drawside[4]=true; else drawside[4]=false;
+					if(z==zmax || isDrawable(BlockID,getValue(is_anvil,blocks,x,y,z+1,ymax)))
+						drawside[5]=true; else drawside[5]=false;
+
+					rx=x+pos_x*16;
+					rz=z+pos_z*16;
+					
+					Transform identity=new Transform();
+					MeshType mt=mesh_types.get(BlockID);
+					if(mt!=null)
+					{
+						switch(mt)
+						{
+						case BLOCK:
+							addCube(rx, y, rz, BlockID, BlockData, drawside,identity);
+							break;
+						case STAIRS:
+							addStairs(rx, y, rz, BlockID, BlockData, drawside);
+							break;
+						case HALFBLOCK:
+							addHalfblock(rx, y, rz, BlockID, BlockData, drawside);
+							break;
+						case LIQUID:
+							addLiquid(rx, y, rz, BlockID, BlockData, drawside);
+							break;
+						case SNOW:
+							addSnow(rx, y,rz, BlockID, BlockData, drawside);
+						case CROSS:
+							addCross(rx, y, rz, BlockID, BlockData,identity);
+							break;
+						case TORCH:
+							addTorch(rx, y, rz, BlockID, BlockData, drawside);
+							break;
+						default:
+						}
+					}
+				}									
+			}
+		}		
+	}
+
+	/**
+	 * Private method used for checking if the given block ID is drawable 
+	 * from the point of view of of a neighboring block.
+	 * @param block_id block id of block being checked
+	 * @param neighbour_id block id of its neighbor
+	 * @return is it drawable
+	 */
+	private boolean isDrawable(int block_id, int neighbour_id)
+	{
+		Color nc=colors.getColor(neighbour_id,(byte) 0);
+		MeshType nm=mesh_types.get(neighbour_id);
+
+		if(block_id==8 && nc!=null && nm==MeshType.BLOCK) return false;
+		if(block_id==9 && nc!=null && nm==MeshType.BLOCK) return false;			
+
+		if(transparent_blocks.contains(neighbour_id) || nc==null || nm!=MeshType.BLOCK)
+			return true;
+
+		//TODO: this is linked to not drawing unknown chunks - remove when removing other comment
+		if(colors.getColor(block_id,(byte) 0)==null)
+			return true;
+
+		return false;
+	}
 }
 
 /**
