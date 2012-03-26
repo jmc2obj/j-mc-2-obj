@@ -15,16 +15,19 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class Settings extends JFrame implements WindowListener {
+public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
 
@@ -39,6 +42,8 @@ public class Settings extends JFrame implements WindowListener {
 	
 	private JTextField tfScale;
 	private JLabel lScaleV;
+	
+	private JCheckBox cbTexAlpha;
 
 	@SuppressWarnings("serial")
 	public Settings()
@@ -71,13 +76,19 @@ public class Settings extends JFrame implements WindowListener {
 		pScale.add(lScale);
 		pScale.add(tfScale);
 		pScale.add(lScaleV);
+		JPanel pTexAlpha=new JPanel();
+		pTexAlpha.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pTexAlpha.setLayout(new BoxLayout(pTexAlpha, BoxLayout.LINE_AXIS));
+		cbTexAlpha=new JCheckBox("Export alpha textures");
+		cbTexAlpha.addChangeListener(this);
+		pTexAlpha.add(cbTexAlpha);
 
 		JButton tex_mc=new JButton("Split textures from minecraft");		
 		tex_mc.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Texsplit split = new Texsplit();
-				split.splitTextures(chooseTextureDestination());
+				split.splitTextures(chooseTextureDestination(),cbTexAlpha.isSelected());
 			}
 		});
 		JButton tex_custom=new JButton("Split custom textures");		
@@ -90,7 +101,7 @@ public class Settings extends JFrame implements WindowListener {
 				if(retval==JFileChooser.APPROVE_OPTION)
 				{					
 					Texsplit split = new Texsplit(jfc.getSelectedFile());
-					split.splitTextures(chooseTextureDestination());
+					split.splitTextures(chooseTextureDestination(),cbTexAlpha.isSelected());
 				}
 			}
 		});
@@ -105,13 +116,15 @@ public class Settings extends JFrame implements WindowListener {
 			}
 		});
 
+		pTexAlpha.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pScale.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tex_mc.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tex_custom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		reset.setAlignmentX(Component.LEFT_ALIGNMENT);
 				
 		mp.add(pScale);
-		mp.add(Box.createRigidArea(new Dimension(0, 10)));
+		mp.add(pTexAlpha);
+		mp.add(Box.createRigidArea(new Dimension(0, 10)));		
 		mp.add(tex_mc);
 		mp.add(tex_custom);
 		mp.add(Box.createVerticalGlue());
@@ -119,6 +132,8 @@ public class Settings extends JFrame implements WindowListener {
 		
 		mp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
+		loadSettingsAfter();
+		
 		addWindowListener(this);
 	}
 
@@ -159,13 +174,19 @@ public class Settings extends JFrame implements WindowListener {
 	private void loadSettings()
 	{
 		last_loaded_map=prefs.get("LAST_MAP", "");
-		default_scale=prefs.getFloat("DEFAULT_SCALE",1.0f);
+		default_scale=prefs.getFloat("DEFAULT_SCALE",1.0f);	
+	}
+	
+	private void loadSettingsAfter()
+	{
+		cbTexAlpha.setSelected(prefs.getBoolean("TEX_ALPHA", true));//?????	
 	}
 
 	private void saveSettings()
 	{
 		prefs.put("LAST_MAP", last_loaded_map);
 		prefs.putFloat("DEFAULT_SCALE", default_scale);
+		prefs.putBoolean("TEX_ALPHA", cbTexAlpha.isSelected());
 	}
 	
 	private void resetSettings()
@@ -234,5 +255,11 @@ public class Settings extends JFrame implements WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent e) {					
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		saveSettings();
+		
 	}
 }
