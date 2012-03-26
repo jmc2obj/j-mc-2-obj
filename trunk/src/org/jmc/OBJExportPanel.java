@@ -10,6 +10,7 @@ package org.jmc;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -21,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -28,8 +30,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+
+import org.jmc.OBJExportOptions.OffsetType;
 
 /**
  * A thread used and UI for saving an OBJ file.
@@ -62,6 +67,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	JTextField tfSavePath;
 	JButton bRun,bStop;
 	JButton bOptions;
+	
 
 	/**
 	 * Main constructor.
@@ -198,7 +204,21 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	@Override
 	public void run() {
 
-
+		OffsetType offset_type=options.getOffsetType();
+		Point offset_point=options.getCustomOffset();
+		switch(offset_type)
+		{
+		case NO_OFFSET:
+			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
+			break;
+		case CENTER_OFFSET:
+			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
+			break;
+		case CUSTOM_OFFSET:
+			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
+			break;
+		}
+		
 		File exportpath=new File(tfSavePath.getText());
 		
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
@@ -249,8 +269,23 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			int czs=(int)Math.floor(bounds.y/16.0f);
 			int cxe=(int)Math.ceil((bounds.x+bounds.width)/16.0f);
 			int cze=(int)Math.ceil((bounds.y+bounds.height)/16.0f);
-			int oxs=(cxe-cxs)/-2;
-			int ozs=(cze-czs)/-2;
+			int oxs=0,ozs=0;
+			
+			if(offset_type==OffsetType.NO_OFFSET)
+			{
+				oxs=cxs;
+				ozs=czs;
+			}
+			else if(offset_type==OffsetType.CENTER_OFFSET)
+			{
+				oxs=(cxe-cxs)/-2;
+				ozs=(cze-czs)/-2;
+			}
+			else if(offset_type==OffsetType.CUSTOM_OFFSET)
+			{
+				oxs=cxs+offset_point.x;
+				ozs=czs+offset_point.y;
+			}
 
 			progress.setMaximum((cxe-cxs)*(cze-czs));
 
@@ -300,6 +335,8 @@ class OBJExportOptions extends JPanel
 {
 	
 	private JTextField tfScale;
+	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
+	private JTextField tfXOffset,tfZOffset;
 	
 	public OBJExportOptions() {
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -313,7 +350,107 @@ class OBJExportOptions extends JPanel
 		pScale.add(lScale);
 		pScale.add(tfScale);
 		
+		JPanel pOffset=new JPanel();
+		pOffset.setLayout(new BoxLayout(pOffset,BoxLayout.LINE_AXIS));
+		pOffset.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		JLabel lOffset=new JLabel("Offset: ");
+		rbNoOffset=new JRadioButton("None");
+		rbCenterOffset=new JRadioButton("Center");
+		rbCustomOffset=new JRadioButton("Custom");
+		tfXOffset=new JTextField("0");
+		tfZOffset=new JTextField("0");
+		pOffset.add(lOffset);
+		pOffset.add(rbNoOffset);
+		pOffset.add(rbCenterOffset);
+		pOffset.add(rbCustomOffset);
+		pOffset.add(tfXOffset);
+		pOffset.add(tfZOffset);
+		
+		ButtonGroup gOffset=new ButtonGroup();
+		gOffset.add(rbNoOffset);
+		gOffset.add(rbCenterOffset);
+		gOffset.add(rbCustomOffset);
+		rbNoOffset.setActionCommand("none");
+		rbCenterOffset.setActionCommand("center");
+		rbCustomOffset.setActionCommand("custom");
+		
+		AbstractAction rbOffsetAction=new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				if(ev.getActionCommand().equals("custom"))
+				{
+					tfXOffset.setEnabled(true);
+					tfZOffset.setEnabled(true);
+				}
+				else
+				{
+					tfXOffset.setEnabled(false);
+					tfZOffset.setEnabled(false);
+				}
+				
+				int x=Integer.parseInt(tfXOffset.getText());
+				int z=Integer.parseInt(tfZOffset.getText());
+				
+				if(ev.getActionCommand().equals("none"))
+					MainWindow.settings.setOffset(0,x,z);
+				else if(ev.getActionCommand().equals("center"))
+					MainWindow.settings.setOffset(1,x,z);
+				else if(ev.getActionCommand().equals("custom"))
+					MainWindow.settings.setOffset(2,x,z);
+			}
+		};
+		
+		rbNoOffset.addActionListener(rbOffsetAction);
+		rbCenterOffset.addActionListener(rbOffsetAction);
+		rbCustomOffset.addActionListener(rbOffsetAction);
+		
+		switch(MainWindow.settings.getOffsetType())
+		{
+		case 0:
+			rbNoOffset.setSelected(true);
+			tfXOffset.setEnabled(false);
+			tfZOffset.setEnabled(false);
+			break;
+		case 1:
+			rbCenterOffset.setSelected(true);
+			tfXOffset.setEnabled(false);
+			tfZOffset.setEnabled(false);
+			break;
+		case 2:
+			rbCustomOffset.setSelected(true);
+			tfXOffset.setEnabled(true);
+			tfZOffset.setEnabled(true);
+			break;
+		}
+		Point p=MainWindow.settings.getOffset();
+		tfXOffset.setText(""+p.x);
+		tfZOffset.setText(""+p.y);
+		
 		add(pScale);
+		add(pOffset);
+	}
+	
+	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
+	
+	public OffsetType getOffsetType()
+	{
+		if(rbNoOffset.isSelected())
+			return OffsetType.NO_OFFSET;
+		
+		if(rbCenterOffset.isSelected())
+			return OffsetType.CENTER_OFFSET;
+		
+		if(rbCustomOffset.isSelected())
+			return OffsetType.CUSTOM_OFFSET;
+		
+		return OffsetType.NO_OFFSET;
+	}
+	
+	public Point getCustomOffset()
+	{
+		int x=Integer.parseInt(tfXOffset.getText());
+		int z=Integer.parseInt(tfZOffset.getText());
+		return new Point(x,z);
 	}
 	
 	public float getScale()

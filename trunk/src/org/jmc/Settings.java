@@ -1,8 +1,8 @@
 package org.jmc;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -18,10 +18,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -31,18 +29,14 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
 
-	private String last_loaded_map;
-	private float default_scale;
+	private String last_loaded_map;	
 	
 	public Colors minecraft_colors; 
 	public Textures minecraft_textures;
 
 
 	private Preferences prefs;
-	
-	private JTextField tfScale;
-	private JLabel lScaleV;
-	
+
 	private JCheckBox cbTexAlpha;
 
 	@SuppressWarnings("serial")
@@ -63,19 +57,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		add(mp);
 
 		mp.setLayout(new BoxLayout(mp, BoxLayout.PAGE_AXIS));
-		
-		JPanel pScale=new JPanel();
-		pScale.setLayout(new BoxLayout(pScale, BoxLayout.LINE_AXIS));
-		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lScale=new JLabel("Default export map scale: ");
-		tfScale = new JTextField();
-		tfScale.getDocument().addDocumentListener(document_listener);
-		lScaleV=new JLabel("Number format error!");
-		lScaleV.setForeground(Color.red);
-		lScaleV.setVisible(false);
-		pScale.add(lScale);
-		pScale.add(tfScale);
-		pScale.add(lScaleV);
+				
 		JPanel pTexAlpha=new JPanel();
 		pTexAlpha.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pTexAlpha.setLayout(new BoxLayout(pTexAlpha, BoxLayout.LINE_AXIS));
@@ -117,12 +99,10 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		});
 
 		pTexAlpha.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pScale.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tex_mc.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tex_custom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		reset.setAlignmentX(Component.LEFT_ALIGNMENT);
 				
-		mp.add(pScale);
 		mp.add(pTexAlpha);
 		mp.add(Box.createRigidArea(new Dimension(0, 10)));		
 		mp.add(tex_mc);
@@ -148,33 +128,46 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		return last_loaded_map;
 	}
 	
+	
+	public void setDefaultScale(float val)
+	{		
+		prefs.putFloat("DEFAULT_SCALE", val);
+	}
+	
 	public float getDefaultScale()
 	{
-		return default_scale;
+		return prefs.getFloat("DEFAULT_SCALE",1.0f);
+	}
+	
+	public void setOffset(int type, int x, int z)
+	{
+		prefs.putInt("OFFSET_TYPE", type);
+		prefs.putInt("OFFSET_X", x);
+		prefs.putInt("OFFSET_Z", z);
+	}
+	
+	public int getOffsetType()
+	{
+		return prefs.getInt("OFFSET_TYPE", 0);		
+	}
+	
+	public Point getOffset()
+	{
+		return new Point(prefs.getInt("OFFSET_X", 0),prefs.getInt("OFFSET_Z", 0));
 	}
 	
 	private void getFields()
 	{
-		try{
-			default_scale=Float.parseFloat(tfScale.getText());
-			lScaleV.setVisible(false);
-		}catch(NumberFormatException e)
-		{
-			lScaleV.setVisible(true);
-		}
-		
 		saveSettings();
 	}
 	
 	private void setFields()
-	{
-		tfScale.setText(""+default_scale);
+	{		
 	}
 
 	private void loadSettings()
 	{
-		last_loaded_map=prefs.get("LAST_MAP", "");
-		default_scale=prefs.getFloat("DEFAULT_SCALE",1.0f);	
+		last_loaded_map=prefs.get("LAST_MAP", "");	
 	}
 	
 	private void loadSettingsAfter()
@@ -184,8 +177,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private void saveSettings()
 	{
-		prefs.put("LAST_MAP", last_loaded_map);
-		prefs.putFloat("DEFAULT_SCALE", default_scale);
+		prefs.put("LAST_MAP", last_loaded_map);		
 		prefs.putBoolean("TEX_ALPHA", cbTexAlpha.isSelected());
 	}
 	
