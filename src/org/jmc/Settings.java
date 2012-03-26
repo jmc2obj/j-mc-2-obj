@@ -28,8 +28,6 @@ import javax.swing.event.DocumentListener;
 public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
-
-	private String last_loaded_map;	
 	
 	public Colors minecraft_colors; 
 	public Textures minecraft_textures;
@@ -119,13 +117,12 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	public void setLastLoadedMap(String path)
 	{
-		last_loaded_map=path;
-		saveSettings();
+		prefs.put("LAST_MAP", path);	
 	}
 	
 	public String getLastLoadedMap()
 	{
-		return last_loaded_map;
+		return prefs.get("LAST_MAP", "");
 	}
 	
 	
@@ -156,6 +153,21 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		return new Point(prefs.getInt("OFFSET_X", 0),prefs.getInt("OFFSET_Z", 0));
 	}
 	
+	public void setLastExportPath(String path)
+	{
+		prefs.put("LAST_EXPORT_PATH", path);	
+	}
+	
+	public String getLastExportPath()
+	{
+		File cwd=new File(".");
+		String str="";
+		try{
+		str=cwd.getCanonicalPath();
+		}catch(Exception e){}
+		return prefs.get("LAST_EXPORT_PATH", str);
+	}
+	
 	private void getFields()
 	{
 		saveSettings();
@@ -166,8 +178,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 	}
 
 	private void loadSettings()
-	{
-		last_loaded_map=prefs.get("LAST_MAP", "");	
+	{		
 	}
 	
 	private void loadSettingsAfter()
@@ -176,8 +187,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 	}
 
 	private void saveSettings()
-	{
-		prefs.put("LAST_MAP", last_loaded_map);		
+	{		
 		prefs.putBoolean("TEX_ALPHA", cbTexAlpha.isSelected());
 	}
 	
