@@ -59,8 +59,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	//UI elements (not described)
 	OBJExportOptions options;
 	JProgressBar progress;
-	JTextField tfObj;
-	JTextField tfMtl;
+	JTextField tfSavePath;
 	JButton bRun,bStop;
 	JButton bOptions;
 
@@ -88,28 +87,21 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		
 		main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
 		
-		JPanel pObj=new JPanel();
-		pObj.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lObj=new JLabel("OBJ file: ");
-		pObj.setLayout(new BoxLayout(pObj, BoxLayout.LINE_AXIS));
-		tfObj = new JTextField("minecraft.obj");		
+		JPanel pSavePath=new JPanel();
+		pSavePath.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		JLabel lSavePath=new JLabel("Save folder: ");
+		pSavePath.setLayout(new BoxLayout(pSavePath, BoxLayout.LINE_AXIS));		
+		tfSavePath = new JTextField();		
 		JButton bObj=new JButton("Browse");
-		pObj.add(lObj);
-		pObj.add(tfObj);
-		pObj.add(bObj);
-		main.add(pObj);
+		pSavePath.add(lSavePath);
+		pSavePath.add(tfSavePath);
+		pSavePath.add(bObj);
+		main.add(pSavePath);
 		
-		
-		JPanel pMtl=new JPanel();
-		pMtl.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lMtl=new JLabel("MTL file: ");
-		pMtl.setLayout(new BoxLayout(pMtl, BoxLayout.LINE_AXIS));
-		tfMtl = new JTextField("minecraft.mtl");
-		JButton bMtl=new JButton("Browse");
-		pMtl.add(lMtl);
-		pMtl.add(tfMtl);
-		pMtl.add(bMtl);
-		main.add(pMtl);
+		File cwd=new File(".");
+		try{
+		tfSavePath.setText(cwd.getCanonicalPath());
+		}catch(Exception e){}
 		
 		JPanel pOptions=new JPanel();
 		pOptions.setLayout(new BoxLayout(pOptions, BoxLayout.LINE_AXIS));
@@ -147,86 +139,15 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				JFileChooser jfcSave=new JFileChooser();
-				jfcSave.setDialogTitle("Save OBJ file");
+				jfcSave.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				jfcSave.setDialogTitle("Save folder");
 				if(jfcSave.showSaveDialog(OBJExportPanel.this)!=JFileChooser.APPROVE_OPTION)
 				{
 					return;
 				}
 
-				File objfile=jfcSave.getSelectedFile();
-				if(!objfile.getName().endsWith(".obj"))
-				{
-					objfile=new File(objfile.getAbsolutePath()+".obj");
-				}
-
-				if(objfile.exists())
-				{
-					if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "File exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
-					{												
-						return;
-					}
-				}
-				
-				File mtlfile=new File(objfile.getParent()+"/minecraft.mtl");
-				
-				if(mtlfile.exists())
-				{
-					int ret=JOptionPane.showConfirmDialog(OBJExportPanel.this, "This folder already contains the linked minecraft.mtl file. Do you want to overwrite it?");
-					if(ret!=JOptionPane.YES_OPTION)
-					{
-						jfcSave.setDialogTitle("Save MTL file");
-						if(jfcSave.showSaveDialog(OBJExportPanel.this)!=JFileChooser.APPROVE_OPTION)
-						{
-							return;
-						}
-
-						mtlfile=jfcSave.getSelectedFile();
-						if(!mtlfile.getName().endsWith(".mtl"))
-						{
-							mtlfile=new File(mtlfile.getAbsolutePath()+".mtl");
-						}
-
-						if(mtlfile.exists())
-						{
-							if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "File exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
-							{												
-								return;
-							}
-						}
-					}
-				}
-				
-				tfMtl.setText(mtlfile.getAbsolutePath());
-				tfObj.setText(objfile.getAbsolutePath());
-			}
-		});
-		
-		bMtl.addActionListener(new AbstractAction() {			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-				JFileChooser jfcSave=new JFileChooser();
-				jfcSave.setDialogTitle("Save MTL file");
-				if(jfcSave.showSaveDialog(OBJExportPanel.this)!=JFileChooser.APPROVE_OPTION)
-				{
-					return;
-				}
-
-				File mtlfile=jfcSave.getSelectedFile();
-				if(!mtlfile.getName().endsWith(".mtl"))
-				{
-					mtlfile=new File(mtlfile.getAbsolutePath()+".mtl");
-				}
-
-				if(mtlfile.exists())
-				{
-					if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "File exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
-					{												
-						return;
-					}
-				}
-				
-				tfMtl.setText(mtlfile.getAbsolutePath());
+				File save_path=jfcSave.getSelectedFile();													
+				tfSavePath.setText(save_path.getAbsolutePath());
 			}
 		});
 		
@@ -278,8 +199,26 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	public void run() {
 
 
-		File objfile=new File(tfObj.getText());
-		File mtlfile=new File(tfMtl.getText());
+		File exportpath=new File(tfSavePath.getText());
+		
+		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
+		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
+		
+		if(objfile.exists())
+		{
+			if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+			{												
+				return;
+			}
+		}
+		
+		if(mtlfile.exists())
+		{
+			if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+			{												
+				return;
+			}
+		}
 		
 		try {
 			objfile.createNewFile();
@@ -301,6 +240,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			MTLFile mtl=new MTLFile(mtlfile);
 			
 			mtl.saveMTLFile();
+			
+			MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
 
 			mtl.header(writer,objfile);
 
@@ -340,6 +281,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				}
 
 			writer.close();
+			
+			MainWindow.log("Saved model to "+objfile.getAbsolutePath());
 
 		} catch (Exception e) {
 			e.printStackTrace();
