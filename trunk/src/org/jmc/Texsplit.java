@@ -1,6 +1,7 @@
 package org.jmc;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class Texsplit
 		}
 	}
 	
-	public void splitTextures(File destination)
+	public void splitTextures(File destination, boolean save_alpha)
 	{
 	
 		if(destination==null)
@@ -107,6 +108,14 @@ public class Texsplit
 						File f=new File(destination.getAbsolutePath() + "/" + counter + ".png");
 						ImageIO.write(im, "png", f);				
 						MainWindow.log("Saving texture to: "+f.getAbsolutePath());
+						
+						if(save_alpha)
+						{
+							convertToAlpha(im);
+							File f2=new File(destination.getAbsolutePath() + "/" + counter + "_a.png");
+							ImageIO.write(im, "png", f2);				
+							MainWindow.log("Saving texture alpha to: "+f2.getAbsolutePath());
+						}
 					}
 				} 
 				catch (IOException e)
@@ -116,5 +125,35 @@ public class Texsplit
 				}
 			}
 		}
+	}
+	
+	private int buffer[]=null;
+	
+	private void convertToAlpha(BufferedImage img)
+	{
+		int w=img.getWidth();
+		int h=img.getHeight();
+		int c=img.getColorModel().getPixelSize()/8;
+		
+		if(c!=4)
+		{
+			MainWindow.log("ERROR: texture is not 32-bit!");
+		}
+		
+		if(buffer==null || buffer.length<w*h*c)
+			buffer=new int[w*h*c];
+		
+		WritableRaster raster=img.getRaster();
+		raster.getPixels(0, 0, w, h, buffer);
+		
+		for(int i=0; i<w*h; i++)
+		{
+			buffer[4*i]=buffer[4*i+3];
+			buffer[4*i+1]=buffer[4*i+3];
+			buffer[4*i+2]=buffer[4*i+3];
+			buffer[4*i+3]=255;
+		}
+		
+		raster.setPixels(0, 0, w, h, buffer);
 	}
 }
