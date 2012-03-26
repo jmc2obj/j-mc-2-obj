@@ -99,10 +99,7 @@ public class MTLFile {
 	 */
 	public void header(PrintWriter out, File objfile)
 	{
-		if(objfile.getParent()!=null && mtl_file.getParent()!=null && objfile.getParent().equals(mtl_file.getParent()))
-			out.println("mtllib "+mtl_file.getName());
-		else
-			out.println("mtllib "+mtl_file.getAbsolutePath());
+		out.println("mtllib "+mtl_file.getName());		
 		out.println();
 	}
 
