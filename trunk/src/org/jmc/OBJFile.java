@@ -84,11 +84,11 @@ public class OBJFile {
 	 * These blocks allow us to see what's behind them.
 	 * Non-transparent blocks make the sides of neighboring blocks not render.
 	 */
-	private Set<Integer> transparent_blocks;
+	private Set<Short> transparent_blocks;
 	/**
 	 * A map of mesh types for given block IDs.
 	 */
-	private Map<Integer, MeshType> mesh_types;
+	private Map<Short, MeshType> mesh_types;
 	
 	private Colors colors;
 	
@@ -130,116 +130,116 @@ public class OBJFile {
 	 */
 	public OBJFile(String ident, MTLFile mtl)
 	{
-		transparent_blocks=new TreeSet<Integer>();
-		transparent_blocks.add(-1);
-		transparent_blocks.add(0);
-		transparent_blocks.add(8);
-		transparent_blocks.add(9);
-		transparent_blocks.add(20);
-		transparent_blocks.add(26);
-		transparent_blocks.add(27);
-		transparent_blocks.add(30);
-		transparent_blocks.add(31);
-		transparent_blocks.add(32);
-		transparent_blocks.add(34);
-		transparent_blocks.add(37);
-		transparent_blocks.add(38);
-		transparent_blocks.add(39);
-		transparent_blocks.add(40);
-		transparent_blocks.add(50);
-		transparent_blocks.add(51);
-		transparent_blocks.add(52);
-		transparent_blocks.add(53);
-		transparent_blocks.add(55);
-		transparent_blocks.add(59);
-		transparent_blocks.add(63);
+		transparent_blocks=new TreeSet<Short>();
+		transparent_blocks.add((short) -1);
+		transparent_blocks.add((short) 0);
+		transparent_blocks.add((short) 8);
+		transparent_blocks.add((short) 9);
+		transparent_blocks.add((short) 20);
+		transparent_blocks.add((short) 26);
+		transparent_blocks.add((short) 27);
+		transparent_blocks.add((short) 30);
+		transparent_blocks.add((short) 31);
+		transparent_blocks.add((short) 32);
+		transparent_blocks.add((short) 34);
+		transparent_blocks.add((short) 37);
+		transparent_blocks.add((short) 38);
+		transparent_blocks.add((short) 39);
+		transparent_blocks.add((short) 40);
+		transparent_blocks.add((short) 50);
+		transparent_blocks.add((short) 51);
+		transparent_blocks.add((short) 52);
+		transparent_blocks.add((short) 53);
+		transparent_blocks.add((short) 55);
+		transparent_blocks.add((short) 59);
+		transparent_blocks.add((short) 63);
 
-		mesh_types=new TreeMap<Integer, OBJFile.MeshType>();
-		mesh_types.put(1, MeshType.BLOCK);
-		mesh_types.put(2, MeshType.BLOCK);
-		mesh_types.put(3, MeshType.BLOCK);
-		mesh_types.put(4, MeshType.BLOCK);
-		mesh_types.put(5, MeshType.BLOCK);
-		mesh_types.put(7, MeshType.BLOCK);
-		mesh_types.put(8, MeshType.LIQUID);//WATER F
-		mesh_types.put(9, MeshType.BLOCK);//WATER S
-		mesh_types.put(10, MeshType.LIQUID);//LAVA F
-		mesh_types.put(11, MeshType.BLOCK);//LAVA S
-		mesh_types.put(12, MeshType.BLOCK);		
-		mesh_types.put(13, MeshType.BLOCK);
-		mesh_types.put(14, MeshType.BLOCK);
-		mesh_types.put(15, MeshType.BLOCK);
-		mesh_types.put(16, MeshType.BLOCK);
-		mesh_types.put(17, MeshType.BLOCK);
-		mesh_types.put(18, MeshType.BLOCK);//LEAVES(alpha)
-		mesh_types.put(19, MeshType.BLOCK);
-		mesh_types.put(20, MeshType.BLOCK);//GLASS(alpha)
-		mesh_types.put(21, MeshType.BLOCK);
-		mesh_types.put(22, MeshType.BLOCK);
-		mesh_types.put(23, MeshType.BLOCK);
-		mesh_types.put(24, MeshType.BLOCK);
-		mesh_types.put(25, MeshType.BLOCK);
-		mesh_types.put(30, MeshType.CROSS);//COBWEB
-		mesh_types.put(31, MeshType.CROSS);//TALL GRASS
-		mesh_types.put(32, MeshType.CROSS);//DEAD BUSH
-		mesh_types.put(35, MeshType.BLOCK);//WOOL
-		mesh_types.put(37, MeshType.CROSS);//FLOWER 1
-		mesh_types.put(38, MeshType.CROSS);//FLOWER 2
-		mesh_types.put(39, MeshType.CROSS);//MUSHROOM 1
-		mesh_types.put(40, MeshType.CROSS);//MUSHROOM 2		
-		mesh_types.put(41, MeshType.BLOCK);
-		mesh_types.put(42, MeshType.BLOCK);
-		mesh_types.put(43, MeshType.BLOCK);
-		mesh_types.put(44, MeshType.HALFBLOCK);//SLABS
-		mesh_types.put(45, MeshType.BLOCK);
-		mesh_types.put(46, MeshType.BLOCK);
-		mesh_types.put(47, MeshType.BLOCK);
-		mesh_types.put(48, MeshType.BLOCK);
-		mesh_types.put(49, MeshType.BLOCK);
-		mesh_types.put(50, MeshType.TORCH);//TORCH
-		mesh_types.put(51, MeshType.CROSS);//FIRE
-		mesh_types.put(52, MeshType.BLOCK);//SPAWNER(alpha)
-		mesh_types.put(53, MeshType.STAIRS);//WOOD STAIRS
-		mesh_types.put(54, MeshType.BLOCK);
-		mesh_types.put(56, MeshType.BLOCK);
-		mesh_types.put(57, MeshType.BLOCK);
-		mesh_types.put(58, MeshType.BLOCK);
-		mesh_types.put(59, MeshType.CROSS);//WHEAT
-		mesh_types.put(60, MeshType.BLOCK);
-		mesh_types.put(61, MeshType.BLOCK);
-		mesh_types.put(62, MeshType.BLOCK);
-		mesh_types.put(67, MeshType.STAIRS);//cobble stairs
-		mesh_types.put(73, MeshType.BLOCK);
-		mesh_types.put(74, MeshType.BLOCK);
-		mesh_types.put(75, MeshType.TORCH);//REDSTONE TORCH OFF
-		mesh_types.put(76, MeshType.TORCH);//REDSTONE TORCH ON
-		mesh_types.put(79, MeshType.BLOCK);//ICE(alpha?)
-		mesh_types.put(80, MeshType.BLOCK);
-		mesh_types.put(81, MeshType.BLOCK);
-		mesh_types.put(82, MeshType.BLOCK);
-		mesh_types.put(83, MeshType.CROSS);//SUGAR CANE
-		mesh_types.put(84, MeshType.BLOCK);
-		mesh_types.put(86, MeshType.BLOCK);
-		mesh_types.put(87, MeshType.BLOCK);
-		mesh_types.put(88, MeshType.BLOCK);
-		mesh_types.put(89, MeshType.BLOCK);
-		mesh_types.put(91, MeshType.BLOCK);
-		mesh_types.put(95, MeshType.BLOCK);
-		mesh_types.put(97, MeshType.BLOCK);
-		mesh_types.put(98, MeshType.BLOCK);
-		mesh_types.put(103, MeshType.BLOCK);
-		mesh_types.put(104, MeshType.CROSS);//PUMPKIN  STALK
-		mesh_types.put(105, MeshType.CROSS);//MELON STALK
-		mesh_types.put(106, MeshType.CROSS);//VINE
-		mesh_types.put(108, MeshType.STAIRS);//brick stairs
-		mesh_types.put(109, MeshType.STAIRS);//stone brick stairs
-		mesh_types.put(110, MeshType.BLOCK);
-		mesh_types.put(112, MeshType.BLOCK);
-		mesh_types.put(114, MeshType.STAIRS);//nether brick stairs
-		mesh_types.put(115, MeshType.CROSS);//NETHERWART
-		mesh_types.put(121, MeshType.BLOCK);
-		mesh_types.put(123, MeshType.BLOCK);
-		mesh_types.put(124, MeshType.BLOCK);		
+		mesh_types=new TreeMap<Short, OBJFile.MeshType>();
+		mesh_types.put((short) 1, MeshType.BLOCK);
+		mesh_types.put((short) 2, MeshType.BLOCK);
+		mesh_types.put((short) 3, MeshType.BLOCK);
+		mesh_types.put((short) 4, MeshType.BLOCK);
+		mesh_types.put((short) 5, MeshType.BLOCK);
+		mesh_types.put((short) 7, MeshType.BLOCK);
+		mesh_types.put((short) 8, MeshType.LIQUID);//WATER F
+		mesh_types.put((short) 9, MeshType.BLOCK);//WATER S
+		mesh_types.put((short) 10, MeshType.LIQUID);//LAVA F
+		mesh_types.put((short) 11, MeshType.BLOCK);//LAVA S
+		mesh_types.put((short) 12, MeshType.BLOCK);		
+		mesh_types.put((short) 13, MeshType.BLOCK);
+		mesh_types.put((short) 14, MeshType.BLOCK);
+		mesh_types.put((short) 15, MeshType.BLOCK);
+		mesh_types.put((short) 16, MeshType.BLOCK);
+		mesh_types.put((short) 17, MeshType.BLOCK);
+		mesh_types.put((short) 18, MeshType.BLOCK);//LEAVES(alpha)
+		mesh_types.put((short) 19, MeshType.BLOCK);
+		mesh_types.put((short) 20, MeshType.BLOCK);//GLASS(alpha)
+		mesh_types.put((short) 21, MeshType.BLOCK);
+		mesh_types.put((short) 22, MeshType.BLOCK);
+		mesh_types.put((short) 23, MeshType.BLOCK);
+		mesh_types.put((short) 24, MeshType.BLOCK);
+		mesh_types.put((short) 25, MeshType.BLOCK);
+		mesh_types.put((short) 30, MeshType.CROSS);//COBWEB
+		mesh_types.put((short) 31, MeshType.CROSS);//TALL GRASS
+		mesh_types.put((short) 32, MeshType.CROSS);//DEAD BUSH
+		mesh_types.put((short) 35, MeshType.BLOCK);//WOOL
+		mesh_types.put((short) 37, MeshType.CROSS);//FLOWER 1
+		mesh_types.put((short) 38, MeshType.CROSS);//FLOWER 2
+		mesh_types.put((short) 39, MeshType.CROSS);//MUSHROOM 1
+		mesh_types.put((short) 40, MeshType.CROSS);//MUSHROOM 2		
+		mesh_types.put((short) 41, MeshType.BLOCK);
+		mesh_types.put((short) 42, MeshType.BLOCK);
+		mesh_types.put((short) 43, MeshType.BLOCK);
+		mesh_types.put((short) 44, MeshType.HALFBLOCK);//SLABS
+		mesh_types.put((short) 45, MeshType.BLOCK);
+		mesh_types.put((short) 46, MeshType.BLOCK);
+		mesh_types.put((short) 47, MeshType.BLOCK);
+		mesh_types.put((short) 48, MeshType.BLOCK);
+		mesh_types.put((short) 49, MeshType.BLOCK);
+		mesh_types.put((short) 50, MeshType.TORCH);//TORCH
+		mesh_types.put((short) 51, MeshType.CROSS);//FIRE
+		mesh_types.put((short) 52, MeshType.BLOCK);//SPAWNER(alpha)
+		mesh_types.put((short) 53, MeshType.STAIRS);//WOOD STAIRS
+		mesh_types.put((short) 54, MeshType.BLOCK);
+		mesh_types.put((short) 56, MeshType.BLOCK);
+		mesh_types.put((short) 57, MeshType.BLOCK);
+		mesh_types.put((short) 58, MeshType.BLOCK);
+		mesh_types.put((short) 59, MeshType.CROSS);//WHEAT
+		mesh_types.put((short) 60, MeshType.BLOCK);
+		mesh_types.put((short) 61, MeshType.BLOCK);
+		mesh_types.put((short) 62, MeshType.BLOCK);
+		mesh_types.put((short) 67, MeshType.STAIRS);//cobble stairs
+		mesh_types.put((short) 73, MeshType.BLOCK);
+		mesh_types.put((short) 74, MeshType.BLOCK);
+		mesh_types.put((short) 75, MeshType.TORCH);//REDSTONE TORCH OFF
+		mesh_types.put((short) 76, MeshType.TORCH);//REDSTONE TORCH ON
+		mesh_types.put((short) 79, MeshType.BLOCK);//ICE(alpha?)
+		mesh_types.put((short) 80, MeshType.BLOCK);
+		mesh_types.put((short) 81, MeshType.BLOCK);
+		mesh_types.put((short) 82, MeshType.BLOCK);
+		mesh_types.put((short) 83, MeshType.CROSS);//SUGAR CANE
+		mesh_types.put((short) 84, MeshType.BLOCK);
+		mesh_types.put((short) 86, MeshType.BLOCK);
+		mesh_types.put((short) 87, MeshType.BLOCK);
+		mesh_types.put((short) 88, MeshType.BLOCK);
+		mesh_types.put((short) 89, MeshType.BLOCK);
+		mesh_types.put((short) 91, MeshType.BLOCK);
+		mesh_types.put((short) 95, MeshType.BLOCK);
+		mesh_types.put((short) 97, MeshType.BLOCK);
+		mesh_types.put((short) 98, MeshType.BLOCK);
+		mesh_types.put((short) 103, MeshType.BLOCK);
+		mesh_types.put((short) 104, MeshType.CROSS);//PUMPKIN  STALK
+		mesh_types.put((short) 105, MeshType.CROSS);//MELON STALK
+		mesh_types.put((short) 106, MeshType.CROSS);//VINE
+		mesh_types.put((short) 108, MeshType.STAIRS);//brick stairs
+		mesh_types.put((short) 109, MeshType.STAIRS);//stone brick stairs
+		mesh_types.put((short) 110, MeshType.BLOCK);
+		mesh_types.put((short) 112, MeshType.BLOCK);
+		mesh_types.put((short) 114, MeshType.STAIRS);//nether brick stairs
+		mesh_types.put((short) 115, MeshType.CROSS);//NETHERWART
+		mesh_types.put((short) 121, MeshType.BLOCK);
+		mesh_types.put((short) 123, MeshType.BLOCK);
+		mesh_types.put((short) 124, MeshType.BLOCK);		
 
 		
 		identifier=ident;
@@ -285,7 +285,7 @@ public class OBJFile {
 	 * @param sy scale in y axis
 	 * @param sz scale in z axis
 	 */
-	public void addCube(float x, float y, float z, int id, byte data, boolean [] drawside, Transform trans)
+	public void addCube(float x, float y, float z, short id, byte data, boolean [] drawside, Transform trans)
 	{
 		Vertex vertices[]=new Vertex[4];
 		
@@ -350,7 +350,7 @@ public class OBJFile {
 	 * @param id
 	 * @param data
 	 */
-	public void addCross(float x, float y, float z, int id, byte data, Transform trans)
+	public void addCross(float x, float y, float z, short id, byte data, Transform trans)
 	{
 		Transform move=new Transform();
 		move.translate(x, y, z);
@@ -378,7 +378,7 @@ public class OBJFile {
 	 * @param data
 	 * @param drawside
 	 */
-	public void addHalfblock(float x, float y, float z, int id, byte data, boolean [] drawside)
+	public void addHalfblock(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
 		Transform trans=new Transform();
 		trans.scale(1.0f, 0.5f, 1.0f);
@@ -396,7 +396,7 @@ public class OBJFile {
 	 * @param data
 	 * @param drawside
 	 */
-	public void addTorch(float x, float y, float z, int id, byte data, boolean [] drawside)
+	public void addTorch(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
 		Transform trans=new Transform();
 		trans.scale(0.2f, 0.9f, 0.2f);
@@ -433,7 +433,7 @@ public class OBJFile {
 	 * @param data
 	 * @param drawside
 	 */
-	public void addLiquid(float x, float y, float z, int id, byte data, boolean [] drawside)
+	public void addLiquid(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
 		//TODO: complete this
 		Transform trans=new Transform();
@@ -453,7 +453,7 @@ public class OBJFile {
 	 * @param data
 	 * @param drawside
 	 */
-	public void addSnow(float x, float y, float z, int id, byte data, boolean [] drawside)
+	public void addSnow(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
 		Transform trans=new Transform();
 		trans.scale(1.0f,(1.0f+data)/8.0f,1.0f);
@@ -470,7 +470,7 @@ public class OBJFile {
 	 * @param data
 	 * @param drawside
 	 */
-	public void addStairs(float x, float y, float z, int id, byte data, boolean [] drawside)
+	public void addStairs(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
 		int dir=data&3;
 		int up=data&4;
@@ -641,7 +641,7 @@ public class OBJFile {
 	 * @param side side of the object
 	 * @param id block id
 	 */
-	private void addFace(Vertex [] verts, Transform trans, Side side, int id, byte data)
+	private void addFace(Vertex [] verts, Transform trans, Side side, short id, byte data)
 	{
 		Face face=new Face();
 		face.side=side;
@@ -663,7 +663,7 @@ public class OBJFile {
 		faces.add(face);
 	}
 
-	private final int getValue(boolean is_anvil, int [] array, int x, int y, int z, int ymax)
+	private final short getValue(boolean is_anvil, short [] array, int x, int y, int z, int ymax)
 	{
 		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
 		if(is_anvil)
@@ -703,10 +703,10 @@ public class OBJFile {
 
 		boolean drawside[]=new boolean[6];
 
-		int BlockID;
+		short BlockID;
 		byte BlockData;
 		Blocks bd=chunk.getBlocks();
-		int blocks[]=bd.id;
+		short blocks[]=bd.id;
 		byte data[]=bd.data;
 
 		int ymax_f;
@@ -780,6 +780,84 @@ public class OBJFile {
 		}		
 	}
 
+	public void addChunkBuffer(ChunkDataBuffer chunk)
+	{
+		int x,y,z;
+		int xmin,xmax,ymin,ymax,zmin,zmax;
+		Rectangle xy,xz;
+		xy=chunk.getXYBoundaries();
+		xz=chunk.getXZBoundaries();
+		xmin=xy.x;
+		xmax=xmin+xy.width;
+		ymin=xy.y;
+		ymax=ymin+xy.height;
+		zmin=xz.y;
+		zmax=zmin+xz.height;
+		
+		short BlockID;
+		byte BlockData;
+		
+		boolean drawside[]=new boolean[6];
+		
+		for(z = zmin; z < zmax; z++)
+		{
+			for(x = xmin; x < xmax; x++)
+			{
+				for(y = ymin; y < ymax; y++)
+				{						
+					BlockID=chunk.getBlockID(x, y, z);
+					BlockData=chunk.getBlockData(x, y, z);
+
+					if(BlockID==0) continue;
+
+					if(y==ymax-1 || isDrawable(BlockID,chunk.getBlockID(x,y+1,z)))
+						drawside[0]=true; else drawside[0]=false;
+					if(y==ymin || isDrawable(BlockID,chunk.getBlockID(x,y-1,z)))
+						drawside[1]=true; else drawside[1]=false;
+					if(x==xmin || isDrawable(BlockID,chunk.getBlockID(x-1,y,z)))
+						drawside[2]=true; else drawside[2]=false;
+					if(x==xmax-1 || isDrawable(BlockID,chunk.getBlockID(x+1,y,z)))
+						drawside[3]=true; else drawside[3]=false;
+					if(z==zmin || isDrawable(BlockID,chunk.getBlockID(x,y,z-1)))
+						drawside[4]=true; else drawside[4]=false;
+					if(z==zmax-1 || isDrawable(BlockID,chunk.getBlockID(x,y,z+1)))
+						drawside[5]=true; else drawside[5]=false;
+					
+					Transform identity=new Transform();
+					MeshType mt=mesh_types.get(BlockID);
+					if(mt!=null)
+					{
+						switch(mt)
+						{
+						case BLOCK:
+							addCube(x, y, z, BlockID, BlockData, drawside,identity);
+							break;
+						case STAIRS:
+							addStairs(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case HALFBLOCK:
+							addHalfblock(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case LIQUID:
+							addLiquid(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case SNOW:
+							addSnow(x, y,z, BlockID, BlockData, drawside);
+						case CROSS:
+							addCross(x, y, z, BlockID, BlockData,identity);
+							break;
+						case TORCH:
+							addTorch(x, y, z, BlockID, BlockData, drawside);
+							break;
+						default:
+						}
+					}
+				}									
+			}
+		}		
+	}
+
+	
 	/**
 	 * Private method used for checking if the given block ID is drawable 
 	 * from the point of view of of a neighboring block.
@@ -787,7 +865,7 @@ public class OBJFile {
 	 * @param neighbour_id block id of its neighbor
 	 * @return is it drawable
 	 */
-	private boolean isDrawable(int block_id, int neighbour_id)
+	private boolean isDrawable(short block_id, short neighbour_id)
 	{
 		Color nc=colors.getColor(neighbour_id,(byte) 0);
 		MeshType nm=mesh_types.get(neighbour_id);

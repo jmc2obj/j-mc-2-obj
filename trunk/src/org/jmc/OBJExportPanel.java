@@ -285,17 +285,25 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				ozs=offset_point.y;
 			}
 
-			progress.setMaximum((cxe-cxs)*(cze-czs));
+			progress.setMaximum(100);
 			
 			OBJFile obj=new OBJFile("minecraft", mtl);
 			obj.setOffset(-oxs*16, -ymin, -ozs*16);
 			obj.setScale(scale);
+			
+			ChunkDataBuffer chunk_buffer=null;			
+			try{
+				chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
+			}catch (OutOfMemoryError e) {
+				return;
+			}
 
 			int progress_count=0;
+			int progress_max=(cxe-cxs)*(cze-czs);
 			for(int cx=cxs,ox=oxs; cx<=cxe && running; cx++,ox++)
 				for(int cz=czs,oz=ozs; cz<=cze && running; cz++,oz++,progress_count++)
 				{
-					progress.setValue(progress_count);
+					progress.setValue(progress_count/(2*progress_max));
 
 					Chunk chunk=null;
 					try{
@@ -307,10 +315,17 @@ public class OBJExportPanel extends JFrame implements Runnable {
 						continue;
 					}
 					
-					obj.addChunk(chunk,bounds,ymin, ymax);					
+					chunk_buffer.addChunk(chunk);
+					//obj.addChunk(chunk,bounds,ymin, ymax);
+					
 				}
 
+			
+			progress.setValue(50);
+			obj.addChunkBuffer(chunk_buffer);
+			progress.setValue(75);
 			obj.append(writer);
+			progress.setValue(100);
 			writer.close();
 			
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());

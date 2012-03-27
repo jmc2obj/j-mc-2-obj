@@ -122,13 +122,13 @@ public class Chunk {
 		 */
 		public Blocks(int num)
 		{
-			id=new int[num];
+			id=new short[num];
 			data=new byte[num];
 		}
 		/**
 		 * Block IDs.
 		 */
-		public int [] id;
+		public short [] id;
 		/**
 		 * Block meta-data.
 		 */
