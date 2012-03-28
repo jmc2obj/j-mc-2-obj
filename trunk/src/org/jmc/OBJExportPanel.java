@@ -58,7 +58,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	 * Altitude above which we are saving.
 	 */
 	int ymin,ymax;
-	
+
 	boolean running;
 
 	//UI elements (not described)
@@ -67,7 +67,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	JTextField tfSavePath;
 	JButton bRun,bStop;
 	JButton bOptions;
-	
+
 
 	/**
 	 * Main constructor.
@@ -87,12 +87,12 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		setSize(400,200);
 		setMinimumSize(new Dimension(400,0));
-		
+
 		JPanel main=new JPanel();
 		add(main);
-		
+
 		main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
-		
+
 		JPanel pSavePath=new JPanel();
 		pSavePath.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		JLabel lSavePath=new JLabel("Save folder: ");
@@ -103,22 +103,22 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		pSavePath.add(tfSavePath);
 		pSavePath.add(bObj);
 		main.add(pSavePath);
-		
+
 		tfSavePath.setText(MainWindow.settings.getLastExportPath());
-		
+
 		JPanel pOptions=new JPanel();
 		pOptions.setLayout(new BoxLayout(pOptions, BoxLayout.LINE_AXIS));
 		bOptions=new JButton("Show more options...");
 		bOptions.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pOptions.add(bOptions);
 		main.add(pOptions);
-		
+
 		options=new OBJExportOptions();
 		options.setVisible(false);
 		main.add(options);
-		
+
 		main.add(Box.createVerticalGlue());
-		
+
 		JPanel pRun=new JPanel();
 		pRun.setLayout(new BoxLayout(pRun, BoxLayout.LINE_AXIS));
 		bRun=new JButton("Export");
@@ -136,11 +136,11 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		progress=new JProgressBar();
 		progress.setStringPainted(true);
 		main.add(progress);
-		
+
 		bObj.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				JFileChooser jfcSave=new JFileChooser();
 				jfcSave.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				jfcSave.setDialogTitle("Save folder");
@@ -153,26 +153,26 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				tfSavePath.setText(save_path.getAbsolutePath());
 			}
 		});
-		
+
 		bRun.addActionListener(new AbstractAction() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				bRun.setEnabled(false);
 				bStop.setEnabled(true);
 				(new Thread(OBJExportPanel.this)).start();
-				
+
 			}
 		});
-		
+
 		bStop.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				running=false;				
 			}
 		});
-		
+
 		bOptions.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -190,7 +190,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				}
 			}
 		});
-		
+
 		pack();
 		setVisible(true);
 	}
@@ -202,10 +202,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	public void run() {
 
 		File exportpath=new File(tfSavePath.getText());
-		
+
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
 		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
-		
+
 		if(objfile.exists())
 		{
 			if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
@@ -213,7 +213,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				return;
 			}
 		}
-		
+
 		if(mtlfile.exists())
 		{
 			if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
@@ -221,7 +221,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				return;
 			}
 		}
-		
+
 		try {
 			objfile.createNewFile();
 			mtlfile.createNewFile();
@@ -229,7 +229,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			JOptionPane.showMessageDialog(this, "Cannot write to the chosen location!");
 			return;
 		}
-		
+
 		OffsetType offset_type=options.getOffsetType();
 		Point offset_point=options.getCustomOffset();
 		switch(offset_type)
@@ -247,18 +247,18 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		MainWindow.settings.setLastExportPath(tfSavePath.getText());
 
 		running=true;
-		
-		
+
+
 		float scale=options.getScale();
-		
+
 		try {
 			FileWriter file=new FileWriter(objfile);
 			PrintWriter writer=new PrintWriter(file);
 
 			MTLFile mtl=new MTLFile(mtlfile);
-			
+
 			mtl.saveMTLFile();
-			
+
 			MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
 
 			mtl.header(writer,objfile);
@@ -268,7 +268,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			int cxe=(int)Math.ceil((bounds.x+bounds.width)/16.0f);
 			int cze=(int)Math.ceil((bounds.y+bounds.height)/16.0f);
 			int oxs=0,ozs=0;
-			
+
 			if(offset_type==OffsetType.NO_OFFSET)
 			{
 				oxs=0;
@@ -285,47 +285,50 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				ozs=offset_point.y;
 			}
 
-			progress.setMaximum(100);
 			
-			OBJFile obj=new OBJFile("minecraft", mtl);
-			obj.setOffset(-oxs*16, -ymin, -ozs*16);
-			obj.setScale(scale);
-			
-			ChunkDataBuffer chunk_buffer=null;			
-			try{
-				chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
-			}catch (OutOfMemoryError e) {
-				return;
-			}
+
+
 
 			int progress_count=0;
 			int progress_max=(cxe-cxs)*(cze-czs);
-			for(int cx=cxs,ox=oxs; cx<=cxe && running; cx++,ox++)
-				for(int cz=czs,oz=ozs; cz<=cze && running; cz++,oz++,progress_count++)
+			
+			progress.setMaximum(progress_max);
+			
+			for(int cx=cxs; cx<=cxe && running; cx++)
+				for(int cz=czs; cz<=cze && running; cz++,progress_count++)
 				{
-					progress.setValue(progress_count/(2*progress_max));
+					progress.setValue(progress_count);
 
-					Chunk chunk=null;
-					try{
-						Region region=Region.findRegion(savepath, cx, cz);							
-						if(region==null) continue;					
-						chunk=region.getChunk(cx, cz);
-						if(chunk==null) continue;
-					}catch (Exception e) {
-						continue;
-					}
+					OBJFile obj=new OBJFile("chunk_"+cx+"_"+cz, mtl);
+					obj.setOffset(-oxs*16, -ymin, -ozs*16);
+					obj.setScale(scale);
+
+					ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
+
+					for(int lx=cx-1; lx<=cx+1; lx++)
+						for(int lz=cz-1; lz<=cz+1; lz++)
+						{
+							if(lx<cxs || lx>cxe || lz<czs || lz>cze) continue;
+							
+							Chunk chunk=null;
+							try{
+								Region region=Region.findRegion(savepath, lx, lz);							
+								if(region==null) continue;					
+								chunk=region.getChunk(lx, lz);
+								if(chunk==null) continue;
+							}catch (Exception e) {
+								continue;
+							}
+
+							chunk_buffer.addChunk(chunk);						
+						}
 					
-					chunk_buffer.addChunk(chunk);
-					//obj.addChunk(chunk,bounds,ymin, ymax);
-					
+					obj.addChunkBuffer(chunk_buffer,cx,cz);
+					obj.append(writer);
+
 				}
 
-			
-			progress.setValue(50);
-			obj.addChunkBuffer(chunk_buffer);
-			progress.setValue(75);
-			obj.append(writer);
-			progress.setValue(100);
+
 			writer.close();
 			
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());
@@ -344,15 +347,15 @@ public class OBJExportPanel extends JFrame implements Runnable {
 @SuppressWarnings("serial")
 class OBJExportOptions extends JPanel
 {
-	
+
 	private JTextField tfScale;
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
-	
+
 	public OBJExportOptions() {
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		
+
 		JPanel pScale=new JPanel();		
 		pScale.setLayout(new BoxLayout(pScale,BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -360,7 +363,7 @@ class OBJExportOptions extends JPanel
 		tfScale=new JTextField(""+MainWindow.settings.getDefaultScale());
 		pScale.add(lScale);
 		pScale.add(tfScale);
-		
+
 		JPanel pOffset=new JPanel();
 		pOffset.setLayout(new BoxLayout(pOffset,BoxLayout.LINE_AXIS));
 		pOffset.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -376,7 +379,7 @@ class OBJExportOptions extends JPanel
 		pOffset.add(rbCustomOffset);
 		pOffset.add(tfXOffset);
 		pOffset.add(tfZOffset);
-		
+
 		ButtonGroup gOffset=new ButtonGroup();
 		gOffset.add(rbNoOffset);
 		gOffset.add(rbCenterOffset);
@@ -384,7 +387,7 @@ class OBJExportOptions extends JPanel
 		rbNoOffset.setActionCommand("none");
 		rbCenterOffset.setActionCommand("center");
 		rbCustomOffset.setActionCommand("custom");
-		
+
 		AbstractAction rbOffsetAction=new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent ev) {
@@ -398,10 +401,10 @@ class OBJExportOptions extends JPanel
 					tfXOffset.setEnabled(false);
 					tfZOffset.setEnabled(false);
 				}
-				
+
 				int x=Integer.parseInt(tfXOffset.getText());
 				int z=Integer.parseInt(tfZOffset.getText());
-				
+
 				if(ev.getActionCommand().equals("none"))
 					MainWindow.settings.setOffset(0,x,z);
 				else if(ev.getActionCommand().equals("center"))
@@ -410,11 +413,11 @@ class OBJExportOptions extends JPanel
 					MainWindow.settings.setOffset(2,x,z);
 			}
 		};
-		
+
 		rbNoOffset.addActionListener(rbOffsetAction);
 		rbCenterOffset.addActionListener(rbOffsetAction);
 		rbCustomOffset.addActionListener(rbOffsetAction);
-		
+
 		switch(MainWindow.settings.getOffsetType())
 		{
 		case 0:
@@ -436,38 +439,38 @@ class OBJExportOptions extends JPanel
 		Point p=MainWindow.settings.getOffset();
 		tfXOffset.setText(""+p.x);
 		tfZOffset.setText(""+p.y);
-		
+
 		add(pScale);
 		add(pOffset);
 	}
-	
+
 	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
-	
+
 	public OffsetType getOffsetType()
 	{
 		if(rbNoOffset.isSelected())
 			return OffsetType.NO_OFFSET;
-		
+
 		if(rbCenterOffset.isSelected())
 			return OffsetType.CENTER_OFFSET;
-		
+
 		if(rbCustomOffset.isSelected())
 			return OffsetType.CUSTOM_OFFSET;
-		
+
 		return OffsetType.NO_OFFSET;
 	}
-	
+
 	public Point getCustomOffset()
 	{
 		int x=Integer.parseInt(tfXOffset.getText());
 		int z=Integer.parseInt(tfZOffset.getText());
 		return new Point(x,z);
 	}
-	
+
 	public float getScale()
 	{
 		float ret=1;
-		
+
 		try
 		{
 			ret=Float.parseFloat(tfScale.getText());
@@ -475,7 +478,7 @@ class OBJExportOptions extends JPanel
 			JOptionPane.showMessageDialog(OBJExportOptions.this, "Cannot parse the scale value! Assuming 1!");
 			return 1.0f;
 		}
-		
+
 		return ret;
 	}
 }
