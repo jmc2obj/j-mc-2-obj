@@ -78,7 +78,7 @@ public class OBJFile {
 			return this.mtl_id-o.mtl_id;
 		}
 	}
-	
+
 	/**
 	 * Collection of IDs of transparent blocks.
 	 * These blocks allow us to see what's behind them.
@@ -89,9 +89,9 @@ public class OBJFile {
 	 * A map of mesh types for given block IDs.
 	 */
 	private Map<Short, MeshType> mesh_types;
-	
+
 	private Colors colors;
-	
+
 	/**
 	 * Identifier of the file.
 	 * Since many OBJ class objects are created by different chunks,
@@ -120,7 +120,7 @@ public class OBJFile {
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
 	float x_offset, y_offset, z_offset;
-	
+
 	float file_scale;
 
 	/**
@@ -152,7 +152,7 @@ public class OBJFile {
 		transparent_blocks.add((short) 53);
 		transparent_blocks.add((short) 55);
 		transparent_blocks.add((short) 59);
-		transparent_blocks.add((short) 63);
+		transparent_blocks.add((short) 63);		
 
 		mesh_types=new TreeMap<Short, OBJFile.MeshType>();
 		mesh_types.put((short) 1, MeshType.BLOCK);
@@ -162,9 +162,9 @@ public class OBJFile {
 		mesh_types.put((short) 5, MeshType.BLOCK);
 		mesh_types.put((short) 7, MeshType.BLOCK);
 		mesh_types.put((short) 8, MeshType.LIQUID);//WATER F
-		mesh_types.put((short) 9, MeshType.BLOCK);//WATER S
+		mesh_types.put((short) 9, MeshType.LIQUID);//WATER S
 		mesh_types.put((short) 10, MeshType.LIQUID);//LAVA F
-		mesh_types.put((short) 11, MeshType.BLOCK);//LAVA S
+		mesh_types.put((short) 11, MeshType.LIQUID);//LAVA S
 		mesh_types.put((short) 12, MeshType.BLOCK);		
 		mesh_types.put((short) 13, MeshType.BLOCK);
 		mesh_types.put((short) 14, MeshType.BLOCK);
@@ -213,6 +213,7 @@ public class OBJFile {
 		mesh_types.put((short) 74, MeshType.BLOCK);
 		mesh_types.put((short) 75, MeshType.TORCH);//REDSTONE TORCH OFF
 		mesh_types.put((short) 76, MeshType.TORCH);//REDSTONE TORCH ON
+		mesh_types.put((short) 78, MeshType.SNOW);//snow layer
 		mesh_types.put((short) 79, MeshType.BLOCK);//ICE(alpha?)
 		mesh_types.put((short) 80, MeshType.BLOCK);
 		mesh_types.put((short) 81, MeshType.BLOCK);
@@ -241,7 +242,7 @@ public class OBJFile {
 		mesh_types.put((short) 123, MeshType.BLOCK);
 		mesh_types.put((short) 124, MeshType.BLOCK);		
 
-		
+
 		identifier=ident;
 		material=mtl;
 		colors = MainWindow.settings.minecraft_colors;
@@ -267,7 +268,7 @@ public class OBJFile {
 		y_offset=y;
 		z_offset=z;
 	}
-	
+
 	public void setScale(float scale)
 	{
 		file_scale=scale;
@@ -288,10 +289,10 @@ public class OBJFile {
 	public void addCube(float x, float y, float z, short id, byte data, boolean [] drawside, Transform trans)
 	{
 		Vertex vertices[]=new Vertex[4];
-		
+
 		Transform move=new Transform();
 		move.translate(x, y, z);
-		
+
 		if(drawside[0])
 		{
 			vertices[0]=new Vertex(-0.5f,+0.5f,-0.5f);
@@ -354,21 +355,21 @@ public class OBJFile {
 	{
 		Transform move=new Transform();
 		move.translate(x, y, z);
-		
+
 		Vertex vertices[]=new Vertex[4];
 		vertices[0]=new Vertex(-0.5f,-0.5f,0.0f);
 		vertices[1]=new Vertex(-0.5f,+0.5f,0.0f);
 		vertices[2]=new Vertex(+0.5f,+0.5f,0.0f);
 		vertices[3]=new Vertex(+0.5f,-0.5f,0.0f);
 		addFace(vertices,move.multiply(trans),Side.FRONT,id,data);
-		
+
 		vertices[0]=new Vertex(0.0f,-0.5f,-0.5f);
 		vertices[1]=new Vertex(0.0f,+0.5f,-0.5f);
 		vertices[2]=new Vertex(0.0f,+0.5f,+0.5f);
 		vertices[3]=new Vertex(0.0f,-0.5f,+0.5f);
 		addFace(vertices,move.multiply(trans),Side.LEFT,id,data);						
 	}
-	
+
 	/**
 	 * Adds a halfblock at the given location 
 	 * @param x
@@ -385,7 +386,7 @@ public class OBJFile {
 		drawside[0]=true;
 		addCube(x,y,z,id,data,drawside,trans);
 	}
-	
+
 	/**
 	 * Adds a torch
 	 * 
@@ -400,9 +401,9 @@ public class OBJFile {
 	{
 		Transform trans=new Transform();
 		trans.scale(0.2f, 0.9f, 0.2f);
-		
+
 		Transform rotate=new Transform();
-		
+
 		switch(data)
 		{
 		case 1:
@@ -418,11 +419,11 @@ public class OBJFile {
 			rotate.rotate(-30, 0, 0);
 			break;			
 		}
-		
+
 		for(int i=0; i<6; i++) drawside[i]=true;		
 		addCube(x,y,z,id,data,drawside,rotate.multiply(trans));
 	}
-	
+
 	/**
 	 * Adds a liquid block at the given location
 	 * This is still a work in progress! 
@@ -433,17 +434,33 @@ public class OBJFile {
 	 * @param data
 	 * @param drawside
 	 */
-	public void addLiquid(float x, float y, float z, short id, byte data, boolean [] drawside)
+	public void addLiquid(float x, float y, float z, short id, byte data, boolean [] drawside, short id_above)
 	{
 		//TODO: complete this
-		Transform trans=new Transform();
-		trans.scale(1.0f,data/8.0f,1.0f);
-		drawside[0]=true;
-		if(data>8) data-=8;
-		if(data==0) data=8;
-		addCube(x,y,z,id,data,drawside,trans);
+
+		if(mesh_types.get(id_above)==MeshType.LIQUID)
+		{
+			addCube(x,y,z,id,data,drawside,new Transform());
+		}
+		else
+		{
+			if(data>8) data-=8;
+			if(data==0) data=8;
+			if(id==9 || id==11) data=8;
+
+			Transform scale=new Transform();
+			Transform move=new Transform();
+			
+			float s=data/10.0f;
+			scale.scale(1.0f,s,1.0f);
+			move.translate(0.0f, -0.5f+s/2, 0.0f);
+			
+			drawside[0]=true;
+			
+			addCube(x,y,z,id,data,drawside,move.multiply(scale));
+		}
 	}
-	
+
 	/**
 	 * Adds a snow layer at the given location
 	 * @param x
@@ -455,12 +472,16 @@ public class OBJFile {
 	 */
 	public void addSnow(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
-		Transform trans=new Transform();
-		trans.scale(1.0f,(1.0f+data)/8.0f,1.0f);
+		Transform scale=new Transform();
+		Transform move=new Transform();
+		if(data>8) data-=8;
+		float s=(1.0f+data)/9.0f;
+		scale.scale(1.0f,s,1.0f);
+		move.translate(0.0f, -0.5f+s/2, 0.0f);		
 		drawside[0]=true;
-		addCube(x,y,z,id,data,drawside,trans);
+		addCube(x,y,z,id,data,drawside,move.multiply(scale));
 	}
-	
+
 	/**
 	 * Add stairs at the given location
 	 * @param x
@@ -474,14 +495,14 @@ public class OBJFile {
 	{
 		int dir=data&3;
 		int up=data&4;
-		
+
 		Transform trans_bottom=new Transform();
 		trans_bottom.scale(1.0f, 0.5f, 1.0f);
 		Transform trans_top_h=new Transform();
 		trans_top_h.scale(0.5f, 0.5f, 1.0f);
 		Transform trans_top_v=new Transform();
 		trans_top_v.scale(1.0f, 0.5f, 0.5f);
-		
+
 		switch(dir)
 		{
 		case 0:
@@ -651,7 +672,7 @@ public class OBJFile {
 		for(int i=0; i<4; i++)
 		{
 			vert=trans.multiply(verts[i]);
-			
+
 			if(!vertex_map.containsKey(vert))				
 			{
 				vertices.add(vert);
@@ -671,8 +692,8 @@ public class OBJFile {
 		else
 			return array[y + (z * 128) + (x * 128) * 16];
 	}
-	
-	
+
+
 	private final byte getValue(boolean is_anvil, byte [] array, int x, int y, int z, int ymax)
 	{
 		if(x<0 || x>15 || y<0 || y>=ymax || z<0 || z>15) return -1;
@@ -682,7 +703,7 @@ public class OBJFile {
 			return array[y + (z * 128) + (x * 128) * 16];
 	}
 
-	
+
 	public void addChunk(Chunk chunk, Rectangle bounds, int ymin, int ymax)
 	{
 		int pos_x=chunk.getPosX();
@@ -698,7 +719,7 @@ public class OBJFile {
 		if(zmin<0) zmin=0;
 		if(xmax>15) xmax=15;
 		if(zmax>15) zmax=15;
-		
+
 		boolean is_anvil=chunk.isAnvil();
 
 		boolean drawside[]=new boolean[6];
@@ -714,7 +735,7 @@ public class OBJFile {
 			ymax_f=blocks.length/(16*16);
 		else 
 			ymax_f=128;
-		
+
 		if(ymax>ymax_f)
 			ymax=ymax_f;
 
@@ -745,7 +766,7 @@ public class OBJFile {
 
 					rx=x+pos_x*16;
 					rz=z+pos_z*16;
-					
+
 					Transform identity=new Transform();
 					MeshType mt=mesh_types.get(BlockID);
 					if(mt!=null)
@@ -762,10 +783,11 @@ public class OBJFile {
 							addHalfblock(rx, y, rz, BlockID, BlockData, drawside);
 							break;
 						case LIQUID:
-							addLiquid(rx, y, rz, BlockID, BlockData, drawside);
+							addLiquid(rx, y, rz, BlockID, BlockData, drawside,getValue(is_anvil,blocks,x,y+1,z,ymax));
 							break;
 						case SNOW:
 							addSnow(rx, y,rz, BlockID, BlockData, drawside);
+							break;
 						case CROSS:
 							addCross(rx, y, rz, BlockID, BlockData,identity);
 							break;
@@ -793,12 +815,12 @@ public class OBJFile {
 		ymax=ymin+xy.height;
 		zmin=xz.y;
 		zmax=zmin+xz.height;
-		
+
 		short BlockID;
 		byte BlockData;
-		
+
 		boolean drawside[]=new boolean[6];
-		
+
 		for(z = zmin; z < zmax; z++)
 		{
 			for(x = xmin; x < xmax; x++)
@@ -822,7 +844,7 @@ public class OBJFile {
 						drawside[4]=true; else drawside[4]=false;
 					if(z==zmax-1 || isDrawable(BlockID,chunk.getBlockID(x,y,z+1)))
 						drawside[5]=true; else drawside[5]=false;
-					
+
 					Transform identity=new Transform();
 					MeshType mt=mesh_types.get(BlockID);
 					if(mt!=null)
@@ -839,10 +861,11 @@ public class OBJFile {
 							addHalfblock(x, y, z, BlockID, BlockData, drawside);
 							break;
 						case LIQUID:
-							addLiquid(x, y, z, BlockID, BlockData, drawside);
+							addLiquid(x, y, z, BlockID, BlockData, drawside,chunk.getBlockID(x,y+1,z));
 							break;
 						case SNOW:
 							addSnow(x, y,z, BlockID, BlockData, drawside);
+							break;
 						case CROSS:
 							addCross(x, y, z, BlockID, BlockData,identity);
 							break;
@@ -857,7 +880,98 @@ public class OBJFile {
 		}		
 	}
 
-	
+
+	public void addChunkBuffer(ChunkDataBuffer chunk, int chunk_x, int chunk_z)
+	{
+		int x,y,z;
+		int xmin,xmax,ymin,ymax,zmin,zmax;
+		Rectangle xy,xz;
+		xy=chunk.getXYBoundaries();
+		xz=chunk.getXZBoundaries();
+		xmin=xy.x;
+		xmax=xmin+xy.width;
+		ymin=xy.y;
+		ymax=ymin+xy.height;
+		zmin=xz.y;
+		zmax=zmin+xz.height;
+
+
+		int xs=chunk_x*16;
+		int zs=chunk_z*16;
+		int xe=xs+16;
+		int ze=zs+16;
+
+		if(xs<xmin) xs=xmin;
+		if(xe>xmax) xe=xmax;
+		if(zs<zmin) zs=zmin;
+		if(ze>zmax) ze=zmax;
+
+
+		short BlockID;
+		byte BlockData;
+
+		boolean drawside[]=new boolean[6];
+
+		for(z = zs; z < ze; z++)
+		{
+			for(x = xs; x < xe; x++)
+			{
+				for(y = ymin; y < ymax; y++)
+				{						
+					BlockID=chunk.getBlockID(x, y, z);
+					BlockData=chunk.getBlockData(x, y, z);
+
+					if(BlockID==0) continue;
+
+					if(y==ymax-1 || isDrawable(BlockID,chunk.getBlockID(x,y+1,z)))
+						drawside[0]=true; else drawside[0]=false;
+					if(y==ymin || isDrawable(BlockID,chunk.getBlockID(x,y-1,z)))
+						drawside[1]=true; else drawside[1]=false;
+					if(x==xmin || isDrawable(BlockID,chunk.getBlockID(x-1,y,z)))
+						drawside[2]=true; else drawside[2]=false;
+					if(x==xmax-1 || isDrawable(BlockID,chunk.getBlockID(x+1,y,z)))
+						drawside[3]=true; else drawside[3]=false;
+					if(z==zmin || isDrawable(BlockID,chunk.getBlockID(x,y,z-1)))
+						drawside[4]=true; else drawside[4]=false;
+					if(z==zmax-1 || isDrawable(BlockID,chunk.getBlockID(x,y,z+1)))
+						drawside[5]=true; else drawside[5]=false;
+
+					Transform identity=new Transform();
+					MeshType mt=mesh_types.get(BlockID);
+
+					if(mt!=null)
+					{
+						switch(mt)
+						{
+						case BLOCK:
+							addCube(x, y, z, BlockID, BlockData, drawside,identity);
+							break;
+						case STAIRS:
+							addStairs(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case HALFBLOCK:
+							addHalfblock(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case LIQUID:
+							addLiquid(x, y, z, BlockID, BlockData, drawside,chunk.getBlockID(x,y+1,z));
+							break;
+						case SNOW:
+							addSnow(x, y, z, BlockID, BlockData, drawside);
+							break;
+						case CROSS:
+							addCross(x, y, z, BlockID, BlockData,identity);
+							break;
+						case TORCH:
+							addTorch(x, y, z, BlockID, BlockData, drawside);
+							break;
+						default:
+						}
+					}
+				}									
+			}
+		}		
+	}
+
 	/**
 	 * Private method used for checking if the given block ID is drawable 
 	 * from the point of view of of a neighboring block.
@@ -870,8 +984,9 @@ public class OBJFile {
 		Color nc=colors.getColor(neighbour_id,(byte) 0);
 		MeshType nm=mesh_types.get(neighbour_id);
 
-		if(block_id==8 && nc!=null && nm==MeshType.BLOCK) return false;
-		if(block_id==9 && nc!=null && nm==MeshType.BLOCK) return false;			
+		MeshType mt=mesh_types.get(block_id);
+		
+		if(mt==MeshType.LIQUID && nm==MeshType.LIQUID) return false;			
 
 		if(transparent_blocks.contains(neighbour_id) || nc==null || nm!=MeshType.BLOCK)
 			return true;
@@ -934,7 +1049,7 @@ class Transform
 		matrix=new float[4][4];
 		identity();
 	}
-	
+
 	private void identity()
 	{
 		for(int i=0; i<4; i++)
@@ -944,7 +1059,7 @@ class Transform
 				else matrix[i][j]=0;
 			}
 	}
-	
+
 	public Transform multiply(Transform a)
 	{
 		Transform ret=new Transform();
@@ -957,11 +1072,11 @@ class Transform
 			}
 		return ret;
 	}
-	
+
 	public Vertex multiply(Vertex vertex)
 	{
 		Vertex ret=new Vertex(0,0,0);
-		
+
 		ret.x=vertex.x*matrix[0][0]+vertex.y*matrix[0][1]+vertex.z*matrix[0][2]+matrix[0][3];		
 		ret.y=vertex.x*matrix[1][0]+vertex.y*matrix[1][1]+vertex.z*matrix[1][2]+matrix[1][3];
 		ret.z=vertex.x*matrix[2][0]+vertex.y*matrix[2][1]+vertex.z*matrix[2][2]+matrix[2][3];
@@ -969,62 +1084,62 @@ class Transform
 		{
 			System.out.println("matrix multiply error: last row doesn't add to 1");
 		}
-		
+
 		return ret;
 	}
-	
+
 	public void translate(float x, float y, float z)
 	{
 		identity();
-		
+
 		matrix[0][3]=x;
 		matrix[1][3]=y;
 		matrix[2][3]=z;				
 	}
-	
+
 	public void scale(float x, float y, float z)
 	{
 		identity();
-		
+
 		matrix[0][0]=x;
 		matrix[1][1]=y;
 		matrix[2][2]=z;				
 	}
-	
+
 	public void rotate(float a, float b, float g)
 	{
 		//convert to rad
 		a=(float) (a*Math.PI/180.0);
 		b=(float) (b*Math.PI/180.0);
 		g=(float) (g*Math.PI/180.0);
-	
+
 		identity();
 		Transform ret;
 		Transform trans=new Transform();
-		
+
 		trans.matrix[1][1]=(float) Math.cos(a);
 		trans.matrix[1][2]=(float) -Math.sin(a);
 		trans.matrix[2][1]=(float) Math.sin(a);
 		trans.matrix[2][2]=(float) Math.cos(a);
-		
+
 		ret=multiply(trans);
 		matrix=ret.matrix;
-		
+
 		trans.identity();
 		trans.matrix[0][0]=(float) Math.cos(b);
 		trans.matrix[0][2]=(float) -Math.sin(b);
 		trans.matrix[2][0]=(float) Math.sin(b);
 		trans.matrix[2][2]=(float) Math.cos(b);
-		
+
 		ret=multiply(trans);
 		matrix=ret.matrix;
-		
+
 		trans.identity();
 		trans.matrix[0][0]=(float) Math.cos(g);
 		trans.matrix[0][1]=(float) -Math.sin(g);
 		trans.matrix[1][0]=(float) Math.sin(g);
 		trans.matrix[1][1]=(float) Math.cos(g);
-		
+
 		ret=multiply(trans);
 		matrix=ret.matrix;
 	}
