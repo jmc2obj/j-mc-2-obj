@@ -13,3 +13,7 @@ Revision r71 - Belnder - lame attempt of using defocus
 Texture experiment in Cycles
 
 <a href="http://imgur.com/4PmGM"><img src="http://i.imgur.com/4PmGM.png" width=640 /></a>
+
+Snow examples - r85
+
+<a href="http://imgur.com/C3lft"><img src="http://i.imgur.com/C3lft.png" width=640 /></a>
