@@ -287,6 +287,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 			
 
+			//TODO:
+			// 2. move all chunks into one object
+			// 3. meshes!
+			// 4. textures
 
 
 			int progress_count=0;
@@ -294,7 +298,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			
 			progress.setMaximum(progress_max);
 			
+			ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
+			
 			for(int cx=cxs; cx<=cxe && running; cx++)
+			{
 				for(int cz=czs; cz<=cze && running; cz++,progress_count++)
 				{
 					progress.setValue(progress_count);
@@ -303,12 +310,12 @@ public class OBJExportPanel extends JFrame implements Runnable {
 					obj.setOffset(-oxs*16, -ymin, -ozs*16);
 					obj.setScale(scale);
 
-					ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
-
 					for(int lx=cx-1; lx<=cx+1; lx++)
 						for(int lz=cz-1; lz<=cz+1; lz++)
 						{
 							if(lx<cxs || lx>cxe || lz<czs || lz>cze) continue;
+							
+							if(chunk_buffer.hasChunk(lx, lz)) continue;
 							
 							Chunk chunk=null;
 							try{
@@ -319,15 +326,20 @@ public class OBJExportPanel extends JFrame implements Runnable {
 							}catch (Exception e) {
 								continue;
 							}
-
+							
 							chunk_buffer.addChunk(chunk);						
 						}
 					
 					obj.addChunkBuffer(chunk_buffer,cx,cz);
 					obj.append(writer);
+					
+					for(int lx=cx-1; lx<=cx+1; lx++)
+						chunk_buffer.removeChunk(lx,cz-1);
 
 				}
-
+				
+				chunk_buffer.removeAllChunks();
+			}
 
 			writer.close();
 			

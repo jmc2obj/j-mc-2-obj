@@ -38,6 +38,27 @@ public class ChunkDataBuffer {
 		is_anvil=chunk.isAnvil();
 	}
 	
+	public void removeChunk(int x, int z)
+	{
+		Point p=new Point();
+		p.x=x;
+		p.y=z;
+		chunks.remove(p);
+	}
+	
+	public void removeAllChunks()
+	{
+		chunks.clear();
+	}
+	
+	public boolean hasChunk(int x, int z)
+	{
+		Point p=new Point();
+		p.x=x;
+		p.y=z;
+		return chunks.containsKey(p);
+	}
+	
 	public Rectangle getXZBoundaries()
 	{
 		return boundaries;
