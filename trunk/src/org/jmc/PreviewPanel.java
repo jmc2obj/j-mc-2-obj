@@ -261,7 +261,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		synchronized (main_img) {
 			Graphics2D bg=base_img.createGraphics();	
-			bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
+			if(!fast)
+				bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
 			bg.setColor(Color.black);			
 			bg.clearRect(0, 0, win_w, win_h);			
 
@@ -312,10 +313,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 
 			Graphics2D mg=main_img.createGraphics();	
-			mg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
-			mg.setColor(Color.black);			
-			mg.clearRect(0, 0, win_w, win_h);			
-
 			mg.drawImage(base_img,0,0,null);
 			if(!fast)
 			{
@@ -326,6 +323,28 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		}
 	}
 
+	/**
+	 * Draws a single chunk. Does not draw height map.
+	 */
+	private void redrawChunk(ChunkImage chunk)
+	{
+		int win_w=getWidth();
+		int win_h=getHeight();
+
+		int x=(int) ((chunk.x+shift_x)*zoom_level);
+		int y=(int) ((chunk.y+shift_y)*zoom_level);
+		int w=(int) (chunk.image.getWidth()*zoom_level);
+		int h=(int) (chunk.image.getHeight()*zoom_level);
+
+		if(x>win_w || y>win_h) return;
+		if(x+w<0 || y+h<0) return;
+
+		synchronized (main_img) {
+			Graphics2D mg=main_img.createGraphics();
+			mg.drawImage(chunk.image, x, y, w, h, null);
+		}
+	}
+	
 	/**
 	 * Add a chunk image to the preview.
 	 * @param img image of the individual blocks
@@ -343,7 +362,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		synchronized (chunks) {			
 			chunks.add(chunk);
 		}
-		redraw(true);	
+		redrawChunk(chunk);
 	}
 
 	/**
