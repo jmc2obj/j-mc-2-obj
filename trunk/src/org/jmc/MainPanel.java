@@ -29,6 +29,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
@@ -264,6 +265,9 @@ public class MainPanel extends JPanel
 	public void log(String msg)
 	{
 		taLog.append(msg+"\n");
+		try {
+			taLog.setCaretPosition(taLog.getLineEndOffset(taLog.getLineCount()-1));
+		} catch (BadLocationException e) {}
 		//System.out.println(msg);
 	}
 
