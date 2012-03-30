@@ -381,10 +381,13 @@ public class OBJFile {
 	 */
 	public void addHalfblock(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
-		Transform trans=new Transform();
-		trans.scale(1.0f, 0.5f, 1.0f);
+		Transform ts=new Transform();
+		ts.scale(1.0f, 0.5f, 1.0f);
+		Transform tt=new Transform();
+		tt.translate(0.0f, -0.25f, 0.0f);
+
 		drawside[0]=true;
-		addCube(x,y,z,id,data,drawside,trans);
+		addCube(x,y,z,id,data,drawside,tt.multiply(ts));
 	}
 
 	/**
@@ -622,10 +625,10 @@ public class OBJFile {
 	 */
 	private void printTexturesAndNormals(PrintWriter out)
 	{
-		out.println("vt 0 0");
 		out.println("vt 1 0");
 		out.println("vt 1 1");
 		out.println("vt 0 1");
+		out.println("vt 0 0");
 		out.println("vn 0 -1 0");
 		out.println("vn 0 1 0");
 		out.println("vn 1 0 0");
