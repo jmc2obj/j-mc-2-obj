@@ -288,7 +288,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			
 
 			//TODO:
-			// 2. move all chunks into one object
+			// 2. move all chunks into one object (done)
+			// 2a do it so that it doesn't take up too much memory!
 			// 3. meshes!
 			// 4. textures
 
@@ -300,15 +301,15 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			
 			ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
 			
+			OBJFile obj=new OBJFile("minecraft", mtl);
+			obj.setOffset(-oxs*16, -ymin, -ozs*16);
+			obj.setScale(scale);
+			
 			for(int cx=cxs; cx<=cxe && running; cx++)
 			{
 				for(int cz=czs; cz<=cze && running; cz++,progress_count++)
 				{
-					progress.setValue(progress_count);
-
-					OBJFile obj=new OBJFile("chunk_"+cx+"_"+cz, mtl);
-					obj.setOffset(-oxs*16, -ymin, -ozs*16);
-					obj.setScale(scale);
+					progress.setValue(progress_count);					
 
 					for(int lx=cx-1; lx<=cx+1; lx++)
 						for(int lz=cz-1; lz<=cz+1; lz++)
@@ -327,11 +328,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 								continue;
 							}
 							
-							chunk_buffer.addChunk(chunk);						
+							chunk_buffer.addChunk(chunk);			
 						}
 					
 					obj.addChunkBuffer(chunk_buffer,cx,cz);
-					obj.append(writer);
 					
 					for(int lx=cx-1; lx<=cx+1; lx++)
 						chunk_buffer.removeChunk(lx,cz-1);
@@ -341,6 +341,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				chunk_buffer.removeAllChunks();
 			}
 
+			obj.append(writer);
 			writer.close();
 			
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());

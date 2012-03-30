@@ -51,6 +51,11 @@ public class ChunkDataBuffer {
 		chunks.clear();
 	}
 	
+	public int getChunkCount()
+	{
+		return chunks.size();
+	}
+	
 	public boolean hasChunk(int x, int z)
 	{
 		Point p=new Point();
