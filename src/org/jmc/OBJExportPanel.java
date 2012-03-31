@@ -13,9 +13,12 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.swing.AbstractAction;
@@ -204,6 +207,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		File exportpath=new File(tfSavePath.getText());
 
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
+		File tmpfile=new File(exportpath.getAbsolutePath()+"/minecraft_faces.tmp");
 		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
 
 		if(objfile.exists())
@@ -224,6 +228,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		try {
 			objfile.createNewFile();
+			tmpfile.createNewFile();
 			mtlfile.createNewFile();
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this, "Cannot write to the chosen location!");
@@ -252,8 +257,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		float scale=options.getScale();
 
 		try {
-			FileWriter file=new FileWriter(objfile);
-			PrintWriter writer=new PrintWriter(file);
+			PrintWriter vertex_writer=new PrintWriter(new FileWriter(objfile));
+			PrintWriter faces_writer=new PrintWriter(new FileWriter(tmpfile));
 
 			MTLFile mtl=new MTLFile(mtlfile);
 
@@ -261,7 +266,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 			MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
 
-			mtl.header(writer,objfile);
+			mtl.header(vertex_writer,objfile);
 
 			int cxs=(int)Math.floor(bounds.x/16.0f);
 			int czs=(int)Math.floor(bounds.y/16.0f);
@@ -285,14 +290,6 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				ozs=offset_point.y;
 			}
 
-			
-
-			//TODO:
-			// 2. move all chunks into one object (done)
-			// 2a do it so that it doesn't take up too much memory!
-			// 3. meshes!
-			// 4. textures
-
 
 			int progress_count=0;
 			int progress_max=(cxe-cxs)*(cze-czs);
@@ -304,6 +301,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			OBJFile obj=new OBJFile("minecraft", mtl);
 			obj.setOffset(-oxs*16, -ymin, -ozs*16);
 			obj.setScale(scale);
+			
+			obj.appendObjectname(vertex_writer);
+			
+			MainWindow.log("Processing chunks...");
 			
 			for(int cx=cxs; cx<=cxe && running; cx++)
 			{
@@ -328,7 +329,11 @@ public class OBJExportPanel extends JFrame implements Runnable {
 								continue;
 							}
 							
-							chunk_buffer.addChunk(chunk);			
+							chunk_buffer.addChunk(chunk);		
+							obj.appendVertices(vertex_writer);
+							obj.appendFaces(faces_writer);
+							obj.clearData();
+							
 						}
 					
 					obj.addChunkBuffer(chunk_buffer,cx,cz);
@@ -340,11 +345,26 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				
 				chunk_buffer.removeAllChunks();
 			}
-
-			obj.append(writer);
-			writer.close();
+			
+			faces_writer.close();
+			
+			MainWindow.log("Merging temp into final...");
+			
+			BufferedReader tmpreader=new BufferedReader(new InputStreamReader(new FileInputStream(tmpfile)));
+			
+			String line;
+			while((line=tmpreader.readLine())!=null)
+			{
+				vertex_writer.println(line);
+			}
+			
+			tmpreader.close();
+			vertex_writer.close();
+			
+			tmpfile.delete();
 			
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());
+			MainWindow.log("Done!");
 
 		} catch (Exception e) {
 			e.printStackTrace();
