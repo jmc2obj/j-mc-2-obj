@@ -9,6 +9,8 @@ import javax.swing.JOptionPane;
 public class About {
 	
 	private static boolean initialized=false; 
+	private static String version="0.14";
+	private static String revision="r92";
 	
 	private static void init()
 	{
@@ -18,7 +20,8 @@ public class About {
 		String msg="<html><div style=\"width:200px\">";		
 		
 		msg+="<div style=\"font-size:24pt\">jMC2Obj</div>";
-		msg+="<div style=\"font-size:14pt;margin-bottom:20px\">A Java Minecraft to OBJ converter</div>";
+		msg+="<div style=\"font-size:14pt\">A Java Minecraft to OBJ converter</div>";
+		msg+="<div style=\"font-size:12pt;margin-bottom:20px\">version: "+version+" build "+revision+"</div>";
 		
 		List<String> developer_list=new LinkedList<String>();
 		
