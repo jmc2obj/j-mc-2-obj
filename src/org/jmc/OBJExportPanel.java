@@ -346,6 +346,9 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				chunk_buffer.removeAllChunks();
 			}
 			
+			
+			obj.printTexturesAndNormals(vertex_writer);
+			
 			faces_writer.close();
 			
 			MainWindow.log("Merging temp into final...");

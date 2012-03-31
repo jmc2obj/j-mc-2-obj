@@ -358,20 +358,21 @@ public class OBJFile {
 	public void addCross(float x, float y, float z, short id, byte data, Transform trans)
 	{
 		Transform move=new Transform();
-		move.translate(x, y, z);
-
+		move.translate(x, y, z);		
+		
 		Vertex vertices[]=new Vertex[4];
-		vertices[0]=new Vertex(-0.5f,-0.5f,0.0f);
-		vertices[1]=new Vertex(-0.5f,+0.5f,0.0f);
-		vertices[2]=new Vertex(+0.5f,+0.5f,0.0f);
-		vertices[3]=new Vertex(+0.5f,-0.5f,0.0f);
-		addFace(vertices,move.multiply(trans),Side.FRONT,id,data);
-
-		vertices[0]=new Vertex(0.0f,-0.5f,-0.5f);
-		vertices[1]=new Vertex(0.0f,+0.5f,-0.5f);
-		vertices[2]=new Vertex(0.0f,+0.5f,+0.5f);
-		vertices[3]=new Vertex(0.0f,-0.5f,+0.5f);
-		addFace(vertices,move.multiply(trans),Side.LEFT,id,data);						
+		vertices[0]=new Vertex(-0.5f,-0.5f,+0.5f);
+		vertices[1]=new Vertex(-0.5f,+0.5f,+0.5f); 				
+		vertices[2]=new Vertex(+0.5f,+0.5f,-0.5f);	
+		vertices[3]=new Vertex(+0.5f,-0.5f,-0.5f);				
+		addFace(vertices,move.multiply(trans),Side.FRONTRIGHT,id,data);
+		
+		
+		vertices[0]=new Vertex(+0.5f,-0.5f,+0.5f);
+		vertices[1]=new Vertex(+0.5f,+0.5f,+0.5f);	
+		vertices[2]=new Vertex(-0.5f,+0.5f,-0.5f);
+		vertices[3]=new Vertex(-0.5f,-0.5f,-0.5f);		
+		addFace(vertices,move.multiply(trans),Side.BACKRIGHT,id,data);						
 	}
 
 	/**
@@ -406,29 +407,32 @@ public class OBJFile {
 	 */
 	public void addTorch(float x, float y, float z, short id, byte data, boolean [] drawside)
 	{
-		Transform trans=new Transform();
-		trans.scale(0.2f, 0.9f, 0.2f);
 
 		Transform rotate=new Transform();
+		Transform translate=new Transform();
 
 		switch(data)
 		{
 		case 1:
 			rotate.rotate(0, 0, -30);
+			translate.translate(-0.3f, 0, 0);
 			break;
 		case 2:
 			rotate.rotate(0, 0, 30);
+			translate.translate(0.3f, 0, 0);
 			break;
 		case 3:
-			rotate.rotate(30, 0, 0);
+			rotate.rotate(30, 0, 0);			
+			translate.translate(0, 0, -0.3f);
 			break;
 		case 4:
 			rotate.rotate(-30, 0, 0);
+			translate.translate(0, 0, 0.3f);
 			break;			
 		}
 
 		for(int i=0; i<6; i++) drawside[i]=true;		
-		addCube(x,y,z,id,data,drawside,rotate.multiply(trans));
+		addCross(x,y,z,id,data,rotate.multiply(translate));
 	}
 
 	/**
@@ -653,7 +657,7 @@ public class OBJFile {
 	 * Write texture coordinates and normals. These are usually the same for all chunks.
 	 * @param out writer of the OBJ file
 	 */
-	private void printTexturesAndNormals(PrintWriter out)
+	public void printTexturesAndNormals(PrintWriter out)
 	{
 		out.println("vt 1 0");
 		out.println("vt 1 1");
@@ -664,7 +668,9 @@ public class OBJFile {
 		out.println("vn 1 0 0");
 		out.println("vn -1 0 0");
 		out.println("vn 0 0 1");
-		out.println("vn 0 1 0");
+		out.println("vn 0 0 -1");
+		out.println("vn 0.7 0 0.7");
+		out.println("vn -0.7 0 0.7");
 		//TODO: finish printing normals
 
 	}
@@ -678,13 +684,15 @@ public class OBJFile {
 	{
 		switch(side)
 		{
-		case BOTTOM: return -6;
-		case TOP: return -5;
-		case RIGHT: return -4;
-		case LEFT: return -3;
-		case BACK: return -2;
-		case FRONT: return -1;
-		default: return -1;
+		case BOTTOM: return 1;
+		case TOP: return 2;
+		case RIGHT: return 3;
+		case LEFT: return 4;
+		case BACK: return 5;
+		case FRONT: return 6;
+		case BACKRIGHT: return 7;
+		case FRONTRIGHT: return 8;
+		default: return 6;
 		}
 	}
 
