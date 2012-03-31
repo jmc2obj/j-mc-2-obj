@@ -76,6 +76,8 @@ public class Textures
 		textures[56] = "tex\\51.png";	//diamond ore
 		textures[57] = "tex\\25.png";	//diamond block
 		textures[58] = "tex\\44.png";	//crafting table
+		textures[59] = "tex\\95.png";	//wheat
+		alpha[59]=true;
 		textures[60] = "tex\\88.png";	//farmland
 		textures[61] = "tex\\45.png";	//furnace
 		textures[62] = "tex\\62.png";	//furnace lit
@@ -112,6 +114,17 @@ public class Textures
 		if(id>=0 && id<textures.length && textures[id] != null)
 		{
 			return textures[id];
+		}		
+		return null;
+	}
+	
+	public String getAlphaTexture(int id)
+	{
+		if(id>=0 && id<textures.length && textures[id] != null)
+		{
+			if(textures[id]==null) return null;
+			if(!textures[id].endsWith(".png")) return textures[id]+"_a.png";
+			return textures[id].substring(0,textures[id].length()-4)+"_a.png";
 		}		
 		return null;
 	}

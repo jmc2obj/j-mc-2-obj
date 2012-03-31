@@ -1,5 +1,9 @@
 package org.jmc;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -102,9 +106,13 @@ public class Texsplit
 				BufferedImage im = textures[(i * cols) + j];
 				counter++;
 				try
-				{
+				{					
 					if (counter < rows*cols)
-					{
+					{										
+						if(counter==1 || counter==53 || counter==40 || counter==144)
+						{
+							tintImage(im, Color.green);
+						}
 						File f=new File(destination.getAbsolutePath() + "/" + counter + ".png");
 						ImageIO.write(im, "png", f);				
 						MainWindow.log("Saving texture to: "+f.getAbsolutePath());
@@ -138,6 +146,7 @@ public class Texsplit
 		if(c!=4)
 		{
 			MainWindow.log("ERROR: texture is not 32-bit!");
+			return;
 		}
 		
 		if(buffer==null || buffer.length<w*h*c)
@@ -152,6 +161,46 @@ public class Texsplit
 			buffer[4*i+1]=buffer[4*i+3];
 			buffer[4*i+2]=buffer[4*i+3];
 			buffer[4*i+3]=255;
+		}
+		
+		raster.setPixels(0, 0, w, h, buffer);
+	}
+	
+	private void tintImage(BufferedImage img, Color tint)
+	{
+		int w=img.getWidth();
+		int h=img.getHeight();
+		int c=img.getColorModel().getPixelSize()/8;
+		
+		if(c!=4)
+		{
+			MainWindow.log("ERROR: texture is not 32-bit!");
+			return;
+		}
+		
+		if(buffer==null || buffer.length<w*h*c)
+			buffer=new int[w*h*c];
+		
+		WritableRaster raster=img.getRaster();
+		raster.getPixels(0, 0, w, h, buffer);
+		
+		int r=tint.getRed();
+		int g=tint.getGreen();
+		int b=tint.getBlue();
+		
+		for(int i=0; i<w*h; i++)
+		{
+			c=(buffer[4*i]*r)>>8;
+			if(c>255) c=255;
+			buffer[4*i]=c;
+			
+			c=(buffer[4*i+1]*g)>>8;
+			if(c>255) c=255;
+			buffer[4*i+1]=c;
+			
+			c=(buffer[4*i+2]*b)>>8;
+			if(c>255) c=255;
+			buffer[4*i+2]=c;
 		}
 		
 		raster.setPixels(0, 0, w, h, buffer);

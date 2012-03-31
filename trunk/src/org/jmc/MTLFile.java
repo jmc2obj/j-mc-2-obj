@@ -35,7 +35,9 @@ public class MTLFile {
 		LEFT,
 		RIGHT,
 		FRONT,
-		BACK
+		BACK,
+		BACKRIGHT,
+		FRONTRIGHT
 	}
 
 	/**
@@ -116,6 +118,8 @@ public class MTLFile {
 		float b=c.getBlue()/256.0f;
 		writer.format(l,"Kd %2.2f %2.2f %2.2f",r,g,b);
 		writer.println();
+		writer.format(l,"Ks 0 0 0");
+		writer.println();
 	}
 	
 	private void writeDiffuseTexture(PrintWriter writer, String s)//added
@@ -178,10 +182,11 @@ public class MTLFile {
 			{
 				writer.println("newmtl material-"+i);
 				writeDiffuse(writer, c);
-				writeDiffuseTexture(writer, textures.getTexture(i));//added
-				if(i == 20)//if glass
+				writeDiffuseTexture(writer, textures.getTexture(i));
+				if(textures.hasAlpha(i))
 				{
-					writeAlphaTexture(writer, textures.getTexture(i));//added
+					//for Blender renderer use same texture for alpha
+					writeAlphaTexture(writer, textures.getTexture(i));
 				}
 				writer.println();
 			}
