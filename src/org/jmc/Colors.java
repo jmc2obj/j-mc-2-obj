@@ -94,11 +94,12 @@ public class Colors
 		colors[89] = new Color(0xEDC421);	//glowstone
 		colors[91] = new Color(0xFF3C00);	//jackolantern
 		colors[95] = new Color(0xA76E1F);	//locked chest
-		colors[97] = new Color(0xC2C2C2);	//hidden silverfish
+		colors[97] = new Color(0x9C9C9C);	//hidden silverfish
 		colors[98] = new Color(0x9C9C9C);	//stone brick
 		colors[102] = new Color(0x9B5643);	//brick stairs		
-		colors[98] = new Color(0x9C9C9C);	//stone brick stairs		
 		colors[103] = new Color(0xB0DE3C);	//melon
+		colors[108] = new Color(0x9B5643);	//brick stairs
+		colors[109] = new Color(0x9C9C9C);	//stone brick stairs
 		colors[110] = new Color(0xCF9191);	//mycelium
 		colors[112] = new Color(0x7A0000);	//netherbrick
 		colors[114] = new Color(0x7A0000);	//netherbrick stairs		
