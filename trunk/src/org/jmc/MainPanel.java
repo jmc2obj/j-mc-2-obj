@@ -9,6 +9,7 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -17,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -45,7 +48,7 @@ import org.jmc.NBT.TAG_List;
 public class MainPanel extends JPanel
 {
 	//UI elements (not described separately)
-	private JButton bLoad,bSave,bSettings;
+	private JButton bLoad,bSave,bSettings,bAbout;
 	//this suppression is for compatibility wiht java 1.6
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbPath;
@@ -84,12 +87,19 @@ public class MainPanel extends JPanel
 	{
 		setLayout(new BorderLayout());		
 		JPanel buttons = new JPanel();
+		buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
+		buttons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110,150,100));
 		bLoad = new JButton("Load");
 		bSave = new JButton("Export selection");
 		bSettings = new JButton("Settings");
+		bAbout = new JButton("About");
+		bAbout.setForeground(Color.red);
+		Font f=bAbout.getFont();
+		bAbout.setFont(new Font(f.getFamily(),Font.BOLD,f.getSize()));
 		cbPath = new JComboBox();			
+		cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
 		taLog = new JTextArea(5,1);
 		taLog.setLineWrap(true);
 		taLog.setEditable(false);
@@ -123,9 +133,11 @@ public class MainPanel extends JPanel
 		spMainSplit.setResizeWeight(1);
 		
 		buttons.add(cbPath);
+		buttons.add(Box.createRigidArea(new Dimension(10,0)));
 		buttons.add(bLoad);
 		buttons.add(bSave);
 		buttons.add(bSettings);
+		buttons.add(bAbout);
 		
 		alts.add(sCeil);
 		alts.add(sFloor);
@@ -249,6 +261,15 @@ public class MainPanel extends JPanel
 				MainWindow.settings.setLocation(p);
 				MainWindow.settings.setVisible(true);
 				
+			}
+		});
+		
+		bAbout.addActionListener(new AbstractAction() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				About.show();
 			}
 		});
 

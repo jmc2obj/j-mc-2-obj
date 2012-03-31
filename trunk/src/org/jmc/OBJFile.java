@@ -111,6 +111,9 @@ public class OBJFile {
 	 * Map of vertices to their respective IDs used in the faces of the mesh.
 	 */
 	Map<Vertex, Integer> vertex_map;
+	
+	private int vertex_counter;
+	
 	/**
 	 * List of faces in the file.
 	 */
@@ -248,6 +251,7 @@ public class OBJFile {
 		colors = MainWindow.settings.minecraft_colors;
 		vertices=new LinkedList<Vertex>();
 		vertex_map=new TreeMap<Vertex, Integer>();
+		vertex_counter=1;
 		faces=new LinkedList<OBJFile.Face>();
 		x_offset=0;
 		y_offset=0;
@@ -453,13 +457,13 @@ public class OBJFile {
 
 			Transform scale=new Transform();
 			Transform move=new Transform();
-			
+
 			float s=data/10.0f;
 			scale.scale(1.0f,s,1.0f);
 			move.translate(0.0f, -0.5f+s/2, 0.0f);
-			
+
 			drawside[0]=true;
-			
+
 			addCube(x,y,z,id,data,drawside,move.multiply(scale));
 		}
 	}
@@ -579,24 +583,43 @@ public class OBJFile {
 	 * Append this object to the OBJ file.
 	 * @param out writer of the OBJ file
 	 */
-	public void append(PrintWriter out)
+	public void appendAll(PrintWriter out)
 	{
 		Locale l=null;
+		
+		appendObjectname(out);
+		
+		appendVertices(out);
+		
+		printTexturesAndNormals(out);
+
+		appendFaces(out);
+	}
+	
+	public void appendObjectname(PrintWriter out)
+	{
 		out.println("g "+identifier);
 		out.println();
+	}
+
+	public void appendVertices(PrintWriter out)
+	{
+		Locale l=null;
 
 		for(Vertex vertex:vertices)
 		{
 			out.format(l,"v %2.2f %2.2f %2.2f",(vertex.x+x_offset)*file_scale,(vertex.y+y_offset)*file_scale,(vertex.z+z_offset)*file_scale);
 			out.println();
 		}
+	}
 
-		printTexturesAndNormals(out);
-
+	public void appendFaces(PrintWriter out)
+	{
+		Locale l=null;
+		
 		Collections.sort(faces);
 		int last_id=-2;	
 		int normal_idx;
-		int vertices_num=vertices.size();
 		for(Face f:faces)
 		{
 			if(f.mtl_id<0) continue; //TODO: temporary modification - skip unknown materials  
@@ -611,12 +634,19 @@ public class OBJFile {
 			normal_idx=sideToNormalIndex(f.side);
 
 			out.print("f ");
-			out.format(l,"%d/-4/%d ",(-vertices_num+f.vertices[0]),normal_idx);
-			out.format(l,"%d/-3/%d ",(-vertices_num+f.vertices[1]),normal_idx);
-			out.format(l,"%d/-2/%d ",(-vertices_num+f.vertices[2]),normal_idx);
-			out.format(l,"%d/-1/%d ",(-vertices_num+f.vertices[3]),normal_idx);
+			out.format(l,"%d/-4/%d ",f.vertices[0],normal_idx);
+			out.format(l,"%d/-3/%d ",f.vertices[1],normal_idx);
+			out.format(l,"%d/-2/%d ",f.vertices[2],normal_idx);
+			out.format(l,"%d/-1/%d ",f.vertices[3],normal_idx);
 			out.println();
 		}				
+	}
+	
+	void clearData()
+	{
+		faces.clear();
+		vertices.clear();
+		vertex_map.clear();
 	}
 
 	/**
@@ -679,7 +709,8 @@ public class OBJFile {
 			if(!vertex_map.containsKey(vert))				
 			{
 				vertices.add(vert);
-				vertex_map.put(vert, vertices.size()-1);				
+				vertex_map.put(vert, vertex_counter);
+				vertex_counter++;
 			}
 			face.vertices[i]=vertex_map.get(vert);
 		}
@@ -988,7 +1019,7 @@ public class OBJFile {
 		MeshType nm=mesh_types.get(neighbour_id);
 
 		MeshType mt=mesh_types.get(block_id);
-		
+
 		if(mt==MeshType.LIQUID && nm==MeshType.LIQUID) return false;			
 
 		if(transparent_blocks.contains(neighbour_id) || nc==null || nm!=MeshType.BLOCK)
