@@ -15,7 +15,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,8 +33,6 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 
 	private Preferences prefs;
-
-	private JCheckBox cbTexAlpha;
 
 	@SuppressWarnings("serial")
 	public Settings()
@@ -59,29 +56,32 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		JPanel pTexAlpha=new JPanel();
 		pTexAlpha.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pTexAlpha.setLayout(new BoxLayout(pTexAlpha, BoxLayout.LINE_AXIS));
-		cbTexAlpha=new JCheckBox("Export alpha textures");
-		cbTexAlpha.addChangeListener(this);
-		pTexAlpha.add(cbTexAlpha);
 
 		JButton tex_mc=new JButton("Split textures from minecraft");		
 		tex_mc.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Texsplit split = new Texsplit();
-				split.splitTextures(chooseTextureDestination(),cbTexAlpha.isSelected());
+				try {
+					Texsplit.splitTextures(chooseTextureDestination(),null);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(MainWindow.main, "Error saving textures:\n" + e.getMessage());
+				}
 			}
 		});
-		JButton tex_custom=new JButton("Split custom textures");		
+		JButton tex_custom=new JButton("Split textures from texture pack");		
 		tex_custom.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser jfc=new JFileChooser();
 				jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-				int retval=jfc.showDialog(Settings.this,"Choose your terrain.png file");
+				int retval=jfc.showDialog(Settings.this,"Select texture pack file");
 				if(retval==JFileChooser.APPROVE_OPTION)
 				{					
-					Texsplit split = new Texsplit(jfc.getSelectedFile());
-					split.splitTextures(chooseTextureDestination(),cbTexAlpha.isSelected());
+					try {
+						Texsplit.splitTextures(chooseTextureDestination(),jfc.getSelectedFile());
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(MainWindow.main, "Error saving textures:\n" + e.getMessage());
+					}
 				}
 			}
 		});
@@ -183,12 +183,10 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 	
 	private void loadSettingsAfter()
 	{
-		cbTexAlpha.setSelected(prefs.getBoolean("TEX_ALPHA", true));//?????	
 	}
 
 	private void saveSettings()
 	{		
-		prefs.putBoolean("TEX_ALPHA", cbTexAlpha.isSelected());
 	}
 	
 	private void resetSettings()

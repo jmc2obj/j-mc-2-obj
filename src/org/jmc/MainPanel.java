@@ -23,7 +23,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -303,7 +302,7 @@ public class MainPanel extends JPanel
 		@SuppressWarnings("unchecked")
 		public void run()
 		{
-			File minecraft_dir=getMinecraftDir();
+			File minecraft_dir=Utility.getMinecraftDir();
 			if(minecraft_dir==null) return;
 			File save_dir=new File(minecraft_dir.getAbsolutePath()+"/saves");
 
@@ -337,41 +336,6 @@ public class MainPanel extends JPanel
 	private void populateLoadList()
 	{
 		(new PopulateLoadListThread()).start();
-	}
-
-	/**
-	 * Gets the directory that Minecraft keeps its save files in.
-	 * It works on all systems that Minecraft 1.2 works in.
-	 * @return path to the Minecraft dir
-	 */
-	public static File getMinecraftDir()
-	{
-		String minecraft="minecraft";
-		String osname = System.getProperty("os.name").toLowerCase();
-		String default_home = System.getProperty("user.home", ".");
-		if(osname.contains("solaris") || osname.contains("sunos") || osname.contains("linux") || osname.contains("unix"))
-		{
-			return new File(default_home, (new StringBuilder()).append('.').append(minecraft).append('/').toString());
-		}
-
-		if(osname.contains("win"))
-		{
-			String win_home = System.getenv("APPDATA");
-			if(win_home != null)
-			{
-				return new File(win_home, (new StringBuilder()).append(".").append(minecraft).append('/').toString());
-			} else
-			{
-				return new File(default_home, (new StringBuilder()).append('.').append(minecraft).append('/').toString());
-			}
-		}
-
-		if(osname.contains("mac"))
-		{
-			return new File(default_home, (new StringBuilder()).append("Library/Application Support/").append(minecraft).toString());
-		}
-
-		return null;
 	}
 
 }
