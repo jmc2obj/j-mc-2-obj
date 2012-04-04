@@ -10,6 +10,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -17,9 +24,6 @@ import javax.imageio.ImageIO;
  */
 public class Texsplit
 {
-	final static int ROWS = 16;
-	final static int COLS = 16;
-	
 
 	private static BufferedImage loadImageFromZip(File zipfile, String imagePath) throws IOException
 	{
@@ -27,10 +31,8 @@ public class Texsplit
 
 		ZipEntry entry = null;
 		while ((entry = zis.getNextEntry()) != null)
-		{
 			if (!entry.isDirectory() && entry.getName().equals(imagePath))
 				break;
-		}
 
 		if (entry == null)
 			throw new IOException("Couldn't find " + imagePath + " in " + zipfile.getName());
@@ -41,33 +43,33 @@ public class Texsplit
 		return result;
 	}
 	
-	private static void convertToAlpha(BufferedImage img)
-	{
-		int w=img.getWidth();
-		int h=img.getHeight();
-		int c=img.getColorModel().getPixelSize()/8;
-		
-		if(c!=4)
-		{
-			MainWindow.log("ERROR: texture is not 32-bit!");
-			return;
-		}
-		
-		int buffer[]=new int[w*h*c];
-
-		WritableRaster raster=img.getRaster();
-		raster.getPixels(0, 0, w, h, buffer);
-		
-		for(int i=0; i<w*h; i++)
-		{
-			buffer[4*i]=buffer[4*i+3];
-			buffer[4*i+1]=buffer[4*i+3];
-			buffer[4*i+2]=buffer[4*i+3];
-			buffer[4*i+3]=255;
-		}
-		
-		raster.setPixels(0, 0, w, h, buffer);
-	}
+//	private static void convertToAlpha(BufferedImage img)
+//	{
+//		int w=img.getWidth();
+//		int h=img.getHeight();
+//		int c=img.getColorModel().getPixelSize()/8;
+//		
+//		if(c!=4)
+//		{
+//			MainWindow.log("ERROR: texture is not 32-bit!");
+//			return;
+//		}
+//		
+//		int buffer[]=new int[w*h*c];
+//
+//		WritableRaster raster=img.getRaster();
+//		raster.getPixels(0, 0, w, h, buffer);
+//		
+//		for(int i=0; i<w*h; i++)
+//		{
+//			buffer[4*i]=buffer[4*i+3];
+//			buffer[4*i+1]=buffer[4*i+3];
+//			buffer[4*i+2]=buffer[4*i+3];
+//			buffer[4*i+3]=255;
+//		}
+//		
+//		raster.setPixels(0, 0, w, h, buffer);
+//	}
 	
 	private static void tintImage(BufferedImage img, Color tint)
 	{
@@ -111,9 +113,11 @@ public class Texsplit
 
 	/**
 	 * Reads a Minecraft texture pack and splits the individual block textures into .png images.
+	 * Depends on configuration file "texsplit.conf".
 	 * 
 	 * @param destination Directory to place the output files.
 	 * @param texturePack A Minecraft texture pack file. If null, will use minecraft's default textures.
+	 * @throws Exception if there is an error.
 	 */
 	public static void splitTextures(File destination, File texturePack) throws Exception
 	{
@@ -125,42 +129,57 @@ public class Texsplit
 			zipfile = new File(Utility.getMinecraftDir(), "bin/minecraft.jar");
 		else
 			zipfile = texturePack;
-
 		if (!zipfile.canRead())
 			throw new Exception("Cannot open " + zipfile.getName());
 		
-		BufferedImage image = loadImageFromZip(zipfile, "terrain.png");
-
-		int width = image.getWidth() / COLS;
-		int height = image.getHeight() / ROWS;
-		BufferedImage[] textures = new BufferedImage[ROWS * COLS];
+		File confFile = new File(Utility.getDatafilesDir(), "texsplit.conf");
+		if (!confFile.canRead())
+			throw new Exception("Cannot open configuration file " + zipfile.toString());
 		
-		int counter = 0;
-		for(int i = 0; i < ROWS; i++)
+		Document doc = XmlUtil.loadDocument(confFile);
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		
+		NodeList fileNodes = (NodeList)xpath.evaluate("/texsplit/file", doc, XPathConstants.NODESET);
+		for (int i = 0; i < fileNodes.getLength(); i++)
 		{
-			for(int j = 0; j < COLS; j++)
-			{
-				textures[(i * COLS) + j] = image.getSubimage(j * width, i * height, width, height);
-				BufferedImage im = textures[(i * COLS) + j];
-				counter++;
+			Node fileNode = fileNodes.item(i);
+			String fileName = XmlUtil.getAttribute(fileNode, "name");
+			int rows = Integer.parseInt(XmlUtil.getAttribute(fileNode, "rows"), 10);
+			int cols = Integer.parseInt(XmlUtil.getAttribute(fileNode, "cols"), 10);
+			
+			BufferedImage image = loadImageFromZip(zipfile, fileName);
 
-				if (counter < ROWS*COLS)
-				{
-					if(counter==1 || counter==53 || counter==40 || counter==144)
-					{
-						tintImage(im, Color.green);
-					}
-					File f=new File(destination.getAbsolutePath() + "/" + counter + ".png");
-					ImageIO.write(im, "png", f);
-					MainWindow.log("Saving texture to: "+f.getAbsolutePath());
-					
-					convertToAlpha(im);
-					File f2=new File(destination.getAbsolutePath() + "/" + counter + "_a.png");
-					ImageIO.write(im, "png", f2);				
-					MainWindow.log("Saving texture alpha to: "+f2.getAbsolutePath());
-				}
+			int width = image.getWidth() / cols;
+			int height = image.getHeight() / rows;
+			
+			NodeList texNodes = (NodeList)xpath.evaluate("tex", fileNode, XPathConstants.NODESET);
+			for (int j = 0; j < texNodes.getLength(); j++)
+			{
+				Node texNode = texNodes.item(j);
+				String pos = XmlUtil.getAttribute(texNode, "pos");
+				String texName = XmlUtil.getAttribute(texNode, "name");
+				String tint = XmlUtil.getAttribute(texNode, "tint");
+
+				if (texName == null)
+					continue;
+				
+				String[] aux = pos.split("\\s*,\\s*");
+				int rowPos = Integer.parseInt(aux[0], 10) - 1;
+				int colPos = Integer.parseInt(aux[1], 10) - 1;
+				
+				// XXX
+				System.out.println(pos + "\t" + texName);
+				
+				BufferedImage texture = image.getSubimage(colPos*width, rowPos*height, width, height);
+				
+				if (tint != null && tint.length() > 0)
+					tintImage(texture, new Color(Integer.parseInt(tint, 16)));
+				
+				ImageIO.write(texture, "png", new File(destination, texName + ".png"));
+				
 			}
 		}
+
 	}
 	
 }
