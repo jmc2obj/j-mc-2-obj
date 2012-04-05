@@ -24,7 +24,14 @@ import org.w3c.dom.NodeList;
  */
 public class Texsplit
 {
+	private static final String CONFIG_FILE = "texsplit.conf";
+	
 
+	private static BufferedImage loadImageFromFile(File file) throws IOException
+	{
+		return ImageIO.read(file);
+	}
+	
 	private static BufferedImage loadImageFromZip(File zipfile, String imagePath) throws IOException
 	{
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(zipfile));
@@ -112,8 +119,8 @@ public class Texsplit
 
 
 	/**
+	 * Reads the configuration file "texsplit.conf".
 	 * Reads a Minecraft texture pack and splits the individual block textures into .png images.
-	 * Depends on configuration file "texsplit.conf".
 	 * 
 	 * @param destination Directory to place the output files.
 	 * @param texturePack A Minecraft texture pack file. If null, will use minecraft's default textures.
@@ -132,7 +139,7 @@ public class Texsplit
 		if (!zipfile.canRead())
 			throw new Exception("Cannot open " + zipfile.getName());
 		
-		File confFile = new File(Utility.getDatafilesDir(), "texsplit.conf");
+		File confFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
 			throw new Exception("Cannot open configuration file " + zipfile.toString());
 		
@@ -143,11 +150,19 @@ public class Texsplit
 		for (int i = 0; i < fileNodes.getLength(); i++)
 		{
 			Node fileNode = fileNodes.item(i);
+			String source = XmlUtil.getAttribute(fileNode, "source", "texturepack");
 			String fileName = XmlUtil.getAttribute(fileNode, "name");
-			int rows = Integer.parseInt(XmlUtil.getAttribute(fileNode, "rows"), 10);
-			int cols = Integer.parseInt(XmlUtil.getAttribute(fileNode, "cols"), 10);
+			int rows = Integer.parseInt(XmlUtil.getAttribute(fileNode, "rows", "1"), 10);
+			int cols = Integer.parseInt(XmlUtil.getAttribute(fileNode, "cols", "1"), 10);
 			
-			BufferedImage image = loadImageFromZip(zipfile, fileName);
+			if (fileName == null || fileName.length() == 0)
+				throw new Exception("In " + CONFIG_FILE + ": 'file' tag is missing required attribute 'name'.");
+			
+			BufferedImage image;
+			if (source.equalsIgnoreCase("texturepack"))
+				image = loadImageFromZip(zipfile, fileName);
+			else
+				image = loadImageFromFile(new File(Utility.getDatafilesDir(), fileName));
 
 			int width = image.getWidth() / cols;
 			int height = image.getHeight() / rows;
@@ -156,19 +171,18 @@ public class Texsplit
 			for (int j = 0; j < texNodes.getLength(); j++)
 			{
 				Node texNode = texNodes.item(j);
-				String pos = XmlUtil.getAttribute(texNode, "pos");
+				String pos = XmlUtil.getAttribute(texNode, "pos", "1,1");
 				String texName = XmlUtil.getAttribute(texNode, "name");
 				String tint = XmlUtil.getAttribute(texNode, "tint");
 
 				if (texName == null)
 					continue;
 				
-				String[] aux = pos.split("\\s*,\\s*");
-				int rowPos = Integer.parseInt(aux[0], 10) - 1;
-				int colPos = Integer.parseInt(aux[1], 10) - 1;
-				
-				// XXX
-				System.out.println(pos + "\t" + texName);
+				String[] parts = pos.split("\\s*,\\s*");
+				if (parts.length != 2)
+					throw new Exception("In " + CONFIG_FILE + ": attribute 'pos' has invalid format.");
+				int rowPos = Integer.parseInt(parts[0], 10) - 1;
+				int colPos = Integer.parseInt(parts[1], 10) - 1;
 				
 				BufferedImage texture = image.getSubimage(colPos*width, rowPos*height, width, height);
 				
@@ -181,5 +195,5 @@ public class Texsplit
 		}
 
 	}
-	
+
 }

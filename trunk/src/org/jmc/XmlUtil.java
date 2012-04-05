@@ -39,13 +39,26 @@ public class XmlUtil {
 	 */
 	public static String getAttribute(Node node, String attrName)
 	{
+		return getAttribute(node, attrName, null);
+	}
+	
+	/**
+	 * Gets the value of an attribute in a XML element 
+	 * 
+	 * @param element DOM node
+	 * @param attrName Attribute name
+	 * @param defaultVal Default value to return when the attribute is not found
+	 * @return Attribute value, or 'defaultVal' if not found
+	 */
+	public static String getAttribute(Node node, String attrName, String defaultVal)
+	{
 		NamedNodeMap nm = node.getAttributes();
 		if (nm == null)
-			return null;
+			return defaultVal;
 		
 		Node attr = nm.getNamedItem(attrName);
 		if (attr == null)
-			return null;
+			return defaultVal;
 
 		return attr.getNodeValue();
 	}
