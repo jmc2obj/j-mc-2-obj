@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 public class About {
 	
 	private static boolean initialized=false; 
-	private static String version="0.14";
-	private static String revision="r92";
+	private static String version="0.15";
+	private static String revision="r100";
 	
 	private static void init()
 	{
@@ -41,7 +41,7 @@ public class About {
 				
 		List<String> donations=new LinkedList<String>();
 		
-		//donations will be added soon
+		donations.add("Hilum");
 		
 		msg+="We would like to thank these people for their dontaions:";
 		msg+="<ul style=\"list-style-type:none\">";
