@@ -37,6 +37,10 @@ newmtl bedrock
 Kd 0.3294 0.3294 0.3294
 map_Kd tex/bedrock.png
 
+newmtl book
+Kd 0.4235 0.3451 0.2275
+map_Kd tex/book.png
+
 newmtl bookshelf
 Kd 0.4235 0.3451 0.2275
 map_Kd tex/bookshelf.png
@@ -198,8 +202,8 @@ map_d tex/crops_7.png
 newmtl crops_8
 Kd 0.5137 0.7569 0.2667
 d 0.0
-map_Kd tex/crops_0.png
-map_d tex/crops_0.png
+map_Kd tex/crops_8.png
+map_d tex/crops_8.png
 
 newmtl dead_shrub
 Kd 0.5882 0.4431 0.3451
@@ -282,6 +286,9 @@ map_Kd tex/enchant_table_top.png
 newmtl enderdragon_egg
 Kd 0.1764 0.0039 0.2000
 map_Kd tex/enderdragon_egg.png
+
+newmtl endportal
+Kd 0.0000 0.0000 0.0000
 
 newmtl endportal_frame_side
 Kd 0.8632 0.8705 0.6470
@@ -563,7 +570,7 @@ map_Kd tex/piston_arm_sticky.png
 
 newmtl piston_arm
 Kd 0.4823 0.5569 0.3255
-map_Kd tex/piston_side.png
+map_Kd tex/piston_arm.png
 
 newmtl piston_bottom
 Kd 0.3059 0.3059 0.3059
