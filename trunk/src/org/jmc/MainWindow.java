@@ -73,6 +73,13 @@ public class MainWindow extends JFrame
 		
 		settings = new Settings();
 		main = new MainWindow();
+
+		try {
+			Blocks.initialize();
+		} catch (Exception e) {
+			Utility.logError("Error reading configuration file:", e);
+			return;
+		}
 	}
 	
 	/**

@@ -141,7 +141,7 @@ public class Texsplit
 		
 		File confFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
-			throw new Exception("Cannot open configuration file " + zipfile.toString());
+			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
 		
 		Document doc = XmlUtil.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();

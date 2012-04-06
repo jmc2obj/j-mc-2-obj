@@ -65,7 +65,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 					Texsplit.splitTextures(chooseTextureDestination(),null);
 				} catch (Exception e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(MainWindow.main, "Error saving textures:\n" + e.getMessage());
+					Utility.logError("Error saving textures:", e);
 				}
 			}
 		});
@@ -82,7 +82,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 						Texsplit.splitTextures(chooseTextureDestination(),jfc.getSelectedFile());
 					} catch (Exception e) {
 						e.printStackTrace();
-						JOptionPane.showMessageDialog(MainWindow.main, "Error saving textures:\n" + e.getMessage());
+						Utility.logError("Error saving textures:", e);
 					}
 				}
 			}
