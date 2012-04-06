@@ -29,7 +29,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 * Used by isRunning and stopRunning methods.
 	 */
 	private boolean running;
-	
+
 	/**
 	 * Reference to preview panel so we can change the preview.
 	 */
@@ -59,6 +59,13 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	Set<Integer> loaded_chunks;
 
 	/**
+	 * Variables defining the Y-axis boundaries of the current preview. 
+	 */
+	private int floor, ceiling;
+	private boolean y_bounds_changed;
+	private Object y_bounds_sync;
+
+	/**
 	 * Main constructor.
 	 * @param preview reference to the preview panel
 	 * @param savepath path to the world save
@@ -70,6 +77,10 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		chunk_images=preview.getChunkImages();
 
 		loaded_chunks=new HashSet<Integer>();
+		floor=0;
+		ceiling=Integer.MAX_VALUE;
+		y_bounds_changed=false;
+		y_bounds_sync=new Object();
 	}
 
 	/**
@@ -79,12 +90,12 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	public void run() {		
 
 		running=true;
-		
+
 		Region region=null;
 		Chunk chunk=null;
 
 		Rectangle prev_bounds=new Rectangle();
-		
+
 		long last_time=System.currentTimeMillis(),this_time;
 
 		loaded_chunks.clear();
@@ -92,46 +103,53 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		while(running)
 		{
 			Rectangle bounds=preview.getChunkBounds();
+			int floor,ceiling;
+			synchronized (y_bounds_sync) {
+				floor=this.floor;
+				ceiling=this.ceiling;				
+			}
 
 			boolean stop_iter=false;
-			if(!bounds.equals(prev_bounds))
+			if(!bounds.equals(prev_bounds) || y_bounds_changed)
 			{
-
 				int cxs=bounds.x;
 				int czs=bounds.y;
 				int cxe=bounds.x+bounds.width;
 				int cze=bounds.y+bounds.height;
 
+				if(y_bounds_changed)
+				{
+					y_bounds_changed=false;
+					loaded_chunks.clear();
+					chunk_images.clear();
+				}
 
 				Iterator<ChunkImage> iter=chunk_images.iterator();
 				while(iter.hasNext())
 				{
 					ChunkImage chunk_image=iter.next();
-					
+
 					int cx=chunk_image.x/64;
 					int cz=chunk_image.y/64;
-					
+
 					if(cx<cxs || cx>cxe || cz<czs || cz>cze)
 					{
-						if(!loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz))
-							System.out.println("THIS IS THE ERROR");
-						
 						loaded_chunks.remove(cx*MAX_CHUNK_NUM+cz);
 						iter.remove();
 					}
-					
+
 					Rectangle new_bounds=preview.getChunkBounds();
-					if(!bounds.equals(new_bounds))
-					{
+					if(!bounds.equals(new_bounds) || y_bounds_changed)
+					{						
 						stop_iter=true;
 						break;
 					}
-					
+
 					if(!running) return;
 				}	
-				
+
 				preview.redraw(true);			
-				
+
 				for(int cx=cxs; cx<=cxe && !stop_iter; cx++)
 				{
 					for(int cz=czs; cz<=cze && !stop_iter; cz++)
@@ -146,19 +164,19 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						}
 
 						if(chunk==null) continue;					
-						
+
 
 						int ix=chunk.getPosX();
 						int iy=chunk.getPosZ();
 
-						chunk.renderImages();
+						chunk.renderImages(floor,ceiling);
 						BufferedImage height_img=chunk.getHeightImage();
 						BufferedImage img=chunk.getBlockImage();											
 
 						preview.addImage(img, height_img, ix*64, iy*64);
 						loaded_chunks.add(cx*MAX_CHUNK_NUM+cz);			
 
-						
+
 						this_time=System.currentTimeMillis();
 						if(this_time-last_time>REPAINT_FREQUENCY)
 						{
@@ -167,9 +185,9 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						}
 
 						Rectangle new_bounds=preview.getChunkBounds();
-						if(!bounds.equals(new_bounds))
+						if(!bounds.equals(new_bounds) || y_bounds_changed)
 							stop_iter=true;
-						
+
 						if(!running) return;
 					}
 				}			
@@ -197,14 +215,29 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	public boolean isRunning() {
 		return running;
 	}
-	
+
 	/**
 	 * Interface override.
 	 */
 	@Override
 	public void stopRunning() {
 		running=false;
-		
+
+	}
+
+	/**
+	 * Change the Y-axis bounds needed for drawing. 
+	 * @param floor
+	 * @param ceiling
+	 */
+	public void setYBounds(int floor, int ceiling)
+	{
+		synchronized (y_bounds_sync) 
+		{
+			this.floor=floor;
+			this.ceiling=ceiling;	
+			y_bounds_changed=true;
+		}		
 	}
 
 }

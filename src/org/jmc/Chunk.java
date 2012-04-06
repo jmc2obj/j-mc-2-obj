@@ -220,8 +220,10 @@ public class Chunk {
 
 	/**
 	 * Renders the block and height images.
+	 * @param floor floor boundary
+	 * @param ceiling ceiling boundary
 	 */
-	public void renderImages()
+	public void renderImages(int floor, int ceiling)
 	{
 		int width = 4 * 16;
 		int height = 4 * 16;
@@ -239,19 +241,22 @@ public class Chunk {
 		int BlockID=0;
 		byte BlockData=0;
 		Color c;
-		Blocks bd=getBlocks();
-		
-		/*for(int i=0; i<bd.id.length; i++)
-			System.out.print(bd.id[i]+"/"+bd.data[i]+",");
-		System.out.println();*/
-		
-		
+		Blocks bd=getBlocks();		
 
 		int ymax=0;
 		if(is_anvil)
 			ymax=bd.id.length/(16*16);
 		else 
 			ymax=128;
+		
+		if(floor>ymax)
+			return;
+		if(ceiling>ymax)
+			ceiling=ymax;
+		if(ceiling<1)
+			ceiling=1;
+		if(floor>=ceiling)
+			floor=ceiling-1;
 
 
 		int ids[]=new int[16*16];
@@ -265,7 +270,7 @@ public class Chunk {
 			{
 				ids[z*16+x]=0;
 
-				for(y = 0; y < ymax; y++)
+				for(y = floor; y < ceiling; y++)
 				{
 					if(is_anvil)
 					{

@@ -22,4 +22,10 @@ public interface ChunkLoaderThread extends Runnable {
 	 * Stops the thread.
 	 */
 	public void stopRunning();
+	/**
+	 * Changes the Y-axis boundaries.
+	 * @param floor
+	 * @param ceiling
+	 */
+	public void setYBounds(int floor, int ceiling);
 }
