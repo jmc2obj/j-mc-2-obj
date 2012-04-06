@@ -591,7 +591,21 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		if(left_pressed && !shaping_selection)
 		{			
 			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
-			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);		
+			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
+			int t;
+			if(selection_end_x<selection_start_x)
+			{
+				t=selection_end_x;
+				selection_end_x=selection_start_x;
+				selection_start_x=t;
+			}
+			
+			if(selection_end_z<selection_start_z)
+			{
+				t=selection_end_z;
+				selection_end_z=selection_start_z;
+				selection_start_z=t;
+			}
 		}
 
 		left_pressed=false;
