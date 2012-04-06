@@ -162,6 +162,7 @@ public class MainPanel extends JPanel
 					if(sCeil.getValue()<=sFloor.getValue())
 						sCeil.setValue(sFloor.getValue()+1);
 				}
+				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
 				preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
 				preview.repaint();
 			}

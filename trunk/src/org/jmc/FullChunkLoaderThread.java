@@ -76,7 +76,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 					return;
 				}
 
-				chunk.renderImages();
+				chunk.renderImages(0,Integer.MAX_VALUE); //this ignores the GUI, but the class is unused anyway...
 				BufferedImage height_img=chunk.getHeightImage();
 				BufferedImage img=chunk.getBlockImage();										
 
@@ -118,6 +118,12 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 	@Override
 	public void stopRunning() {
 		running=false;		
+	}
+
+	@Override
+	public void setYBounds(int floor, int ceiling) {
+		//THIS METHOD IS NOT YET IMPLEMENTED
+		
 	}
 
 }
