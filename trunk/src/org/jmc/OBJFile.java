@@ -597,7 +597,7 @@ public class OBJFile {
 		
 		printTexturesAndNormals(out);
 
-		appendFaces(out);
+		appendFaces(out,false);
 	}
 	
 	public void appendObjectname(PrintWriter out)
@@ -617,7 +617,13 @@ public class OBJFile {
 		}
 	}
 
-	public void appendFaces(PrintWriter out)
+	/**
+	 * This method prints faces from the current buffer to an OBJ format.
+	 * 
+	 * @param out file to append the data
+	 * @param obj_per_mat create separate object for each material
+	 */
+	public void appendFaces(PrintWriter out, boolean obj_per_mat)
 	{
 		Locale l=null;
 		
@@ -631,6 +637,7 @@ public class OBJFile {
 			if(f.mtl_id!=last_id)
 			{
 				out.println();
+				if(obj_per_mat) out.println("g "+identifier+"_"+material.getMaterial(f.mtl_id));
 				out.println("usemtl "+material.getMaterial(f.mtl_id));
 				last_id=f.mtl_id;
 			}
