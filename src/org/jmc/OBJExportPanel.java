@@ -24,6 +24,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -250,6 +251,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 
 		float scale=options.getScale();
+		boolean obj_per_mat=options.getObjPerMat();
 
 		try {
 			PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
@@ -296,7 +298,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			obj.setOffset(-oxs*16, -ymin, -ozs*16);
 			obj.setScale(scale);
 			
-			obj.appendObjectname(obj_writer);
+			if(!obj_per_mat) obj.appendObjectname(obj_writer);
 			obj.printTexturesAndNormals(obj_writer);
 			
 			
@@ -327,7 +329,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 							
 							chunk_buffer.addChunk(chunk);		
 							obj.appendVertices(obj_writer);
-							obj.appendFaces(obj_writer);
+							obj.appendFaces(obj_writer,obj_per_mat);
 							obj.clearData();
 							
 						}
@@ -365,6 +367,7 @@ class OBJExportOptions extends JPanel
 	private JTextField tfScale;
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
+	private JCheckBox cbObjPerMat;
 
 	public OBJExportOptions() {
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -401,6 +404,12 @@ class OBJExportOptions extends JPanel
 		rbNoOffset.setActionCommand("none");
 		rbCenterOffset.setActionCommand("center");
 		rbCustomOffset.setActionCommand("custom");
+		
+		JPanel pObjPerMat=new JPanel();
+		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
+		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbObjPerMat=new JCheckBox("Create a separate object for each material");
+		pObjPerMat.add(cbObjPerMat);
 
 		AbstractAction rbOffsetAction=new AbstractAction() {			
 			@Override
@@ -456,6 +465,7 @@ class OBJExportOptions extends JPanel
 
 		add(pScale);
 		add(pOffset);
+		add(pObjPerMat);
 	}
 
 	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
@@ -494,5 +504,10 @@ class OBJExportOptions extends JPanel
 		}
 
 		return ret;
+	}
+	
+	public boolean getObjPerMat()
+	{
+		return cbObjPerMat.isSelected();
 	}
 }
