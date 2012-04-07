@@ -48,7 +48,7 @@ public class MainPanel extends JPanel
 {
 	//UI elements (not described separately)
 	private JButton bLoad,bSave,bSettings,bAbout;
-	//this suppression is for compatibility wiht java 1.6
+	//this suppression is for compatibility with java 1.6
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbPath;
 	private JTextArea taLog;

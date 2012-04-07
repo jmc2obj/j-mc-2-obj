@@ -13,12 +13,9 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.swing.AbstractAction;
@@ -207,7 +204,6 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		File exportpath=new File(tfSavePath.getText());
 
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
-		File tmpfile=new File(exportpath.getAbsolutePath()+"/minecraft_faces.tmp");
 		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
 
 		if(objfile.exists())
@@ -228,7 +224,6 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		try {
 			objfile.createNewFile();
-			tmpfile.createNewFile();
 			mtlfile.createNewFile();
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this, "Cannot write to the chosen location!");
@@ -257,16 +252,15 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		float scale=options.getScale();
 
 		try {
-			PrintWriter vertex_writer=new PrintWriter(new FileWriter(objfile));
-			PrintWriter faces_writer=new PrintWriter(new FileWriter(tmpfile));
-
+			PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
+			
 			MTLFile mtl=new MTLFile(mtlfile);
 
 			mtl.saveMTLFile();
 
 			MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
 
-			mtl.header(vertex_writer,objfile);
+			mtl.header(obj_writer,objfile);
 
 			int cxs=(int)Math.floor(bounds.x/16.0f);
 			int czs=(int)Math.floor(bounds.y/16.0f);
@@ -302,7 +296,9 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			obj.setOffset(-oxs*16, -ymin, -ozs*16);
 			obj.setScale(scale);
 			
-			obj.appendObjectname(vertex_writer);
+			obj.appendObjectname(obj_writer);
+			obj.printTexturesAndNormals(obj_writer);
+			
 			
 			MainWindow.log("Processing chunks...");
 			
@@ -330,8 +326,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 							}
 							
 							chunk_buffer.addChunk(chunk);		
-							obj.appendVertices(vertex_writer);
-							obj.appendFaces(faces_writer);
+							obj.appendVertices(obj_writer);
+							obj.appendFaces(obj_writer);
 							obj.clearData();
 							
 						}
@@ -346,25 +342,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				chunk_buffer.removeAllChunks();
 			}
 			
-			
-			obj.printTexturesAndNormals(vertex_writer);
-			
-			faces_writer.close();
-			
-			MainWindow.log("Merging temp into final...");
-			
-			BufferedReader tmpreader=new BufferedReader(new InputStreamReader(new FileInputStream(tmpfile)));
-			
-			String line;
-			while((line=tmpreader.readLine())!=null)
-			{
-				vertex_writer.println(line);
-			}
-			
-			tmpreader.close();
-			vertex_writer.close();
-			
-			tmpfile.delete();
+			obj_writer.close();
 			
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());
 			MainWindow.log("Done!");
