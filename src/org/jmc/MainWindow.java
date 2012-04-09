@@ -75,7 +75,8 @@ public class MainWindow extends JFrame
 		main = new MainWindow();
 
 		try {
-			Blocks.initialize();
+			Materials.initialize();
+			BlockTypes.initialize();
 		} catch (Exception e) {
 			Utility.logError("Error reading configuration file:", e);
 			return;

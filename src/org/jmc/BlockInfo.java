@@ -29,23 +29,44 @@ public class BlockInfo
 	/** Block name */
 	public String name;
 
-	/** Color to draw in the interactive map */
-	public Color color;
+	/** Materials defined for this block */
+	public BlockMaterial materials;
 	
 	/** How this block occludes adjacent blocks */
-	public BlockInfo.Occlusion occlusion;
+	public Occlusion occlusion;
 
 	/** 3D model handler for this block */
 	public BlockModel model;
 	
 	
 	/** Convenience constructor */
-	BlockInfo(int id, String name, Color color, Occlusion occlusion, BlockModel model)
+	BlockInfo(int id, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
 	{
 		this.id = id;
 		this.name = name;
-		this.color = color;
+		this.materials = materials;
 		this.occlusion = occlusion;
 		this.model = model;
 	}
+	
+
+	/**
+	 * Convenience method to get the color to use for this block in the map preview.
+	 * The color is taken from the first material in the block's material list.
+	 *  
+	 * @param data Block data
+	 * @return Block color
+	 */
+	public Color getPreviewColor(byte data)
+	{
+		String[] mtlNames = materials.get(data);
+		if (mtlNames == null || mtlNames.length == 0)
+		{
+			Utility.logDebug("block " + id + " (" + name + ") has no mtl for data="+data);
+			return Materials.getColor("unknown");
+		}
+		return Materials.getColor(mtlNames[0]);
+	}
+	
+
 }
