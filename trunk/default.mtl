@@ -801,7 +801,7 @@ map_Kd tex/sugarcane.png
 map_d tex/sugarcane.png
 
 newmtl tall_grass
-Kd 0.3216 0.4510 0.1725
+Kd 0.2896 0.4060 0.1555
 d 0.0
 map_Kd tex/tall_grass.png
 map_d tex/tall_grass.png
@@ -825,7 +825,7 @@ map_Kd tex/torch.png
 map_d tex/torch.png
 
 newmtl vines
-Kd 0.2902 0.5216 0.2353
+Kd 0.2896 0.4060 0.1555
 d 0.0
 map_Kd tex/vines.png
 map_d tex/vines.png

@@ -1,6 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
+import org.jmc.BlockMaterial;
 
 
 /**
@@ -10,7 +10,7 @@ import java.util.HashMap;
 public abstract class BlockModel
 {
 	protected int blockId = -1;
-	protected HashMap<Integer, String[]> materials = null;
+	protected BlockMaterial materials = null;
 	
 
 	/**
@@ -22,9 +22,9 @@ public abstract class BlockModel
 	}
 	
 	/**
-	 * XXX describe the expected indexes
+	 * Set the materials for this block.
 	 */
-	public void setMaterials(HashMap<Integer, String[]> val)
+	public void setMaterials(BlockMaterial val)
 	{
 		this.materials = val;
 	}

@@ -30,10 +30,6 @@ public class Chunk {
 	 * Root of the loaded chunk structure.
 	 */
 	private TAG_Compound root;
-	/**
-	 * Color scheme used for the given chunk.
-	 */
-	private Colors colors;
 
 	/**
 	 * Position of chunk.
@@ -68,8 +64,6 @@ public class Chunk {
 
 		root=(TAG_Compound) NBT_Tag.make(is);		
 		is.close();
-
-		colors = MainWindow.settings.minecraft_colors;
 
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 
@@ -238,8 +232,8 @@ public class Chunk {
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
-		int BlockID=0;
-		byte BlockData=0;
+		int blockID=0;
+		byte blockData=0;
 		Color c;
 		Blocks bd=getBlocks();		
 
@@ -274,20 +268,19 @@ public class Chunk {
 				{
 					if(is_anvil)
 					{
-						BlockID = bd.id[x + (z * 16) + (y * 16) * 16];
-						BlockData = bd.data[x + (z * 16) + (y * 16) * 16];
+						blockID = bd.id[x + (z * 16) + (y * 16) * 16];
+						blockData = bd.data[x + (z * 16) + (y * 16) * 16];
 					}
 					else
 					{
-						BlockID = bd.id[y + (z * 128) + (x * 128) * 16];
-						BlockData = bd.data[y + (z * 128) + (x * 128) * 16];
+						blockID = bd.id[y + (z * 128) + (x * 128) * 16];
+						blockData = bd.data[y + (z * 128) + (x * 128) * 16];
 					}
 
-					c=colors.getColor(BlockID,BlockData);
-					if(c != null)
+					if(blockID != 0)
 					{
-						ids[z*16+x]=BlockID;
-						data[z*16+x]=BlockData;
+						ids[z*16+x]=blockID;
+						data[z*16+x]=blockData;
 						himage[z*16+x]=y;
 					}
 				}
@@ -298,8 +291,8 @@ public class Chunk {
 		for(z = 0; z < 16; z++)
 		{
 			for(x = 0; x < 16; x++)
-			{				
-				c=colors.getColor(ids[z*16+x],data[z*16+x]);
+			{
+				c = BlockTypes.get(ids[z*16+x]).getPreviewColor(data[z*16+x]);
 				if(c!=null)
 				{
 					gb.setColor(c);

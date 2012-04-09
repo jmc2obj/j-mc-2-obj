@@ -1,6 +1,5 @@
 package org.jmc;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.HashMap;
 
@@ -21,7 +20,7 @@ import org.w3c.dom.NodeList;
  * available to the program.
  * It also creates the appropriate model handlers for each block type.
  */
-public class Blocks
+public class BlockTypes
 {
 	private static final String CONFIG_FILE = "blocks.conf";
 	
@@ -55,7 +54,7 @@ public class Blocks
 			String name = XmlUtil.getAttribute(blockNode, "name", "");
 			String modelName = "Cube";
 			BlockInfo.Occlusion occlusion = BlockInfo.Occlusion.FULL; 
-			HashMap<Integer, String[]> materials = new HashMap<Integer, String[]>(16);
+			BlockMaterial materials = new BlockMaterial();
 
 			String aux;
 			aux = (String)xpath.evaluate("model", blockNode, XPathConstants.STRING);
@@ -74,12 +73,14 @@ public class Blocks
 				}
 			}
 
+			boolean hasMtl = false;
 			NodeList matNodes = (NodeList)xpath.evaluate("materials", blockNode, XPathConstants.NODESET);
 			for (int j = 0; j < matNodes.getLength(); j++)
 			{
 				Node matNode = matNodes.item(j);
 
 				int data = Integer.parseInt(XmlUtil.getAttribute(matNode, "data", "-1"), 10);
+				int mask = Integer.parseInt(XmlUtil.getAttribute(matNode, "mask", "-1"), 10);
 				String mats = matNode.getTextContent();
 				if (data < -1 || data > 15 || mats.trim().isEmpty())
 				{
@@ -87,13 +88,21 @@ public class Blocks
 					continue;
 				}
 				
-				materials.put(data, mats.split("\\s,\\s"));
+				if (mask >= 0)
+					materials.setDataMask((byte)mask);
+				
+				if (data >= 0)
+					materials.put((byte)data, mats.split("\\s*,\\s*"));
+				else
+					materials.put(mats.split("\\s*,\\s*"));
+				
+				hasMtl = true;
 			}
 			
-			if (materials.isEmpty())
+			if (!hasMtl)
 			{
 				Utility.logInfo("Block " + id + " has no materials. Using default.");
-				materials.put(-1, new String[] { "unknown" });
+				materials.put(new String[] { "unknown" });
 			}
 			
 			BlockModel model;
@@ -108,8 +117,7 @@ public class Blocks
 			model.setBlockId(id);
 			model.setMaterials(materials);
 			
-			// TODO get block from materials
-			blockTable.put(id, new BlockInfo(id, name, new Color(0xCCCCCC), occlusion, model)); 
+			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model)); 
 		}
 	}
 	
@@ -123,15 +131,14 @@ public class Blocks
 	public static void initialize() throws Exception
 	{
 		// create a block to use when dealing with unknown block ids
-		HashMap<Integer, String[]> material = new HashMap<Integer, String[]>();
-		material.put(-1, new String[] { "unknown" });
+		BlockMaterial materials = new BlockMaterial();
+		materials.put(new String[] { "unknown" });
 
 		BlockModel cube = new Cube();
 		cube.setBlockId(-1);
-		cube.setMaterials(material);
+		cube.setMaterials(materials);
 		
-		// TODO get block from materials
-		unknownBlock = new BlockInfo(-1, "unknown", new Color(0xFF00FF), BlockInfo.Occlusion.FULL, cube);
+		unknownBlock = new BlockInfo(-1, "unknown", materials, BlockInfo.Occlusion.FULL, cube);
 		
 		// create the blocks table
 		Utility.logInfo("Reading blocks configuration file...");
