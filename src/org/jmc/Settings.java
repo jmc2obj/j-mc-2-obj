@@ -116,6 +116,11 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		
 		addWindowListener(this);
 	}
+	
+	public Preferences getPreferences()
+	{
+		return prefs;
+	}
 
 	public void setLastLoadedMap(String path)
 	{
@@ -125,34 +130,6 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 	public String getLastLoadedMap()
 	{
 		return prefs.get("LAST_MAP", "");
-	}
-	
-	
-	public void setDefaultScale(float val)
-	{		
-		prefs.putFloat("DEFAULT_SCALE", val);
-	}
-	
-	public float getDefaultScale()
-	{
-		return prefs.getFloat("DEFAULT_SCALE",1.0f);
-	}
-	
-	public void setOffset(int type, int x, int z)
-	{
-		prefs.putInt("OFFSET_TYPE", type);
-		prefs.putInt("OFFSET_X", x);
-		prefs.putInt("OFFSET_Z", z);
-	}
-	
-	public int getOffsetType()
-	{
-		return prefs.getInt("OFFSET_TYPE", 0);		
-	}
-	
-	public Point getOffset()
-	{
-		return new Point(prefs.getInt("OFFSET_X", 0),prefs.getInt("OFFSET_Z", 0));
 	}
 	
 	public void setLastExportPath(String path)

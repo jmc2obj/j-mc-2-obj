@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -233,18 +234,6 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		OffsetType offset_type=options.getOffsetType();
 		Point offset_point=options.getCustomOffset();
-		switch(offset_type)
-		{
-		case NO_OFFSET:
-			MainWindow.settings.setOffset(0,offset_point.x,offset_point.y);
-			break;
-		case CENTER_OFFSET:
-			MainWindow.settings.setOffset(1,offset_point.x,offset_point.y);
-			break;
-		case CUSTOM_OFFSET:
-			MainWindow.settings.setOffset(2,offset_point.x,offset_point.y);
-			break;
-		}
 		MainWindow.settings.setLastExportPath(tfSavePath.getText());
 
 		running=true;
@@ -252,10 +241,12 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		float scale=options.getScale();
 		boolean obj_per_mat=options.getObjPerMat();
+		
+		options.saveSettings();
 
 		try {
 			PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
-			
+
 			MTLFile mtl=new MTLFile(mtlfile);
 
 			mtl.saveMTLFile();
@@ -289,21 +280,21 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 			int progress_count=0;
 			int progress_max=(cxe-cxs)*(cze-czs);
-			
+
 			progress.setMaximum(progress_max);
-			
+
 			ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
-			
+
 			OBJFile obj=new OBJFile("minecraft", mtl);
 			obj.setOffset(-oxs*16, -ymin, -ozs*16);
 			obj.setScale(scale);
-			
+
 			if(!obj_per_mat) obj.appendObjectname(obj_writer);
 			obj.printTexturesAndNormals(obj_writer);
-			
-			
+
+
 			MainWindow.log("Processing chunks...");
-			
+
 			for(int cx=cxs; cx<=cxe && running; cx++)
 			{
 				for(int cz=czs; cz<=cze && running; cz++,progress_count++)
@@ -314,9 +305,9 @@ public class OBJExportPanel extends JFrame implements Runnable {
 						for(int lz=cz-1; lz<=cz+1; lz++)
 						{
 							if(lx<cxs || lx>cxe || lz<czs || lz>cze) continue;
-							
+
 							if(chunk_buffer.hasChunk(lx, lz)) continue;
-							
+
 							Chunk chunk=null;
 							try{
 								Region region=Region.findRegion(savepath, lx, lz);							
@@ -326,26 +317,26 @@ public class OBJExportPanel extends JFrame implements Runnable {
 							}catch (Exception e) {
 								continue;
 							}
-							
+
 							chunk_buffer.addChunk(chunk);		
 							obj.appendVertices(obj_writer);
 							obj.appendFaces(obj_writer,obj_per_mat);
 							obj.clearData();
-							
+
 						}
-					
+
 					obj.addChunkBuffer(chunk_buffer,cx,cz);
-					
+
 					for(int lx=cx-1; lx<=cx+1; lx++)
 						chunk_buffer.removeChunk(lx,cz-1);
 
 				}
-				
+
 				chunk_buffer.removeAllChunks();
 			}
-			
+
 			obj_writer.close();
-			
+
 			MainWindow.log("Saved model to "+objfile.getAbsolutePath());
 			MainWindow.log("Done!");
 
@@ -363,7 +354,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 @SuppressWarnings("serial")
 class OBJExportOptions extends JPanel
 {
-
+	private Preferences prefs;
 	private JTextField tfScale;
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
@@ -373,11 +364,13 @@ class OBJExportOptions extends JPanel
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
+		prefs=MainWindow.settings.getPreferences();
+
 		JPanel pScale=new JPanel();		
 		pScale.setLayout(new BoxLayout(pScale,BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		JLabel lScale=new JLabel("Map Scale: ");
-		tfScale=new JTextField(""+MainWindow.settings.getDefaultScale());
+		tfScale=new JTextField(""+prefs.getFloat("DEFAULT_SCALE", 1.0f));
 		pScale.add(lScale);
 		pScale.add(tfScale);
 
@@ -404,7 +397,7 @@ class OBJExportOptions extends JPanel
 		rbNoOffset.setActionCommand("none");
 		rbCenterOffset.setActionCommand("center");
 		rbCustomOffset.setActionCommand("custom");
-		
+
 		JPanel pObjPerMat=new JPanel();
 		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -427,13 +420,16 @@ class OBJExportOptions extends JPanel
 
 				int x=Integer.parseInt(tfXOffset.getText());
 				int z=Integer.parseInt(tfZOffset.getText());
+			
+				prefs.putInt("OFFSET_X", x);
+				prefs.putInt("OFFSET_Z", z);
 
 				if(ev.getActionCommand().equals("none"))
-					MainWindow.settings.setOffset(0,x,z);
+					prefs.putInt("OFFSET_TYPE", 0);
 				else if(ev.getActionCommand().equals("center"))
-					MainWindow.settings.setOffset(1,x,z);
+					prefs.putInt("OFFSET_TYPE", 1);
 				else if(ev.getActionCommand().equals("custom"))
-					MainWindow.settings.setOffset(2,x,z);
+					prefs.putInt("OFFSET_TYPE", 2);
 			}
 		};
 
@@ -441,7 +437,7 @@ class OBJExportOptions extends JPanel
 		rbCenterOffset.addActionListener(rbOffsetAction);
 		rbCustomOffset.addActionListener(rbOffsetAction);
 
-		switch(MainWindow.settings.getOffsetType())
+		switch(prefs.getInt("OFFSET_TYPE", 0))
 		{
 		case 0:
 			rbNoOffset.setSelected(true);
@@ -459,9 +455,8 @@ class OBJExportOptions extends JPanel
 			tfZOffset.setEnabled(true);
 			break;
 		}
-		Point p=MainWindow.settings.getOffset();
-		tfXOffset.setText(""+p.x);
-		tfZOffset.setText(""+p.y);
+		tfXOffset.setText(""+prefs.getInt("OFFSET_X", 0));
+		tfZOffset.setText(""+prefs.getInt("OFFSET_Z", 0));
 
 		add(pScale);
 		add(pOffset);
@@ -482,6 +477,11 @@ class OBJExportOptions extends JPanel
 			return OffsetType.CUSTOM_OFFSET;
 
 		return OffsetType.NO_OFFSET;
+	}
+	
+	public void saveSettings()
+	{
+		prefs.putFloat("DEFAULT_SCALE", getScale());
 	}
 
 	public Point getCustomOffset()
@@ -505,7 +505,7 @@ class OBJExportOptions extends JPanel
 
 		return ret;
 	}
-	
+
 	public boolean getObjPerMat()
 	{
 		return cbObjPerMat.isSelected();
