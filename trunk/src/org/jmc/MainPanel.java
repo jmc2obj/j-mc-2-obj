@@ -15,6 +15,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.AbstractAction;
@@ -31,6 +32,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.text.BadLocationException;
 
 import org.jmc.NBT.TAG_Double;
@@ -77,6 +79,8 @@ public class MainPanel extends JPanel
 	 * be able to save the last loaded file.
 	 */
 	private File loaded_file=null;
+	
+	private boolean slider_pressed=false;
 
 	/**
 	 * Panel contructor.
@@ -162,14 +166,29 @@ public class MainPanel extends JPanel
 					if(sCeil.getValue()<=sFloor.getValue())
 						sCeil.setValue(sFloor.getValue()+1);
 				}
-				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+				if(!slider_pressed) 
+					chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
 				preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
 				preview.repaint();
 			}
 		};
+		MouseInputAdapter slider_adapter=new MouseInputAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				slider_pressed=true;
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				slider_pressed=false;
+				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+			}
+		};
 		
 		sCeil.addChangeListener(slider_listener);
+		sCeil.addMouseListener(slider_adapter);
 		sFloor.addChangeListener(slider_listener);
+		sFloor.addMouseListener(slider_adapter);
 		preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
 		
 		bLoad.addActionListener(new ActionListener()
