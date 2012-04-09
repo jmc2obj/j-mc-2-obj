@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.prefs.Preferences;
 
+import javax.management.openmbean.OpenDataException;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,6 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
 import org.jmc.OBJExportOptions.OffsetType;
+import org.jmc.OBJExportOptions.OverwriteAction;
 
 /**
  * A thread used and UI for saving an OBJ file.
@@ -69,6 +71,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	JTextField tfSavePath;
 	JButton bRun,bStop;
 	JButton bOptions;
+	JButton bTex;
 
 
 	/**
@@ -134,6 +137,13 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		pRun.add(bRun);
 		pRun.add(bStop);
 		main.add(pRun);
+		
+		JPanel pTex=new JPanel();
+		pTex.setLayout(new BoxLayout(pTex, BoxLayout.LINE_AXIS));
+		bTex=new JButton("Export Textures");
+		bTex.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pTex.add(bTex);
+		main.add(pTex);
 
 		progress=new JProgressBar();
 		progress.setStringPainted(true);
@@ -192,6 +202,17 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				}
 			}
 		});
+		
+		bTex.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {				
+				TexsplitDialog tsdiag=new TexsplitDialog(tfSavePath.getText()+"/tex");
+				Point p=getLocation();
+				p.x+=(getWidth()-tsdiag.getWidth())/2;
+				p.y+=(getHeight()-tsdiag.getHeight())/2;
+				tsdiag.setLocation(p);
+			}
+		});
 
 		pack();
 		setVisible(true);
@@ -208,19 +229,38 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
 		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
 
+		boolean write_obj=true;
+		boolean write_mtl=true;
+
 		if(objfile.exists())
 		{
-			if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+			if(options.getOBJOverwriteAction()==OverwriteAction.ALWAYS)
+			{
+				write_obj=true;
+			}
+			else if(options.getOBJOverwriteAction()==OverwriteAction.NEVER)
+			{
+				write_obj=false;
+			}
+			else if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
 			{												
-				return;
+				write_obj=false;
 			}
 		}
 
 		if(mtlfile.exists())
 		{
-			if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+			if(options.getMTLOverwriteAction()==OverwriteAction.ALWAYS)
+			{
+				write_mtl=true;
+			}
+			else if(options.getMTLOverwriteAction()==OverwriteAction.NEVER)
+			{
+				write_mtl=false;
+			}
+			else if(JOptionPane.showConfirmDialog(OBJExportPanel.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
 			{												
-				return;
+				write_mtl=false;
 			}
 		}
 
@@ -229,6 +269,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			mtlfile.createNewFile();
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this, "Cannot write to the chosen location!");
+			bRun.setEnabled(true);
+			bStop.setEnabled(false);
 			return;
 		}
 
@@ -241,7 +283,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		float scale=options.getScale();
 		boolean obj_per_mat=options.getObjPerMat();
-		
+
 		options.saveSettings();
 
 		try {
@@ -249,95 +291,100 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 			MTLFile mtl=new MTLFile(mtlfile);
 
-			mtl.saveMTLFile();
+			if(write_mtl) mtl.saveMTLFile();
 
 			MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
 
-			mtl.header(obj_writer,objfile);
-
-			int cxs=(int)Math.floor(bounds.x/16.0f);
-			int czs=(int)Math.floor(bounds.y/16.0f);
-			int cxe=(int)Math.ceil((bounds.x+bounds.width)/16.0f);
-			int cze=(int)Math.ceil((bounds.y+bounds.height)/16.0f);
-			int oxs=0,ozs=0;
-
-			if(offset_type==OffsetType.NO_OFFSET)
+			if(write_obj)
 			{
-				oxs=0;
-				ozs=0;
-			}
-			else if(offset_type==OffsetType.CENTER_OFFSET)
-			{
-				oxs=cxs+(cxe-cxs)/2;
-				ozs=czs+(cze-czs)/2;
-			}
-			else if(offset_type==OffsetType.CUSTOM_OFFSET)
-			{
-				oxs=offset_point.x;
-				ozs=offset_point.y;
-			}
 
+				mtl.header(obj_writer,objfile);
 
-			int progress_count=0;
-			int progress_max=(cxe-cxs)*(cze-czs);
+				int cxs=(int)Math.floor(bounds.x/16.0f);
+				int czs=(int)Math.floor(bounds.y/16.0f);
+				int cxe=(int)Math.ceil((bounds.x+bounds.width)/16.0f);
+				int cze=(int)Math.ceil((bounds.y+bounds.height)/16.0f);
+				int oxs=0,ozs=0;
 
-			progress.setMaximum(progress_max);
-
-			ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
-
-			OBJFile obj=new OBJFile("minecraft", mtl);
-			obj.setOffset(-oxs*16, -ymin, -ozs*16);
-			obj.setScale(scale);
-
-			if(!obj_per_mat) obj.appendObjectname(obj_writer);
-			obj.printTexturesAndNormals(obj_writer);
-
-
-			MainWindow.log("Processing chunks...");
-
-			for(int cx=cxs; cx<=cxe && running; cx++)
-			{
-				for(int cz=czs; cz<=cze && running; cz++,progress_count++)
+				if(offset_type==OffsetType.NO_OFFSET)
 				{
-					progress.setValue(progress_count);					
-
-					for(int lx=cx-1; lx<=cx+1; lx++)
-						for(int lz=cz-1; lz<=cz+1; lz++)
-						{
-							if(lx<cxs || lx>cxe || lz<czs || lz>cze) continue;
-
-							if(chunk_buffer.hasChunk(lx, lz)) continue;
-
-							Chunk chunk=null;
-							try{
-								Region region=Region.findRegion(savepath, lx, lz);							
-								if(region==null) continue;					
-								chunk=region.getChunk(lx, lz);
-								if(chunk==null) continue;
-							}catch (Exception e) {
-								continue;
-							}
-
-							chunk_buffer.addChunk(chunk);		
-							obj.appendVertices(obj_writer);
-							obj.appendFaces(obj_writer,obj_per_mat);
-							obj.clearData();
-
-						}
-
-					obj.addChunkBuffer(chunk_buffer,cx,cz);
-
-					for(int lx=cx-1; lx<=cx+1; lx++)
-						chunk_buffer.removeChunk(lx,cz-1);
-
+					oxs=0;
+					ozs=0;
+				}
+				else if(offset_type==OffsetType.CENTER_OFFSET)
+				{
+					oxs=cxs+(cxe-cxs)/2;
+					ozs=czs+(cze-czs)/2;
+				}
+				else if(offset_type==OffsetType.CUSTOM_OFFSET)
+				{
+					oxs=offset_point.x;
+					ozs=offset_point.y;
 				}
 
-				chunk_buffer.removeAllChunks();
+
+				int progress_count=0;
+				int progress_max=(cxe-cxs)*(cze-czs);
+
+				progress.setMaximum(progress_max);
+
+				ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
+
+				OBJFile obj=new OBJFile("minecraft", mtl);
+				obj.setOffset(-oxs*16, -ymin, -ozs*16);
+				obj.setScale(scale);
+
+				if(!obj_per_mat) obj.appendObjectname(obj_writer);
+				obj.printTexturesAndNormals(obj_writer);
+
+
+				MainWindow.log("Processing chunks...");
+
+				for(int cx=cxs; cx<=cxe && running; cx++)
+				{
+					for(int cz=czs; cz<=cze && running; cz++,progress_count++)
+					{
+						progress.setValue(progress_count);					
+
+						for(int lx=cx-1; lx<=cx+1; lx++)
+							for(int lz=cz-1; lz<=cz+1; lz++)
+							{
+								if(lx<cxs || lx>cxe || lz<czs || lz>cze) continue;
+
+								if(chunk_buffer.hasChunk(lx, lz)) continue;
+
+								Chunk chunk=null;
+								try{
+									Region region=Region.findRegion(savepath, lx, lz);							
+									if(region==null) continue;					
+									chunk=region.getChunk(lx, lz);
+									if(chunk==null) continue;
+								}catch (Exception e) {
+									continue;
+								}
+
+								chunk_buffer.addChunk(chunk);		
+								obj.appendVertices(obj_writer);
+								obj.appendFaces(obj_writer,obj_per_mat);
+								obj.clearData();
+
+							}
+
+						obj.addChunkBuffer(chunk_buffer,cx,cz);
+
+						for(int lx=cx-1; lx<=cx+1; lx++)
+							chunk_buffer.removeChunk(lx,cz-1);
+
+					}
+
+					chunk_buffer.removeAllChunks();
+				}
+
+				obj_writer.close();
+
+				MainWindow.log("Saved model to "+objfile.getAbsolutePath());
 			}
-
-			obj_writer.close();
-
-			MainWindow.log("Saved model to "+objfile.getAbsolutePath());
+			
 			MainWindow.log("Done!");
 
 		} catch (Exception e) {
@@ -359,6 +406,8 @@ class OBJExportOptions extends JPanel
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
 	private JCheckBox cbObjPerMat;
+	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
+	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
 
 	public OBJExportOptions() {
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -403,6 +452,46 @@ class OBJExportOptions extends JPanel
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbObjPerMat=new JCheckBox("Create a separate object for each material");
 		pObjPerMat.add(cbObjPerMat);
+		
+		JPanel pOBJOver = new JPanel();
+		pOBJOver.setLayout(new BoxLayout(pOBJOver, BoxLayout.LINE_AXIS));
+		pOBJOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		JLabel lOBJOver=new JLabel("Overwrite OBJ: ");
+		rbOBJAsk=new JRadioButton("Ask");
+		rbOBJAlways=new JRadioButton("Always");
+		rbOBJNever=new JRadioButton("Never");		
+		pOBJOver.add(lOBJOver);
+		pOBJOver.add(rbOBJAsk);
+		pOBJOver.add(rbOBJAlways);
+		pOBJOver.add(rbOBJNever);
+		
+		ButtonGroup gOBJOver=new ButtonGroup();
+		gOBJOver.add(rbOBJAsk);
+		gOBJOver.add(rbOBJAlways);
+		gOBJOver.add(rbOBJNever);
+		rbOBJAsk.setActionCommand("ask");
+		rbOBJAlways.setActionCommand("always");
+		rbOBJNever.setActionCommand("never");
+		
+		JPanel pMTLOver = new JPanel();
+		pMTLOver.setLayout(new BoxLayout(pMTLOver, BoxLayout.LINE_AXIS));
+		pMTLOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		JLabel lMTLOver=new JLabel("Overwrite MTL: ");
+		rbMTLAsk=new JRadioButton("Ask");
+		rbMTLAlways=new JRadioButton("Always");
+		rbMTLNever=new JRadioButton("Never");		
+		pMTLOver.add(lMTLOver);
+		pMTLOver.add(rbMTLAsk);
+		pMTLOver.add(rbMTLAlways);
+		pMTLOver.add(rbMTLNever);
+		
+		ButtonGroup gMTLOver=new ButtonGroup();
+		gMTLOver.add(rbMTLAsk);
+		gMTLOver.add(rbMTLAlways);
+		gMTLOver.add(rbMTLNever);
+		rbMTLAsk.setActionCommand("ask");
+		rbMTLAlways.setActionCommand("always");
+		rbMTLNever.setActionCommand("never");
 
 		AbstractAction rbOffsetAction=new AbstractAction() {			
 			@Override
@@ -420,7 +509,7 @@ class OBJExportOptions extends JPanel
 
 				int x=Integer.parseInt(tfXOffset.getText());
 				int z=Integer.parseInt(tfZOffset.getText());
-			
+
 				prefs.putInt("OFFSET_X", x);
 				prefs.putInt("OFFSET_Z", z);
 
@@ -436,6 +525,21 @@ class OBJExportOptions extends JPanel
 		rbNoOffset.addActionListener(rbOffsetAction);
 		rbCenterOffset.addActionListener(rbOffsetAction);
 		rbCustomOffset.addActionListener(rbOffsetAction);
+		
+		AbstractAction SaveAction=new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				saveSettings();
+			}	
+		};
+		
+		rbOBJAsk.addActionListener(SaveAction);
+		rbOBJAlways.addActionListener(SaveAction);
+		rbOBJNever.addActionListener(SaveAction);
+		rbMTLAsk.addActionListener(SaveAction);
+		rbMTLAlways.addActionListener(SaveAction);
+		rbMTLNever.addActionListener(SaveAction);
+		cbObjPerMat.addActionListener(SaveAction);
 
 		switch(prefs.getInt("OFFSET_TYPE", 0))
 		{
@@ -457,10 +561,40 @@ class OBJExportOptions extends JPanel
 		}
 		tfXOffset.setText(""+prefs.getInt("OFFSET_X", 0));
 		tfZOffset.setText(""+prefs.getInt("OFFSET_Z", 0));
-
+		
+		switch(prefs.getInt("OBJ_OVERWRITE", 0))
+		{
+		case 0:
+			rbOBJAsk.setSelected(true);
+			break;
+		case 1:
+			rbOBJAlways.setSelected(true);
+			break;
+		case 2:
+			rbOBJNever.setSelected(true);
+			break;
+		}
+		
+		switch(prefs.getInt("MTL_OVERWRITE", 0))
+		{
+		case 0:
+			rbMTLAsk.setSelected(true);
+			break;
+		case 1:
+			rbMTLAlways.setSelected(true);
+			break;
+		case 2:
+			rbMTLNever.setSelected(true);
+			break;
+		}
+		
+		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
+		
 		add(pScale);
 		add(pOffset);
 		add(pObjPerMat);
+		add(pOBJOver);
+		add(pMTLOver);
 	}
 
 	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
@@ -479,9 +613,67 @@ class OBJExportOptions extends JPanel
 		return OffsetType.NO_OFFSET;
 	}
 	
+	enum OverwriteAction { ASK, ALWAYS, NEVER };
+	
+	public OverwriteAction getOBJOverwriteAction()
+	{
+		if(rbOBJAsk.isSelected())
+			return OverwriteAction.ASK;
+		
+		if(rbOBJAlways.isSelected())
+			return OverwriteAction.ALWAYS;
+		
+		if(rbOBJNever.isSelected())
+			return OverwriteAction.NEVER;
+		
+		return OverwriteAction.ASK;
+	}
+	
+	public OverwriteAction getMTLOverwriteAction()
+	{
+		if(rbMTLAsk.isSelected())
+			return OverwriteAction.ASK;
+		
+		if(rbMTLAlways.isSelected())
+			return OverwriteAction.ALWAYS;
+		
+		if(rbMTLNever.isSelected())
+			return OverwriteAction.NEVER;
+		
+		return OverwriteAction.ASK;
+	}
+
 	public void saveSettings()
 	{
 		prefs.putFloat("DEFAULT_SCALE", getScale());
+		
+		switch(getOBJOverwriteAction())
+		{
+		case ASK:
+			prefs.putInt("OBJ_OVERWRITE", 0);
+			break;
+		case ALWAYS:
+			prefs.putInt("OBJ_OVERWRITE", 1);
+			break;
+		case NEVER:
+			prefs.putInt("OBJ_OVERWRITE", 2);
+			break;
+		}
+		
+		switch(getMTLOverwriteAction())
+		{
+		case ASK:
+			prefs.putInt("MTL_OVERWRITE", 0);
+			break;
+		case ALWAYS:
+			prefs.putInt("MTL_OVERWRITE", 1);
+			break;
+		case NEVER:
+			prefs.putInt("MTL_OVERWRITE", 2);
+			break;
+		}
+		
+		prefs.putBoolean("OBJ_PER_MTL", cbObjPerMat.isSelected());
 	}
 
 	public Point getCustomOffset()
