@@ -17,3 +17,7 @@ Texture experiment in Cycles
 Snow examples - r85
 
 <a href="http://imgur.com/C3lft"><img src="http://i.imgur.com/C3lft.png" width=640 /></a>
+
+Config and textures release - r113
+
+<a href="http://imgur.com/iEnOq"><img src="http://i.imgur.com/iEnOq.jpg" width=640 /></a>
