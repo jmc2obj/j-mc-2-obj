@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
@@ -527,9 +528,30 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		return CursorSelectionPosition.OUTSIDE;
 	}
 
+	
+	private boolean isPerformingAction(MouseEvent e, int action_index)
+	{		
+		switch(action_index)
+		{
+		case 0:
+			return e.getButton()==MouseEvent.BUTTON1;
+		case 1:
+			return e.getButton()==MouseEvent.BUTTON3;
+		case 2:
+			return e.getButton()==MouseEvent.BUTTON2;
+		case 3:
+			return e.getButton()==MouseEvent.BUTTON1 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)!=0);
+		case 4:
+			return e.getButton()==MouseEvent.BUTTON3 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)!=0);
+		case 5:
+			return e.getButton()==MouseEvent.BUTTON2 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)!=0);
+		default:
+				return false;
+		}
+	}
 
-	private boolean left_pressed=false;
-	private boolean right_pressed=false;
+	private boolean selecting_area=false;
+	private boolean moving_map=false;
 	private boolean shaping_selection=false;
 	private CursorSelectionPosition shaping_action;
 	private int last_x,last_y;
@@ -545,9 +567,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		int x=e.getX();
 		int y=e.getY();
 
-		if(e.getButton()==MouseEvent.BUTTON1)
+		if(isPerformingAction(e, MainWindow.settings.getSelectAction()))
 		{
-			left_pressed=true;
+			selecting_area=true;
 
 			shaping_action=getCursorSelectionPosition(x, y);
 			if(shaping_action!=CursorSelectionPosition.OUTSIDE)
@@ -570,12 +592,12 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		}
 
-		if(e.getButton()==MouseEvent.BUTTON3)
+		if(isPerformingAction(e, MainWindow.settings.getMoveAction()))
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			last_x=e.getX();
 			last_y=e.getY();			
-			right_pressed=true;
+			moving_map=true;
 
 		}
 	}
@@ -588,7 +610,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-		if(left_pressed && !shaping_selection)
+		if(selecting_area && !shaping_selection)
 		{			
 			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
@@ -608,8 +630,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			}
 		}
 
-		left_pressed=false;
-		right_pressed=false;
+		selecting_area=false;
+		moving_map=false;
 		shaping_selection=false;
 		redraw(false);
 		repaint();
@@ -624,7 +646,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		int x=e.getX();
 		int y=e.getY();
 
-		if(left_pressed)
+		if(selecting_area)
 		{
 			if(shaping_selection)
 			{				
@@ -666,7 +688,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			return;
 		}	
 
-		if(right_pressed)
+		if(moving_map)
 		{		
 			shift_x+=(x-last_x)/zoom_level;
 			shift_y+=(y-last_y)/zoom_level;
