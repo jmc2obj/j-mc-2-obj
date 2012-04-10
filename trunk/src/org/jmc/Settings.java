@@ -48,38 +48,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 				
 		JPanel pTexAlpha=new JPanel();
 		pTexAlpha.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		pTexAlpha.setLayout(new BoxLayout(pTexAlpha, BoxLayout.LINE_AXIS));
-
-		JButton tex_mc=new JButton("Split textures from minecraft");		
-		tex_mc.addActionListener(new AbstractAction() {			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					Texsplit.splitTextures(chooseTextureDestination(),null);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Utility.logError("Error saving textures:", e);
-				}
-			}
-		});
-		JButton tex_custom=new JButton("Split textures from texture pack");		
-		tex_custom.addActionListener(new AbstractAction() {			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser jfc=new JFileChooser();
-				jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-				int retval=jfc.showDialog(Settings.this,"Select texture pack file");
-				if(retval==JFileChooser.APPROVE_OPTION)
-				{					
-					try {
-						Texsplit.splitTextures(chooseTextureDestination(),jfc.getSelectedFile());
-					} catch (Exception e) {
-						e.printStackTrace();
-						Utility.logError("Error saving textures:", e);
-					}
-				}
-			}
-		});
+		pTexAlpha.setLayout(new BoxLayout(pTexAlpha, BoxLayout.LINE_AXIS));		
 		
 		JButton reset=new JButton("Restore to factory settings");
 		reset.addActionListener(new AbstractAction() {			
@@ -92,14 +61,10 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		});
 
 		pTexAlpha.setAlignmentX(Component.LEFT_ALIGNMENT);
-		tex_mc.setAlignmentX(Component.LEFT_ALIGNMENT);
-		tex_custom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		reset.setAlignmentX(Component.LEFT_ALIGNMENT);
 				
 		mp.add(pTexAlpha);
 		mp.add(Box.createRigidArea(new Dimension(0, 10)));		
-		mp.add(tex_mc);
-		mp.add(tex_custom);
 		mp.add(Box.createVerticalGlue());
 		mp.add(reset);		
 		
@@ -169,19 +134,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		loadSettings();
 		setFields();
 	}
-	
-	private File chooseTextureDestination()
-	{
-		JFileChooser jfc=new JFileChooser();
-		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int retval=jfc.showDialog(Settings.this,"Choose texture files' destination");
-		if(retval==JFileChooser.APPROVE_OPTION)
-			return jfc.getSelectedFile();
-		else
-			return null;
-	}
-
+		
 	private DocumentListener document_listener=new DocumentListener() {	
 		@Override
 		public void removeUpdate(DocumentEvent e) {
