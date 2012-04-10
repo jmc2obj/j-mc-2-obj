@@ -25,12 +25,12 @@ public class BlockTypes
 	private static final String CONFIG_FILE = "blocks.conf";
 	
 	
-	private static HashMap<Integer, BlockInfo> blockTable;
+	private static HashMap<Short, BlockInfo> blockTable;
 	
 	private static BlockInfo unknownBlock;
 	
 	
-	private static void readConfig(HashMap<Integer, BlockInfo> blockTable) throws Exception
+	private static void readConfig(HashMap<Short, BlockInfo> blockTable) throws Exception
 	{
 		File confFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
@@ -44,7 +44,7 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 			
-			int id = Integer.parseInt(XmlUtil.getAttribute(blockNode, "id", "0"), 10);
+			short id = Short.parseShort(XmlUtil.getAttribute(blockNode, "id", "0"), 10);
 			if (id < 1)
 			{
 				Utility.logInfo("Skipping block with invalid id");
@@ -135,7 +135,7 @@ public class BlockTypes
 		materials.put(new String[] { "unknown" });
 
 		BlockModel cube = new Cube();
-		cube.setBlockId(-1);
+		cube.setBlockId((short)-1);
 		cube.setMaterials(materials);
 		
 		unknownBlock = new BlockInfo(-1, "unknown", materials, BlockInfo.Occlusion.FULL, cube);
@@ -143,7 +143,7 @@ public class BlockTypes
 		// create the blocks table
 		Utility.logInfo("Reading blocks configuration file...");
 
-		blockTable = new HashMap<Integer, BlockInfo>();
+		blockTable = new HashMap<Short, BlockInfo>();
 		readConfig(blockTable);
 
 		Utility.logInfo("Loaded " + blockTable.size() + " block definitions.");
@@ -158,7 +158,7 @@ public class BlockTypes
 	 * @param id Block id
 	 * @return BlockInfo structure
 	 */
-	public static BlockInfo get(int id)
+	public static BlockInfo get(short id)
 	{
 		BlockInfo bi = blockTable.get(id);
 		return bi != null ? bi : unknownBlock;

@@ -5,8 +5,6 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
 import org.jmc.Chunk.Blocks;
 
 public class ChunkDataBuffer {

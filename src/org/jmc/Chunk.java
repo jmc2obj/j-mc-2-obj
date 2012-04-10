@@ -232,7 +232,7 @@ public class Chunk {
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
-		int blockID=0;
+		short blockID=0;
 		byte blockData=0;
 		Color c;
 		Blocks bd=getBlocks();		
@@ -253,7 +253,7 @@ public class Chunk {
 			floor=ceiling-1;
 
 
-		int ids[]=new int[16*16];
+		short ids[]=new short[16*16];
 		byte data[]=new byte[16*16];
 		int himage[]=new int[16*16];
 
@@ -292,12 +292,17 @@ public class Chunk {
 		{
 			for(x = 0; x < 16; x++)
 			{
-				c = BlockTypes.get(ids[z*16+x]).getPreviewColor(data[z*16+x]);
-				if(c!=null)
+				blockID = ids[z*16+x];
+				blockData = data[z*16+x];
+				if(blockID != 0)
 				{
-					gb.setColor(c);
-					gb.fillRect(x*4, z*4, 4, 4);
-				}				
+					c = BlockTypes.get(blockID).getPreviewColor(blockData);
+					if(c!=null)
+					{
+						gb.setColor(c);
+						gb.fillRect(x*4, z*4, 4, 4);
+					}
+				}
 			}
 		}
 
