@@ -301,21 +301,24 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				int czs=(int)Math.floor(bounds.y/16.0f);
 				int cxe=(int)Math.ceil((bounds.x+bounds.width)/16.0f);
 				int cze=(int)Math.ceil((bounds.y+bounds.height)/16.0f);
-				int oxs=0,ozs=0;
+				int oxs=0,oys=0,ozs=0;
 
 				if(offset_type==OffsetType.NO_OFFSET)
 				{
 					oxs=0;
+					oys=0;
 					ozs=0;
 				}
 				else if(offset_type==OffsetType.CENTER_OFFSET)
 				{
 					oxs=cxs+(cxe-cxs)/2;
+					oys=ymin;
 					ozs=czs+(cze-czs)/2;
 				}
 				else if(offset_type==OffsetType.CUSTOM_OFFSET)
 				{
 					oxs=offset_point.x;
+					oys=0;
 					ozs=offset_point.y;
 				}
 
@@ -328,7 +331,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
 
 				OBJFile obj=new OBJFile("minecraft");
-				obj.setOffset(-oxs*16, -ymin, -ozs*16);
+				obj.setOffset(-oxs*16, -oys, -ozs*16);
 				obj.setScale(scale);
 
 				obj.appendMtl(obj_writer, "minecraft.mtl");
