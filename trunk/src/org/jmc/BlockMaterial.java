@@ -2,7 +2,7 @@ package org.jmc;
 
 
 /**
- * Holds the material definition sfor a block type.
+ * Holds the material definitions for a block type.
  */
 public class BlockMaterial
 {
