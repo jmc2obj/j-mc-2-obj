@@ -1,8 +1,12 @@
 package org.jmc;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.channels.FileChannel;
 
 import javax.swing.JOptionPane;
 
@@ -77,6 +81,32 @@ public class Utility {
 	}
 	
 
+	/**
+	 * Convenience function to copy a file.
+	 * If the destination file exists it is overwritten.
+	 * 
+	 * @param origPath Original path
+	 * @param destPath Destination path
+	 * @throws FileNotFoundException if either file exists but is a directory rather 
+	 * than a regular file, does not exist but cannot be read/created, or cannot be 
+	 * opened for any other reason.
+	 * @throws IOException If the operation fails during the data copy phase.
+	 */
+	public static void copyFile(File origPath, File destPath) throws IOException {
+		FileChannel in = null;
+		FileChannel out = null;
+		try {
+			in = new FileInputStream(origPath).getChannel();
+			out = new FileOutputStream(destPath).getChannel();
+			in.transferTo(0, in.size(), out);
+		}
+		finally {
+			if (in != null) in.close();
+			if (out != null) out.close();
+		}
+	}
+
+	
 	/**
 	 * Logs a debug message to stdout.
 	 * 

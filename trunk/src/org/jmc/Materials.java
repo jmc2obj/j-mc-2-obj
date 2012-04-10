@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,6 +81,18 @@ public class Materials
 	
 	
 	/**
+	 * Copies the .mtl file to the given location.
+	 * 
+	 * @param dest Destination file
+	 */
+	public static void copyMTLFile(File dest) throws IOException
+	{
+		File mtlFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
+		Utility.copyFile(mtlFile, dest);
+	}
+
+
+	/**
 	 * Gets the diffuse color defined for a material.
 	 * If the material name is not found, returns a default color.
 	 * 
@@ -91,5 +104,6 @@ public class Materials
 		Color c = mtlColors.get(mtlName.toLowerCase());
 		return c != null ? c : new Color(0,0,0);
 	}
+
 
 }

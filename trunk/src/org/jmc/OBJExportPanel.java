@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.prefs.Preferences;
 
-import javax.management.openmbean.OpenDataException;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -286,20 +285,18 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		options.saveSettings();
 
-		try {
+		try
+		{
+			if(write_mtl)
+			{
+				Materials.copyMTLFile(mtlfile);
+				MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
+			}
+
 			PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
-
-			MTLFile mtl=new MTLFile(mtlfile);
-
-			if(write_mtl) mtl.saveMTLFile();
-
-			MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
 
 			if(write_obj)
 			{
-
-				mtl.header(obj_writer,objfile);
-
 				int cxs=(int)Math.floor(bounds.x/16.0f);
 				int czs=(int)Math.floor(bounds.y/16.0f);
 				int cxe=(int)Math.ceil((bounds.x+bounds.width)/16.0f);
@@ -330,10 +327,11 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
 
-				OBJFile obj=new OBJFile("minecraft", mtl);
+				OBJFile obj=new OBJFile("minecraft");
 				obj.setOffset(-oxs*16, -ymin, -ozs*16);
 				obj.setScale(scale);
 
+				obj.appendMtl(obj_writer, "minecraft.mtl");
 				if(!obj_per_mat) obj.appendObjectname(obj_writer);
 				obj.printTexturesAndNormals(obj_writer);
 
@@ -367,14 +365,12 @@ public class OBJExportPanel extends JFrame implements Runnable {
 								obj.appendVertices(obj_writer);
 								obj.appendFaces(obj_writer,obj_per_mat);
 								obj.clearData();
-
 							}
 
 						obj.addChunkBuffer(chunk_buffer,cx,cz);
 
 						for(int lx=cx-1; lx<=cx+1; lx++)
 							chunk_buffer.removeChunk(lx,cz-1);
-
 					}
 
 					chunk_buffer.removeAllChunks();
@@ -387,13 +383,13 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			
 			MainWindow.log("Done!");
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			Utility.logError("Error while exporting OBJ:", e);
 		}
 
 		bRun.setEnabled(true);
 		bStop.setEnabled(false);
-
 	}
 
 }

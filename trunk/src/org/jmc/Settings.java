@@ -2,7 +2,6 @@ package org.jmc;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -28,9 +27,6 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
 	
-	public Colors minecraft_colors; 
-	public Textures minecraft_textures;
-
 
 	private Preferences prefs;
 
@@ -40,9 +36,6 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		prefs = Preferences.userNodeForPackage(getClass());		
 
 		loadSettings();
-
-		minecraft_colors=new Colors();
-		minecraft_textures=new Textures();
 
 		setTitle("Settings");
 

@@ -189,6 +189,8 @@ public class Texsplit
 				if (tint != null && tint.length() > 0)
 					tintImage(texture, new Color(Integer.parseInt(tint, 16)));
 				
+				// TODO restore alpha mask saving
+				
 				ImageIO.write(texture, "png", new File(destination, texName + ".png"));
 				
 			}

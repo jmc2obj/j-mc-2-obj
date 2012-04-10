@@ -235,7 +235,7 @@ newmtl dirt_mycelium_side
 Kd 0.5255 0.3765 0.2627
 map_Kd tex/dirt_mycelium_side.png
 
-dirt_mycelium_top
+newmtl dirt_mycelium_top
 Kd 0.4392 0.3921 0.4156
 map_Kd tex/dirt_mycelium_top.png
 
