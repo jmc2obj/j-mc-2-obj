@@ -118,15 +118,15 @@ public abstract class BlockModel
 	 */
 	protected void addBox(OBJFile obj, float xs, float ys, float zs, float xe, float ye, float ze, boolean[] drawSides, String[] mtlSides)
 	{
-		Vertex vertices[] = new Vertex[4];
+		Vertex[] vertices = new Vertex[4];
 
 		if(drawSides[0])
 		{
-			vertices[0] = new Vertex(xs,ye,zs);
-			vertices[1] = new Vertex(xs,ye,ze);
-			vertices[2] = new Vertex(xe,ye,ze);
-			vertices[3] = new Vertex(xe,ye,zs);			
-			obj.addFace(vertices, null, Side.TOP, blockId, mtlSides[0]);
+			vertices[0] = new Vertex(xe,ye,ze);
+			vertices[1] = new Vertex(xe,ye,zs);			
+			vertices[2] = new Vertex(xs,ye,zs);
+			vertices[3] = new Vertex(xs,ye,ze);
+			obj.addFace(vertices, null, Side.TOP, mtlSides[0]);
 		}
 		if(drawSides[1])
 		{
@@ -134,7 +134,7 @@ public abstract class BlockModel
 			vertices[1] = new Vertex(xs,ye,zs);
 			vertices[2] = new Vertex(xe,ye,zs);
 			vertices[3] = new Vertex(xe,ys,zs);
-			obj.addFace(vertices, null, Side.FRONT, blockId, mtlSides[1]);
+			obj.addFace(vertices, null, Side.FRONT, mtlSides[1]);
 		}
 		if(drawSides[2])
 		{
@@ -142,7 +142,7 @@ public abstract class BlockModel
 			vertices[1] = new Vertex(xe,ye,ze);
 			vertices[2] = new Vertex(xs,ye,ze);
 			vertices[3] = new Vertex(xs,ys,ze);
-			obj.addFace(vertices, null ,Side.BACK, blockId, mtlSides[2]);
+			obj.addFace(vertices, null ,Side.BACK, mtlSides[2]);
 		}
 		if(drawSides[3])
 		{
@@ -150,7 +150,7 @@ public abstract class BlockModel
 			vertices[1] = new Vertex(xs,ye,ze);
 			vertices[2] = new Vertex(xs,ye,zs);
 			vertices[3] = new Vertex(xs,ys,zs);
-			obj.addFace(vertices, null, Side.LEFT, blockId, mtlSides[3]);
+			obj.addFace(vertices, null, Side.LEFT, mtlSides[3]);
 		}
 		if(drawSides[4])
 		{
@@ -158,7 +158,7 @@ public abstract class BlockModel
 			vertices[1] = new Vertex(xe,ye,zs);
 			vertices[2] = new Vertex(xe,ye,ze);
 			vertices[3] = new Vertex(xe,ys,ze);
-			obj.addFace(vertices, null, Side.RIGHT, blockId, mtlSides[4]);
+			obj.addFace(vertices, null, Side.RIGHT, mtlSides[4]);
 		}
 		if(drawSides[5])
 		{
@@ -166,7 +166,7 @@ public abstract class BlockModel
 			vertices[1] = new Vertex(xe,ys,ze);
 			vertices[2] = new Vertex(xs,ys,ze);
 			vertices[3] = new Vertex(xs,ys,zs);
-			obj.addFace(vertices, null, Side.BOTTOM, blockId, mtlSides[5]);
+			obj.addFace(vertices, null, Side.BOTTOM, mtlSides[5]);
 		}
 	}
 	

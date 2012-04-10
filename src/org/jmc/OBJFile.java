@@ -256,9 +256,8 @@ public class OBJFile
 	 * Also create vertices if necessary.
 	 * @param verts vertices of the face
 	 * @param side side of the object
-	 * @param id block id
 	 */
-	public void addFace(Vertex [] verts, Transform trans, Side side, short id, String mtl)
+	public void addFace(Vertex [] verts, Transform trans, Side side, String mtl)
 	{
 		Face face=new Face();
 		face.side=side;

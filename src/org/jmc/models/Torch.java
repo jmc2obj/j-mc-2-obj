@@ -20,41 +20,48 @@ public class Torch extends BlockModel
 	{
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
+		Transform rt;
 
 		switch(data)
 		{
 		case 1:
 			rotate.rotate(0, 0, -30);
 			translate.translate(x-0.3f, y, z);
+			rt = translate.multiply(rotate);
 			break;
 		case 2:
 			rotate.rotate(0, 0, 30);
 			translate.translate(x+0.3f, y, z);
+			rt = translate.multiply(rotate);
 			break;
 		case 3:
 			rotate.rotate(30, 0, 0);			
 			translate.translate(x, y, z-0.3f);
+			rt = translate.multiply(rotate);
 			break;
 		case 4:
 			rotate.rotate(-30, 0, 0);
 			translate.translate(x, y, z+0.3f);
-			break;			
+			rt = translate.multiply(rotate);
+			break;
+		default:
+			translate.translate(x, y, z);
+			rt = translate;
+			break;
 		}
 		
-		Transform rt = translate.multiply(rotate);
+		Vertex[] vertices = new Vertex[4];
+		vertices[0] = new Vertex(-0.5f,-0.5f,+0.5f);
+		vertices[1] = new Vertex(-0.5f,+0.5f,+0.5f); 				
+		vertices[2] = new Vertex(+0.5f,+0.5f,-0.5f);	
+		vertices[3] = new Vertex(+0.5f,-0.5f,-0.5f);				
+		obj.addFace(vertices, rt, Side.FRONTRIGHT, materials.get(data)[0]);
 		
-		Vertex vertices[]=new Vertex[4];
-		vertices[0]=new Vertex(-0.5f,-0.5f,+0.5f);
-		vertices[1]=new Vertex(-0.5f,+0.5f,+0.5f); 				
-		vertices[2]=new Vertex(+0.5f,+0.5f,-0.5f);	
-		vertices[3]=new Vertex(+0.5f,-0.5f,-0.5f);				
-		obj.addFace(vertices, rt, Side.FRONTRIGHT, blockId, materials.get(data)[0]);
-		
-		vertices[0]=new Vertex(+0.5f,-0.5f,+0.5f);
-		vertices[1]=new Vertex(+0.5f,+0.5f,+0.5f);	
-		vertices[2]=new Vertex(-0.5f,+0.5f,-0.5f);
-		vertices[3]=new Vertex(-0.5f,-0.5f,-0.5f);		
-		obj.addFace(vertices, rt, Side.BACKRIGHT, blockId, materials.get(data)[0]);						
+		vertices[0] = new Vertex(+0.5f,-0.5f,+0.5f);
+		vertices[1] = new Vertex(+0.5f,+0.5f,+0.5f);	
+		vertices[2] = new Vertex(-0.5f,+0.5f,-0.5f);
+		vertices[3] = new Vertex(-0.5f,-0.5f,-0.5f);		
+		obj.addFace(vertices, rt, Side.BACKRIGHT, materials.get(data)[0]);						
 	}
 
 }
