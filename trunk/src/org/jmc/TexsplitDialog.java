@@ -1,6 +1,5 @@
 package org.jmc;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -18,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+@SuppressWarnings("serial")
 public class TexsplitDialog extends JFrame implements ProgessDisplay {
 
 	JTextField tfDest;
@@ -46,7 +46,7 @@ public class TexsplitDialog extends JFrame implements ProgessDisplay {
 		
 		JPanel pAlpha = new JPanel();
 		pAlpha.setLayout(new BoxLayout(pAlpha, BoxLayout.LINE_AXIS));
-		cbAlpha=new JCheckBox("Export alpha channel in seperate files");
+		cbAlpha=new JCheckBox("Export alpha channel in separate files", true);
 		pAlpha.add(cbAlpha);
 
 		JPanel pQuest=new JPanel();
