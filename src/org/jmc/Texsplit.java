@@ -101,16 +101,16 @@ public class Texsplit
 		for(int i=0; i<w*h; i++)
 		{
 			c=(buffer[4*i]*r)>>8;
-		if(c>255) c=255;
-		buffer[4*i]=c;
-
-		c=(buffer[4*i+1]*g)>>8;
-		if(c>255) c=255;
-		buffer[4*i+1]=c;
-
-		c=(buffer[4*i+2]*b)>>8;
-		if(c>255) c=255;
-		buffer[4*i+2]=c;
+			if(c>255) c=255;
+			buffer[4*i]=c;
+	
+			c=(buffer[4*i+1]*g)>>8;
+			if(c>255) c=255;
+			buffer[4*i+1]=c;
+	
+			c=(buffer[4*i+2]*b)>>8;
+			if(c>255) c=255;
+			buffer[4*i+2]=c;
 		}
 
 		raster.setPixels(0, 0, w, h, buffer);
@@ -194,7 +194,7 @@ public class Texsplit
 						tintImage(texture, new Color(Integer.parseInt(tint, 16)));
 					}catch(ImagingOpException e)
 					{
-						Utility.logError("Cannot tint image: "+texName, e);
+						Utility.logInfo("Cannot tint image: "+texName+" ("+e.getMessage()+")");
 					}
 				}
 
