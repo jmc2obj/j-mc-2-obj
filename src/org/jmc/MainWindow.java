@@ -73,8 +73,9 @@ public class MainWindow extends JFrame
 		
 		settings = new Settings();
 		main = new MainWindow();
-
+		
 		try {
+			Configuration.initialize();
 			Materials.initialize();
 			BlockTypes.initialize();
 		} catch (Exception e) {

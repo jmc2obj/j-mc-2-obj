@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
  */
 public class BlockTypes
 {
-	private static final String CONFIG_FILE = "blocks.conf";
+	private static final String CONFIG_FILE = "conf/blocks.conf";
 	
 	
 	private static HashMap<Short, BlockInfo> blockTable;

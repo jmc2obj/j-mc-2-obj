@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class Materials
 {
 
-	private static final String CONFIG_FILE = "default.mtl";
+	private static final String CONFIG_FILE = "conf/default.mtl";
 	
 	
 	private static HashMap<String, Color> mtlColors;
