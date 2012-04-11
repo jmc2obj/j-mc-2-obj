@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 public class About {
 	
 	private static boolean initialized=false; 
-	private static String version="0.15";
-	private static String revision="r123";
+	private static String version="0.15-dev";
+	private static String revision="r124";
 	
 	private static void init()
 	{
