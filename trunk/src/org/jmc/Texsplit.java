@@ -25,7 +25,7 @@ import org.w3c.dom.NodeList;
  */
 public class Texsplit
 {
-	private static final String CONFIG_FILE = "texsplit.conf";
+	private static final String CONFIG_FILE = "conf/texsplit.conf";
 
 
 	private static BufferedImage loadImageFromFile(File file) throws IOException
