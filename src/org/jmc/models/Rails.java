@@ -62,7 +62,7 @@ public class Rails extends BlockModel
 		
 		
 		Vertex[] vertices = new Vertex[4];
-		if ((data & 7) < 2 || (data & 7) > 5)
+		if (data < 2 || data > 5)
 		{
 			// flat
 			vertices[0] = new Vertex( 0.5f, -0.49f,  0.5f);

@@ -162,10 +162,10 @@ public abstract class BlockModel
 		}
 		if(drawSides[5])
 		{
-			vertices[0] = new Vertex(xe,ys,zs);
-			vertices[1] = new Vertex(xe,ys,ze);
-			vertices[2] = new Vertex(xs,ys,ze);
-			vertices[3] = new Vertex(xs,ys,zs);
+			vertices[0] = new Vertex(xs,ys,ze);
+			vertices[1] = new Vertex(xs,ys,zs);
+			vertices[2] = new Vertex(xe,ys,zs);
+			vertices[3] = new Vertex(xe,ys,ze);
 			obj.addFace(vertices, null, Side.BOTTOM, mtlSides[5]);
 		}
 	}
