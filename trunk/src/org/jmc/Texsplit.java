@@ -72,7 +72,6 @@ public class Texsplit
 			buffer[4*i]=buffer[4*i+3];
 			buffer[4*i+1]=buffer[4*i+3];
 			buffer[4*i+2]=buffer[4*i+3];
-			buffer[4*i+3]=255;
 		}
 
 		raster.setPixels(0, 0, w, h, buffer);
