@@ -129,6 +129,12 @@ public class Texsplit
 	{
 		if(destination==null)
 			throw new IllegalArgumentException("destination cannot be null");
+		
+		if(!destination.exists() || !destination.isDirectory())
+		{
+			if(destination.exists()) throw new RuntimeException("Cannot create texture directory! Filen is in the way!");
+			if(!destination.mkdir())  throw new RuntimeException("Cannot create texture directory!");
+		}
 
 		File zipfile;
 		if (texturePack == null)
@@ -140,8 +146,8 @@ public class Texsplit
 
 		File confFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
-			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-
+			throw new Exception("Cannot open configuration file " + CONFIG_FILE);		
+		
 		Document doc = XmlUtil.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
