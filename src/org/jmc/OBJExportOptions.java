@@ -26,6 +26,7 @@ public class OBJExportOptions extends JPanel
 	private JTextField tfXOffset,tfZOffset;
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbSort;
+	private JCheckBox cbRemoveDuplicates;
 	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
 	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
 
@@ -78,6 +79,12 @@ public class OBJExportOptions extends JPanel
 		pSort.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbSort=new JCheckBox("Sort OBJ file");
 		pSort.add(cbSort);
+		
+		JPanel pRemoveDuplicates=new JPanel();
+		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
+		pRemoveDuplicates.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbRemoveDuplicates=new JCheckBox("RemoveDuplicates OBJ file");
+		pRemoveDuplicates.add(cbRemoveDuplicates);
 		
 		JPanel pOBJOver = new JPanel();
 		pOBJOver.setLayout(new BoxLayout(pOBJOver, BoxLayout.LINE_AXIS));
@@ -166,6 +173,8 @@ public class OBJExportOptions extends JPanel
 		rbMTLAlways.addActionListener(SaveAction);
 		rbMTLNever.addActionListener(SaveAction);
 		cbObjPerMat.addActionListener(SaveAction);
+		cbSort.addActionListener(SaveAction);
+		cbRemoveDuplicates.addActionListener(SaveAction);
 
 		switch(prefs.getInt("OFFSET_TYPE", 0))
 		{
@@ -216,11 +225,13 @@ public class OBJExportOptions extends JPanel
 		
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbSort.setSelected(prefs.getBoolean("SORT_OBJ", false));
+		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 		
 		add(pScale);
 		add(pOffset);
 		add(pObjPerMat);
 		add(pSort);
+		add(pRemoveDuplicates);
 		add(pOBJOver);
 		add(pMTLOver);
 	}
@@ -303,6 +314,7 @@ public class OBJExportOptions extends JPanel
 		
 		prefs.putBoolean("OBJ_PER_MTL", cbObjPerMat.isSelected());
 		prefs.putBoolean("SORT_OBJ", cbSort.isSelected());
+		prefs.putBoolean("REMOVE_DUPLICATES", cbRemoveDuplicates.isSelected());
 	}
 
 	public Point getCustomOffset()
@@ -335,5 +347,10 @@ public class OBJExportOptions extends JPanel
 	public boolean getObjSort()
 	{
 		return cbSort.isSelected();
+	}
+	
+	public boolean getRemoveDuplicates()
+	{
+		return cbRemoveDuplicates.isSelected();
 	}
 }

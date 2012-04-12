@@ -378,7 +378,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 								chunk_buffer.addChunk(chunk);		
 								obj.appendVertices(obj_writer);
 								obj.appendFaces(obj_writer,obj_per_mat);
-								obj.clearData();
+								obj.clearData(options.getRemoveDuplicates());
 							}
 
 						obj.addChunkBuffer(chunk_buffer,cx,cz);

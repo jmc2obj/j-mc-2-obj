@@ -201,11 +201,24 @@ public class OBJFile
 		}				
 	}
 	
-	void clearData()
+	void clearData(boolean remove_duplicates)
 	{
 		faces.clear();
+		
+		if(!remove_duplicates)
+		{
+			vertices.clear();
+			vertex_map.clear();
+			return;
+		}
+				
+		//keep edge vertices
+		for(Vertex v:vertices)
+		{			
+			if((v.x-0.5)%16!=0 && (v.z-0.5)%16!=0 && (v.x+0.5)%16!=0 && (v.z+0.5)%16!=0)
+				vertex_map.remove(v);
+		}
 		vertices.clear();
-		vertex_map.clear();
 	}
 
 	/**
