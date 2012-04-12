@@ -13,28 +13,33 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
-import java.util.prefs.Preferences;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.rmi.CORBA.Util;
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
 
 import org.jmc.OBJExportOptions.OffsetType;
 import org.jmc.OBJExportOptions.OverwriteAction;
@@ -157,6 +162,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				jfcSave.setDialogTitle("Save folder");
 				if(jfcSave.showSaveDialog(OBJExportPanel.this)!=JFileChooser.APPROVE_OPTION)
 				{
+					bRun.setEnabled(true);
+					bStop.setEnabled(false);
 					return;
 				}
 
@@ -227,10 +234,19 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
 		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
+		File tmpdir=new File(exportpath.getAbsolutePath()+"/temp");
 
 		boolean write_obj=true;
 		boolean write_mtl=true;
 
+		if(options.getObjSort() && tmpdir.exists())
+		{
+			Utility.logError("Cannot create directory: "+tmpdir.getAbsolutePath()+"\nSomething is in the way.\nDelete it or turn off the Sort OBJ option.", null);
+			bRun.setEnabled(true);
+			bStop.setEnabled(false);
+			return;
+		}
+		
 		if(objfile.exists())
 		{
 			if(options.getOBJOverwriteAction()==OverwriteAction.ALWAYS)
@@ -290,7 +306,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			if(write_mtl)
 			{
 				Materials.copyMTLFile(mtlfile);
-				MainWindow.log("Saved materials to "+mtlfile.getAbsolutePath());
+				Utility.logInfo("Saved materials to "+mtlfile.getAbsolutePath());
 			}
 
 			PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
@@ -339,7 +355,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				obj.printTexturesAndNormals(obj_writer);
 
 
-				MainWindow.log("Processing chunks...");
+				Utility.logInfo("Processing chunks...");
 
 				for(int cx=cxs; cx<=cxe && running; cx++)
 				{
@@ -381,10 +397,112 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				obj_writer.close();
 
-				MainWindow.log("Saved model to "+objfile.getAbsolutePath());
+				Utility.logInfo("Saved model to "+objfile.getAbsolutePath());
 			}
 			
-			MainWindow.log("Done!");
+			if(options.getObjSort())
+			{
+				Utility.logInfo("Sorting OBJ file...");
+				
+				if(!tmpdir.mkdir())
+				{
+					Utility.logError("Cannot temp create directory: "+tmpdir.getAbsolutePath(), null);
+					bRun.setEnabled(true);
+					bStop.setEnabled(false);
+					return;
+				}
+				
+				File mainfile=new File(tmpdir,"main");
+				PrintWriter main=new PrintWriter(mainfile);
+				
+				BufferedReader objin=new BufferedReader(new FileReader(objfile));				
+				
+				Map<String,FaceFile> faces=new HashMap<String, FaceFile>();
+				int facefilecount=1;
+				
+				FaceFile current_ff=null;
+				
+				progress.setMaximum(100);
+				int maxcount=(int)mainfile.length();
+				if(maxcount==0) maxcount=1;
+				int count=0;
+				
+				String line;
+				while((line=objin.readLine())!=null)
+				{
+					if(line.length()==0) continue;
+					
+					count+=line.length()+1;
+					if(count>maxcount) count=maxcount;
+					progress.setValue((int)(50.0*(double)count/(double)maxcount));
+					
+					if(line.startsWith("usemtl "))
+					{
+						line=line.substring(7).trim();						
+						
+						if(!faces.containsKey(line))
+						{
+							current_ff=new FaceFile();
+							current_ff.name=line;
+							current_ff.file=new File(tmpdir,""+facefilecount);
+							facefilecount++;
+							current_ff.writer=new PrintWriter(current_ff.file);
+							faces.put(line, current_ff);
+						}
+						else
+							current_ff=faces.get(line);
+					}
+					else if(line.startsWith("f "))
+					{
+						if(current_ff!=null)
+						{
+							current_ff.writer.println(line);
+						}
+					}
+					else
+					{
+						main.println(line);
+						if(line.startsWith("mtllib") || line.startsWith("g"))
+							main.println();
+					}
+				}
+				objin.close();
+				
+				count=0;
+				maxcount=faces.size();
+				
+				for(FaceFile ff:faces.values())
+				{
+					ff.writer.close();
+					
+					count++;
+					progress.setValue(50+(int)(50.0*(double)count/(double)maxcount));
+					
+					main.println();
+					main.println("usemtl "+ff.name);
+					main.println();
+					
+					BufferedReader reader=new BufferedReader(new FileReader(ff.file));
+					while((line=reader.readLine())!=null)
+					{
+						main.println(line);
+					}
+					reader.close();
+					
+					ff.file.delete();
+				}
+				
+				main.close();
+								
+				Files.move(mainfile.toPath(), objfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				
+				if(!tmpdir.delete())
+				{
+					Utility.logError("Failed to erase temp dir: "+tmpdir.getAbsolutePath()+"\nPlease remove it yourself!", null);
+				}
+			}
+			
+			Utility.logInfo("Done!");
 
 		}
 		catch (Exception e) {
@@ -394,311 +512,16 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		bRun.setEnabled(true);
 		bStop.setEnabled(false);
 	}
-
 }
 
-@SuppressWarnings("serial")
-class OBJExportOptions extends JPanel
+/**
+ * Little helper class for the map used in sorting.
+ * @author danijel
+ *
+ */
+class FaceFile
 {
-	private Preferences prefs;
-	private JTextField tfScale;
-	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
-	private JTextField tfXOffset,tfZOffset;
-	private JCheckBox cbObjPerMat;
-	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
-	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
-
-	public OBJExportOptions() {
-		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-
-		prefs=MainWindow.settings.getPreferences();
-
-		JPanel pScale=new JPanel();		
-		pScale.setLayout(new BoxLayout(pScale,BoxLayout.LINE_AXIS));
-		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lScale=new JLabel("Map Scale: ");
-		tfScale=new JTextField(""+prefs.getFloat("DEFAULT_SCALE", 1.0f));
-		pScale.add(lScale);
-		pScale.add(tfScale);
-
-		JPanel pOffset=new JPanel();
-		pOffset.setLayout(new BoxLayout(pOffset,BoxLayout.LINE_AXIS));
-		pOffset.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lOffset=new JLabel("Offset: ");
-		rbNoOffset=new JRadioButton("None");
-		rbCenterOffset=new JRadioButton("Center");
-		rbCustomOffset=new JRadioButton("Custom");
-		tfXOffset=new JTextField("0");
-		tfZOffset=new JTextField("0");
-		pOffset.add(lOffset);
-		pOffset.add(rbNoOffset);
-		pOffset.add(rbCenterOffset);
-		pOffset.add(rbCustomOffset);
-		pOffset.add(tfXOffset);
-		pOffset.add(tfZOffset);
-
-		ButtonGroup gOffset=new ButtonGroup();
-		gOffset.add(rbNoOffset);
-		gOffset.add(rbCenterOffset);
-		gOffset.add(rbCustomOffset);
-		rbNoOffset.setActionCommand("none");
-		rbCenterOffset.setActionCommand("center");
-		rbCustomOffset.setActionCommand("custom");
-
-		JPanel pObjPerMat=new JPanel();
-		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
-		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbObjPerMat=new JCheckBox("Create a separate object for each material");
-		pObjPerMat.add(cbObjPerMat);
-		
-		JPanel pOBJOver = new JPanel();
-		pOBJOver.setLayout(new BoxLayout(pOBJOver, BoxLayout.LINE_AXIS));
-		pOBJOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lOBJOver=new JLabel("Overwrite OBJ: ");
-		rbOBJAsk=new JRadioButton("Ask");
-		rbOBJAlways=new JRadioButton("Always");
-		rbOBJNever=new JRadioButton("Never");		
-		pOBJOver.add(lOBJOver);
-		pOBJOver.add(rbOBJAsk);
-		pOBJOver.add(rbOBJAlways);
-		pOBJOver.add(rbOBJNever);
-		
-		ButtonGroup gOBJOver=new ButtonGroup();
-		gOBJOver.add(rbOBJAsk);
-		gOBJOver.add(rbOBJAlways);
-		gOBJOver.add(rbOBJNever);
-		rbOBJAsk.setActionCommand("ask");
-		rbOBJAlways.setActionCommand("always");
-		rbOBJNever.setActionCommand("never");
-		
-		JPanel pMTLOver = new JPanel();
-		pMTLOver.setLayout(new BoxLayout(pMTLOver, BoxLayout.LINE_AXIS));
-		pMTLOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lMTLOver=new JLabel("Overwrite MTL: ");
-		rbMTLAsk=new JRadioButton("Ask");
-		rbMTLAlways=new JRadioButton("Always");
-		rbMTLNever=new JRadioButton("Never");		
-		pMTLOver.add(lMTLOver);
-		pMTLOver.add(rbMTLAsk);
-		pMTLOver.add(rbMTLAlways);
-		pMTLOver.add(rbMTLNever);
-		
-		ButtonGroup gMTLOver=new ButtonGroup();
-		gMTLOver.add(rbMTLAsk);
-		gMTLOver.add(rbMTLAlways);
-		gMTLOver.add(rbMTLNever);
-		rbMTLAsk.setActionCommand("ask");
-		rbMTLAlways.setActionCommand("always");
-		rbMTLNever.setActionCommand("never");
-
-		AbstractAction rbOffsetAction=new AbstractAction() {			
-			@Override
-			public void actionPerformed(ActionEvent ev) {
-				if(ev.getActionCommand().equals("custom"))
-				{
-					tfXOffset.setEnabled(true);
-					tfZOffset.setEnabled(true);
-				}
-				else
-				{
-					tfXOffset.setEnabled(false);
-					tfZOffset.setEnabled(false);
-				}
-
-				int x=Integer.parseInt(tfXOffset.getText());
-				int z=Integer.parseInt(tfZOffset.getText());
-
-				prefs.putInt("OFFSET_X", x);
-				prefs.putInt("OFFSET_Z", z);
-
-				if(ev.getActionCommand().equals("none"))
-					prefs.putInt("OFFSET_TYPE", 0);
-				else if(ev.getActionCommand().equals("center"))
-					prefs.putInt("OFFSET_TYPE", 1);
-				else if(ev.getActionCommand().equals("custom"))
-					prefs.putInt("OFFSET_TYPE", 2);
-			}
-		};
-
-		rbNoOffset.addActionListener(rbOffsetAction);
-		rbCenterOffset.addActionListener(rbOffsetAction);
-		rbCustomOffset.addActionListener(rbOffsetAction);
-		
-		AbstractAction SaveAction=new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				saveSettings();
-			}	
-		};
-		
-		rbOBJAsk.addActionListener(SaveAction);
-		rbOBJAlways.addActionListener(SaveAction);
-		rbOBJNever.addActionListener(SaveAction);
-		rbMTLAsk.addActionListener(SaveAction);
-		rbMTLAlways.addActionListener(SaveAction);
-		rbMTLNever.addActionListener(SaveAction);
-		cbObjPerMat.addActionListener(SaveAction);
-
-		switch(prefs.getInt("OFFSET_TYPE", 0))
-		{
-		case 0:
-			rbNoOffset.setSelected(true);
-			tfXOffset.setEnabled(false);
-			tfZOffset.setEnabled(false);
-			break;
-		case 1:
-			rbCenterOffset.setSelected(true);
-			tfXOffset.setEnabled(false);
-			tfZOffset.setEnabled(false);
-			break;
-		case 2:
-			rbCustomOffset.setSelected(true);
-			tfXOffset.setEnabled(true);
-			tfZOffset.setEnabled(true);
-			break;
-		}
-		tfXOffset.setText(""+prefs.getInt("OFFSET_X", 0));
-		tfZOffset.setText(""+prefs.getInt("OFFSET_Z", 0));
-		
-		switch(prefs.getInt("OBJ_OVERWRITE", 0))
-		{
-		case 0:
-			rbOBJAsk.setSelected(true);
-			break;
-		case 1:
-			rbOBJAlways.setSelected(true);
-			break;
-		case 2:
-			rbOBJNever.setSelected(true);
-			break;
-		}
-		
-		switch(prefs.getInt("MTL_OVERWRITE", 0))
-		{
-		case 0:
-			rbMTLAsk.setSelected(true);
-			break;
-		case 1:
-			rbMTLAlways.setSelected(true);
-			break;
-		case 2:
-			rbMTLNever.setSelected(true);
-			break;
-		}
-		
-		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
-		
-		add(pScale);
-		add(pOffset);
-		add(pObjPerMat);
-		add(pOBJOver);
-		add(pMTLOver);
-	}
-
-	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
-
-	public OffsetType getOffsetType()
-	{
-		if(rbNoOffset.isSelected())
-			return OffsetType.NO_OFFSET;
-
-		if(rbCenterOffset.isSelected())
-			return OffsetType.CENTER_OFFSET;
-
-		if(rbCustomOffset.isSelected())
-			return OffsetType.CUSTOM_OFFSET;
-
-		return OffsetType.NO_OFFSET;
-	}
-	
-	enum OverwriteAction { ASK, ALWAYS, NEVER };
-	
-	public OverwriteAction getOBJOverwriteAction()
-	{
-		if(rbOBJAsk.isSelected())
-			return OverwriteAction.ASK;
-		
-		if(rbOBJAlways.isSelected())
-			return OverwriteAction.ALWAYS;
-		
-		if(rbOBJNever.isSelected())
-			return OverwriteAction.NEVER;
-		
-		return OverwriteAction.ASK;
-	}
-	
-	public OverwriteAction getMTLOverwriteAction()
-	{
-		if(rbMTLAsk.isSelected())
-			return OverwriteAction.ASK;
-		
-		if(rbMTLAlways.isSelected())
-			return OverwriteAction.ALWAYS;
-		
-		if(rbMTLNever.isSelected())
-			return OverwriteAction.NEVER;
-		
-		return OverwriteAction.ASK;
-	}
-
-	public void saveSettings()
-	{
-		prefs.putFloat("DEFAULT_SCALE", getScale());
-		
-		switch(getOBJOverwriteAction())
-		{
-		case ASK:
-			prefs.putInt("OBJ_OVERWRITE", 0);
-			break;
-		case ALWAYS:
-			prefs.putInt("OBJ_OVERWRITE", 1);
-			break;
-		case NEVER:
-			prefs.putInt("OBJ_OVERWRITE", 2);
-			break;
-		}
-		
-		switch(getMTLOverwriteAction())
-		{
-		case ASK:
-			prefs.putInt("MTL_OVERWRITE", 0);
-			break;
-		case ALWAYS:
-			prefs.putInt("MTL_OVERWRITE", 1);
-			break;
-		case NEVER:
-			prefs.putInt("MTL_OVERWRITE", 2);
-			break;
-		}
-		
-		prefs.putBoolean("OBJ_PER_MTL", cbObjPerMat.isSelected());
-	}
-
-	public Point getCustomOffset()
-	{
-		int x=Integer.parseInt(tfXOffset.getText());
-		int z=Integer.parseInt(tfZOffset.getText());
-		return new Point(x,z);
-	}
-
-	public float getScale()
-	{
-		float ret=1;
-
-		try
-		{
-			ret=Float.parseFloat(tfScale.getText());
-		}catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(OBJExportOptions.this, "Cannot parse the scale value! Assuming 1!");
-			return 1.0f;
-		}
-
-		return ret;
-	}
-
-	public boolean getObjPerMat()
-	{
-		return cbObjPerMat.isSelected();
-	}
-}
+	public String name;
+	public File file;
+	public PrintWriter writer;
+};
