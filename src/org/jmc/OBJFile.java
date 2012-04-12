@@ -16,6 +16,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jmc.geom.Transform;
+import org.jmc.geom.Vertex;
+
 
 /**
  * OBJ file class.
@@ -60,8 +63,7 @@ public class OBJFile
 
 	/**
 	 * Small internal class for describing a simple rectangular face of an object.
-	 * @author danijel
-	 *
+	 * Faces can be sorted by material.
 	 */
 	private class Face implements Comparable<Face>
 	{

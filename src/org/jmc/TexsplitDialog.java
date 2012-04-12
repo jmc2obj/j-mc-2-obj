@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import org.jmc.util.Log;
+
 @SuppressWarnings("serial")
 public class TexsplitDialog extends JFrame implements ProgessDisplay {
 
@@ -157,7 +159,7 @@ class TexsplitThread extends Thread
 			Texsplit.splitTextures(dialog.getDestination(),dialog.getTexturepack(),dialog.getAlphas(),dialog);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Utility.logError("Error saving textures:", e);
+			Log.error("Error saving textures:", e);
 		}			
 		
 		dialog.dispose();		

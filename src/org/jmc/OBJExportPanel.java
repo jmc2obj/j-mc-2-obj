@@ -38,6 +38,7 @@ import javax.swing.JTextField;
 
 import org.jmc.OBJExportOptions.OffsetType;
 import org.jmc.OBJExportOptions.OverwriteAction;
+import org.jmc.util.Log;
 
 /**
  * A thread used and UI for saving an OBJ file.
@@ -236,7 +237,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		if(options.getObjSort() && tmpdir.exists())
 		{
-			Utility.logError("Cannot create directory: "+tmpdir.getAbsolutePath()+"\nSomething is in the way.\nDelete it or turn off the Sort OBJ option.", null);
+			Log.error("Cannot create directory: "+tmpdir.getAbsolutePath()+"\nSomething is in the way.\nDelete it or turn off the Sort OBJ option.", null);
 			bRun.setEnabled(true);
 			bStop.setEnabled(false);
 			return;
@@ -301,7 +302,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			if(write_mtl)
 			{
 				Materials.copyMTLFile(mtlfile);
-				Utility.logInfo("Saved materials to "+mtlfile.getAbsolutePath());
+				Log.info("Saved materials to "+mtlfile.getAbsolutePath());
 			}
 
 			PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
@@ -350,7 +351,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				obj.printTexturesAndNormals(obj_writer);
 
 
-				Utility.logInfo("Processing chunks...");
+				Log.info("Processing chunks...");
 
 				for(int cx=cxs; cx<=cxe && running; cx++)
 				{
@@ -392,16 +393,16 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				obj_writer.close();
 
-				Utility.logInfo("Saved model to "+objfile.getAbsolutePath());
+				Log.info("Saved model to "+objfile.getAbsolutePath());
 			}
 			
 			if(options.getObjSort())
 			{
-				Utility.logInfo("Sorting OBJ file...");
+				Log.info("Sorting OBJ file...");
 				
 				if(!tmpdir.mkdir())
 				{
-					Utility.logError("Cannot temp create directory: "+tmpdir.getAbsolutePath(), null);
+					Log.error("Cannot temp create directory: "+tmpdir.getAbsolutePath(), null);
 					bRun.setEnabled(true);
 					bStop.setEnabled(false);
 					return;
@@ -498,15 +499,15 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				
 				if(!tmpdir.delete())
 				{
-					Utility.logError("Failed to erase temp dir: "+tmpdir.getAbsolutePath()+"\nPlease remove it yourself!", null);
+					Log.error("Failed to erase temp dir: "+tmpdir.getAbsolutePath()+"\nPlease remove it yourself!", null);
 				}
 			}
 			
-			Utility.logInfo("Done!");
+			Log.info("Done!");
 
 		}
 		catch (Exception e) {
-			Utility.logError("Error while exporting OBJ:", e);
+			Log.error("Error while exporting OBJ:", e);
 		}
 
 		bRun.setEnabled(true);

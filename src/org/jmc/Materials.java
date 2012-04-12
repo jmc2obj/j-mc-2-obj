@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jmc.util.Log;
+import org.jmc.util.Filesystem;
+
 
 /**
  * This class reads the default materials file (default.mtl).
@@ -25,7 +28,7 @@ public class Materials
 	
 	private static void readConfig(HashMap<String, Color> mtlColors) throws Exception
 	{
-		File mtlFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
+		File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!mtlFile.canRead())
 			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
 		
@@ -71,12 +74,12 @@ public class Materials
 	public static void initialize() throws Exception
 	{
 		// create the colors table
-		Utility.logInfo("Reading materials file...");
+		Log.info("Reading materials file...");
 
 		mtlColors = new HashMap<String, Color>();
 		readConfig(mtlColors);
 
-		Utility.logInfo("Loaded " + mtlColors.size() + " materials.");
+		Log.info("Loaded " + mtlColors.size() + " materials.");
 	}
 	
 	
@@ -87,8 +90,8 @@ public class Materials
 	 */
 	public static void copyMTLFile(File dest) throws IOException
 	{
-		File mtlFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
-		Utility.copyFile(mtlFile, dest);
+		File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
+		Filesystem.copyFile(mtlFile, dest);
 	}
 
 

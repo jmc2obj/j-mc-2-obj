@@ -15,6 +15,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.jmc.util.Log;
+import org.jmc.util.Filesystem;
+import org.jmc.util.Xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -137,17 +140,17 @@ public class Texsplit
 
 		File zipfile;
 		if (texturePack == null)
-			zipfile = new File(Utility.getMinecraftDir(), "bin/minecraft.jar");
+			zipfile = new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar");
 		else
 			zipfile = texturePack;
 		if (!zipfile.canRead())
 			throw new Exception("Cannot open " + zipfile.getName());
 
-		File confFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
+		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
 			throw new Exception("Cannot open configuration file " + CONFIG_FILE);		
 		
-		Document doc = XmlUtil.loadDocument(confFile);
+		Document doc = Xml.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
 		NodeList fileNodes = (NodeList)xpath.evaluate("/texsplit/file", doc, XPathConstants.NODESET);
@@ -157,10 +160,10 @@ public class Texsplit
 			if(progress!=null) progress.setProgress(i);
 
 			Node fileNode = fileNodes.item(i);
-			String source = XmlUtil.getAttribute(fileNode, "source", "texturepack");
-			String fileName = XmlUtil.getAttribute(fileNode, "name");
-			int rows = Integer.parseInt(XmlUtil.getAttribute(fileNode, "rows", "1"), 10);
-			int cols = Integer.parseInt(XmlUtil.getAttribute(fileNode, "cols", "1"), 10);
+			String source = Xml.getAttribute(fileNode, "source", "texturepack");
+			String fileName = Xml.getAttribute(fileNode, "name");
+			int rows = Integer.parseInt(Xml.getAttribute(fileNode, "rows", "1"), 10);
+			int cols = Integer.parseInt(Xml.getAttribute(fileNode, "cols", "1"), 10);
 
 			if (fileName == null || fileName.length() == 0)
 				throw new Exception("In " + CONFIG_FILE + ": 'file' tag is missing required attribute 'name'.");
@@ -169,7 +172,7 @@ public class Texsplit
 			if (source.equalsIgnoreCase("texturepack"))
 				image = loadImageFromZip(zipfile, fileName);
 			else
-				image = loadImageFromFile(new File(Utility.getDatafilesDir(), fileName));
+				image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
 
 			int width = image.getWidth() / cols;
 			int height = image.getHeight() / rows;
@@ -178,9 +181,9 @@ public class Texsplit
 			for (int j = 0; j < texNodes.getLength(); j++)
 			{
 				Node texNode = texNodes.item(j);
-				String pos = XmlUtil.getAttribute(texNode, "pos", "1,1");
-				String texName = XmlUtil.getAttribute(texNode, "name");
-				String tint = XmlUtil.getAttribute(texNode, "tint");
+				String pos = Xml.getAttribute(texNode, "pos", "1,1");
+				String texName = Xml.getAttribute(texNode, "name");
+				String tint = Xml.getAttribute(texNode, "tint");
 
 				if (texName == null)
 					continue;
@@ -199,7 +202,7 @@ public class Texsplit
 						tintImage(texture, new Color(Integer.parseInt(tint, 16)));
 					}catch(ImagingOpException e)
 					{
-						Utility.logInfo("Cannot tint image: "+texName+" ("+e.getMessage()+")");
+						Log.info("Cannot tint image: "+texName+" ("+e.getMessage()+")");
 					}
 				}
 
@@ -212,7 +215,7 @@ public class Texsplit
 						ImageIO.write(texture, "png", new File(destination, texName + "_a.png"));
 					}catch(ImagingOpException e)
 					{
-						Utility.logInfo("Cannot save alpha for: "+texName+" ("+e.getMessage()+")");
+						Log.info("Cannot save alpha for: "+texName+" ("+e.getMessage()+")");
 					}
 				}
 

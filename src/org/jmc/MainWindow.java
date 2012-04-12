@@ -10,6 +10,8 @@ package org.jmc;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import org.jmc.util.Log;
+
 /**
  * MainWindow class.
  * 
@@ -79,7 +81,7 @@ public class MainWindow extends JFrame
 			Materials.initialize();
 			BlockTypes.initialize();
 		} catch (Exception e) {
-			Utility.logError("Error reading configuration file:", e);
+			Log.error("Error reading configuration file:", e);
 			return;
 		}
 	}

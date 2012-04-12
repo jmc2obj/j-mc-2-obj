@@ -3,6 +3,7 @@ package org.jmc;
 import java.awt.Color;
 
 import org.jmc.models.BlockModel;
+import org.jmc.util.Log;
 
 
 /**
@@ -62,7 +63,7 @@ public class BlockInfo
 		String[] mtlNames = materials.get(data);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
-			Utility.logDebug("block " + id + " (" + name + ") has no mtl for data="+data);
+			Log.debug("block " + id + " (" + name + ") has no mtl for data="+data);
 			return Materials.getColor("unknown");
 		}
 		return Materials.getColor(mtlNames[0]);

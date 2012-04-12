@@ -9,6 +9,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
+import org.jmc.util.Log;
+import org.jmc.util.Filesystem;
+import org.jmc.util.Xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -32,11 +35,11 @@ public class BlockTypes
 	
 	private static void readConfig(HashMap<Short, BlockInfo> blockTable) throws Exception
 	{
-		File confFile = new File(Utility.getDatafilesDir(), CONFIG_FILE);
+		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
 			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
 		
-		Document doc = XmlUtil.loadDocument(confFile);
+		Document doc = Xml.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		
 		NodeList blockNodes = (NodeList)xpath.evaluate("/blocks/block", doc, XPathConstants.NODESET);
@@ -44,14 +47,14 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 			
-			short id = Short.parseShort(XmlUtil.getAttribute(blockNode, "id", "0"), 10);
+			short id = Short.parseShort(Xml.getAttribute(blockNode, "id", "0"), 10);
 			if (id < 1)
 			{
-				Utility.logInfo("Skipping block with invalid id");
+				Log.info("Skipping block with invalid id");
 				continue;
 			}
 
-			String name = XmlUtil.getAttribute(blockNode, "name", "");
+			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Cube";
 			BlockInfo.Occlusion occlusion = BlockInfo.Occlusion.FULL; 
 			BlockMaterial materials = new BlockMaterial();
@@ -69,7 +72,7 @@ public class BlockTypes
 				try {
 					occlusion = BlockInfo.Occlusion.valueOf(aux.toUpperCase());
 				} catch (Exception e) {
-					Utility.logInfo("Block " + id + " has invalid occlusion. Using default.");
+					Log.info("Block " + id + " has invalid occlusion. Using default.");
 				}
 			}
 
@@ -79,12 +82,12 @@ public class BlockTypes
 			{
 				Node matNode = matNodes.item(j);
 
-				int data = Integer.parseInt(XmlUtil.getAttribute(matNode, "data", "-1"), 10);
-				int mask = Integer.parseInt(XmlUtil.getAttribute(matNode, "mask", "-1"), 10);
+				int data = Integer.parseInt(Xml.getAttribute(matNode, "data", "-1"), 10);
+				int mask = Integer.parseInt(Xml.getAttribute(matNode, "mask", "-1"), 10);
 				String mats = matNode.getTextContent();
 				if (data < -1 || data > 15 || mats.trim().isEmpty())
 				{
-					Utility.logInfo("Block " + id + " has invalid material. Ignoring.");
+					Log.info("Block " + id + " has invalid material. Ignoring.");
 					continue;
 				}
 				
@@ -101,7 +104,7 @@ public class BlockTypes
 			
 			if (!hasMtl)
 			{
-				Utility.logInfo("Block " + id + " has no materials. Using default.");
+				Log.info("Block " + id + " has no materials. Using default.");
 				materials.put(new String[] { "unknown" });
 			}
 			
@@ -111,7 +114,7 @@ public class BlockTypes
 				model = (BlockModel)modelClass.getConstructor().newInstance();
 			}
 			catch (Exception e) {
-				Utility.logInfo("Block " + id + " has invalid model. Using default.");
+				Log.info("Block " + id + " has invalid model. Using default.");
 				model = new Cube();
 			}
 			model.setBlockId(id);
@@ -141,12 +144,12 @@ public class BlockTypes
 		unknownBlock = new BlockInfo(-1, "unknown", materials, BlockInfo.Occlusion.FULL, cube);
 		
 		// create the blocks table
-		Utility.logInfo("Reading blocks configuration file...");
+		Log.info("Reading blocks configuration file...");
 
 		blockTable = new HashMap<Short, BlockInfo>();
 		readConfig(blockTable);
 
-		Utility.logInfo("Loaded " + blockTable.size() + " block definitions.");
+		Log.info("Loaded " + blockTable.size() + " block definitions.");
 	}
 	
 	
