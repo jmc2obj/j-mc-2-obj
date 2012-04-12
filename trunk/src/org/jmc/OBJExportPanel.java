@@ -13,22 +13,17 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.rmi.CORBA.Util;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -459,10 +454,14 @@ public class OBJExportPanel extends JFrame implements Runnable {
 							current_ff.writer.println(line);
 						}
 					}
-					else
+					else if(options.getObjPerMat() && line.startsWith("g "))
 					{
+						continue;
+					}
+					else
+					{						
 						main.println(line);
-						if(line.startsWith("mtllib") || line.startsWith("g"))
+						if(line.startsWith("mtllib") || line.startsWith("g "))
 							main.println();
 					}
 				}
@@ -479,6 +478,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 					progress.setValue(50+(int)(50.0*(double)count/(double)maxcount));
 					
 					main.println();
+					if(options.getObjPerMat()) main.println("g "+ff.name);
 					main.println("usemtl "+ff.name);
 					main.println();
 					
