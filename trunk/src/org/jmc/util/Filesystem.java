@@ -1,4 +1,4 @@
-package org.jmc;
+package org.jmc.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,13 +8,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 
-import javax.swing.JOptionPane;
-
 
 /**
- * Misc. utility methods.
+ * File and directory related methods.
  */
-public class Utility {
+public class Filesystem
+{
 
 	/**
 	 * Gets the directory that Minecraft keeps its save files in.
@@ -26,6 +25,7 @@ public class Utility {
 		String minecraft="minecraft";
 		String osname = System.getProperty("os.name").toLowerCase();
 		String default_home = System.getProperty("user.home", ".");
+		
 		if(osname.contains("solaris") || osname.contains("sunos") || osname.contains("linux") || osname.contains("unix"))
 		{
 			return new File(default_home, "." + minecraft);
@@ -35,12 +35,9 @@ public class Utility {
 		{
 			String win_home = System.getenv("APPDATA");
 			if(win_home != null)
-			{
 				return new File(win_home, "." + minecraft);
-			} else
-			{
+			else
 				return new File(default_home, "." + minecraft);
-			}
 		}
 
 		if(osname.contains("mac"))
@@ -61,7 +58,7 @@ public class Utility {
 	{
 		try {
 			String codePath = URLDecoder.decode(
-					Utility.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
+					Filesystem.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
 					"UTF-8");
 			
 			// ASSUMPTION:
@@ -92,7 +89,8 @@ public class Utility {
 	 * opened for any other reason.
 	 * @throws IOException If the operation fails during the data copy phase.
 	 */
-	public static void copyFile(File origPath, File destPath) throws IOException {
+	public static void copyFile(File origPath, File destPath) throws IOException
+	{
 		FileChannel in = null;
 		FileChannel out = null;
 		try {
@@ -103,55 +101,6 @@ public class Utility {
 		finally {
 			if (in != null) in.close();
 			if (out != null) out.close();
-		}
-	}
-
-	
-	/**
-	 * Logs a debug message to stdout.
-	 * 
-	 * @param msg string to be logged
-	 */
-	public static void logDebug(String msg)
-	{
-		System.out.println(msg);
-	}
-
-	/**
-	 * Logs an informational message to stdout.
-	 * If the UI is up, it will also be shown in the messages area of the main window.   
-	 * 
-	 * @param msg string to be logged
-	 */
-	public static void logInfo(String msg)
-	{
-		System.out.println(msg);
-		MainWindow.log(msg);
-	}
-
-	/**
-	 * Logs an error message to stderr.
-	 * If the UI is up, it will also be shown in a popup window.   
-	 * 
-	 * @param msg string to be logged
-	 * @param ex (optional) exception that caused the error
-	 */
-	public static void logError(String msg, Exception ex)
-	{
-		System.err.println(msg);
-		if (ex != null)
-			ex.printStackTrace();
-		
-		if (ex != null)
-		{
-			String exMsg = ex.getMessage();
-			if (exMsg == null)
-				exMsg = ex.getClass().getSimpleName();
-			JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + exMsg);
-		}
-		else
-		{
-			JOptionPane.showMessageDialog(MainWindow.main, msg);
 		}
 	}
 

@@ -5,8 +5,8 @@ import org.jmc.BlockTypes;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJFile;
 import org.jmc.OBJFile.Side;
-import org.jmc.Transform;
-import org.jmc.Vertex;
+import org.jmc.geom.Transform;
+import org.jmc.geom.Vertex;
 
 
 /**

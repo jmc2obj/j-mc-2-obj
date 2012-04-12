@@ -3,7 +3,7 @@ package org.jmc.models;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJFile;
 import org.jmc.OBJFile.Side;
-import org.jmc.Vertex;
+import org.jmc.geom.Vertex;
 
 
 /**

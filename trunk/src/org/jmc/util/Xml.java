@@ -1,4 +1,4 @@
-package org.jmc;
+package org.jmc.util;
 
 import java.io.File;
 
@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
 /**
  * Utility methods for dealing with XML
  */
-public class XmlUtil {
+public class Xml {
 
 	/**
 	 * Loads a XML document from a file and returns the corresponding DOM Document.

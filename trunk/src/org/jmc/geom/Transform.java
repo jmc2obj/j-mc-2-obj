@@ -1,4 +1,5 @@
-package org.jmc;
+package org.jmc.geom;
+
 
 /**
  * A class to perform simple affine transformations.

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.jmc.util.Log;
+
 /**
  * Class used for exporting configuration resources from within JAR file
  * 
@@ -48,7 +50,7 @@ public class Configuration
 			}
 
 		} catch (Exception e) {			
-			Utility.logError("Error checking configuration files", e);
+			Log.error("Error checking configuration files", e);
 		}
 	}
 
@@ -93,7 +95,7 @@ public class Configuration
 		File dest=new File(path);
 		if(dest.exists())
 		{
-			Utility.logInfo("File "+path+" exists...");
+			Log.info("File "+path+" exists...");
 			return;
 		}
 		
@@ -102,7 +104,7 @@ public class Configuration
 			throw new IOException("Cannot create file: "+path);
 		}
 
-		Utility.logInfo("File "+path+" doesn't exist! Recreating...");
+		Log.info("File "+path+" doesn't exist! Recreating...");
 
 		InputStream src=Configuration.class.getClassLoader().getResourceAsStream(path);		
 		ReadableByteChannel input=Channels.newChannel(src);

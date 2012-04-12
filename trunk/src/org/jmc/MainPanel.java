@@ -37,6 +37,7 @@ import javax.swing.text.BadLocationException;
 
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
+import org.jmc.util.Filesystem;
 
 
 /**
@@ -322,7 +323,7 @@ public class MainPanel extends JPanel
 		@SuppressWarnings("unchecked")
 		public void run()
 		{
-			File minecraft_dir=Utility.getMinecraftDir();
+			File minecraft_dir=Filesystem.getMinecraftDir();
 			if(minecraft_dir==null) return;
 			File save_dir=new File(minecraft_dir.getAbsolutePath()+"/saves");
 

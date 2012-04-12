@@ -1,4 +1,4 @@
-package org.jmc;
+package org.jmc.geom;
 
 /**
  * Small class for describing Vertices in a sortable fashion.
