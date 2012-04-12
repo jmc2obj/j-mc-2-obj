@@ -10,7 +10,7 @@ public class About {
 	
 	private static boolean initialized=false; 
 	private static String version="0.15-dev";
-	private static String revision="r124";
+	private static String revision="r127";
 	
 	private static void init()
 	{
