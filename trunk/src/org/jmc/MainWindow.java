@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.jmc;
 
+import java.awt.Dimension;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
@@ -36,6 +38,7 @@ public class MainWindow extends JFrame
 		super("Main Window");
 		
 		setSize(800,600);
+		setMinimumSize(new Dimension(400,400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("jMC2Obj");
 		setLocationRelativeTo(null);

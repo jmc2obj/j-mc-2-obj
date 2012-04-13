@@ -153,6 +153,16 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		}catch(Exception e){}
 		return prefs.get("LAST_EXPORT_PATH", str);
 	}
+	
+	public void setLastVisitedDir(String path)
+	{
+		prefs.put("LAST_VISITED_DIR", path);
+	}
+	
+	public String getLastVisitedDir()
+	{
+		return prefs.get("LAST_VISITED_DIR", getLastExportPath());
+	}
 
 	public int getMoveAction()
 	{
