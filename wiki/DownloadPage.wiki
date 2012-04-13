@@ -2,9 +2,7 @@
 
 To download go to the following page and download the executable JAR:
 
-[http://code.google.com/p/j-mc-2-obj/downloads/detail?name=jMc2Obj.jar]
-
-Most recent snapshot of the program is also available in the download section. It may contain unfinished features.
+[http://code.google.com/p/j-mc-2-obj/downloads/list]
 
 You can place the file anywhere you like and double-click it to run the program.
 
