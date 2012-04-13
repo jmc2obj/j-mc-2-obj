@@ -57,6 +57,7 @@ public class MainWindow extends JFrame
 	 */
 	public static Settings settings=null;
 	
+	public static FileNames file_names=null;
 	
 	/**
 	 * Start of program.
@@ -74,6 +75,7 @@ public class MainWindow extends JFrame
 		}
 		
 		settings = new Settings();
+		file_names=new FileNames();
 		main = new MainWindow();
 		
 		try {
