@@ -10,7 +10,7 @@ public class About {
 	
 	private static boolean initialized=false; 
 	private static String version="0.15-dev";
-	private static String revision="r128";
+	private static String revision="r131";
 	
 	private static void init()
 	{
@@ -42,6 +42,10 @@ public class About {
 		List<String> donations=new LinkedList<String>();
 		
 		donations.add("Hilum");
+		donations.add("The Pixel Artist");
+		donations.add("Justin \"Rip_Shot\" Goran");
+		
+		Collections.shuffle(donations);
 		
 		msg+="We would like to thank these people for their dontaions:";
 		msg+="<ul style=\"list-style-type:none\">";
