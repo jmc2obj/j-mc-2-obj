@@ -16,8 +16,19 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -398,6 +409,29 @@ public class MainPanel extends JPanel
 				cbPath.setSelectedItem(last_map);
 			else
 				addPathToList(last_map);
+
+			try{
+				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
+
+				ZipEntry entry = null;
+				while ((entry = zis.getNextEntry()) != null)
+				{
+					if (entry.getName().equals("title/splashes.txt"))
+						break;
+				}
+				if (entry != null)
+				{
+					BufferedReader in=new BufferedReader(new InputStreamReader(zis));
+					List<String> splashes=new LinkedList<String>();
+					String line;
+					while((line=in.readLine())!=null)
+						splashes.add(line);
+					in.close();
+					int r=(int)(Math.random()*(double)splashes.size());
+					MainWindow.main.setTitle("jMc2Obj - "+splashes.get(r));
+				}								
+				zis.close();
+			}catch (Exception e) {}
 		}
 	}
 
