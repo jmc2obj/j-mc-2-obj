@@ -228,8 +228,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		File exportpath=new File(tfSavePath.getText());
 
-		File objfile=new File(exportpath.getAbsolutePath()+"/minecraft.obj");
-		File mtlfile=new File(exportpath.getAbsolutePath()+"/minecraft.mtl");
+		File objfile=new File(exportpath.getAbsolutePath(),MainWindow.file_names.getOBJName());
+		File mtlfile=new File(exportpath.getAbsolutePath(),MainWindow.file_names.getMTLName());
 		File tmpdir=new File(exportpath.getAbsolutePath()+"/temp");
 
 		boolean write_obj=true;
@@ -346,7 +346,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				obj.setOffset(-oxs*16, -oys, -ozs*16);
 				obj.setScale(scale);
 
-				obj.appendMtl(obj_writer, "minecraft.mtl");
+				obj.appendMtl(obj_writer, mtlfile.getName());
 				if(!obj_per_mat) obj.appendObjectname(obj_writer);
 				obj.printTexturesAndNormals(obj_writer);
 

@@ -9,6 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -117,6 +118,19 @@ public class OBJExportOptions extends JPanel
 		pMTLOver.add(rbMTLAsk);
 		pMTLOver.add(rbMTLAlways);
 		pMTLOver.add(rbMTLNever);
+		
+		JPanel pNames=new JPanel();
+		pNames.setLayout(new BoxLayout(pNames, BoxLayout.LINE_AXIS));
+		pNames.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		JButton bNames=new JButton("Rename files...");
+		pNames.add(bNames);
+		
+		bNames.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {	
+				MainWindow.file_names.display();
+			}
+		});
 		
 		ButtonGroup gMTLOver=new ButtonGroup();
 		gMTLOver.add(rbMTLAsk);
@@ -234,6 +248,7 @@ public class OBJExportOptions extends JPanel
 		add(pRemoveDuplicates);
 		add(pOBJOver);
 		add(pMTLOver);
+		add(pNames);
 	}
 
 	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
