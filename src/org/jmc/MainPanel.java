@@ -20,10 +20,10 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,8 +52,7 @@ public class MainPanel extends JPanel
 	//UI elements (not described separately)
 	private JButton bLoad,bSave,bSettings,bAbout;
 	//this suppression is for compatibility with java 1.6
-	@SuppressWarnings("rawtypes")
-	private JComboBox cbPath;
+	private JComboBox<String> cbPath;
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private JSlider sFloor,sCeil;
@@ -86,15 +85,31 @@ public class MainPanel extends JPanel
 	/**
 	 * Panel contructor.
 	 */	
-	@SuppressWarnings("rawtypes")
 	public MainPanel()
 	{
-		setLayout(new BorderLayout());		
-		JPanel buttons = new JPanel();
-		buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
-		buttons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		preview = new PreviewPanel();
-		preview.setBackground(new Color(110,150,100));
+		setLayout(new BorderLayout());
+		
+		
+		JPanel pToolbar = new JPanel();
+		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));		
+		
+		JPanel pPath=new JPanel();
+		pPath.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
+		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
+		cbPath = new JComboBox<String>();			
+		cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
+		cbPath.setEditable(true);
+		JButton bPath=new JButton("...");
+		pPath.add(bPath);
+		pPath.add(cbPath);
+		
+		JScrollPane spPath=new JScrollPane(pPath);
+		spPath.setBorder(BorderFactory.createEmptyBorder());
+		
+		JPanel pButtons = new JPanel();
+		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
+		pButtons.setBorder(BorderFactory.createEmptyBorder(0,5,10,5));
+		
 		bLoad = new JButton("Load");
 		bSave = new JButton("Export selection");
 		bSettings = new JButton("Settings");
@@ -102,14 +117,18 @@ public class MainPanel extends JPanel
 		bAbout.setForeground(Color.red);
 		Font f=bAbout.getFont();
 		bAbout.setFont(new Font(f.getFamily(),Font.BOLD,f.getSize()));
-		cbPath = new JComboBox();			
-		cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
-		taLog = new JTextArea(5,1);
-		taLog.setLineWrap(true);
-		taLog.setEditable(false);
-		taLog.setFont(new Font("Courier", 0, 14));
-		spPane = new JScrollPane(taLog);
-		memory_monitor=new MemoryMonitor();
+				
+		pButtons.add(bLoad);
+		pButtons.add(bSave);
+		pButtons.add(bSettings);
+		pButtons.add(bAbout);						
+
+		pToolbar.add(spPath);
+		pToolbar.add(pButtons);
+		
+		preview = new PreviewPanel();
+		preview.setBackground(new Color(110,150,100));
+		
 		JPanel preview_alts=new JPanel();
 		preview_alts.setLayout(new BorderLayout());
 		JPanel alts=new JPanel();
@@ -126,9 +145,15 @@ public class MainPanel extends JPanel
 		sCeil.setMinimum(0);
 		sCeil.setMaximum(256);
 		sCeil.setValue(256);
-		
+			
+		taLog = new JTextArea(5,1);
+		taLog.setLineWrap(true);
+		taLog.setEditable(false);
+		taLog.setFont(new Font("Courier", 0, 14));
+				
+		spPane = new JScrollPane(taLog);
+		memory_monitor=new MemoryMonitor();
 
-		cbPath.setEditable(true);		
 
 		populateLoadList();		
 		
@@ -136,12 +161,7 @@ public class MainPanel extends JPanel
 		spMainSplit.setDividerLocation(400);
 		spMainSplit.setResizeWeight(1);
 		
-		buttons.add(cbPath);
-		buttons.add(Box.createRigidArea(new Dimension(10,0)));
-		buttons.add(bLoad);
-		buttons.add(bSave);
-		buttons.add(bSettings);
-		buttons.add(bAbout);
+		
 		
 		alts.add(sCeil);
 		alts.add(sFloor);
@@ -149,7 +169,7 @@ public class MainPanel extends JPanel
 		preview_alts.add(preview);
 		preview_alts.add(alts,BorderLayout.EAST);
 		
-		add(buttons, BorderLayout.NORTH);		
+		add(pToolbar, BorderLayout.NORTH);		
 		add(spMainSplit);		
 		add(memory_monitor, BorderLayout.SOUTH);	
 		
@@ -191,6 +211,20 @@ public class MainPanel extends JPanel
 		sFloor.addChangeListener(slider_listener);
 		sFloor.addMouseListener(slider_adapter);
 		preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
+		
+		bPath.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastVisitedDir());
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				if(jfc.showDialog(MainPanel.this, "Choose save folder")==JFileChooser.APPROVE_OPTION)
+				{
+					String path=jfc.getSelectedFile().getAbsolutePath();
+					addPathToList(path);
+					MainWindow.settings.setLastVisitedDir(path);
+				}
+			}
+		});
 		
 		bLoad.addActionListener(new ActionListener()
 		{			
@@ -297,6 +331,21 @@ public class MainPanel extends JPanel
 		(new Thread(memory_monitor)).start();
 
 	}
+	
+	public void addPathToList(String path)
+	{
+		for(int i=0; i<cbPath.getItemCount(); i++)
+		{
+			if(cbPath.getItemAt(i).equals(path))
+			{
+				cbPath.setSelectedIndex(i);
+				return;
+			}
+		}
+		
+		cbPath.addItem(path);
+		cbPath.setSelectedItem(path);
+	}
 
 	/**
 	 * Main log method.
@@ -320,7 +369,6 @@ public class MainPanel extends JPanel
 	 */
 	class PopulateLoadListThread extends Thread
 	{
-		@SuppressWarnings("unchecked")
 		public void run()
 		{
 			File minecraft_dir=Filesystem.getMinecraftDir();
@@ -331,7 +379,7 @@ public class MainPanel extends JPanel
 				return;
 
 			String last_map=MainWindow.settings.getLastLoadedMap();
-			boolean use_last_map=false;
+			boolean found_last_save=false;
 			
 			File [] saves=save_dir.listFiles();
 
@@ -342,12 +390,14 @@ public class MainPanel extends JPanel
 				{
 					p=f.getAbsolutePath();
 					cbPath.addItem(p);
-					if(p.equals(last_map)) use_last_map=true;
+					if(p.equals(last_map)) found_last_save=true;
 				}
 			}
 			
-			if(use_last_map)
+			if(found_last_save)
 				cbPath.setSelectedItem(last_map);
+			else
+				addPathToList(last_map);
 		}
 	}
 
