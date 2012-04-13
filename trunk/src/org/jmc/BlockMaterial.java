@@ -57,7 +57,8 @@ public class BlockMaterial
 	/**
 	 * Looks up the materials to use, given the block's data value.
 	 * If specific materials for that data value are not defined, returns the 
-	 * default materials; if the default materials are not defined returns null.
+	 * default materials; if the default materials are not defined returns the
+	 * materials for the lowest data value defined.
 	 * 
 	 * @param dataValue Block data value.
 	 * @return Array of material names, or null.
@@ -67,6 +68,14 @@ public class BlockMaterial
 		String[] mtlNames = dataMaterials[dataValue & dataMask];
 		if (mtlNames == null)
 			mtlNames = baseMaterials;
+		if (mtlNames == null)
+			for (int i = 0; i < dataMaterials.length; i++)
+				if (dataMaterials[i] != null) {
+					mtlNames = dataMaterials[i];
+					break;
+				}
+		if (mtlNames == null)
+			throw new RuntimeException("materials definition is empty!");
 		return mtlNames;
 	}
 
