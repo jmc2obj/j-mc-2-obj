@@ -3,8 +3,8 @@ package org.jmc.models;
 import org.jmc.BlockInfo;
 import org.jmc.BlockTypes;
 import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJFile;
-import org.jmc.OBJFile.Side;
+import org.jmc.OBJOutputFile;
+import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 
@@ -27,7 +27,7 @@ public class Pane extends BlockModel
 	}
 
 	@Override
-	public void addModel(OBJFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		boolean n = checkConnect(chunks.getBlockID(x, y, z-1));
 		boolean s = checkConnect(chunks.getBlockID(x, y, z+1));

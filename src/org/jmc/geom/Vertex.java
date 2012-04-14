@@ -21,6 +21,18 @@ public class Vertex implements Comparable<Vertex>
 		this.y=y;
 		this.z=z;
 	}
+	
+	/**
+	 * Copy constructor
+	 * @param v
+	 */
+	public Vertex(Vertex v)
+	{
+		this.x=v.x;
+		this.y=v.y;
+		this.z=v.z;
+	}
+	
 
 	/**
 	 * Comparator that sorts vertices first along the X, then Y and finally Z axis.

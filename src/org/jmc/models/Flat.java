@@ -1,8 +1,8 @@
 package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJFile;
-import org.jmc.OBJFile.Side;
+import org.jmc.OBJOutputFile;
+import org.jmc.geom.Side;
 import org.jmc.geom.Vertex;
 
 
@@ -13,7 +13,7 @@ public class Flat extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
