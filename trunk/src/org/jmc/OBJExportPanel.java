@@ -342,7 +342,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(bounds, ymin, ymax);
 
-				OBJFile obj=new OBJFile("minecraft");
+				OBJOutputFile obj=new OBJOutputFile("minecraft");
 				obj.setOffset(-oxs*16, -oys, -ozs*16);
 				obj.setScale(scale);
 

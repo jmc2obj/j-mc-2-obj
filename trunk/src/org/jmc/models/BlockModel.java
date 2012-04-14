@@ -5,8 +5,8 @@ import java.awt.Rectangle;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJFile;
-import org.jmc.OBJFile.Side;
+import org.jmc.OBJOutputFile;
+import org.jmc.geom.Side;
 import org.jmc.geom.Vertex;
 
 
@@ -116,7 +116,7 @@ public abstract class BlockModel
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
 	 * @param mtlSides Material for each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
 	 */
-	protected void addBox(OBJFile obj, float xs, float ys, float zs, float xe, float ye, float ze, boolean[] drawSides, String[] mtlSides)
+	protected void addBox(OBJOutputFile obj, float xs, float ys, float zs, float xe, float ye, float ze, boolean[] drawSides, String[] mtlSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
@@ -181,6 +181,6 @@ public abstract class BlockModel
 	 * @param z Block z coordinate
 	 * @param data Block data value
 	 */
-	public abstract void addModel(OBJFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data);
+	public abstract void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data);
 	
 }

@@ -3,7 +3,7 @@ package org.jmc.models;
 import java.util.HashSet;
 
 import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJFile;
+import org.jmc.OBJOutputFile;
 
 
 /**
@@ -44,7 +44,7 @@ public class Fence extends BlockModel
 	
 	
 	@Override
-	public void addModel(OBJFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		String[] mtls = getMtlSides(data);
 		boolean[] drawSides = new boolean[] {true,true,true,true,true,true};

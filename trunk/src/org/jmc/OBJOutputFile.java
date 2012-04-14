@@ -16,7 +16,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jmc.geom.Face;
+import org.jmc.geom.MaterialMap;
+import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
+import org.jmc.geom.UVNormMap;
 import org.jmc.geom.Vertex;
 
 
@@ -27,55 +31,9 @@ import org.jmc.geom.Vertex;
  * @author danijel
  *
  */
-public class OBJFile
+public class OBJOutputFile
 {
-
-	/**
-	 * Small enum describing the UV location of the texture for simple rectangular
-	 * textures.
-	 * @author danijel
-	 *
-	 */
-	public enum TexCoordinate
-	{
-		TOPLEFT,
-		TOPRIGHT,
-		BOTTOMRIGHT,
-		BOTTOMLEFT
-	}
-
-	/**
-	 * A small enum for describing the sides of a cube.
-	 * @author danijel
-	 *
-	 */
-	public enum Side
-	{
-		TOP,
-		BOTTOM,
-		LEFT,
-		RIGHT,
-		FRONT,
-		BACK,
-		BACKRIGHT,
-		FRONTRIGHT
-	}
-
-	/**
-	 * Small internal class for describing a simple rectangular face of an object.
-	 * Faces can be sorted by material.
-	 */
-	private class Face implements Comparable<Face>
-	{
-		int[] vertices;
-		Side side;
-		String mtl;
-		@Override
-		public int compareTo(Face o) {
-			return this.mtl.compareTo(o.mtl);
-		}
-	}
-
+	
 	/**
 	 * Identifier of the file.
 	 * Since many OBJ class objects are created by different chunks,
@@ -100,6 +58,10 @@ public class OBJFile
 	 * List of faces in the file.
 	 */
 	List<Face> faces;
+	
+	MaterialMap material_map;
+	
+	UVNormMap uvnorm_map;
 
 	/**
 	 * Offsets of the file. Used to position the chunk in its right location.
@@ -113,13 +75,15 @@ public class OBJFile
 	 * @param ident identifier of the OBJ
 	 * @param mtl reference to the MTL
 	 */
-	public OBJFile(String ident)
+	public OBJOutputFile(String ident)
 	{
 		identifier=ident;
 		vertices=new LinkedList<Vertex>();
 		vertex_map=new TreeMap<Vertex, Integer>();
 		vertex_counter=1;
-		faces=new LinkedList<OBJFile.Face>();
+		faces=new LinkedList<Face>();
+		material_map=new MaterialMap();
+		uvnorm_map=new UVNormMap();
 		x_offset=0;
 		y_offset=0;
 		z_offset=0;
@@ -140,24 +104,41 @@ public class OBJFile
 		z_offset=z;
 	}
 
+	/**
+	 * Scales the map by a float value.
+	 * @param scale
+	 */
 	public void setScale(float scale)
 	{
 		file_scale=scale;
 	}
 
 
+	/**
+	 * Appends a header linking to the MTL file.
+	 * @param out
+	 * @param mtlFile
+	 */
 	public void appendMtl(PrintWriter out, String mtlFile)
 	{
 		out.println("mtllib "+mtlFile);
 		out.println();
 	}
 	
+	/**
+	 * Appends an object name line to the file.
+	 * @param out
+	 */
 	public void appendObjectname(PrintWriter out)
 	{
 		out.println("g "+identifier);
 		out.println();
 	}
 
+	/**
+	 * Appends vertices to the file.
+	 * @param out
+	 */
 	public void appendVertices(PrintWriter out)
 	{
 		Locale l=null;
@@ -180,25 +161,20 @@ public class OBJFile
 		Locale l=null;
 		
 		Collections.sort(faces);
-		String last_mtl=null;	
-		int normal_idx;
+		int last_mtl=-1;	
 		for(Face f:faces)
 		{
-			if(!f.mtl.equals(last_mtl))
+			if(f.mtl!=last_mtl)
 			{
 				out.println();
 				if(obj_per_mat) out.println("g "+identifier+"_"+f.mtl);
-				out.println("usemtl "+f.mtl);
+				out.println("usemtl "+material_map.getMaterialName(f.mtl));
 				last_mtl=f.mtl;
 			}
 
-			normal_idx=sideToNormalIndex(f.side);
-
 			out.print("f ");
-			out.format(l,"%d/-4/%d ",f.vertices[0],normal_idx);
-			out.format(l,"%d/-3/%d ",f.vertices[1],normal_idx);
-			out.format(l,"%d/-2/%d ",f.vertices[2],normal_idx);
-			out.format(l,"%d/-1/%d ",f.vertices[3],normal_idx);
+			for(int i=0; i<4; i++)
+				out.format(l,"%d/%d/%d ",f.vertices[i],f.uv[i],f.normals[i]);
 			out.println();
 		}				
 	}
@@ -229,41 +205,7 @@ public class OBJFile
 	 */
 	public void printTexturesAndNormals(PrintWriter out)
 	{
-		out.println("vt 1 0");
-		out.println("vt 1 1");
-		out.println("vt 0 1");
-		out.println("vt 0 0");
-		out.println("vn 0 -1 0");
-		out.println("vn 0 1 0");
-		out.println("vn 1 0 0");
-		out.println("vn -1 0 0");
-		out.println("vn 0 0 1");
-		out.println("vn 0 0 -1");
-		out.println("vn 0.7 0 0.7");
-		out.println("vn -0.7 0 0.7");
-		//TODO: finish printing normals
-
-	}
-
-	/**
-	 * Converts the side to the normal index as printed by the printTexturesAndNormals method
-	 * @param side side of the block
-	 * @return index of the normal
-	 */
-	private int sideToNormalIndex(Side side)
-	{
-		switch(side)
-		{
-		case BOTTOM: return 1;
-		case TOP: return 2;
-		case RIGHT: return 3;
-		case LEFT: return 4;
-		case BACK: return 5;
-		case FRONT: return 6;
-		case BACKRIGHT: return 7;
-		case FRONTRIGHT: return 8;
-		default: return 6;
-		}
+		uvnorm_map.print(out);		
 	}
 
 	/**
@@ -275,9 +217,8 @@ public class OBJFile
 	public void addFace(Vertex [] verts, Transform trans, Side side, String mtl)
 	{
 		Face face=new Face();
-		face.side=side;
-		face.mtl=mtl;		
-		face.vertices=new int[4];
+		face.mtl=material_map.getMaterialID(mtl);
+		uvnorm_map.calculate(side, face);
 		Vertex vert;
 		for(int i=0; i<4; i++)
 		{
@@ -297,7 +238,37 @@ public class OBJFile
 
 		faces.add(face);
 	}
+	
+	public void addFace(Vertex[] v, String [] uv, String [] normal,  String mtl)
+	{
+		Face face=new Face();
+		face.mtl=material_map.getMaterialID(mtl);
+		Vertex vert;
+		for(int i=0; i<4; i++)
+		{		
+			vert=v[i];
+			
+			if(!vertex_map.containsKey(vert))				
+			{
+				vertices.add(vert);
+				vertex_map.put(vert, vertex_counter);
+				vertex_counter++;
+			}
+			
+			face.vertices[i]=vertex_map.get(vert);
+			face.uv[i]=uvnorm_map.getUVId(uv[i]);
+			face.normals[i]=uvnorm_map.getNormId(normal[i]);
+		}
+		
+		faces.add(face);
+	}
 
+	/**
+	 * Adds all blocks from the given chunk buffer into the file.
+	 * @param chunk
+	 * @param chunk_x
+	 * @param chunk_z
+	 */
 	public void addChunkBuffer(ChunkDataBuffer chunk, int chunk_x, int chunk_z)
 	{
 		int x,y,z;

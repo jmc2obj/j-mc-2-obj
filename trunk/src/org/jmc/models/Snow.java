@@ -1,7 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJFile;
+import org.jmc.OBJOutputFile;
 
 
 /**
@@ -11,7 +11,7 @@ public class Snow extends BoxModel
 {
 
 	@Override
-	public void addModel(OBJFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		drawSides[0] = true;
