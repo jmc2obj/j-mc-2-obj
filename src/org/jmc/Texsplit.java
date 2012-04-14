@@ -194,7 +194,8 @@ public class Texsplit
 				int rowPos = Integer.parseInt(parts[0], 10) - 1;
 				int colPos = Integer.parseInt(parts[1], 10) - 1;
 
-				BufferedImage texture = image.getSubimage(colPos*width, rowPos*height, width, height);
+				BufferedImage texture = new BufferedImage(width, height, image.getType());
+				image.getSubimage(colPos*width, rowPos*height, width, height).copyData(texture.getRaster());
 
 				if (tint != null && tint.length() > 0)
 				{
