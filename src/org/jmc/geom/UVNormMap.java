@@ -1,8 +1,7 @@
 package org.jmc.geom;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,112 +13,77 @@ import java.util.Map;
  */
 public class UVNormMap {
 
-	List<String> uv,normal;	
-	Map<String,Integer> uvmap,normmap;
+	List<UV> uvlist;
+	List<Vertex> normlist;	
+	Map<UV,Integer> uvmap;
+	Map<Vertex,Integer> normmap;
 	
 	
 	public UVNormMap() 
 	{
-		uv=new LinkedList<String>(); 
-		normal=new LinkedList<String>();
-		uvmap=new HashMap<String, Integer>();
-		normmap=new HashMap<String, Integer>();
+		uvlist=new ArrayList<UV>(); 
+		normlist=new ArrayList<Vertex>();
+		uvmap=new HashMap<UV, Integer>();
+		normmap=new HashMap<Vertex, Integer>();
 		
 		//adding default values
-		uv.add("1 0");
-		uv.add("1 1");
-		uv.add("0 1");
-		uv.add("0 0");
-		normal.add("0 -1 0");
-		normal.add("0 1 0");
-		normal.add("1 0 0");
-		normal.add("-1 0 0");
-		normal.add("0 0 1");
-		normal.add("0 0 -1");
-		normal.add("0.7 0 0.7");
-		normal.add("-0.7 0 0.7");
+		uvlist.add(new UV(1,0));
+		uvlist.add(new UV(1,1));
+		uvlist.add(new UV(0,1));
+		uvlist.add(new UV(0,0));
+		normlist.add(new Vertex(0,-1,0));
+		normlist.add(new Vertex(0,1,0));
+		normlist.add(new Vertex(1,0,0));
+		normlist.add(new Vertex(-1,0,0));
+		normlist.add(new Vertex(0,0,1));
+		normlist.add(new Vertex(0,0,-1));
 		
 		int i=1;
-		for(String s:uv)
+		for(UV s:uvlist)
 		{
 			uvmap.put(s, i);
 			i++;
 		}
 		i=1;
-		for(String s:normal)
+		for(Vertex s:normlist)
 		{
 			normmap.put(s, i);
 			i++;
 		}
 	}
 
-	public void calculate(Side side, Face face)
+	public int getUVId(UV uv)
 	{
-		int norm_idx=6;		
-		switch(side)
+		if(uvmap.containsKey(uv))
 		{
-		case BOTTOM: norm_idx=1; break;
-		case TOP: norm_idx=2; break;
-		case RIGHT: norm_idx=3; break;
-		case LEFT: norm_idx=4; break;
-		case BACK: norm_idx=5; break;
-		case FRONT: norm_idx=6; break;
-		case BACKRIGHT: norm_idx=7; break;
-		case FRONTRIGHT: norm_idx=8; break;
-		default: norm_idx=6;
+			return uvmap.get(uv);
 		}
 		
-		for(int i=0; i<4; i++)
-		{
-			face.normals[i]=norm_idx;
-			face.uv[i]=i+1;
-		}
+		uvlist.add(uv);
+		uvmap.put(uv, uvlist.size());
+		return uvlist.size();
 	}
 	
-	public int getUVId(String str)
+	public int getNormId(Vertex norm)
 	{
-		if(uvmap.containsKey(str))
+		if(normmap.containsKey(norm))
 		{
-			return uvmap.get(str);
+			return normmap.get(norm);
 		}
 		
-		uv.add(str);
-		uvmap.put(str, uv.size());
-		return uv.size();
+		normlist.add(norm);
+		normmap.put(norm, normlist.size());
+		return normlist.size();
 	}
 	
-	public int getNormId(String str)
+	public UV getUV(int id)
 	{
-		if(normmap.containsKey(str))
-		{
-			return normmap.get(str);
-		}
-		
-		normal.add(str);
-		normmap.put(str, normal.size());
-		return normal.size();
+		return uvlist.get(id-1);
 	}
 	
-	public String getUV(int id)
+	public Vertex getNorm(int id)
 	{
-		return uv.get(id-1);
+		return normlist.get(id-1);
 	}
 	
-	public String getNorm(int id)
-	{
-		return normal.get(id-1);
-	}
-	
-	public void print(PrintWriter out)
-	{
-		for(String s:uv)
-		{
-			out.println("vt "+s);
-		}
-		
-		for(String s:normal)
-		{
-			out.println("vn "+s);
-		}
-	}
 }

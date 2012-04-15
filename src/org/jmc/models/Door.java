@@ -2,8 +2,8 @@ package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
-import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
+import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 
 
@@ -90,30 +90,34 @@ public class Door extends BlockModel
 
 		
 		Vertex[] vertices = new Vertex[4];
+		UV[] uv = new UV[4];
 
-		vertices[0] = new Vertex(-0.5f, -0.5f, -0.09375f);
-		vertices[1] = new Vertex(-0.5f,  0.5f, -0.09375f);
-		vertices[2] = new Vertex( 0.5f,  0.5f, -0.09375f);
-		vertices[3] = new Vertex( 0.5f, -0.5f, -0.09375f);
-		obj.addFace(vertices, rt, Side.FRONT, mtl);
-
-		vertices[0] = new Vertex(-0.5f, -0.5f, 0.09375f);
-		vertices[1] = new Vertex(-0.5f,  0.5f, 0.09375f);
-		vertices[2] = new Vertex( 0.5f,  0.5f, 0.09375f);
-		vertices[3] = new Vertex( 0.5f, -0.5f, 0.09375f);
-		obj.addFace(vertices, rt ,Side.BACK, mtl);
-
-		vertices[0] = new Vertex(-0.5f, -0.5f,  0.09375f);
-		vertices[1] = new Vertex(-0.5f,  0.5f,  0.09375f);
+		// front
+		vertices[0] = new Vertex( 0.5f, -0.5f, -0.09375f);
+		vertices[1] = new Vertex(-0.5f, -0.5f, -0.09375f);
 		vertices[2] = new Vertex(-0.5f,  0.5f, -0.09375f);
-		vertices[3] = new Vertex(-0.5f, -0.5f, -0.09375f);
-		obj.addFace(vertices, rt, Side.LEFT, mtl);
+		vertices[3] = new Vertex( 0.5f,  0.5f, -0.09375f);
+		obj.addFace(vertices, null, rt, mtl);
 
-		vertices[0] = new Vertex(0.5f, -0.5f, -0.09375f);
-		vertices[1] = new Vertex(0.5f,  0.5f, -0.09375f);
-		vertices[2] = new Vertex(0.5f,  0.5f,  0.09375f);
-		vertices[3] = new Vertex(0.5f, -0.5f,  0.09375f);
-		obj.addFace(vertices, rt, Side.RIGHT, mtl);
+		// back (texture is flipped horizontally)
+		vertices[0] = new Vertex(-0.5f, -0.5f, 0.09375f); uv[0] = new UV(1,0);
+		vertices[1] = new Vertex( 0.5f, -0.5f, 0.09375f); uv[1] = new UV(0,0);
+		vertices[2] = new Vertex( 0.5f,  0.5f, 0.09375f); uv[2] = new UV(0,1);
+		vertices[3] = new Vertex(-0.5f,  0.5f, 0.09375f); uv[3] = new UV(1,1);
+		obj.addFace(vertices, uv, rt, mtl);
+
+		// left
+		vertices[0] = new Vertex(-0.5f, -0.5f, -0.09375f); uv[0] = new UV(13/16f,0);
+		vertices[1] = new Vertex(-0.5f, -0.5f,  0.09375f); uv[1] = new UV(1,0);
+		vertices[2] = new Vertex(-0.5f,  0.5f,  0.09375f); uv[2] = new UV(1,1);
+		vertices[3] = new Vertex(-0.5f,  0.5f, -0.09375f); uv[3] = new UV(13/16f,1);
+		obj.addFace(vertices, uv, rt, mtl);
+
+		// right
+		vertices[0] = new Vertex(0.5f, -0.5f,  0.09375f); uv[0] = new UV(0,0);
+		vertices[1] = new Vertex(0.5f, -0.5f, -0.09375f); uv[1] = new UV(3/16f,0);
+		vertices[2] = new Vertex(0.5f,  0.5f, -0.09375f); uv[2] = new UV(3/16f,1);
+		vertices[3] = new Vertex(0.5f,  0.5f,  0.09375f); uv[3] = new UV(0,1);
+		obj.addFace(vertices, uv, rt, mtl);
 	}
-
 }

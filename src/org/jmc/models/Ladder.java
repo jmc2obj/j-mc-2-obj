@@ -2,7 +2,6 @@ package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
-import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 
@@ -37,11 +36,11 @@ public class Ladder extends BlockModel
 		rt = translate.multiply(rotate);
 		
 		Vertex[] vertices = new Vertex[4];
-		vertices[0] = new Vertex( 0.5f, -0.5f, -0.49f);
-		vertices[1] = new Vertex( 0.5f,  0.5f, -0.49f);			
-		vertices[2] = new Vertex(-0.5f,  0.5f, -0.49f);
-		vertices[3] = new Vertex(-0.5f, -0.5f, -0.49f);
-		obj.addFace(vertices, rt, Side.FRONT, materials.get(data)[0]);
+		vertices[0] = new Vertex(-0.5f, -0.5f, -0.49f);
+		vertices[1] = new Vertex( 0.5f, -0.5f, -0.49f);
+		vertices[2] = new Vertex( 0.5f,  0.5f, -0.49f);
+		vertices[3] = new Vertex(-0.5f,  0.5f, -0.49f);
+		obj.addFace(vertices, null, rt, materials.get(data)[0]);
 	}
 
 }

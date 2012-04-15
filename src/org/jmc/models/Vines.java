@@ -4,7 +4,6 @@ import org.jmc.BlockInfo;
 import org.jmc.BlockTypes;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
-import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 
@@ -27,10 +26,10 @@ public class Vines extends BlockModel
 		boolean e = (data & 8) != 0;
 
 		Vertex[] vertices = new Vertex[4];
-		vertices[0] = new Vertex( 0.5f, -0.5f, -0.49f);
-		vertices[1] = new Vertex( 0.5f,  0.5f, -0.49f);			
-		vertices[2] = new Vertex(-0.5f,  0.5f, -0.49f);
-		vertices[3] = new Vertex(-0.5f, -0.5f, -0.49f);
+		vertices[0] = new Vertex(-0.5f, -0.5f, -0.49f);
+		vertices[1] = new Vertex( 0.5f, -0.5f, -0.49f);
+		vertices[2] = new Vertex( 0.5f,  0.5f, -0.49f);			
+		vertices[3] = new Vertex(-0.5f,  0.5f, -0.49f);
 
 		Transform rot = new Transform();
 		Transform trans = new Transform();
@@ -38,31 +37,31 @@ public class Vines extends BlockModel
 		if (n)
 		{
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, trans, Side.FRONT, materials.get(data)[0]);
+			obj.addFace(vertices, null, trans, materials.get(data)[0]);
 		}
 		if (s)
 		{
 			rot.rotate(0, 180, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, trans.multiply(rot), Side.FRONT, materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
 		}
 		if (e)
 		{
 			rot.rotate(0, 90, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, trans.multiply(rot), Side.FRONT, materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
 		}
 		if (w)
 		{
 			rot.rotate(0, -90, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, trans.multiply(rot), Side.FRONT, materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
 		}
 		if (top)
 		{
 			rot.rotate(90, 0, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, trans.multiply(rot), Side.FRONT, materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
 		}
 			
 		

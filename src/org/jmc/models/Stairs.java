@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
+import org.jmc.geom.UV;
 
 
 /**
@@ -32,71 +33,132 @@ public class Stairs extends BlockModel
 		int up = data & 4;
 		String[] mtls = getMtlSides(data);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
+		UV[] uvSide, uvFront, uvTop;
+		UV[][] uvSides;
 		
+		uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,12/16f), new UV(0,12/16f) };
+		uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+
 		switch (dir)
 		{
 		case 0:
 			if (up==0)
 			{
 				boolean b=drawSides[0]; drawSides[0]=true;
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[0]=b; drawSides[1]=true;
-				addBox(obj, x, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, drawSides, mtls);
+				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
+				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSide = new UV[] { new UV(0.5f,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0.5f,1) };
+				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
+				addBox(obj, x, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
 			}
 			else
 			{
 				boolean b=drawSides[5]; drawSides[5]=true;
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[5]=b; drawSides[1]=true;
-				addBox(obj, x, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, drawSides, mtls);
+				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
+				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSide = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,0.5f), new UV(0.5f,0.5f) };
+				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
+				addBox(obj, x, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
 			}
 			break;
 		case 1:
 			if (up==0)
 			{
 				boolean b=drawSides[0]; drawSides[0]=true;
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[0]=b; drawSides[2]=true;
-				addBox(obj, x-0.5f, y, z-0.5f, x, y+0.5f, z+0.5f, drawSides, mtls);
+				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
+				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSide = new UV[] { new UV(0,0.5f), new UV(0.5f,0.5f), new UV(0.5f,1), new UV(0,1) };
+				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
+				addBox(obj, x-0.5f, y, z-0.5f, x, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
 			}
 			else
 			{
 				boolean b=drawSides[5]; drawSides[5]=true;
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[5]=b; drawSides[2]=true;
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x, y, z+0.5f, drawSides, mtls);
+				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
+				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSide = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,0.5f), new UV(0,0.5f) };
+				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
+				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x, y, z+0.5f, null, mtls, uvSides, drawSides);
 			}
 			break;
 		case 2:
 			if (up==0)
 			{
 				boolean b=drawSides[0]; drawSides[0]=true;
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[0]=b; drawSides[3]=true;
-				addBox(obj, x-0.5f, y, z, x+0.5f, y+0.5f, z+0.5f, drawSides, mtls);
+				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSide = new UV[] { new UV(0.5f,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0.5f,1) };
+				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
+				addBox(obj, x-0.5f, y, z, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
 			}
 			else
 			{
 				boolean b=drawSides[5]; drawSides[5]=true;
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[5]=b; drawSides[3]=true;
-				addBox(obj, x-0.5f, y-0.5f, z, x+0.5f, y, z+0.5f, drawSides, mtls);
+				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSide = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,0.5f), new UV(0.5f,0.5f) };
+				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
+				addBox(obj, x-0.5f, y-0.5f, z, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
 			}
 			break;
 		case 3:
 			if (up==0)
 			{
 				boolean b=drawSides[0]; drawSides[0]=true;
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
+
 				drawSides[0]=b; drawSides[4]=true;
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z, drawSides, mtls);
+				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSide = new UV[] { new UV(0,0.5f), new UV(0.5f,0.5f), new UV(0.5f,1), new UV(0,1) };
+				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
+				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z, null, mtls, uvSides, drawSides);
 			}
 			else
 			{
 				boolean b=drawSides[5]; drawSides[5]=true;
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, drawSides, mtls);
+				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+				
 				drawSides[5]=b; drawSides[4]=true;
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z, drawSides, mtls);
+				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
+				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
+				uvSide = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,0.5f), new UV(0,0.5f) };
+				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
+				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z, null, mtls, uvSides, drawSides);
 			}
 			break;		
 		}

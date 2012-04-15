@@ -9,18 +9,16 @@ package org.jmc;
 
 import java.awt.Rectangle;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.jmc.geom.Face;
-import org.jmc.geom.MaterialMap;
-import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
-import org.jmc.geom.UVNormMap;
+import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 
 
@@ -40,35 +38,43 @@ public class OBJOutputFile
 	 * this helps differentiate them and assign them a name. It's
 	 * usually just the coordinates of the chunk.
 	 */
-	String identifier;
+	private String identifier;
 
 	/**
 	 * List of vertices in the file.
 	 */
-	List<Vertex> vertices;
+	private List<Vertex> vertices;
 
 	/**
 	 * Map of vertices to their respective IDs used in the faces of the mesh.
 	 */
-	Map<Vertex, Integer> vertex_map;
+	private Map<Vertex, Integer> vertexMap;
 	
-	private int vertex_counter;
+	/**
+	 * List of texture coordinates in the file
+	 */
+	private List<UV> texCoords;
+	
+	/**
+	 * Map of texture coordinates to their respective indexes in the OBJ file.
+	 */
+	private Map<UV, Integer> texCoordMap;
 	
 	/**
 	 * List of faces in the file.
 	 */
-	List<Face> faces;
+	private List<Face> faces;
 	
-	MaterialMap material_map;
-	
-	UVNormMap uvnorm_map;
 
 	/**
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
-	float x_offset, y_offset, z_offset;
+	private float x_offset, y_offset, z_offset;
 
-	float file_scale;
+	private float file_scale;
+
+	private int vertex_counter, tex_counter;
+
 
 	/**
 	 * Main constructor.
@@ -77,17 +83,18 @@ public class OBJOutputFile
 	 */
 	public OBJOutputFile(String ident)
 	{
-		identifier=ident;
-		vertices=new LinkedList<Vertex>();
-		vertex_map=new TreeMap<Vertex, Integer>();
-		vertex_counter=1;
-		faces=new LinkedList<Face>();
-		material_map=new MaterialMap();
-		uvnorm_map=new UVNormMap();
-		x_offset=0;
-		y_offset=0;
-		z_offset=0;
-		file_scale=1.0f;
+		identifier = ident;
+		vertices = new ArrayList<Vertex>();
+		vertexMap = new HashMap<Vertex, Integer>();
+		vertex_counter = 1;
+		texCoords = new ArrayList<UV>();
+		texCoordMap = new HashMap<UV, Integer>();
+		tex_counter = 1;
+		faces = new ArrayList<Face>();
+		x_offset = 0;
+		y_offset = 0;
+		z_offset = 0;
+		file_scale = 1.0f;
 	}
 
 	/**
@@ -114,6 +121,24 @@ public class OBJOutputFile
 	}
 
 
+	void clearData(boolean remove_duplicates)
+	{
+		if(remove_duplicates)
+		{
+			//keep edge vertices
+			for(Vertex v:vertices)
+				if((v.x-0.5)%16!=0 && (v.z-0.5)%16!=0 && (v.x+0.5)%16!=0 && (v.z+0.5)%16!=0)
+					vertexMap.remove(v);
+		}
+		else
+		{
+			vertexMap.clear();
+		}
+		vertices.clear();
+		texCoords.clear();
+		faces.clear();
+	}
+
 	/**
 	 * Appends a header linking to the MTL file.
 	 * @param out
@@ -136,6 +161,21 @@ public class OBJOutputFile
 	}
 
 	/**
+	 * Write texture coordinates. These will be shared by all chunks.
+	 * @param out writer of the OBJ file
+	 */
+	public void appendTextures(PrintWriter out)
+	{
+		Locale l=null;
+
+		for(UV uv : texCoords)
+		{
+			out.format(l,"vt %.4f %.4f", uv.u, uv.v);
+			out.println();
+		}
+	}
+
+	/**
 	 * Appends vertices to the file.
 	 * @param out
 	 */
@@ -145,7 +185,7 @@ public class OBJOutputFile
 
 		for(Vertex vertex:vertices)
 		{
-			out.format(l,"v %2.2f %2.2f %2.2f",(vertex.x+x_offset)*file_scale,(vertex.y+y_offset)*file_scale,(vertex.z+z_offset)*file_scale);
+			out.format(l,"v %.3f %.3f %.3f",(vertex.x+x_offset)*file_scale,(vertex.y+y_offset)*file_scale,(vertex.z+z_offset)*file_scale);
 			out.println();
 		}
 	}
@@ -158,111 +198,106 @@ public class OBJOutputFile
 	 */
 	public void appendFaces(PrintWriter out, boolean obj_per_mat)
 	{
-		Locale l=null;
-		
 		Collections.sort(faces);
-		int last_mtl=-1;	
+		String last_mtl=null;	
 		for(Face f:faces)
 		{
-			if(f.mtl!=last_mtl)
+			if(!f.mtl.equals(last_mtl))
 			{
 				out.println();
 				if(obj_per_mat) out.println("g "+identifier+"_"+f.mtl);
-				out.println("usemtl "+material_map.getMaterialName(f.mtl));
+				out.println("usemtl "+f.mtl);
 				last_mtl=f.mtl;
 			}
 
-			out.print("f ");
-			for(int i=0; i<4; i++)
-				out.format(l,"%d/%d/%d ",f.vertices[i],f.uv[i],f.normals[i]);
+			// TODO ignoring normals for now
+			out.format((Locale)null,
+					"f %d/%d %d/%d %d/%d %d/%d", 
+					f.vertices[0], f.uv[0],
+					f.vertices[1], f.uv[1],
+					f.vertices[2], f.uv[2],
+					f.vertices[3], f.uv[3]);
 			out.println();
-		}				
+		}
 	}
 	
-	void clearData(boolean remove_duplicates)
+	
+	/**
+	 * Add a face with the given vertices to the OBJ file.
+	 * 
+	 * @param verts vertices of the face (length must be 4)
+	 * @param uv texture coordinates for the vertices (length must be 4). If null, the default coordinates will be used.
+	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
+	 * @param mtl Name of the material for the face
+	 */
+	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl)
 	{
-		faces.clear();
+		addFace(verts, null, uv, trans, mtl);
+	}
+	
+	/**
+	 * Add a face with the given vertices to the OBJ file.
+	 * 
+	 * @param verts vertices of the face (length must be 4)
+	 * @param normals normals for the vertices (length must be 4)
+	 * @param uv texture coordinates for the vertices (length must be 4). If null, the default coordinates will be used.
+	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
+	 * @param mtl Name of the material for the face
+	 */
+	public void addFace(Vertex[] verts, Vertex[] normals, UV[] uv, Transform trans, String mtl)
+	{
+		// TODO ignoring normals for now
 		
-		if(!remove_duplicates)
+		if (uv == null)
 		{
-			vertices.clear();
-			vertex_map.clear();
-			return;
+			uv = new UV[] { 
+				new UV(0,0),
+				new UV(1,0), 
+				new UV(1,1), 
+				new UV(0,1) 
+			};
 		}
-				
-		//keep edge vertices
-		for(Vertex v:vertices)
-		{			
-			if((v.x-0.5)%16!=0 && (v.z-0.5)%16!=0 && (v.x+0.5)%16!=0 && (v.z+0.5)%16!=0)
-				vertex_map.remove(v);
-		}
-		vertices.clear();
-	}
-
-	/**
-	 * Write texture coordinates and normals. These are usually the same for all chunks.
-	 * @param out writer of the OBJ file
-	 */
-	public void printTexturesAndNormals(PrintWriter out)
-	{
-		uvnorm_map.print(out);		
-	}
-
-	/**
-	 * Add a face with the given vertices to the appropriate lists.
-	 * Also create vertices if necessary.
-	 * @param verts vertices of the face
-	 * @param side side of the object
-	 */
-	public void addFace(Vertex [] verts, Transform trans, Side side, String mtl)
-	{
-		Face face=new Face();
-		face.mtl=material_map.getMaterialID(mtl);
-		uvnorm_map.calculate(side, face);
-		Vertex vert;
-		for(int i=0; i<4; i++)
+			
+		Face face = new Face();
+		face.mtl = mtl;		
+		for (int i=0; i<4; i++)
 		{
+			Vertex vert;
 			if (trans != null)
-				vert=trans.multiply(verts[i]);
+				vert = trans.multiply(verts[i]);
 			else
-				vert=verts[i];
+				vert = verts[i];
 
-			if(!vertex_map.containsKey(vert))				
+			if (vertexMap.containsKey(vert))				
+			{
+				face.vertices[i] = vertexMap.get(vert);
+			}
+			else 
 			{
 				vertices.add(vert);
-				vertex_map.put(vert, vertex_counter);
+				vertexMap.put(vert, vertex_counter);
+				face.vertices[i] = vertex_counter;
 				vertex_counter++;
 			}
-			face.vertices[i]=vertex_map.get(vert);
+		}
+		for (int i=0; i<4; i++)
+		{
+			if (texCoordMap.containsKey(uv[i]))				
+			{
+				face.uv[i] = texCoordMap.get(uv[i]);
+			}
+			else
+			{
+				texCoords.add(uv[i]);
+				texCoordMap.put(uv[i], tex_counter);
+				face.uv[i] = tex_counter;
+				tex_counter++;
+			}
 		}
 
 		faces.add(face);
 	}
 	
-	public void addFace(Vertex[] v, String [] uv, String [] normal,  String mtl)
-	{
-		Face face=new Face();
-		face.mtl=material_map.getMaterialID(mtl);
-		Vertex vert;
-		for(int i=0; i<4; i++)
-		{		
-			vert=v[i];
-			
-			if(!vertex_map.containsKey(vert))				
-			{
-				vertices.add(vert);
-				vertex_map.put(vert, vertex_counter);
-				vertex_counter++;
-			}
-			
-			face.vertices[i]=vertex_map.get(vert);
-			face.uv[i]=uvnorm_map.getUVId(uv[i]);
-			face.normals[i]=uvnorm_map.getNormId(normal[i]);
-		}
-		
-		faces.add(face);
-	}
-
 	/**
 	 * Adds all blocks from the given chunk buffer into the file.
 	 * @param chunk

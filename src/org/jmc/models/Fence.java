@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
+import org.jmc.geom.UV;
 
 
 /**
@@ -47,33 +48,62 @@ public class Fence extends BlockModel
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		String[] mtls = getMtlSides(data);
-		boolean[] drawSides = new boolean[] {true,true,true,true,true,true};
+		UV[] uvTop, uvSide;
+		UV[][] uvSides;
 
 		// fence post
-		addBox(obj, x-0.125f, y-0.5f, z-0.125f, x+0.125f, y+0.5f, z+0.125f, drawSides, mtls);
+		uvTop = new UV[] { new UV(6/16f, 6/16f), new UV(10/16f, 6/16f), new UV(10/16f, 10/16f), new UV(6/16f, 10/16f) };
+		uvSide = new UV[] { new UV(6/16f, 0), new UV(10/16f, 0), new UV(10/16f, 1), new UV(6/16f, 1) };
+		uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+		addBox(obj, x-0.125f, y-0.5f, z-0.125f, x+0.125f, y+0.5f, z+0.125f, null, mtls, uvSides, null);
+
 		// north connector
 		if (connectable.contains(chunks.getBlockID(x, y, z-1)))
 		{
-			addBox(obj, x-0.0625f, y+0.250f, z-0.5f, x+0.0625f, y+0.4375f, z-0.125f, drawSides, mtls);
-			addBox(obj, x-0.0625f, y-0.125f, z-0.5f, x+0.0625f, y+0.0625f, z-0.125f, drawSides, mtls);
+			uvTop = new UV[] { new UV(7/16f, 10/16f), new UV(9/16f, 10/16f), new UV(9/16f, 1), new UV(7/16f, 1) };
+			uvSide = new UV[] { new UV(10/16f, 12/16f), new UV(1, 12/16f), new UV(1, 15/16f), new UV(10/16f, 15/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x-0.0625f, y+0.250f, z-0.5f, x+0.0625f, y+0.4375f, z-0.125f, null, mtls, uvSides, null);
+
+			uvSide = new UV[] { new UV(10/16f, 6/16f), new UV(1, 6/16f), new UV(1, 9/16f), new UV(10/16f, 9/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x-0.0625f, y-0.125f, z-0.5f, x+0.0625f, y+0.0625f, z-0.125f, null, mtls, uvSides, null);
 		}
 		// south connector
 		if (connectable.contains(chunks.getBlockID(x, y, z+1)))
 		{
-			addBox(obj, x-0.0625f, y+0.250f, z+0.125f, x+0.0625f, y+0.4375f, z+0.5f, drawSides, mtls);
-			addBox(obj, x-0.0625f, y-0.125f, z+0.125f, x+0.0625f, y+0.0625f, z+0.5f, drawSides, mtls);
+			uvTop = new UV[] { new UV(7/16f, 0), new UV(9/16f, 0), new UV(9/16f, 6/16f), new UV(7/16f, 6/16f) };
+			uvSide = new UV[] { new UV(0, 12/16f), new UV(6/16f, 12/16f), new UV(6/16f, 15/16f), new UV(0, 15/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x-0.0625f, y+0.250f, z+0.125f, x+0.0625f, y+0.4375f, z+0.5f, null, mtls, uvSides, null);
+
+			uvSide = new UV[] { new UV(0, 6/16f), new UV(6/16f, 6/16f), new UV(6/16f, 9/16f), new UV(0, 9/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x-0.0625f, y-0.125f, z+0.125f, x+0.0625f, y+0.0625f, z+0.5f, null, mtls, uvSides, null);
 		}
 		// east connector
 		if (connectable.contains(chunks.getBlockID(x-1, y, z)))
 		{
-			addBox(obj, x-0.5f, y+0.250f, z-0.0625f, x-0.125f, y+0.4375f, z+0.0625f, drawSides, mtls);
-			addBox(obj, x-0.5f, y-0.125f, z-0.0625f, x-0.125f, y+0.0625f, z+0.0625f, drawSides, mtls);
+			uvTop = new UV[] { new UV(10/16f, 7/16f), new UV(1, 7/16f), new UV(1, 9/16f), new UV(10/16f, 9/16f) };
+			uvSide = new UV[] { new UV(10/16f, 12/16f), new UV(1, 12/16f), new UV(1, 15/16f), new UV(10/16f, 15/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x-0.5f, y+0.250f, z-0.0625f, x-0.125f, y+0.4375f, z+0.0625f, null, mtls, uvSides, null);
+
+			uvSide = new UV[] { new UV(10/16f, 6/16f), new UV(1, 6/16f), new UV(1, 9/16f), new UV(10/16f, 9/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x-0.5f, y-0.125f, z-0.0625f, x-0.125f, y+0.0625f, z+0.0625f, null, mtls, uvSides, null);
 		}
 		// west connector
 		if (connectable.contains(chunks.getBlockID(x+1, y, z)))
 		{
-			addBox(obj, x+0.125f, y+0.250f, z-0.0625f, x+0.5f, y+0.4375f, z+0.0625f, drawSides, mtls);
-			addBox(obj, x+0.125f, y-0.125f, z-0.0625f, x+0.5f, y+0.0625f, z+0.0625f, drawSides, mtls);
+			uvTop = new UV[] { new UV(0, 7/16f), new UV(6/16f, 7/16f), new UV(6/16f, 9/16f), new UV(0, 9/16f) };
+			uvSide = new UV[] { new UV(0, 12/16f), new UV(6/16f, 12/16f), new UV(6/16f, 15/16f), new UV(0, 15/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x+0.125f, y+0.250f, z-0.0625f, x+0.5f, y+0.4375f, z+0.0625f, null, mtls, uvSides, null);
+
+			uvSide = new UV[] { new UV(0, 6/16f), new UV(6/16f, 6/16f), new UV(6/16f, 9/16f), new UV(0, 9/16f) };
+			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
+			addBox(obj, x+0.125f, y-0.125f, z-0.0625f, x+0.5f, y+0.0625f, z+0.0625f, null, mtls, uvSides, null);
 		}
 	}
 
