@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
+import org.jmc.geom.UV;
 
 
 /**
@@ -18,11 +19,16 @@ public class EnchantTable extends BoxModel
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		drawSides[0] = true;
 		
+		UV[] uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,12/16f), new UV(0,12/16f) };
+		UV[][] uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+
 		addBox(obj,
 				x-0.5f, y-0.5f, z-0.5f,
 				x+0.5f, y+0.25f, z+0.5f, 
-				drawSides, 
-				getMtlSides(data));
+				null, 
+				getMtlSides(data), 
+				uvSides, 
+				drawSides);
 	}
 
 }

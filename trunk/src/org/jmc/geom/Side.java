@@ -1,7 +1,7 @@
 package org.jmc.geom;
 
 /**
- * A small enum for describing sides used by normals.
+ * A small enum for describing sides of a cube.
  * @author danijel
  *
  */
@@ -13,6 +13,4 @@ public enum Side
 	RIGHT,
 	FRONT,
 	BACK,
-	BACKRIGHT,
-	FRONTRIGHT
 }

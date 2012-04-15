@@ -1,5 +1,6 @@
 package org.jmc.geom;
 
+
 /**
  * Small class for describing Vertices in a sortable fashion.
  * @author danijel
@@ -21,7 +22,7 @@ public class Vertex implements Comparable<Vertex>
 		this.y=y;
 		this.z=z;
 	}
-	
+
 	/**
 	 * Copy constructor
 	 * @param v
@@ -33,6 +34,30 @@ public class Vertex implements Comparable<Vertex>
 		this.z=v.z;
 	}
 	
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vertex other = (Vertex)obj;
+		return this.x == other.x && this.y == other.y && this.z == other.z;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(x);
+		result = prime * result + Float.floatToIntBits(y);
+		result = prime * result + Float.floatToIntBits(z);
+		return result;
+	}
 
 	/**
 	 * Comparator that sorts vertices first along the X, then Y and finally Z axis.

@@ -348,8 +348,6 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				obj.appendMtl(obj_writer, mtlfile.getName());
 				if(!obj_per_mat) obj.appendObjectname(obj_writer);
-				obj.printTexturesAndNormals(obj_writer);
-
 
 				Log.info("Processing chunks...");
 
@@ -377,6 +375,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 								}
 
 								chunk_buffer.addChunk(chunk);		
+								obj.appendTextures(obj_writer);
 								obj.appendVertices(obj_writer);
 								obj.appendFaces(obj_writer,obj_per_mat);
 								obj.clearData(options.getRemoveDuplicates());

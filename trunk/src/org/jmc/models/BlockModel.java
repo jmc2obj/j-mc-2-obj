@@ -7,6 +7,8 @@ import org.jmc.BlockTypes;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
 import org.jmc.geom.Side;
+import org.jmc.geom.Transform;
+import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 
 
@@ -113,60 +115,63 @@ public abstract class BlockModel
 	 * @param xe End x coordinate
 	 * @param ye End y coordinate
 	 * @param ze End z coordinate
-	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
+	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtlSides Material for each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
+	 * @param uvSides Texture coordinates for each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, uses default
+	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
+	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(OBJOutputFile obj, float xs, float ys, float zs, float xe, float ye, float ze, boolean[] drawSides, String[] mtlSides)
+	protected void addBox(OBJOutputFile obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
-		if(drawSides[0])
-		{
-			vertices[0] = new Vertex(xe,ye,ze);
-			vertices[1] = new Vertex(xe,ye,zs);			
-			vertices[2] = new Vertex(xs,ye,zs);
-			vertices[3] = new Vertex(xs,ye,ze);
-			obj.addFace(vertices, null, Side.TOP, mtlSides[0]);
-		}
-		if(drawSides[1])
-		{
-			vertices[0] = new Vertex(xs,ys,zs);
-			vertices[1] = new Vertex(xs,ye,zs);
-			vertices[2] = new Vertex(xe,ye,zs);
-			vertices[3] = new Vertex(xe,ys,zs);
-			obj.addFace(vertices, null, Side.FRONT, mtlSides[1]);
-		}
-		if(drawSides[2])
-		{
-			vertices[0] = new Vertex(xe,ys,ze);
+		if (drawSides == null || drawSides[0])
+		{	// top
+			vertices[0] = new Vertex(xs,ye,ze);
 			vertices[1] = new Vertex(xe,ye,ze);
-			vertices[2] = new Vertex(xs,ye,ze);
-			vertices[3] = new Vertex(xs,ys,ze);
-			obj.addFace(vertices, null ,Side.BACK, mtlSides[2]);
+			vertices[2] = new Vertex(xe,ye,zs);
+			vertices[3] = new Vertex(xs,ye,zs);
+			obj.addFace(vertices, uvSides == null ? null : uvSides[0], trans, mtlSides[0]);
 		}
-		if(drawSides[3])
-		{
-			vertices[0] = new Vertex(xs,ys,ze);
-			vertices[1] = new Vertex(xs,ye,ze);
-			vertices[2] = new Vertex(xs,ye,zs);
-			vertices[3] = new Vertex(xs,ys,zs);
-			obj.addFace(vertices, null, Side.LEFT, mtlSides[3]);
-		}
-		if(drawSides[4])
-		{
+		if (drawSides == null || drawSides[1])
+		{	// front
 			vertices[0] = new Vertex(xe,ys,zs);
-			vertices[1] = new Vertex(xe,ye,zs);
-			vertices[2] = new Vertex(xe,ye,ze);
-			vertices[3] = new Vertex(xe,ys,ze);
-			obj.addFace(vertices, null, Side.RIGHT, mtlSides[4]);
-		}
-		if(drawSides[5])
-		{
-			vertices[0] = new Vertex(xs,ys,ze);
 			vertices[1] = new Vertex(xs,ys,zs);
-			vertices[2] = new Vertex(xe,ys,zs);
-			vertices[3] = new Vertex(xe,ys,ze);
-			obj.addFace(vertices, null, Side.BOTTOM, mtlSides[5]);
+			vertices[2] = new Vertex(xs,ye,zs);
+			vertices[3] = new Vertex(xe,ye,zs);
+			obj.addFace(vertices, uvSides == null ? null : uvSides[1], trans, mtlSides[1]);
+		}
+		if (drawSides == null || drawSides[2])
+		{	// back
+			vertices[0] = new Vertex(xs,ys,ze);
+			vertices[1] = new Vertex(xe,ys,ze);
+			vertices[2] = new Vertex(xe,ye,ze);
+			vertices[3] = new Vertex(xs,ye,ze);
+			obj.addFace(vertices, uvSides == null ? null : uvSides[2], trans, mtlSides[2]);
+		}
+		if (drawSides == null || drawSides[3])
+		{	// left
+			vertices[0] = new Vertex(xs,ys,zs);
+			vertices[1] = new Vertex(xs,ys,ze);
+			vertices[2] = new Vertex(xs,ye,ze);
+			vertices[3] = new Vertex(xs,ye,zs);
+			obj.addFace(vertices, uvSides == null ? null : uvSides[3], trans, mtlSides[3]);
+		}
+		if (drawSides == null || drawSides[4])
+		{	// right
+			vertices[0] = new Vertex(xe,ys,ze);
+			vertices[1] = new Vertex(xe,ys,zs);
+			vertices[2] = new Vertex(xe,ye,zs);
+			vertices[3] = new Vertex(xe,ye,ze);
+			obj.addFace(vertices, uvSides == null ? null : uvSides[4], trans, mtlSides[4]);
+		}
+		if (drawSides == null || drawSides[5])
+		{	// bottom
+			vertices[0] = new Vertex(xe,ys,ze);
+			vertices[1] = new Vertex(xs,ys,ze);
+			vertices[2] = new Vertex(xs,ys,zs);
+			vertices[3] = new Vertex(xe,ys,zs);
+			obj.addFace(vertices, uvSides == null ? null : uvSides[5], trans, mtlSides[5]);
 		}
 	}
 	

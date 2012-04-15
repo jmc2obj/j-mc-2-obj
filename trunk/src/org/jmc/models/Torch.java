@@ -2,15 +2,12 @@ package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
-import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 
 
 /**
  * Model for torches.
- * 
- * TODO fix model
  */
 public class Torch extends BlockModel
 {
@@ -51,17 +48,33 @@ public class Torch extends BlockModel
 		}
 		
 		Vertex[] vertices = new Vertex[4];
-		vertices[0] = new Vertex(-0.5f,-0.5f,+0.5f);
-		vertices[1] = new Vertex(-0.5f,+0.5f,+0.5f); 				
-		vertices[2] = new Vertex(+0.5f,+0.5f,-0.5f);	
-		vertices[3] = new Vertex(+0.5f,-0.5f,-0.5f);				
-		obj.addFace(vertices, rt, Side.FRONTRIGHT, materials.get(data)[0]);
-		
-		vertices[0] = new Vertex(+0.5f,-0.5f,+0.5f);
-		vertices[1] = new Vertex(+0.5f,+0.5f,+0.5f);	
-		vertices[2] = new Vertex(-0.5f,+0.5f,-0.5f);
-		vertices[3] = new Vertex(-0.5f,-0.5f,-0.5f);		
-		obj.addFace(vertices, rt, Side.BACKRIGHT, materials.get(data)[0]);						
+		// front
+		vertices[0] = new Vertex( 0.5f, -0.5f, -1/16f);
+		vertices[1] = new Vertex(-0.5f, -0.5f, -1/16f);
+		vertices[2] = new Vertex(-0.5f,  0.5f, -1/16f);
+		vertices[3] = new Vertex( 0.5f,  0.5f, -1/16f);
+		obj.addFace(vertices, null, rt, materials.get(data)[0]);
+
+		// back
+		vertices[0] = new Vertex(-0.5f, -0.5f, 1/16f);
+		vertices[1] = new Vertex( 0.5f, -0.5f, 1/16f);
+		vertices[2] = new Vertex( 0.5f,  0.5f, 1/16f);
+		vertices[3] = new Vertex(-0.5f,  0.5f, 1/16f);
+		obj.addFace(vertices, null, rt, materials.get(data)[0]);
+
+		// left
+		vertices[0] = new Vertex(-1/16f, -0.5f, -0.5f);
+		vertices[1] = new Vertex(-1/16f, -0.5f,  0.5f);
+		vertices[2] = new Vertex(-1/16f,  0.5f,  0.5f);
+		vertices[3] = new Vertex(-1/16f,  0.5f, -0.5f);
+		obj.addFace(vertices, null, rt, materials.get(data)[0]);
+
+		// right
+		vertices[0] = new Vertex(1/16f, -0.5f, -0.5f);
+		vertices[1] = new Vertex(1/16f, -0.5f,  0.5f);
+		vertices[2] = new Vertex(1/16f,  0.5f,  0.5f);
+		vertices[3] = new Vertex(1/16f,  0.5f, -0.5f);
+		obj.addFace(vertices, null, rt, materials.get(data)[0]);
 	}
 
 }

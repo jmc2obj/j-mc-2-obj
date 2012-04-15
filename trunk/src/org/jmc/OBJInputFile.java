@@ -14,9 +14,8 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.jmc.geom.Face;
-import org.jmc.geom.MaterialMap;
-import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
+import org.jmc.geom.UV;
 import org.jmc.geom.UVNormMap;
 import org.jmc.geom.Vertex;
 import org.jmc.util.Log;
@@ -28,11 +27,7 @@ import org.jmc.util.Log;
  */
 public class OBJInputFile {
 
-	Vector<Vertex> vertices;
-	Map<Vertex, Integer> vertex_map;
-	private int vertex_counter;
-
-	class Group
+	private static class Group
 	{
 		public Group()
 		{
@@ -41,9 +36,11 @@ public class OBJInputFile {
 		public List<Face> faces;
 	}
 
-	Map<String,Group> objects;
+	Vector<Vertex> vertices;
+	Map<Vertex, Integer> vertex_map;
+	private int vertex_counter;
 
-	MaterialMap material_map;
+	Map<String,Group> objects;
 
 	UVNormMap uvnorm_map;
 
@@ -52,7 +49,6 @@ public class OBJInputFile {
 		vertices=new Vector<Vertex>();
 		vertex_map=new TreeMap<Vertex, Integer>();
 		vertex_counter=1;
-		material_map=new MaterialMap();
 		uvnorm_map=new UVNormMap();
 		objects=new HashMap<String, OBJInputFile.Group>();
 	}
@@ -75,7 +71,7 @@ public class OBJInputFile {
 
 		Group group=new Group();
 		objects.put(objfile.getName(),group);
-		int material_id=-1;
+		String material=null;
 		String line;
 		int line_count=0;
 		while((line=in.readLine())!=null)
@@ -98,7 +94,7 @@ public class OBJInputFile {
 
 			if(line.startsWith("usemtl "))
 			{
-				material_id=material_map.getMaterialID(line.substring(7));
+				material=line.substring(7);
 				continue;
 			}
 
@@ -134,7 +130,12 @@ public class OBJInputFile {
 					continue;
 				}
 				int v,n,t;
-				uvnorm_map.calculate(Side.FRONT, f);//set defaults
+				//set defaults
+				for(int i=0; i<4; i++)
+				{
+					f.normals[i]=6;
+					f.uv[i]=i+1;
+				}
 				for(int i=0; i<4; i++)
 				{
 					try{
@@ -181,7 +182,7 @@ public class OBJInputFile {
 						else 
 							Log.info("ERROR unknown vertex format in file "+objfile.getName()+"["+line_count+"]");
 
-						f.mtl=material_id;
+						f.mtl=material;
 						group.faces.add(f);
 
 					} catch (Exception e) {
@@ -193,20 +194,39 @@ public class OBJInputFile {
 
 			if(line.startsWith("vt " ))
 			{
-				uv_remap.put(uv_count, uvnorm_map.getUVId(line));
+				uv_remap.put(uv_count, uvnorm_map.getUVId(parseUV(line)));
 				uv_count++;
 				continue;
 			}
 
 			if(line.startsWith("vn " ))
 			{
-				norm_remap.put(norm_count, uvnorm_map.getNormId(line));
+				norm_remap.put(norm_count, uvnorm_map.getNormId(parseNormal(line)));
 				norm_count++;
 				continue;
 			}
 
 			Log.info("ERROR unknown line in OBJ file "+objfile.getName()+"["+line_count+"]: "+line);
 		}		
+	}
+
+	private Vertex parseNormal(String line)
+	{
+		Vertex norm = new Vertex(0,0,0);
+		String[] parts = line.split("\\s+");
+		if (parts.length > 1) norm.x = Float.parseFloat(parts[1]);
+		if (parts.length > 2) norm.y = Float.parseFloat(parts[2]);
+		if (parts.length > 3) norm.z = Float.parseFloat(parts[3]);
+		return norm;
+	}
+
+	private UV parseUV(String line)
+	{
+		UV uv = new UV(0,0);
+		String[] parts = line.split("\\s+");
+		if (parts.length > 1) uv.u = Float.parseFloat(parts[1]);
+		if (parts.length > 2) uv.v = Float.parseFloat(parts[2]);
+		return uv;
 	}
 
 	/**
@@ -230,10 +250,9 @@ public class OBJInputFile {
 
 		for(Face f:group.faces)
 		{
-			String mtl=material_map.getMaterialName(f.mtl);
 			Vertex[] v=new Vertex[4];
-			String [] uv=new String[4];
-			String [] norm=new String[4];
+			UV[] uv=new UV[4];
+			Vertex[] norm=new Vertex[4];
 
 			for(int i=0; i<4; i++)
 			{
@@ -250,7 +269,7 @@ public class OBJInputFile {
 				norm[i]=uvnorm_map.getNorm(f.normals[i]);		
 			}
 
-			out.addFace(v, uv, norm, mtl);
+			out.addFace(v, norm, uv, null, f.mtl);
 		}
 	}
 }

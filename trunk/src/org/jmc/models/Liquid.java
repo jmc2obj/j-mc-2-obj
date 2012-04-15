@@ -11,6 +11,7 @@ import org.jmc.OBJOutputFile;
  */
 public class Liquid extends BlockModel
 {
+
 	/** Expand the materials to the full 6 side definition used by addBox */
 	private String[] getMtlSides(byte data)
 	{
@@ -46,8 +47,10 @@ public class Liquid extends BlockModel
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,
 				x + 0.5f, y + ye, z + 0.5f, 
-				drawSides, 
-				getMtlSides(data));
+				null, 
+				getMtlSides(data), 
+				null, 
+				drawSides);
 	}
 
 }

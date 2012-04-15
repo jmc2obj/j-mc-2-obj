@@ -16,8 +16,10 @@ public class Cube extends BoxModel
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,
 				x + 0.5f, y + 0.5f, z + 0.5f, 
-				drawSides(chunks, x, y, z), 
-				getMtlSides(data));
+				null, 
+				getMtlSides(data), 
+				null, 
+				drawSides(chunks, x, y, z));
 	}
 
 }

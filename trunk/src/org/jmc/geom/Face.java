@@ -9,7 +9,7 @@ public class Face implements Comparable<Face>
 	public int[] vertices;
 	public int[] normals;
 	public int[] uv;
-	public int mtl;
+	public String mtl;
 	
 	public Face()
 	{
@@ -20,6 +20,6 @@ public class Face implements Comparable<Face>
 	
 	@Override
 	public int compareTo(Face o) {
-		return this.mtl-o.mtl;
+		return this.mtl.compareTo(o.mtl);
 	}
 }
