@@ -88,9 +88,19 @@ public class Door extends BlockModel
 		translate.translate(x+table[lookup][1], y, z+table[lookup][2]);		
 		Transform rt = translate.multiply(rotate);
 
-		
+		boolean[] drawSides = drawSides(chunks, x, y, z);
 		Vertex[] vertices = new Vertex[4];
 		UV[] uv = new UV[4];
+
+		// top
+		if (drawSides[0])
+		{
+			vertices[0] = new Vertex(-0.5f, 0.5f,  0.09375f); uv[0] = new UV(13/16f,1);
+			vertices[1] = new Vertex( 0.5f, 0.5f,  0.09375f); uv[1] = new UV(13/16f,0);
+			vertices[2] = new Vertex( 0.5f, 0.5f, -0.09375f); uv[2] = new UV(1,0);
+			vertices[3] = new Vertex(-0.5f, 0.5f, -0.09375f); uv[3] = new UV(1,1);
+			obj.addFace(vertices, uv, rt, mtl);
+		}
 
 		// front
 		vertices[0] = new Vertex( 0.5f, -0.5f, -0.09375f);
@@ -119,5 +129,15 @@ public class Door extends BlockModel
 		vertices[2] = new Vertex(0.5f,  0.5f, -0.09375f); uv[2] = new UV(3/16f,1);
 		vertices[3] = new Vertex(0.5f,  0.5f,  0.09375f); uv[3] = new UV(0,1);
 		obj.addFace(vertices, uv, rt, mtl);
+
+		// bottom
+		if (drawSides[5])
+		{
+			vertices[0] = new Vertex( 0.5f, -0.5f,  0.09375f); uv[0] = new UV(13/16f,1);
+			vertices[1] = new Vertex(-0.5f, -0.5f,  0.09375f); uv[1] = new UV(13/16f,0);
+			vertices[2] = new Vertex(-0.5f, -0.5f, -0.09375f); uv[2] = new UV(1,0);
+			vertices[3] = new Vertex( 0.5f, -0.5f, -0.09375f); uv[3] = new UV(1,1);
+			obj.addFace(vertices, uv, rt, mtl);
+		}
 	}
 }
