@@ -64,19 +64,19 @@ public class Rails extends BlockModel
 		if (data < 2 || data > 5)
 		{
 			// flat
-			vertices[0] = new Vertex(-0.5f, -0.49f,  0.5f);
-			vertices[1] = new Vertex( 0.5f, -0.49f,  0.5f);
-			vertices[2] = new Vertex( 0.5f, -0.49f, -0.5f);			
-			vertices[3] = new Vertex(-0.5f, -0.49f, -0.5f);
+			vertices[0] = new Vertex(-0.5f, -0.47f,  0.5f);
+			vertices[1] = new Vertex( 0.5f, -0.47f,  0.5f);
+			vertices[2] = new Vertex( 0.5f, -0.47f, -0.5f);			
+			vertices[3] = new Vertex(-0.5f, -0.47f, -0.5f);
 			obj.addFace(vertices, null, rt, mtl);
 		}
 		else
 		{
 			// ascending
-			vertices[0] = new Vertex(-0.5f, -0.5f,  0.5f); 				
-			vertices[1] = new Vertex( 0.5f, -0.5f,  0.5f);	
-			vertices[2] = new Vertex( 0.5f,  0.5f, -0.5f);				
-			vertices[3] = new Vertex(-0.5f,  0.5f, -0.5f);
+			vertices[0] = new Vertex(-0.5f, -0.47f,  0.5f); 				
+			vertices[1] = new Vertex( 0.5f, -0.47f,  0.5f);	
+			vertices[2] = new Vertex( 0.5f,  0.53f, -0.5f);				
+			vertices[3] = new Vertex(-0.5f,  0.53f, -0.5f);
 			obj.addFace(vertices, null, rt, mtl);
 		}
 	}
