@@ -1,5 +1,8 @@
 package org.jmc.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.swing.JOptionPane;
 
 import org.jmc.MainWindow;
@@ -23,7 +26,7 @@ public class Log
 
 	/**
 	 * Logs an informational message to stdout.
-	 * If the UI is up, it will also be shown in the messages area of the main window.   
+	 * If the UI is up, it will also be shown in the messages area of the main window.
 	 * 
 	 * @param msg string to be logged
 	 */
@@ -35,7 +38,8 @@ public class Log
 
 	/**
 	 * Logs an error message to stderr.
-	 * If the UI is up, it will also be shown in a popup window.   
+	 * If the UI is up, it will also be shown in a popup window, and the stack trace 
+	 * written to the messages area of the main window.
 	 * 
 	 * @param msg string to be logged
 	 * @param ex (optional) exception that caused the error
@@ -48,10 +52,12 @@ public class Log
 		
 		if (ex != null)
 		{
-			String exMsg = ex.getMessage();
-			if (exMsg == null)
-				exMsg = ex.getClass().getSimpleName();
-			JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + exMsg);
+			JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			
+			// write the full stack trace to the message area
+			final StringWriter sw = new StringWriter();
+		    ex.printStackTrace(new PrintWriter(sw));
+			MainWindow.log(sw.toString());
 		}
 		else
 		{
