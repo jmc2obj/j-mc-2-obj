@@ -11,6 +11,8 @@ import org.jmc.geom.Vertex;
 
 /**
  * Model for glass panes and iron bars.
+ * 
+ * TODO add pane borders
  */
 public class Pane extends BlockModel
 {
