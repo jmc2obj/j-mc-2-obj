@@ -728,11 +728,17 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/rails_powered_on.png
 map_d tex/rails_powered_on_a.png
 
-newmtl redstone_dust
+newmtl redstone_dust_off
+Kd 0.3000 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_dust_off.png
+map_d tex/redstone_dust_off_a.png
+
+newmtl redstone_dust_on
 Kd 0.7961 0.0000 0.0000
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/redstone_dust.png
-map_d tex/redstone_dust_a.png
+map_Kd tex/redstone_dust_on.png
+map_d tex/redstone_dust_on_a.png
 
 newmtl redstone_lamp_off
 Kd 0.3020 0.2118 0.0706
@@ -771,11 +777,17 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/redstone_torch_on.png
 map_d tex/redstone_torch_on_a.png
 
-newmtl redstone_wire
+newmtl redstone_wire_off
+Kd 0.3000 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_wire_off.png
+map_d tex/redstone_wire_off_a.png
+
+newmtl redstone_wire_on
 Kd 0.7961 0.0000 0.0000
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/redstone_wire.png
-map_d tex/redstone_wire_a.png
+map_Kd tex/redstone_wire_on.png
+map_d tex/redstone_wire_on_a.png
 
 newmtl sand
 Kd 0.8549 0.8235 0.6196
