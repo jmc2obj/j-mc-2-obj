@@ -61,6 +61,16 @@ public class OBJOutputFile
 	private Map<UV, Integer> texCoordMap;
 	
 	/**
+	 * List of normals
+	 */
+	private List<Vertex> normals;
+	
+	/**
+	 * Map of normals to their respective indexes in the OBJ file.
+	 */
+	private Map<Vertex, Integer> normalsMap;
+	
+	/**
 	 * List of faces in the file.
 	 */
 	private List<Face> faces;
@@ -73,7 +83,7 @@ public class OBJOutputFile
 
 	private float file_scale;
 
-	private int vertex_counter, tex_counter;
+	private int vertex_counter, tex_counter, norm_counter;
 
 
 	/**
@@ -90,6 +100,9 @@ public class OBJOutputFile
 		texCoords = new ArrayList<UV>();
 		texCoordMap = new HashMap<UV, Integer>();
 		tex_counter = 1;
+		normals = new ArrayList<Vertex>();
+		normalsMap = new HashMap<Vertex, Integer>();
+		norm_counter = 1;
 		faces = new ArrayList<Face>();
 		x_offset = 0;
 		y_offset = 0;
@@ -136,6 +149,7 @@ public class OBJOutputFile
 		}
 		vertices.clear();
 		texCoords.clear();
+		normals.clear();
 		faces.clear();
 	}
 
@@ -166,11 +180,22 @@ public class OBJOutputFile
 	 */
 	public void appendTextures(PrintWriter out)
 	{
-		Locale l=null;
-
-		for(UV uv : texCoords)
+		for (UV uv : texCoords)
 		{
-			out.format(l,"vt %.4f %.4f", uv.u, uv.v);
+			out.format((Locale)null, "vt %.4f %.4f", uv.u, uv.v);
+			out.println();
+		}
+	}
+
+	/**
+	 * Write normals. These will be shared by all chunks.
+	 * @param out writer of the OBJ file
+	 */
+	public void appendNormals(PrintWriter out)
+	{
+		for (Vertex norm : normals)
+		{
+			out.format((Locale)null, "vn %.3f %.3f %.3f", norm.x, norm.y, norm.z);
 			out.println();
 		}
 	}
@@ -181,11 +206,12 @@ public class OBJOutputFile
 	 */
 	public void appendVertices(PrintWriter out)
 	{
-		Locale l=null;
-
-		for(Vertex vertex:vertices)
+		for (Vertex vertex : vertices)
 		{
-			out.format(l,"v %.3f %.3f %.3f",(vertex.x+x_offset)*file_scale,(vertex.y+y_offset)*file_scale,(vertex.z+z_offset)*file_scale);
+			out.format((Locale)null, "v %.3f %.3f %.3f",
+					(vertex.x+x_offset)*file_scale,
+					(vertex.y+y_offset)*file_scale,
+					(vertex.z+z_offset)*file_scale);
 			out.println();
 		}
 	}
@@ -210,13 +236,12 @@ public class OBJOutputFile
 				last_mtl=f.mtl;
 			}
 
-			// TODO ignoring normals for now
 			out.format((Locale)null,
-					"f %d/%d %d/%d %d/%d %d/%d", 
-					f.vertices[0], f.uv[0],
-					f.vertices[1], f.uv[1],
-					f.vertices[2], f.uv[2],
-					f.vertices[3], f.uv[3]);
+					"f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", 
+					f.vertices[0], f.uv[0], f.normals[0],
+					f.vertices[1], f.uv[1], f.normals[1],
+					f.vertices[2], f.uv[2], f.normals[2],
+					f.vertices[3], f.uv[3], f.normals[3]);
 			out.println();
 		}
 	}
@@ -239,12 +264,12 @@ public class OBJOutputFile
 	 * Add a face with the given vertices to the OBJ file.
 	 * 
 	 * @param verts vertices of the face (length must be 4)
-	 * @param normals normals for the vertices (length must be 4)
+	 * @param norms normals for the vertices (length must be 4)
 	 * @param uv texture coordinates for the vertices (length must be 4). If null, the default coordinates will be used.
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
 	 */
-	public void addFace(Vertex[] verts, Vertex[] normals, UV[] uv, Transform trans, String mtl)
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
 	{
 		// TODO ignoring normals for now
 		
@@ -295,6 +320,33 @@ public class OBJOutputFile
 			}
 		}
 
+
+		// XXX crude normals test
+		
+		Vertex norm = new Vertex(0,0,0);
+		int normIndex;
+		norm.x = (verts[1].y - verts[0].y) * (verts[2].z - verts[0].z) - (verts[1].z - verts[0].z) * (verts[2].y - verts[0].y);
+		norm.y = (verts[1].z - verts[0].z) * (verts[2].x - verts[0].x) - (verts[1].x - verts[0].x) * (verts[2].z - verts[0].z);
+		norm.z = (verts[1].x - verts[0].x) * (verts[2].y - verts[0].y) - (verts[1].y - verts[0].y) * (verts[2].x - verts[0].x);
+		
+		if (normalsMap.containsKey(norm))				
+		{
+			normIndex = normalsMap.get(norm);
+		}
+		else
+		{
+			normals.add(norm);
+			normalsMap.put(norm, norm_counter);
+			normIndex = norm_counter;
+			norm_counter++;
+		}
+		
+		for (int i=0; i<4; i++)
+		{
+			face.normals[i] = normIndex;
+		}		
+		
+		
 		faces.add(face);
 	}
 	
