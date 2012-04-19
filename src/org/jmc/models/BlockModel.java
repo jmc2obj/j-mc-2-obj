@@ -26,7 +26,8 @@ public abstract class BlockModel
 	 * Id of the block this model will be rendering.
 	 * This information may influence the behavior of the model.
 	 */
-	public void setBlockId(short val) {
+	public void setBlockId(short val)
+	{
 		this.blockId = val;
 	}
 	

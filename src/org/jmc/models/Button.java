@@ -41,12 +41,14 @@ public class Button extends BoxModel
 		rt = translate.multiply(rotate);
 		
 		
-		UV[] uvTop = new UV[] { new UV(4/16f,14/16f), new UV(12/16f,14/16f), new UV(12/16f,1), new UV(4/16f,1) };
-		UV[] uvFront = new UV[] { new UV(4/16f,6/16f), new UV(12/16f,6/16f), new UV(12/16f,10/16f), new UV(4/16f,10/16f) };
+		boolean[] drawSides = new boolean[] {true,false,true,true,true,true};
+		
+		UV[] uvTop = new UV[] { new UV(5/16f,14/16f), new UV(11/16f,14/16f), new UV(11/16f,1), new UV(5/16f,1) };
+		UV[] uvFront = new UV[] { new UV(5/16f,6/16f), new UV(11/16f,6/16f), new UV(11/16f,10/16f), new UV(5/16f,10/16f) };
 		UV[] uvSide = new UV[] { new UV(0,6/16f), new UV(2/16f,6/16f), new UV(2/16f,10/16f), new UV(0,10/16f) };
 		UV[][] uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
 		
-		addBox(obj, -0.25f,-0.125f,-0.5f, 0.25f,0.125f,-0.375f, rt, mtlSides, uvSides, null);
+		addBox(obj, -0.1875f,-0.125f,-0.5f, 0.1875f,0.125f,-0.375f, rt, mtlSides, uvSides, drawSides);
 	}
 
 }
