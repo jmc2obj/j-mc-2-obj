@@ -15,10 +15,10 @@ public class Flat extends BlockModel
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		Vertex[] vertices = new Vertex[4];
-		vertices[0] = new Vertex(x-0.5f, y-0.47f, z+0.5f);
-		vertices[1] = new Vertex(x+0.5f, y-0.47f, z+0.5f);
-		vertices[2] = new Vertex(x+0.5f, y-0.47f, z-0.5f);			
-		vertices[3] = new Vertex(x-0.5f, y-0.47f, z-0.5f);
+		vertices[0] = new Vertex(x-0.5f, y-0.49f, z+0.5f);
+		vertices[1] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
+		vertices[2] = new Vertex(x+0.5f, y-0.49f, z-0.5f);			
+		vertices[3] = new Vertex(x-0.5f, y-0.49f, z-0.5f);
 		obj.addFace(vertices, null, null, materials.get(data)[0]);
 	}
 
