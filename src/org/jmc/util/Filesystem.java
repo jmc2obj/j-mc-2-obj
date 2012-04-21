@@ -103,5 +103,20 @@ public class Filesystem
 			if (out != null) out.close();
 		}
 	}
+	
+	/**
+	 *  Convenience function to move a file.
+	 * 
+	 * @param origPath
+	 * @param destPath
+	 * @throws IOException
+	 */
+	public static void moveFile(File origPath, File destPath) throws IOException
+	{
+		copyFile(origPath, destPath);
+		if(!origPath.delete())
+			throw new IOException("Cannot delete file: "+origPath.getName());
+	}
+
 
 }
