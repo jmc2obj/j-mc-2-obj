@@ -17,7 +17,7 @@ public class Mesh extends BlockModel
 		objin=new OBJInputFile();
 
 		try {
-			objin.loadFile(new File("object.obj"));
+			objin.loadFile(new File("conf/object.obj"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			objin=null;

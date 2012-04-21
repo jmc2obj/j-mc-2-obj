@@ -35,9 +35,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.text.Utilities;
 
 import org.jmc.OBJExportOptions.OffsetType;
 import org.jmc.OBJExportOptions.OverwriteAction;
+import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 
 /**
@@ -495,7 +497,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				
 				main.close();
 								
-				Files.move(mainfile.toPath(), objfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				//Files.move(mainfile.toPath(), objfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				Filesystem.moveFile(mainfile, objfile);
 				
 				if(!tmpdir.delete())
 				{
