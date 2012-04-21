@@ -44,7 +44,7 @@ public class Log
 	 * @param msg string to be logged
 	 * @param ex (optional) exception that caused the error
 	 */
-	public static void error(String msg, Exception ex)
+	public static void error(String msg, Throwable ex)
 	{
 		System.err.println(msg);
 		if (ex != null)

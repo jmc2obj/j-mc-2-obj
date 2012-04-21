@@ -69,6 +69,8 @@ public class MainWindow extends JFrame
 	 */
 	public static void main(String[] args)
 	{
+		
+		
 		try 
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -80,6 +82,13 @@ public class MainWindow extends JFrame
 		settings = new Settings();
 		file_names=new FileNames();
 		main = new MainWindow();
+		
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {			
+			@Override
+			public void uncaughtException(Thread t, Throwable e) { 
+				Log.error("Uncaught exception in thread: "+t.getName(), e);
+			}
+		});
 		
 		try {
 			Configuration.initialize();
