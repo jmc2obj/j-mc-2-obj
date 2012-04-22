@@ -180,7 +180,8 @@ public class Region implements Iterable<Chunk> {
 		int off = offset.getInt(idx*4);
 		int sec = off >> 8;
 		int len = off & 0xff;
-		int ts = timestamp.getInt(idx*4);
+		//int ts = THIS IS UNUSED - line below is to supress the warning 
+		timestamp.getInt(idx*4);
 
 		if(sec<2)
 			return null;
