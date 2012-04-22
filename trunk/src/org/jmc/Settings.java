@@ -210,6 +210,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		setFields();
 	}
 
+	@SuppressWarnings("unused")
 	private DocumentListener document_listener=new DocumentListener() {	
 		@Override
 		public void removeUpdate(DocumentEvent e) {
