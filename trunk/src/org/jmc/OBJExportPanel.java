@@ -19,8 +19,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +33,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-import javax.swing.text.Utilities;
 
 import org.jmc.OBJExportOptions.OffsetType;
 import org.jmc.OBJExportOptions.OverwriteAction;
@@ -412,6 +409,12 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				
 				File mainfile=new File(tmpdir,"main");
 				PrintWriter main=new PrintWriter(mainfile);
+				File vertexfile=new File(tmpdir,"vertex");
+				PrintWriter vertex=new PrintWriter(vertexfile);
+				File normalfile=new File(tmpdir,"normal");
+				PrintWriter normal=new PrintWriter(normalfile);
+				File uvfile=new File(tmpdir,"uv");
+				PrintWriter uv=new PrintWriter(uvfile);
 				
 				BufferedReader objin=new BufferedReader(new FileReader(objfile));				
 				
@@ -421,7 +424,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				FaceFile current_ff=null;
 				
 				progress.setMaximum(100);
-				int maxcount=(int)mainfile.length();
+				int maxcount=(int)vertexfile.length();
 				if(maxcount==0) maxcount=1;
 				int count=0;
 				
@@ -457,6 +460,18 @@ public class OBJExportPanel extends JFrame implements Runnable {
 							current_ff.writer.println(line);
 						}
 					}
+					else if(line.startsWith("v "))
+					{
+						vertex.println(line);
+					}	
+					else if(line.startsWith("vn "))
+					{
+						normal.println(line);
+					}	
+					else if(line.startsWith("vt "))
+					{
+						uv.println(line);
+					}	
 					else if(options.getObjPerMat() && line.startsWith("g "))
 					{
 						continue;
@@ -470,6 +485,28 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				}
 				objin.close();
 				
+				vertex.close();
+				normal.close();
+				uv.close();
+				
+				BufferedReader norm_reader=new BufferedReader(new FileReader(normalfile));
+				while((line=norm_reader.readLine())!=null)
+					main.println(line);
+				norm_reader.close();
+				normalfile.delete();
+				
+				BufferedReader uv_reader=new BufferedReader(new FileReader(uvfile));
+				while((line=uv_reader.readLine())!=null)
+					main.println(line);
+				uv_reader.close();
+				uvfile.delete();
+				
+				BufferedReader vertex_reader=new BufferedReader(new FileReader(vertexfile));
+				while((line=vertex_reader.readLine())!=null)
+					main.println(line);
+				vertex_reader.close();
+				vertexfile.delete();
+								
 				count=0;
 				maxcount=faces.size();
 				
@@ -480,7 +517,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 					count++;
 					progress.setValue(50+(int)(50.0*(double)count/(double)maxcount));
 					
-					main.println();
+					vertex.println();
 					if(options.getObjPerMat()) main.println("g "+ff.name);
 					main.println("usemtl "+ff.name);
 					main.println();
