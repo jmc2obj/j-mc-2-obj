@@ -438,6 +438,8 @@ public class MainPanel extends JPanel
 				cbPath.setSelectedItem(last_map);
 			else
 				addPathToList(last_map);
+			
+			fillDimensionList();
 
 			try{
 				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
