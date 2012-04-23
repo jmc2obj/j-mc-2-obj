@@ -54,6 +54,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	 */
 	File savepath;
 	/**
+	 * Dimension to load chunks from
+	 */
+	int dimension;
+	/**
 	 * Region of the map to be saved.
 	 */
 	Rectangle bounds;
@@ -77,14 +81,16 @@ public class OBJExportPanel extends JFrame implements Runnable {
 	 * Main constructor.
 	 * @param objfile path to OBJ file
 	 * @param savepath path to world save
+	 * @param dimension Dimension to load chunks from
 	 * @param bounds region being saved
 	 * @param ymin minimum altitude being saved
 	 */
-	public OBJExportPanel(File savepath, Rectangle bounds, int ymin, int ymax) 
+	public OBJExportPanel(File savepath, int dimension, Rectangle bounds, int ymin, int ymax) 
 	{		
 		super("Export selection");		
 
 		this.savepath=savepath;
+		this.dimension=dimension;
 		this.bounds=bounds;
 		this.ymin=ymin;
 		this.ymax=ymax;
@@ -365,7 +371,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 								Chunk chunk=null;
 								try{
-									Region region=Region.findRegion(savepath, lx, lz);							
+									Region region=Region.findRegion(savepath, dimension, lx, lz);							
 									if(region==null) continue;					
 									chunk=region.getChunk(lx, lz);
 									if(chunk==null) continue;

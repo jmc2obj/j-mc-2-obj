@@ -9,7 +9,6 @@ package org.jmc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -57,9 +56,10 @@ import org.jmc.util.Filesystem;
 public class MainPanel extends JPanel
 {
 	//UI elements (not described separately)
-	private JButton bLoad,bSave,bSettings,bAbout;
+	private JButton bLoad,bExport,bSettings,bAbout;
 	//this suppression is for compatibility with java 1.6
 	private JComboBox<String> cbPath;
+	private JComboBox<Integer> cbDimension;
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private JSlider sFloor,sCeil;
@@ -85,12 +85,12 @@ public class MainPanel extends JPanel
 	 * Reference to the loaded file used by the export function to
 	 * be able to save the last loaded file.
 	 */
-	private File loaded_file=null;
+	private File save_dir=null;
 	
 	private boolean slider_pressed=false;
 
 	/**
-	 * Panel contructor.
+	 * Panel constructor.
 	 */	
 	public MainPanel()
 	{
@@ -98,17 +98,19 @@ public class MainPanel extends JPanel
 		
 		
 		JPanel pToolbar = new JPanel();
-		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));		
+		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));
 		
 		JPanel pPath=new JPanel();
 		pPath.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
-		cbPath = new JComboBox<String>();			
-		cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
+		cbPath = new JComboBox<String>();
+		//cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
 		cbPath.setEditable(true);
+		cbDimension = new JComboBox<Integer>();
 		JButton bPath=new JButton("...");
 		pPath.add(bPath);
 		pPath.add(cbPath);
+		pPath.add(cbDimension);
 		
 		JScrollPane spPath=new JScrollPane(pPath);
 		spPath.setBorder(BorderFactory.createEmptyBorder());
@@ -118,7 +120,7 @@ public class MainPanel extends JPanel
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0,5,10,5));
 		
 		bLoad = new JButton("Load");
-		bSave = new JButton("Export selection");
+		bExport = new JButton("Export selection");
 		bSettings = new JButton("Settings");
 		bAbout = new JButton("About");
 		bAbout.setForeground(Color.red);
@@ -126,7 +128,7 @@ public class MainPanel extends JPanel
 		bAbout.setFont(new Font(f.getFamily(),Font.BOLD,f.getSize()));
 				
 		pButtons.add(bLoad);
-		pButtons.add(bSave);
+		pButtons.add(bExport);
 		pButtons.add(bSettings);
 		pButtons.add(bAbout);						
 
@@ -233,19 +235,27 @@ public class MainPanel extends JPanel
 			}
 		});
 		
+		cbPath.addActionListener(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				fillDimensionList();
+			}
+		});
+		
 		bLoad.addActionListener(new ActionListener()
 		{			
 			public void actionPerformed(ActionEvent e)
 			{
-				String map=(String) cbPath.getSelectedItem();				
-				loaded_file=new File(map);
-				if(!loaded_file.exists() || !loaded_file.isDirectory())
+				String map=(String) cbPath.getSelectedItem();
+				int dimension=(Integer) cbDimension.getSelectedItem();
+				save_dir=new File(map);
+				if(!save_dir.exists() || !save_dir.isDirectory())
 				{
 					JOptionPane.showMessageDialog(null, "Enter correct dir!");
 					return;
 				}
 
-				LevelDat levelDat=new LevelDat(loaded_file);
+				LevelDat levelDat=new LevelDat(save_dir);
 
 				if(!levelDat.open())
 				{
@@ -271,23 +281,24 @@ public class MainPanel extends JPanel
 					chunk_loader.stopRunning();
 
 				//chunk_loader=new FullChunkLoaderThread(preview, savepath);
-				chunk_loader=new ViewChunkLoaderThread(preview, loaded_file);
+				chunk_loader=new ViewChunkLoaderThread(preview, save_dir, dimension);
 				(new Thread(chunk_loader)).start();
 				
 				MainWindow.settings.setLastLoadedMap(map);
 			}
 		});
 
-		bSave.addActionListener(new ActionListener() {
+		bExport.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				if(loaded_file==null)
+			public void actionPerformed(ActionEvent arg0)
+			{
+				if(save_dir==null)
 				{
 					JOptionPane.showMessageDialog(null, "You have to load a file first!");
 					return;
 				}
+				int dimension=(Integer) cbDimension.getSelectedItem();
 
 				int ymin=0;
 				int ymax=256;
@@ -302,7 +313,7 @@ public class MainPanel extends JPanel
 				ymin=sFloor.getValue();
 				ymax=sCeil.getValue();
 
-				OBJExportPanel export_thread = new OBJExportPanel(loaded_file, rect, ymin, ymax);
+				OBJExportPanel export_thread = new OBJExportPanel(save_dir, dimension, rect, ymin, ymax);
 
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;
@@ -339,7 +350,7 @@ public class MainPanel extends JPanel
 
 	}
 	
-	public void addPathToList(String path)
+	private void addPathToList(String path)
 	{
 		for(int i=0; i<cbPath.getItemCount(); i++)
 		{
@@ -352,6 +363,28 @@ public class MainPanel extends JPanel
 		
 		cbPath.addItem(path);
 		cbPath.setSelectedItem(path);
+	}
+	
+	private void fillDimensionList()
+	{
+		File save_dir = new File((String)cbPath.getSelectedItem());
+		if (!save_dir.isDirectory())
+			return;
+
+		cbDimension.removeAllItems();
+
+		cbDimension.addItem(0);
+		for (File f : save_dir.listFiles()) {
+			if (f.isDirectory())
+			{
+				String dirname = f.getName();
+				if (dirname.startsWith("DIM"))
+				{
+					int dim_id = Integer.parseInt(dirname.substring(3));
+					cbDimension.addItem(dim_id);
+				}
+			}
+		}
 	}
 
 	/**
@@ -374,7 +407,7 @@ public class MainPanel extends JPanel
 	 * @author danijel
 	 *
 	 */
-	class PopulateLoadListThread extends Thread
+	private class PopulateLoadListThread extends Thread
 	{
 		public void run()
 		{
@@ -427,7 +460,7 @@ public class MainPanel extends JPanel
 					MainWindow.main.setTitle("jMc2Obj - "+splashes.get(r));
 				}								
 				zis.close();
-			}catch (Exception e) {}
+			}catch (Exception e) {/* don't care */}
 		}
 	}
 

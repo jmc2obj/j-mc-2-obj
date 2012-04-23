@@ -39,6 +39,10 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 */
 	private File savepath;
 	/**
+	 * Dimension id
+	 */
+	private int dimension;
+	/**
 	 * Collection of chunk images from the preview panel.
 	 */
 	private Vector<ChunkImage> chunk_images;
@@ -69,10 +73,12 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 * Main constructor.
 	 * @param preview reference to the preview panel
 	 * @param savepath path to the world save
+	 * @param dimension Dimension to load chunks from.
 	 */
-	public ViewChunkLoaderThread(PreviewPanel preview, File savepath) {
+	public ViewChunkLoaderThread(PreviewPanel preview, File savepath, int dimension) {
 		this.preview=preview;
 		this.savepath=savepath;
+		this.dimension=dimension;
 
 		chunk_images=preview.getChunkImages();
 
@@ -157,7 +163,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						if(loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz)) continue;
 
 						try {
-							region=Region.findRegion(savepath, cx, cz);
+							region=Region.findRegion(savepath, dimension, cx, cz);
 							chunk=region.getChunk(cx, cz);
 						} catch (Exception e) {
 							continue;
