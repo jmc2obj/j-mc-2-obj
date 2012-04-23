@@ -505,6 +505,11 @@ Kd 0.9608 0.2588 0.0000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/lava.png
 
+newmtl lava_flowing
+Kd 0.9608 0.2588 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lava.png
+
 newmtl leaves_birch
 Kd 0.2549 0.3294 0.1725
 Ks 0.0000 0.0000 0.0000
@@ -944,6 +949,11 @@ map_Kd tex/vines.png
 map_d tex/vines_a.png
 
 newmtl water
+Kd 0.0000 0.6039 1.0000
+map_Kd tex/water.png
+map_d tex/water_a.png
+
+newmtl water_flowing
 Kd 0.0000 0.6039 1.0000
 map_Kd tex/water.png
 map_d tex/water_a.png
