@@ -82,12 +82,13 @@ public class Region implements Iterable<Chunk> {
 	/**
 	 * Find a region file containing the chunk with given coordinates.
 	 * @param saveFolder path to the world save
+	 * @param dimension Dimension to load chunks from.
 	 * @param chunk_x x coordinate of chunk
 	 * @param chunk_z z coordinate of chunk
 	 * @return region file object
 	 * @throws IOException of error occurs
 	 */
-	public static Region findRegion(File saveFolder, int chunk_x, int chunk_z) throws IOException
+	public static Region findRegion(File saveFolder, int dimension, int chunk_x, int chunk_z) throws IOException
 	{
 		int rx,rz;
 
@@ -95,10 +96,15 @@ public class Region implements Iterable<Chunk> {
 		rx = chunk_x >> 5;
 		rz = chunk_z >> 5;
 
-		File file= new File(saveFolder.getAbsolutePath()+"/region/r."+rx+"."+rz+".mca");
+		File dir;
+		if(dimension == 0)
+			dir=new File(saveFolder.getAbsolutePath(), "region");
+		else
+			dir=new File(saveFolder.getAbsolutePath(), "DIM"+dimension+"/region");
 		
+		File file= new File(dir, "/r."+rx+"."+rz+".mca");
 		if(!file.exists())
-			file= new File(saveFolder.getAbsolutePath()+"/region/r."+rx+"."+rz+".mcr");
+			file= new File(dir, "/r."+rx+"."+rz+".mcr");
 
 		return new Region(file);
 	}
