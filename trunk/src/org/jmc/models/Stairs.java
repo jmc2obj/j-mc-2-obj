@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
 import org.jmc.geom.UV;
+import org.jmc.geom.Vertex;
 
 
 /**
@@ -10,155 +11,377 @@ import org.jmc.geom.UV;
  */
 public class Stairs extends BlockModel
 {
-	/** Expand the materials to the full 6 side definition used by addBox */
-	private String[] getMtlSides(byte data)
-	{
-		String[] abbrMtls = materials.get(data);
 
-		String[] mtlSides = new String[6];
-		mtlSides[0] = abbrMtls[0];
-		mtlSides[1] = abbrMtls[0];
-		mtlSides[2] = abbrMtls[0];
-		mtlSides[3] = abbrMtls[0];
-		mtlSides[4] = abbrMtls[0];
-		mtlSides[5] = abbrMtls[0];
-		return mtlSides;
-	}
-
-	
 	@Override
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
-		int dir = data & 3;
-		int up = data & 4;
-		String[] mtls = getMtlSides(data);
+		String mtl = materials.get(data)[0];
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		UV[] uvSide, uvFront, uvTop;
-		UV[][] uvSides;
-		
-		uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,12/16f), new UV(0,12/16f) };
-		uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
+
+		int dir = data & 3;
+		int up = data & 4;
 
 		switch (dir)
 		{
 		case 0:
-			if (up==0)
+			if (up == 0)
 			{
-				boolean b=drawSides[0]; drawSides[0]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
 
-				drawSides[0]=b; drawSides[1]=true;
+				// top
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, null, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtl);
+
+				/* step */
 				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
 				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0.5f,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0.5f,1) };
-				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
-				addBox(obj, x, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvTop, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// left
+				obj.addFace(new Vertex[] {new Vertex(x,y,z-0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvFront, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvFront, null, mtl);
 			}
 			else
 			{
-				boolean b=drawSides[5]; drawSides[5]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
 
-				drawSides[5]=b; drawSides[1]=true;
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvTop, null, mtl);
+
+				/* step */
 				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
 				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvSide = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,0.5f), new UV(0.5f,0.5f) };
-				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
-				addBox(obj, x, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f)}, uvSide, null, mtl);
+				// left
+				obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f)}, uvFront, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvFront, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtl);
 			}
 			break;
 		case 1:
-			if (up==0)
+			if (up == 0)
 			{
-				boolean b=drawSides[0]; drawSides[0]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
 
-				drawSides[0]=b; drawSides[2]=true;
+				// top
+				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvTop, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtl);
+
+				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
 				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0,0.5f), new UV(0.5f,0.5f), new UV(0.5f,1), new UV(0,1) };
-				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
-				addBox(obj, x-0.5f, y, z-0.5f, x, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvTop, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvFront, null, mtl);
+				// right
+				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z+0.5f)}, uvFront, null, mtl);
 			}
 			else
 			{
-				boolean b=drawSides[5]; drawSides[5]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
 				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+				
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvTop, null, mtl);
 
-				drawSides[5]=b; drawSides[2]=true;
+				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
 				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvSide = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,0.5f), new UV(0,0.5f) };
-				uvSides = new UV[][] { uvTop, uvSide, uvSide, uvFront, uvFront, uvTop };
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x, y, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvFront, null, mtl);
+				// right
+				obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y,z+0.5f)}, uvFront, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z-0.5f)}, uvTop, null, mtl);
 			}
 			break;
 		case 2:
-			if (up==0)
+			if (up == 0)
 			{
-				boolean b=drawSides[0]; drawSides[0]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
 
-				drawSides[0]=b; drawSides[3]=true;
+				// top
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvTop, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtl);
+
+				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0.5f,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0.5f,1) };
-				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
-				addBox(obj, x-0.5f, y, z, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z)}, uvTop, null, mtl);
+				// front
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z)}, uvFront, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvFront, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
 			}
 			else
 			{
-				boolean b=drawSides[5]; drawSides[5]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
 
-				drawSides[5]=b; drawSides[3]=true;
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvTop, null, mtl);
+
+				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvSide = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,0.5f), new UV(0.5f,0.5f) };
-				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
-				addBox(obj, x-0.5f, y-0.5f, z, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// front
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z)}, uvFront, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvFront, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z)}, uvTop, null, mtl);
 			}
 			break;
 		case 3:
-			if (up==0)
+			if (up == 0)
 			{
-				boolean b=drawSides[0]; drawSides[0]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z+0.5f, null, mtls, uvSides, drawSides);
 
-				drawSides[0]=b; drawSides[4]=true;
+				// top
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z)}, uvTop, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtl);
+
+				/* step */
 				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvFront = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvSide = new UV[] { new UV(0,0.5f), new UV(0.5f,0.5f), new UV(0.5f,1), new UV(0,1) };
-				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z, null, mtls, uvSides, drawSides);
+
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvTop, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvFront, null, mtl);
+				// back
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z)}, uvFront, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z)}, uvSide, null, mtl);
 			}
 			else
 			{
-				boolean b=drawSides[5]; drawSides[5]=true;
+				/* base */
+				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
-				uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
-				addBox(obj, x-0.5f, y, z-0.5f, x+0.5f, y+0.5f, z+0.5f, null, mtls, uvSides, drawSides);
+
+				// top
+				if (drawSides[0])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// back
+				if (drawSides[2])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+				// bottom
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z)}, uvTop, null, mtl);
 				
-				drawSides[5]=b; drawSides[4]=true;
+				/* step */
 				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 				uvFront = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 				uvSide = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,0.5f), new UV(0,0.5f) };
-				uvSides = new UV[][] { uvTop, uvFront, uvFront, uvSide, uvSide, uvTop };
-				addBox(obj, x-0.5f, y-0.5f, z-0.5f, x+0.5f, y, z, null, mtls, uvSides, drawSides);
+
+				// front
+				if (drawSides[1])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvFront, null, mtl);
+				// back
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z)}, uvFront, null, mtl);
+				// left
+				if (drawSides[3])
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+				// right
+				if (drawSides[4])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z)}, uvSide, null, mtl);
+				// bottom
+				if (drawSides[5])
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtl);
 			}
 			break;		
 		}
