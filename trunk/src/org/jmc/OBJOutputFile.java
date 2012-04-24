@@ -9,14 +9,11 @@ package org.jmc;
 
 import java.awt.Rectangle;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jmc.geom.Face;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -29,9 +26,8 @@ import org.jmc.geom.Vertex;
  * @author danijel
  *
  */
-public class OBJOutputFile
+public class OBJOutputFile extends OBJFileBase
 {
-	
 	/**
 	 * Identifier of the file.
 	 * Since many OBJ class objects are created by different chunks,
@@ -41,19 +37,9 @@ public class OBJOutputFile
 	private String identifier;
 
 	/**
-	 * List of vertices in the file.
-	 */
-	private List<Vertex> vertices;
-
-	/**
 	 * Map of vertices to their respective IDs used in the faces of the mesh.
 	 */
 	private Map<Vertex, Integer> vertexMap;
-	
-	/**
-	 * List of texture coordinates in the file
-	 */
-	private List<UV> texCoords;
 	
 	/**
 	 * Map of texture coordinates to their respective indexes in the OBJ file.
@@ -61,21 +47,10 @@ public class OBJOutputFile
 	private Map<UV, Integer> texCoordMap;
 	
 	/**
-	 * List of normals
-	 */
-	private List<Vertex> normals;
-	
-	/**
 	 * Map of normals to their respective indexes in the OBJ file.
 	 */
 	private Map<Vertex, Integer> normalsMap;
 	
-	/**
-	 * List of faces in the file.
-	 */
-	private List<Face> faces;
-	
-
 	/**
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
@@ -93,17 +68,16 @@ public class OBJOutputFile
 	 */
 	public OBJOutputFile(String ident)
 	{
+		super();
+		
 		identifier = ident;
-		vertices = new ArrayList<Vertex>();
 		vertexMap = new HashMap<Vertex, Integer>();
 		vertex_counter = 1;
-		texCoords = new ArrayList<UV>();
 		texCoordMap = new HashMap<UV, Integer>();
 		tex_counter = 1;
-		normals = new ArrayList<Vertex>();
 		normalsMap = new HashMap<Vertex, Integer>();
 		norm_counter = 1;
-		faces = new ArrayList<Face>();
+		
 		x_offset = 0;
 		y_offset = 0;
 		z_offset = 0;
@@ -246,7 +220,7 @@ public class OBJOutputFile
 		}
 	}
 	
-	
+
 	/**
 	 * Add a face with the given vertices to the OBJ file.
 	 * 
@@ -262,17 +236,17 @@ public class OBJOutputFile
 	
 	/**
 	 * Add a face with the given vertices to the OBJ file.
+	 * TODO accept faces with any number of vertices 
+	 * TODO ignoring normals for now (must also apply transform to normals!)
 	 * 
 	 * @param verts vertices of the face (length must be 4)
-	 * @param norms normals for the vertices (length must be 4)
+	 * @param norms normals for the vertices (length must be 4). If null, no normals will be written to file.
 	 * @param uv texture coordinates for the vertices (length must be 4). If null, the default coordinates will be used.
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
 	 */
 	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
 	{
-		// TODO ignoring normals for now
-		
 		if (uv == null)
 		{
 			uv = new UV[] { 
@@ -283,7 +257,7 @@ public class OBJOutputFile
 			};
 		}
 			
-		Face face = new Face();
+		Face face = new Face(4);
 		face.mtl = mtl;		
 		for (int i=0; i<4; i++)
 		{

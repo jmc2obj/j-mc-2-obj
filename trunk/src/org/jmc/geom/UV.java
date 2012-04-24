@@ -19,7 +19,17 @@ public class UV
 		this.v = v;
 	}
 
-	
+	/**
+	 * Copy constructor
+	 * @param other
+	 */
+	public UV(UV other)
+	{
+		this.u = other.u;
+		this.v = other.v;
+	}
+
+
 	@Override
 	public boolean equals(Object obj)
 	{
