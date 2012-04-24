@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJOutputFile;
+import org.jmc.geom.Transform;
 
 public class Mesh extends BlockModel 
 {
@@ -29,13 +30,14 @@ public class Mesh extends BlockModel
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x,
-			int y, int z, byte data) {
-		
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	{
 		if(objin==null) return; 
-			
-		objin.addObject("object.obj#Cake", x, y, z, null, obj);
-		
+
+		Transform translate = new Transform();
+		translate.translate(x, y, z);		
+
+		objin.addObject("object.obj#Cake", translate, obj);
 	}
 
 }

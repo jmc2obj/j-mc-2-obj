@@ -10,22 +10,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.Vector;
 
-import org.jmc.geom.Face;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
-import org.jmc.geom.UVNormMap;
 import org.jmc.geom.Vertex;
 import org.jmc.util.Log;
+
 
 /**
  * Class for reading simple OBJ meshes.
  * @author danijel
  *
  */
-public class OBJInputFile {
+public class OBJInputFile extends OBJFileBase
+{
 
 	private static class Group
 	{
@@ -36,23 +34,16 @@ public class OBJInputFile {
 		public List<Face> faces;
 	}
 
-	Vector<Vertex> vertices;
-	Map<Vertex, Integer> vertex_map;
-	private int vertex_counter;
-
+	
 	Map<String,Group> objects;
 
-	UVNormMap uvnorm_map;
-
+	
 	public OBJInputFile() 
 	{
-		vertices=new Vector<Vertex>();
-		vertex_map=new TreeMap<Vertex, Integer>();
-		vertex_counter=1;
-		uvnorm_map=new UVNormMap();
 		objects=new HashMap<String, OBJInputFile.Group>();
 	}
 
+	
 	/**
 	 * Loads a file into the buffer.
 	 * @param objfile
@@ -62,10 +53,7 @@ public class OBJInputFile {
 	{
 		BufferedReader in=new BufferedReader(new FileReader(objfile));
 
-		Map<Integer,Integer> vert_remap=new TreeMap<Integer, Integer>();
-		Map<Integer,Integer> uv_remap=new TreeMap<Integer, Integer>();
-		Map<Integer,Integer> norm_remap=new TreeMap<Integer, Integer>();
-		int lvertex_count=1;
+		int vertex_count=1;
 		int uv_count=1;
 		int norm_count=1;
 
@@ -80,7 +68,7 @@ public class OBJInputFile {
 
 			if(line.length()==0) continue;
 
-			//we ignore these line
+			// we ignore these lines
 			if(line.startsWith("#")) continue;
 			if(line.startsWith("mtllib ")) continue;
 			if(line.startsWith("s ")) continue;
@@ -88,7 +76,7 @@ public class OBJInputFile {
 			if(line.startsWith("o ") || line.startsWith("g "))
 			{
 				group=new Group();
-				objects.put(objfile.getName()+"#"+line.substring(2),group);
+				objects.put(objfile.getName()+"#"+line.substring(2).trim(), group);
 				continue;
 			}
 
@@ -100,7 +88,7 @@ public class OBJInputFile {
 
 			if(line.startsWith("v "))
 			{
-				try{
+				try {
 					float x,y,z;				
 					Scanner scanner=new Scanner(line.substring(2));
 					scanner.useLocale(Locale.ROOT);
@@ -108,11 +96,9 @@ public class OBJInputFile {
 					y=scanner.nextFloat();
 					z=scanner.nextFloat();
 					Vertex v=new Vertex(x, y, z);
+					
 					vertices.add(v);
-					vertex_map.put(v, vertex_counter);
-					vert_remap.put(lvertex_count, vertex_counter);
-					vertex_counter++;
-					lvertex_count++;
+					vertex_count++;
 				}
 				catch (Exception e) {
 					Log.info("ERROR vertex format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
@@ -120,31 +106,64 @@ public class OBJInputFile {
 				continue;
 			}
 
+			if(line.startsWith("vt "))
+			{
+				try {
+					UV uv = new UV(0,0);
+					String[] parts = line.split("\\s+");
+					if (parts.length > 1) uv.u = Float.parseFloat(parts[1]);
+					if (parts.length > 2) uv.v = Float.parseFloat(parts[2]);
+					
+					texCoords.add(uv);
+					uv_count++;
+				}
+				catch (Exception e) {
+					Log.info("ERROR texture format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
+				}
+				continue;
+			}
+
+			if(line.startsWith("vn "))
+			{
+				try {
+					Vertex norm = new Vertex(0,0,0);
+					String[] parts = line.split("\\s+");
+					if (parts.length > 1) norm.x = Float.parseFloat(parts[1]);
+					if (parts.length > 2) norm.y = Float.parseFloat(parts[2]);
+					if (parts.length > 3) norm.z = Float.parseFloat(parts[3]);
+
+					normals.add(norm);
+					norm_count++;
+				}
+				catch (Exception e) {
+					Log.info("ERROR normal format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
+				}
+				continue;
+			}
+
 			if(line.startsWith("f "))
 			{
-				Face f=new Face();				
 				String [] vs=line.substring(2).split("\\s+");	
-				if(vs.length!=4)
+				if(vs.length < 3)
 				{
 					Log.info("ERROR wrong number of vertices in face in file "+objfile.getName()+"["+line_count+"]");
 					continue;
 				}
-				int v,n,t;
-				//set defaults
-				for(int i=0; i<4; i++)
+				Face f=new Face(vs.length);
+				boolean has_uv=false;
+				boolean has_norm=false;
+
+				for(int i=0; i<vs.length; i++)
 				{
-					f.normals[i]=6;
-					f.uv[i]=i+1;
-				}
-				for(int i=0; i<4; i++)
-				{
-					try{
+					try {
+						int v,n,t;
+						
 						String [] vt=vs[i].split("/+");
 						if(vt.length==1)
 						{
 							v=Integer.parseInt(vs[i]);
-							if(v<0) v=lvertex_count-v;
-							f.vertices[i]=vert_remap.get(v);
+							if(v<0) v=vertex_count-v;
+							f.vertices[i]=v;
 						}
 						else if(vt.length==2)
 						{							
@@ -152,19 +171,21 @@ public class OBJInputFile {
 							{
 								v=Integer.parseInt(vt[0]);
 								n=Integer.parseInt(vt[1]);
-								if(v<0) v=lvertex_count-v;
-								if(n<0) n=norm_count-n;
-								f.vertices[i]=vert_remap.get(v);						
-								f.normals[i]=norm_remap.get(n);
+								if(v<0) v=vertex_count+v+1;
+								if(n<0) n=norm_count+n+1;
+								f.vertices[i]=v;						
+								f.normals[i]=n;
+								has_norm=true;
 							}
 							else
 							{
 								v=Integer.parseInt(vt[0]);
 								t=Integer.parseInt(vt[1]);
-								if(v<0) v=lvertex_count-v;
-								if(t<0) t=uv_count-t;
-								f.vertices[i]=vert_remap.get(v);
-								f.uv[i]=uv_remap.get(t);
+								if(v<0) v=vertex_count+v+1;
+								if(t<0) t=uv_count+t+1;
+								f.vertices[i]=v;
+								f.uv[i]=t;
+								has_uv=true;
 							}
 						}
 						else if(vt.length==3)
@@ -172,73 +193,40 @@ public class OBJInputFile {
 							v=Integer.parseInt(vt[0]);
 							t=Integer.parseInt(vt[1]);
 							n=Integer.parseInt(vt[2]);							
-							if(v<0) v=lvertex_count-v;
-							if(t<0) t=uv_count-t;
-							if(n<0) n=norm_count-n;
-							f.vertices[i]=vert_remap.get(v);
-							f.uv[i]=uv_remap.get(t);
-							f.normals[i]=norm_remap.get(n);
+							if(v<0) v=vertex_count+v+1;
+							if(t<0) t=uv_count+t+1;
+							if(n<0) n=norm_count+n+1;
+							f.vertices[i]=v;
+							f.uv[i]=t;
+							f.normals[i]=n;
+							has_uv=true;
+							has_norm=true;
 						}
 						else 
 							Log.info("ERROR unknown vertex format in file "+objfile.getName()+"["+line_count+"]");
-
-						f.mtl=material;
-						group.faces.add(f);
-
 					} catch (Exception e) {
 						Log.info("ERROR unknown vertex format in file "+objfile.getName()+"["+line_count+"]: "+e);
 					}
 				}
-				continue;
-			}
-
-			if(line.startsWith("vt " ))
-			{
-				uv_remap.put(uv_count, uvnorm_map.getUVId(parseUV(line)));
-				uv_count++;
-				continue;
-			}
-
-			if(line.startsWith("vn " ))
-			{
-				norm_remap.put(norm_count, uvnorm_map.getNormId(parseNormal(line)));
-				norm_count++;
+				if(!has_uv) f.uv=null;
+				if(!has_norm) f.normals=null;
+				f.mtl=material;
+				
+				group.faces.add(f);
 				continue;
 			}
 
 			Log.info("ERROR unknown line in OBJ file "+objfile.getName()+"["+line_count+"]: "+line);
-		}		
-	}
-
-	private Vertex parseNormal(String line)
-	{
-		Vertex norm = new Vertex(0,0,0);
-		String[] parts = line.split("\\s+");
-		if (parts.length > 1) norm.x = Float.parseFloat(parts[1]);
-		if (parts.length > 2) norm.y = Float.parseFloat(parts[2]);
-		if (parts.length > 3) norm.z = Float.parseFloat(parts[3]);
-		return norm;
-	}
-
-	private UV parseUV(String line)
-	{
-		UV uv = new UV(0,0);
-		String[] parts = line.split("\\s+");
-		if (parts.length > 1) uv.u = Float.parseFloat(parts[1]);
-		if (parts.length > 2) uv.v = Float.parseFloat(parts[2]);
-		return uv;
+		}
 	}
 
 	/**
 	 * Method to add a named object to the output model. 
 	 * @param objname
-	 * @param x
-	 * @param y
-	 * @param z
 	 * @param trans
 	 * @param out
 	 */
-	public void addObject(String objname, int x, int y, int z, Transform trans, OBJOutputFile out)
+	public void addObject(String objname, Transform trans, OBJOutputFile out)
 	{
 		if(!objects.containsKey(objname))
 		{
@@ -250,26 +238,22 @@ public class OBJInputFile {
 
 		for(Face f:group.faces)
 		{
-			Vertex[] v=new Vertex[4];
-			UV[] uv=new UV[4];
-			Vertex[] norm=new Vertex[4];
+			int n = f.vertices.length;
 
-			for(int i=0; i<4; i++)
+			Vertex[] v = new Vertex[n];
+			UV[] uv = f.uv == null ? null : new UV[n];
+			Vertex[] norm = f.normals == null ? null : new Vertex[n];
+
+			for(int i=0; i<n; i++)
 			{
-				v[i]=new Vertex(vertices.get(f.vertices[i]-1));
-
-				if(trans!=null)
-					v[i]=trans.multiply(v[i]);
-
-				v[i].x+=x;
-				v[i].y+=y;
-				v[i].z+=z;
-
-				uv[i]=uvnorm_map.getUV(f.uv[i]);
-				norm[i]=uvnorm_map.getNorm(f.normals[i]);		
+				v[i] = new Vertex(vertices.get(f.vertices[i]-1));
+				if (uv != null)
+					uv[i] = new UV(texCoords.get(f.uv[i]-1));
+				if (norm != null)
+					norm[i] = new Vertex(normals.get(f.normals[i]-1));		
 			}
 
-			out.addFace(v, norm, uv, null, f.mtl);
+			out.addFace(v, norm, uv, trans, f.mtl);
 		}
 	}
 }
