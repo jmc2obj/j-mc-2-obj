@@ -9,6 +9,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
+import org.jmc.models.Mesh;
 import org.jmc.util.Log;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Xml;
@@ -119,6 +120,29 @@ public class BlockTypes
 			}
 			model.setBlockId(id);
 			model.setMaterials(materials);
+			
+			if(modelName.equals("Mesh"))
+			{
+				Mesh mesh=(Mesh)model;
+				
+				NodeList meshNodes = (NodeList)xpath.evaluate("mesh", blockNode, XPathConstants.NODESET);
+			
+				for (int j = 0; j < meshNodes.getLength(); j++)
+				{
+					Node meshNode = meshNodes.item(j);
+					
+					int data = Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
+					String meshstr = meshNode.getTextContent();
+					if (data < -1 || data > 15 || meshstr.trim().isEmpty())
+					{
+						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
+						continue;
+					}
+					
+					mesh.addMesh(meshstr, data);
+					
+				}
+			}
 			
 			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model)); 
 		}
