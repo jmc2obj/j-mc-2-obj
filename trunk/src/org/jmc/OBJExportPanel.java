@@ -142,7 +142,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		pRun.add(bRun);
 		pRun.add(bStop);
 		main.add(pRun);
-		
+
 		JPanel pTex=new JPanel();
 		pTex.setLayout(new BoxLayout(pTex, BoxLayout.LINE_AXIS));
 		bTex=new JButton("Export Textures");
@@ -209,7 +209,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				}
 			}
 		});
-		
+
 		bTex.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
@@ -240,14 +240,14 @@ public class OBJExportPanel extends JFrame implements Runnable {
 		boolean write_obj=true;
 		boolean write_mtl=true;
 
-		if(options.getObjSort() && tmpdir.exists())
+		if(tmpdir.exists())
 		{
 			Log.error("Cannot create directory: "+tmpdir.getAbsolutePath()+"\nSomething is in the way.\nDelete it or turn off the Sort OBJ option.", null);
 			bRun.setEnabled(true);
 			bStop.setEnabled(false);
 			return;
 		}
-		
+
 		if(objfile.exists())
 		{
 			if(options.getOBJOverwriteAction()==OverwriteAction.ALWAYS)
@@ -400,155 +400,155 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				Log.info("Saved model to "+objfile.getAbsolutePath());
 			}
-			
-			if(options.getObjSort())
+
+
+			Log.info("Sorting OBJ file...");
+
+			if(!tmpdir.mkdir())
 			{
-				Log.info("Sorting OBJ file...");
-				
-				if(!tmpdir.mkdir())
+				Log.error("Cannot temp create directory: "+tmpdir.getAbsolutePath(), null);
+				bRun.setEnabled(true);
+				bStop.setEnabled(false);
+				return;
+			}
+
+			File mainfile=new File(tmpdir,"main");
+			PrintWriter main=new PrintWriter(mainfile);
+			File vertexfile=new File(tmpdir,"vertex");
+			PrintWriter vertex=new PrintWriter(vertexfile);
+			File normalfile=new File(tmpdir,"normal");
+			PrintWriter normal=new PrintWriter(normalfile);
+			File uvfile=new File(tmpdir,"uv");
+			PrintWriter uv=new PrintWriter(uvfile);
+
+			BufferedReader objin=new BufferedReader(new FileReader(objfile));				
+
+			Map<String,FaceFile> faces=new HashMap<String, FaceFile>();
+			int facefilecount=1;
+
+			FaceFile current_ff=null;
+
+			progress.setMaximum(100);
+			int maxcount=(int)vertexfile.length();
+			if(maxcount==0) maxcount=1;
+			int count=0;
+
+			String line;
+			while((line=objin.readLine())!=null)
+			{
+				if(line.length()==0) continue;
+
+				count+=line.length()+1;
+				if(count>maxcount) count=maxcount;
+				progress.setValue((int)(50.0*(double)count/(double)maxcount));
+
+				if(line.startsWith("usemtl "))
 				{
-					Log.error("Cannot temp create directory: "+tmpdir.getAbsolutePath(), null);
-					bRun.setEnabled(true);
-					bStop.setEnabled(false);
-					return;
-				}
-				
-				File mainfile=new File(tmpdir,"main");
-				PrintWriter main=new PrintWriter(mainfile);
-				File vertexfile=new File(tmpdir,"vertex");
-				PrintWriter vertex=new PrintWriter(vertexfile);
-				File normalfile=new File(tmpdir,"normal");
-				PrintWriter normal=new PrintWriter(normalfile);
-				File uvfile=new File(tmpdir,"uv");
-				PrintWriter uv=new PrintWriter(uvfile);
-				
-				BufferedReader objin=new BufferedReader(new FileReader(objfile));				
-				
-				Map<String,FaceFile> faces=new HashMap<String, FaceFile>();
-				int facefilecount=1;
-				
-				FaceFile current_ff=null;
-				
-				progress.setMaximum(100);
-				int maxcount=(int)vertexfile.length();
-				if(maxcount==0) maxcount=1;
-				int count=0;
-				
-				String line;
-				while((line=objin.readLine())!=null)
-				{
-					if(line.length()==0) continue;
-					
-					count+=line.length()+1;
-					if(count>maxcount) count=maxcount;
-					progress.setValue((int)(50.0*(double)count/(double)maxcount));
-					
-					if(line.startsWith("usemtl "))
+					line=line.substring(7).trim();						
+
+					if(!faces.containsKey(line))
 					{
-						line=line.substring(7).trim();						
-						
-						if(!faces.containsKey(line))
-						{
-							current_ff=new FaceFile();
-							current_ff.name=line;
-							current_ff.file=new File(tmpdir,""+facefilecount);
-							facefilecount++;
-							current_ff.writer=new PrintWriter(current_ff.file);
-							faces.put(line, current_ff);
-						}
-						else
-							current_ff=faces.get(line);
-					}
-					else if(line.startsWith("f "))
-					{
-						if(current_ff!=null)
-						{
-							current_ff.writer.println(line);
-						}
-					}
-					else if(line.startsWith("v "))
-					{
-						vertex.println(line);
-					}	
-					else if(line.startsWith("vn "))
-					{
-						normal.println(line);
-					}	
-					else if(line.startsWith("vt "))
-					{
-						uv.println(line);
-					}	
-					else if(options.getObjPerMat() && line.startsWith("g "))
-					{
-						continue;
+						current_ff=new FaceFile();
+						current_ff.name=line;
+						current_ff.file=new File(tmpdir,""+facefilecount);
+						facefilecount++;
+						current_ff.writer=new PrintWriter(current_ff.file);
+						faces.put(line, current_ff);
 					}
 					else
-					{						
-						main.println(line);
-						if(line.startsWith("mtllib") || line.startsWith("g "))
-							main.println();
-					}
+						current_ff=faces.get(line);
 				}
-				objin.close();
-				
-				vertex.close();
-				normal.close();
-				uv.close();
-				
-				BufferedReader norm_reader=new BufferedReader(new FileReader(normalfile));
-				while((line=norm_reader.readLine())!=null)
-					main.println(line);
-				norm_reader.close();
-				normalfile.delete();
-				
-				BufferedReader uv_reader=new BufferedReader(new FileReader(uvfile));
-				while((line=uv_reader.readLine())!=null)
-					main.println(line);
-				uv_reader.close();
-				uvfile.delete();
-				
-				BufferedReader vertex_reader=new BufferedReader(new FileReader(vertexfile));
-				while((line=vertex_reader.readLine())!=null)
-					main.println(line);
-				vertex_reader.close();
-				vertexfile.delete();
-								
-				count=0;
-				maxcount=faces.size();
-				
-				for(FaceFile ff:faces.values())
+				else if(line.startsWith("f "))
 				{
-					ff.writer.close();
-					
-					count++;
-					progress.setValue(50+(int)(50.0*(double)count/(double)maxcount));
-					
-					vertex.println();
-					if(options.getObjPerMat()) main.println("g "+ff.name);
-					main.println("usemtl "+ff.name);
-					main.println();
-					
-					BufferedReader reader=new BufferedReader(new FileReader(ff.file));
-					while((line=reader.readLine())!=null)
+					if(current_ff!=null)
 					{
-						main.println(line);
+						current_ff.writer.println(line);
 					}
-					reader.close();
-					
-					ff.file.delete();
 				}
-				
-				main.close();
-								
-				//Files.move(mainfile.toPath(), objfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-				Filesystem.moveFile(mainfile, objfile);
-				
-				if(!tmpdir.delete())
+				else if(line.startsWith("v "))
 				{
-					Log.error("Failed to erase temp dir: "+tmpdir.getAbsolutePath()+"\nPlease remove it yourself!", null);
+					vertex.println(line);
+				}	
+				else if(line.startsWith("vn "))
+				{
+					normal.println(line);
+				}	
+				else if(line.startsWith("vt "))
+				{
+					uv.println(line);
+				}	
+				else if(options.getObjPerMat() && line.startsWith("g "))
+				{
+					continue;
+				}
+				else
+				{						
+					main.println(line);
+					if(line.startsWith("mtllib") || line.startsWith("g "))
+						main.println();
 				}
 			}
-			
+
+			objin.close();
+
+			vertex.close();
+			normal.close();
+			uv.close();
+
+			BufferedReader norm_reader=new BufferedReader(new FileReader(normalfile));
+			while((line=norm_reader.readLine())!=null)
+				main.println(line);
+			norm_reader.close();
+			normalfile.delete();
+
+			BufferedReader uv_reader=new BufferedReader(new FileReader(uvfile));
+			while((line=uv_reader.readLine())!=null)
+				main.println(line);
+			uv_reader.close();
+			uvfile.delete();
+
+			BufferedReader vertex_reader=new BufferedReader(new FileReader(vertexfile));
+			while((line=vertex_reader.readLine())!=null)
+				main.println(line);
+			vertex_reader.close();
+			vertexfile.delete();
+
+			count=0;
+			maxcount=faces.size();
+
+			for(FaceFile ff:faces.values())
+			{
+				ff.writer.close();
+
+				count++;
+				progress.setValue(50+(int)(50.0*(double)count/(double)maxcount));
+
+				vertex.println();
+				if(options.getObjPerMat()) main.println("g "+ff.name);
+				main.println("usemtl "+ff.name);
+				main.println();
+
+				BufferedReader reader=new BufferedReader(new FileReader(ff.file));
+				while((line=reader.readLine())!=null)
+				{
+					main.println(line);
+				}
+				reader.close();
+
+				ff.file.delete();
+			}
+
+			main.close();
+
+			//Files.move(mainfile.toPath(), objfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Filesystem.moveFile(mainfile, objfile);
+
+			if(!tmpdir.delete())
+			{
+				Log.error("Failed to erase temp dir: "+tmpdir.getAbsolutePath()+"\nPlease remove it yourself!", null);
+			}
+
+
 			Log.info("Done!");
 
 		}
