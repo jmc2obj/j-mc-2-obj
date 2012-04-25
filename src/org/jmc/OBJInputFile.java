@@ -25,9 +25,9 @@ import org.jmc.util.Log;
 public class OBJInputFile extends OBJFileBase
 {
 
-	private static class Group
+	public static class OBJGroup
 	{
-		public Group()
+		public OBJGroup()
 		{
 			faces=new LinkedList<Face>();
 		}
@@ -35,12 +35,14 @@ public class OBJInputFile extends OBJFileBase
 	}
 
 	
-	Map<String,Group> objects;
+	OBJGroup default_object;
+	Map<String,OBJGroup> objects;
 
 	
 	public OBJInputFile() 
 	{
-		objects=new HashMap<String, OBJInputFile.Group>();
+		default_object=new OBJGroup();
+		objects=new HashMap<String, OBJGroup>();
 	}
 
 	
@@ -57,8 +59,7 @@ public class OBJInputFile extends OBJFileBase
 		int uv_count=1;
 		int norm_count=1;
 
-		Group group=new Group();
-		objects.put(objfile.getName(),group);
+		OBJGroup group=default_object;
 		String material=null;
 		String line;
 		int line_count=0;
@@ -75,8 +76,8 @@ public class OBJInputFile extends OBJFileBase
 
 			if(line.startsWith("o ") || line.startsWith("g "))
 			{
-				group=new Group();
-				objects.put(objfile.getName()+"#"+line.substring(2).trim(), group);
+				group=new OBJGroup();
+				objects.put(line.substring(2).trim(), group);
 				continue;
 			}
 
@@ -220,22 +221,24 @@ public class OBJInputFile extends OBJFileBase
 		}
 	}
 
-	/**
-	 * Method to add a named object to the output model. 
-	 * @param objname
-	 * @param trans
-	 * @param out
-	 */
-	public void addObject(String objname, Transform trans, OBJOutputFile out)
+	
+	public OBJGroup getDefaultObject()
+	{
+		return default_object;
+	}
+	
+	public OBJGroup getObject(String objname)
 	{
 		if(!objects.containsKey(objname))
-		{
-			Log.info("ERROR mesh object "+objname+" doesn't exist!");
-			return;
+		{			
+			return null;
 		}
 
-		Group group=objects.get(objname);
+		return objects.get(objname);
+	}
 
+	public void addObject(OBJGroup group, Transform trans, OBJOutputFile out)
+	{
 		for(Face f:group.faces)
 		{
 			int n = f.vertices.length;
