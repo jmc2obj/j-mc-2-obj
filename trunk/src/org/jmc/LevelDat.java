@@ -78,33 +78,41 @@ public class LevelDat {
 	
 	/**
 	 * Gets the position of the player.
-	 * @return returns a list of X,Y,Z NBT_Float values
+	 * @return returns a list of X,Y,Z NBT_Float values, or null if the information is not available
 	 */
 	public TAG_List getPosition()
 	{
 		TAG_Compound data=(TAG_Compound) root.getElement("Data");
+		if (data==null) return null;
 		TAG_Compound player=(TAG_Compound) data.getElement("Player");
+		if (player==null) return null;
 		return (TAG_List)player.getElement("Pos");
 	}
 	
 	/**
 	 * Gets the X location of the spawn. 
-	 * @return x coordinate
+	 * @return x coordinate, or 0 if the information is not available
 	 */
 	public int getSpawnX()
 	{
 		TAG_Compound data=(TAG_Compound) root.getElement("Data");
-		return ((TAG_Int)data.getElement("SpawnX")).value;
+		if (data==null) return 0;
+		TAG_Int pos = (TAG_Int)data.getElement("SpawnX");
+		if (pos==null) return 0;
+		return pos.value;
 	}
 	
 	/**
 	 * Gets the Z location of the spawn.
-	 * @return z coordinate
+	 * @return z coordinate, or 0 if the information is not available
 	 */
 	public int getSpawnZ()
 	{
 		TAG_Compound data=(TAG_Compound) root.getElement("Data");
-		return ((TAG_Int)data.getElement("SpawnZ")).value;
+		if (data==null) return 0;
+		TAG_Int pos = (TAG_Int)data.getElement("SpawnZ");
+		if (pos==null) return 0;
+		return pos.value;
 	}
 	
 	/**

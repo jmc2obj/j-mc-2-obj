@@ -8,7 +8,7 @@ import org.jmc.geom.Vertex;
 
 
 /**
- * XXX
+ * Common base for OBJInputFile and OBJOutputFile.
  */
 public abstract class OBJFileBase
 {

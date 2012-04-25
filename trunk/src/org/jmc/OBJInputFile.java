@@ -41,6 +41,8 @@ public class OBJInputFile extends OBJFileBase
 	
 	public OBJInputFile() 
 	{
+		super();
+		
 		default_object=new OBJGroup();
 		objects=new HashMap<String, OBJGroup>();
 	}
@@ -90,7 +92,7 @@ public class OBJInputFile extends OBJFileBase
 			if(line.startsWith("v "))
 			{
 				try {
-					float x,y,z;				
+					float x,y,z;
 					Scanner scanner=new Scanner(line.substring(2));
 					scanner.useLocale(Locale.ROOT);
 					x=scanner.nextFloat();
@@ -253,7 +255,7 @@ public class OBJInputFile extends OBJFileBase
 				if (uv != null)
 					uv[i] = new UV(texCoords.get(f.uv[i]-1));
 				if (norm != null)
-					norm[i] = new Vertex(normals.get(f.normals[i]-1));		
+					norm[i] = new Vertex(normals.get(f.normals[i]-1));
 			}
 
 			out.addFace(v, norm, uv, trans, f.mtl);

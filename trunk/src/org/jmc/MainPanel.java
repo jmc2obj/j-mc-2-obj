@@ -265,9 +265,14 @@ public class MainPanel extends JPanel
 
 				log(levelDat.toString());
 
+				int player_x=0;
+				int player_z=0;
 				TAG_List pos=levelDat.getPosition();
-				int player_x=(int)((TAG_Double)pos.getElement(0)).value;
-				int player_z=(int)((TAG_Double)pos.getElement(2)).value;
+				if (pos!=null)
+				{
+					player_x=(int)((TAG_Double)pos.getElement(0)).value;
+					player_z=(int)((TAG_Double)pos.getElement(2)).value;
+				}
 
 				int spawn_x=levelDat.getSpawnX();
 				int spawn_z=levelDat.getSpawnZ();
