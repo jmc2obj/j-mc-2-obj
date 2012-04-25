@@ -26,7 +26,6 @@ public class OBJExportOptions extends JPanel
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
 	private JCheckBox cbObjPerMat;
-	private JCheckBox cbSort;
 	private JCheckBox cbRemoveDuplicates;
 	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
 	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
@@ -74,12 +73,6 @@ public class OBJExportOptions extends JPanel
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbObjPerMat=new JCheckBox("Create a separate object for each material");
 		pObjPerMat.add(cbObjPerMat);
-		
-		JPanel pSort=new JPanel();
-		pSort.setLayout(new BoxLayout(pSort, BoxLayout.LINE_AXIS));
-		pSort.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbSort=new JCheckBox("Sort OBJ file");
-		pSort.add(cbSort);
 		
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
@@ -187,7 +180,6 @@ public class OBJExportOptions extends JPanel
 		rbMTLAlways.addActionListener(SaveAction);
 		rbMTLNever.addActionListener(SaveAction);
 		cbObjPerMat.addActionListener(SaveAction);
-		cbSort.addActionListener(SaveAction);
 		cbRemoveDuplicates.addActionListener(SaveAction);
 
 		switch(prefs.getInt("OFFSET_TYPE", 0))
@@ -238,13 +230,11 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
-		cbSort.setSelected(prefs.getBoolean("SORT_OBJ", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 		
 		add(pScale);
 		add(pOffset);
 		add(pObjPerMat);
-		add(pSort);
 		add(pRemoveDuplicates);
 		add(pOBJOver);
 		add(pMTLOver);
@@ -328,7 +318,6 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		prefs.putBoolean("OBJ_PER_MTL", cbObjPerMat.isSelected());
-		prefs.putBoolean("SORT_OBJ", cbSort.isSelected());
 		prefs.putBoolean("REMOVE_DUPLICATES", cbRemoveDuplicates.isSelected());
 	}
 
@@ -357,11 +346,6 @@ public class OBJExportOptions extends JPanel
 	public boolean getObjPerMat()
 	{
 		return cbObjPerMat.isSelected();
-	}
-	
-	public boolean getObjSort()
-	{
-		return cbSort.isSelected();
 	}
 	
 	public boolean getRemoveDuplicates()
