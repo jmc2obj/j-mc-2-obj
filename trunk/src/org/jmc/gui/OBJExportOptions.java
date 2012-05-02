@@ -1,7 +1,6 @@
 package org.jmc.gui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.prefs.Preferences;
 
@@ -17,6 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+
+import org.jmc.Options;
+import org.jmc.Options.OffsetType;
+import org.jmc.Options.OverwriteAction;
 
 
 @SuppressWarnings("serial")
@@ -41,7 +44,7 @@ public class OBJExportOptions extends JPanel
 		pScale.setLayout(new BoxLayout(pScale,BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		JLabel lScale=new JLabel("Map Scale: ");
-		tfScale=new JTextField(""+prefs.getFloat("DEFAULT_SCALE", 1.0f));
+		tfScale=new JTextField("");
 		pScale.add(lScale);
 		pScale.add(tfScale);
 
@@ -134,7 +137,7 @@ public class OBJExportOptions extends JPanel
 		rbMTLAlways.setActionCommand("always");
 		rbMTLNever.setActionCommand("never");
 
-		AbstractAction rbOffsetAction=new AbstractAction() {			
+		AbstractAction offsetSaveAction=new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				if(ev.getActionCommand().equals("custom"))
@@ -147,42 +150,49 @@ public class OBJExportOptions extends JPanel
 					tfXOffset.setEnabled(false);
 					tfZOffset.setEnabled(false);
 				}
-
-				int x=Integer.parseInt(tfXOffset.getText());
-				int z=Integer.parseInt(tfZOffset.getText());
-
-				prefs.putInt("OFFSET_X", x);
-				prefs.putInt("OFFSET_Z", z);
-
-				if(ev.getActionCommand().equals("none"))
-					prefs.putInt("OFFSET_TYPE", 0);
-				else if(ev.getActionCommand().equals("center"))
-					prefs.putInt("OFFSET_TYPE", 1);
-				else if(ev.getActionCommand().equals("custom"))
-					prefs.putInt("OFFSET_TYPE", 2);
+				saveSettings();
 			}
 		};
 
-		rbNoOffset.addActionListener(rbOffsetAction);
-		rbCenterOffset.addActionListener(rbOffsetAction);
-		rbCustomOffset.addActionListener(rbOffsetAction);
+		rbNoOffset.addActionListener(offsetSaveAction);
+		rbCenterOffset.addActionListener(offsetSaveAction);
+		rbCustomOffset.addActionListener(offsetSaveAction);
 		
-		AbstractAction SaveAction=new AbstractAction() {
+		AbstractAction genericSaveAction=new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				saveSettings();
 			}	
 		};
 		
-		rbOBJAsk.addActionListener(SaveAction);
-		rbOBJAlways.addActionListener(SaveAction);
-		rbOBJNever.addActionListener(SaveAction);
-		rbMTLAsk.addActionListener(SaveAction);
-		rbMTLAlways.addActionListener(SaveAction);
-		rbMTLNever.addActionListener(SaveAction);
-		cbObjPerMat.addActionListener(SaveAction);
-		cbRemoveDuplicates.addActionListener(SaveAction);
+		rbOBJAsk.addActionListener(genericSaveAction);
+		rbOBJAlways.addActionListener(genericSaveAction);
+		rbOBJNever.addActionListener(genericSaveAction);
+		rbMTLAsk.addActionListener(genericSaveAction);
+		rbMTLAlways.addActionListener(genericSaveAction);
+		rbMTLNever.addActionListener(genericSaveAction);
+		cbObjPerMat.addActionListener(genericSaveAction);
+		cbRemoveDuplicates.addActionListener(genericSaveAction);
 
+		loadSettings();
+
+		add(pScale);
+		add(pOffset);
+		add(pObjPerMat);
+		add(pRemoveDuplicates);
+		add(pOBJOver);
+		add(pMTLOver);
+		add(pNames);
+	}
+
+
+	/**
+	 * Loads the options from the prefs store. Updates the UI controls and the global Options.
+	 */
+	private void loadSettings()
+	{
+		tfScale.setText(""+prefs.getFloat("DEFAULT_SCALE", 1.0f));
+		
 		switch(prefs.getInt("OFFSET_TYPE", 0))
 		{
 		case 0:
@@ -232,67 +242,37 @@ public class OBJExportOptions extends JPanel
 		
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
-		
-		add(pScale);
-		add(pOffset);
-		add(pObjPerMat);
-		add(pRemoveDuplicates);
-		add(pOBJOver);
-		add(pMTLOver);
-		add(pNames);
+
+
+		updateOptions();
 	}
 
-	enum OffsetType{ NO_OFFSET, CENTER_OFFSET, CUSTOM_OFFSET };
-
-	public OffsetType getOffsetType()
+	/**
+	 * Saves the options to the prefs store. Also updates the global Options.
+	 */
+	private void saveSettings()
 	{
-		if(rbNoOffset.isSelected())
-			return OffsetType.NO_OFFSET;
+		updateOptions();
 
-		if(rbCenterOffset.isSelected())
-			return OffsetType.CENTER_OFFSET;
 
-		if(rbCustomOffset.isSelected())
-			return OffsetType.CUSTOM_OFFSET;
+		prefs.putFloat("DEFAULT_SCALE", Options.scale);
 
-		return OffsetType.NO_OFFSET;
-	}
-	
-	enum OverwriteAction { ASK, ALWAYS, NEVER };
-	
-	public OverwriteAction getOBJOverwriteAction()
-	{
-		if(rbOBJAsk.isSelected())
-			return OverwriteAction.ASK;
+		prefs.putInt("OFFSET_X", Options.offsetX);
+		prefs.putInt("OFFSET_Z", Options.offsetZ);
+		switch(Options.offsetType)
+		{
+		case NONE:
+			prefs.putInt("OFFSET_TYPE", 0);
+			break;
+		case CENTER:
+			prefs.putInt("OFFSET_TYPE", 1);
+			break;
+		case CUSTOM:
+			prefs.putInt("OFFSET_TYPE", 2);
+			break;
+		}
 		
-		if(rbOBJAlways.isSelected())
-			return OverwriteAction.ALWAYS;
-		
-		if(rbOBJNever.isSelected())
-			return OverwriteAction.NEVER;
-		
-		return OverwriteAction.ASK;
-	}
-	
-	public OverwriteAction getMTLOverwriteAction()
-	{
-		if(rbMTLAsk.isSelected())
-			return OverwriteAction.ASK;
-		
-		if(rbMTLAlways.isSelected())
-			return OverwriteAction.ALWAYS;
-		
-		if(rbMTLNever.isSelected())
-			return OverwriteAction.NEVER;
-		
-		return OverwriteAction.ASK;
-	}
-
-	public void saveSettings()
-	{
-		prefs.putFloat("DEFAULT_SCALE", getScale());
-		
-		switch(getOBJOverwriteAction())
+		switch(Options.objOverwriteAction)
 		{
 		case ASK:
 			prefs.putInt("OBJ_OVERWRITE", 0);
@@ -305,7 +285,7 @@ public class OBJExportOptions extends JPanel
 			break;
 		}
 		
-		switch(getMTLOverwriteAction())
+		switch(Options.mtlOverwriteAction)
 		{
 		case ASK:
 			prefs.putInt("MTL_OVERWRITE", 0);
@@ -318,18 +298,46 @@ public class OBJExportOptions extends JPanel
 			break;
 		}
 		
-		prefs.putBoolean("OBJ_PER_MTL", cbObjPerMat.isSelected());
-		prefs.putBoolean("REMOVE_DUPLICATES", cbRemoveDuplicates.isSelected());
+		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
+		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
 	}
 
-	public Point getCustomOffset()
+	/**
+	 * Updates the global Options values from the UI.
+	 */
+	private void updateOptions()
 	{
-		int x=Integer.parseInt(tfXOffset.getText());
-		int z=Integer.parseInt(tfZOffset.getText());
-		return new Point(x,z);
-	}
+		Options.scale = getScale();
+		
+		Options.offsetX = Integer.parseInt(tfXOffset.getText());
+		Options.offsetZ = Integer.parseInt(tfZOffset.getText());
 
-	public float getScale()
+		if(rbCenterOffset.isSelected())
+			Options.offsetType = OffsetType.CENTER;
+		else if(rbCustomOffset.isSelected())
+			Options.offsetType = OffsetType.CUSTOM;
+		else
+			Options.offsetType = OffsetType.NONE;
+		
+		if(rbOBJAlways.isSelected())
+			Options.objOverwriteAction = OverwriteAction.ALWAYS;
+		else if(rbOBJNever.isSelected())
+			Options.objOverwriteAction = OverwriteAction.NEVER;
+		else
+			Options.objOverwriteAction = OverwriteAction.ASK;
+
+		if(rbMTLAlways.isSelected())
+			Options.mtlOverwriteAction = OverwriteAction.ALWAYS;
+		else if(rbMTLNever.isSelected())
+			Options.mtlOverwriteAction = OverwriteAction.NEVER;
+		else
+			Options.mtlOverwriteAction = OverwriteAction.ASK;
+		
+		Options.objectPerMaterial = cbObjPerMat.isSelected();
+		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
+	}
+	
+	private float getScale()
 	{
 		float ret=1;
 
@@ -344,13 +352,4 @@ public class OBJExportOptions extends JPanel
 		return ret;
 	}
 
-	public boolean getObjPerMat()
-	{
-		return cbObjPerMat.isSelected();
-	}
-	
-	public boolean getRemoveDuplicates()
-	{
-		return cbRemoveDuplicates.isSelected();
-	}
 }

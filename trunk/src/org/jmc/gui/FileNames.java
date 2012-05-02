@@ -15,6 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.jmc.Options;
+
 
 
 
@@ -36,7 +38,7 @@ public class FileNames extends JFrame {
 		pObj.setLayout(new BoxLayout(pObj, BoxLayout.LINE_AXIS));
 		pObj.setMaximumSize(new Dimension(Short.MAX_VALUE,20));		
 		JLabel lObj=new JLabel("OBJ file name: ");
-		tfObj=new JTextField(pref.get("OBJ_FILE_NAME", "minecraft.obj"));
+		tfObj=new JTextField();
 		pObj.add(lObj);
 		pObj.add(tfObj);
 		
@@ -44,22 +46,24 @@ public class FileNames extends JFrame {
 		pMtl.setLayout(new BoxLayout(pMtl, BoxLayout.LINE_AXIS));
 		pMtl.setMaximumSize(new Dimension(Short.MAX_VALUE,20));
 		JLabel lMtl=new JLabel("MTL file name: ");
-		tfMtl=new JTextField(pref.get("MTL_FILE_NAME", "minecraft.mtl"));		
+		tfMtl=new JTextField();		
 		pMtl.add(lMtl);
 		pMtl.add(tfMtl);
 
+		loadSettings();
+		
 		DocumentListener save_listener=new DocumentListener() {			
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				save_settings();
+				saveSettings();
 			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				save_settings();
+				saveSettings();
 			}			
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				save_settings();				
+				saveSettings();				
 			}
 		};
 		
@@ -95,12 +99,37 @@ public class FileNames extends JFrame {
 		}
 	}
 	
-	private void save_settings()
+	/**
+	 * Loads the options from the prefs store. Updates the UI controls and the global Options.
+	 */
+	private void loadSettings()
 	{
-		String txt=tfObj.getText();
-		if(txt.length()>0) pref.put("OBJ_FILE_NAME",txt);
-		txt=tfMtl.getText();
-		if(txt.length()>0) pref.put("MTL_FILE_NAME",txt);
+		Options.objFileName = pref.get("OBJ_FILE_NAME", "minecraft.obj");
+		tfObj.setText(Options.objFileName);
+		
+		Options.mtlFileName = pref.get("MTL_FILE_NAME", "minecraft.mtl");
+		tfMtl.setText(Options.mtlFileName);
+	}
+	
+	/**
+	 * Saves the options to the prefs store. Also updates the global Options.
+	 */
+	private void saveSettings()
+	{
+		String txt;
+		
+		txt = tfObj.getText().trim();
+		if (txt.length() > 0)
+		{
+			Options.objFileName = txt;
+			pref.put("OBJ_FILE_NAME", txt);
+		}
+		txt = tfMtl.getText().trim();
+		if (txt.length() > 0)
+		{
+			Options.mtlFileName = txt;
+			pref.put("MTL_FILE_NAME",txt);
+		}
 	}
 	
 	public void display()
@@ -112,13 +141,4 @@ public class FileNames extends JFrame {
 		setVisible(true);
 	}
 	
-	public String getOBJName()
-	{
-		return tfObj.getText();
-	}
-	
-	public String getMTLName()
-	{
-		return tfMtl.getText();
-	}
 }

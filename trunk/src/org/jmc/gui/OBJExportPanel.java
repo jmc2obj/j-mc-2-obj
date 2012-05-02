@@ -38,9 +38,10 @@ import org.jmc.Chunk;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.Materials;
 import org.jmc.OBJOutputFile;
+import org.jmc.Options;
 import org.jmc.Region;
-import org.jmc.gui.OBJExportOptions.OffsetType;
-import org.jmc.gui.OBJExportOptions.OverwriteAction;
+import org.jmc.Options.OffsetType;
+import org.jmc.Options.OverwriteAction;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 
@@ -238,8 +239,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		File exportpath=new File(tfSavePath.getText());
 
-		File objfile=new File(exportpath.getAbsolutePath(),MainWindow.file_names.getOBJName());
-		File mtlfile=new File(exportpath.getAbsolutePath(),MainWindow.file_names.getMTLName());
+		File objfile=new File(exportpath.getAbsolutePath(),Options.objFileName);
+		File mtlfile=new File(exportpath.getAbsolutePath(),Options.mtlFileName);
 		File tmpdir=new File(exportpath.getAbsolutePath()+"/temp");
 
 		boolean write_obj=true;
@@ -247,7 +248,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		if(tmpdir.exists())
 		{
-			Log.error("Cannot create directory: "+tmpdir.getAbsolutePath()+"\nSomething is in the way.\nDelete it or turn off the Sort OBJ option.", null);
+			Log.error("Cannot create directory: "+tmpdir.getAbsolutePath()+"\nSomething is in the way.", null);
 			bRun.setEnabled(true);
 			bStop.setEnabled(false);
 			return;
@@ -255,11 +256,11 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		if(objfile.exists())
 		{
-			if(options.getOBJOverwriteAction()==OverwriteAction.ALWAYS)
+			if(Options.objOverwriteAction==OverwriteAction.ALWAYS)
 			{
 				write_obj=true;
 			}
-			else if(options.getOBJOverwriteAction()==OverwriteAction.NEVER)
+			else if(Options.objOverwriteAction==OverwriteAction.NEVER)
 			{
 				write_obj=false;
 			}
@@ -271,11 +272,11 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 		if(mtlfile.exists())
 		{
-			if(options.getMTLOverwriteAction()==OverwriteAction.ALWAYS)
+			if(Options.mtlOverwriteAction==OverwriteAction.ALWAYS)
 			{
 				write_mtl=true;
 			}
-			else if(options.getMTLOverwriteAction()==OverwriteAction.NEVER)
+			else if(Options.mtlOverwriteAction==OverwriteAction.NEVER)
 			{
 				write_mtl=false;
 			}
@@ -295,17 +296,9 @@ public class OBJExportPanel extends JFrame implements Runnable {
 			return;
 		}
 
-		OffsetType offset_type=options.getOffsetType();
-		Point offset_point=options.getCustomOffset();
 		MainWindow.settings.setLastExportPath(tfSavePath.getText());
 
 		running=true;
-
-
-		float scale=options.getScale();
-		boolean obj_per_mat=options.getObjPerMat();
-
-		options.saveSettings();
 
 		try
 		{
@@ -325,23 +318,23 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				int cze=(int)Math.ceil((bounds.y+bounds.height)/16.0f);
 				int oxs=0,oys=0,ozs=0;
 
-				if(offset_type==OffsetType.NO_OFFSET)
+				if(Options.offsetType==OffsetType.NONE)
 				{
 					oxs=0;
 					oys=0;
 					ozs=0;
 				}
-				else if(offset_type==OffsetType.CENTER_OFFSET)
+				else if(Options.offsetType==OffsetType.CENTER)
 				{
 					oxs=cxs+(cxe-cxs)/2;
 					oys=ymin;
 					ozs=czs+(cze-czs)/2;
 				}
-				else if(offset_type==OffsetType.CUSTOM_OFFSET)
+				else if(Options.offsetType==OffsetType.CUSTOM)
 				{
-					oxs=offset_point.x;
+					oxs=Options.offsetX;
 					oys=0;
-					ozs=offset_point.y;
+					ozs=Options.offsetZ;
 				}
 
 
@@ -354,10 +347,10 @@ public class OBJExportPanel extends JFrame implements Runnable {
 
 				OBJOutputFile obj=new OBJOutputFile("minecraft");
 				obj.setOffset(-oxs*16, -oys, -ozs*16);
-				obj.setScale(scale);
+				obj.setScale(Options.scale);
 
 				obj.appendMtl(obj_writer, mtlfile.getName());
-				if(!obj_per_mat) obj.appendObjectname(obj_writer);
+				if(!Options.objectPerMaterial) obj.appendObjectname(obj_writer);
 
 				Log.info("Processing chunks...");
 
@@ -388,8 +381,8 @@ public class OBJExportPanel extends JFrame implements Runnable {
 								obj.appendTextures(obj_writer);
 								obj.appendNormals(obj_writer);
 								obj.appendVertices(obj_writer);
-								obj.appendFaces(obj_writer,obj_per_mat);
-								obj.clearData(options.getRemoveDuplicates());
+								obj.appendFaces(obj_writer,Options.objectPerMaterial);
+								obj.clearData(Options.removeDuplicates);
 							}
 
 						obj.addChunkBuffer(chunk_buffer,cx,cz);
@@ -482,7 +475,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				{
 					uv.println(line);
 				}	
-				else if(options.getObjPerMat() && line.startsWith("g "))
+				else if(Options.objectPerMaterial && line.startsWith("g "))
 				{
 					continue;
 				}
@@ -529,7 +522,7 @@ public class OBJExportPanel extends JFrame implements Runnable {
 				progress.setValue(50+(int)(50.0*(double)count/(double)maxcount));
 
 				vertex.println();
-				if(options.getObjPerMat()) main.println("g "+ff.name);
+				if(Options.objectPerMaterial) main.println("g "+ff.name);
 				main.println("usemtl "+ff.name);
 				main.println();
 
