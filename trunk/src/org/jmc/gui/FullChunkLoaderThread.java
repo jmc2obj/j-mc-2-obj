@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+
+import org.jmc.Chunk;
+import org.jmc.ChunkLoaderThread;
+import org.jmc.Region;
 /**
  * Chunk loader that loads all the chunks for the chosen save.
  * @author danijel

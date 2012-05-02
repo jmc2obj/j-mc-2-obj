@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,6 +41,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.text.BadLocationException;
 
+import org.jmc.ChunkLoaderThread;
+import org.jmc.LevelDat;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
 import org.jmc.util.Filesystem;

@@ -1,4 +1,4 @@
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+
 
 @SuppressWarnings("serial")
 public class OBJExportOptions extends JPanel

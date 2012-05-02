@@ -1,10 +1,11 @@
-package org.jmc;
+package org.jmc.gui;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+
 
 public class About {
 	
@@ -26,7 +27,7 @@ public class About {
 		List<String> developer_list=new LinkedList<String>();
 		
 		developer_list.add("Max Tangelder - programming");
-		developer_list.add("Danijel Koržinek - programming");		
+		developer_list.add("Danijel Korï¿½inek - programming");		
 		developer_list.add("Pedro Lopes - programming");
 		
 		//I hate ordering people so I used this trick...
