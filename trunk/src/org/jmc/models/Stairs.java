@@ -32,7 +32,7 @@ public class Stairs extends BlockModel
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 
 				// top
-				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, null, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvTop, null, mtl);
 				// front
 				if (drawSides[1])
 					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
