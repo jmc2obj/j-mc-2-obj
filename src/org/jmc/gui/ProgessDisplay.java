@@ -1,4 +1,4 @@
-package org.jmc;
+package org.jmc.gui;
 
 public interface ProgessDisplay {
 

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,8 +34,13 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import org.jmc.OBJExportOptions.OffsetType;
-import org.jmc.OBJExportOptions.OverwriteAction;
+import org.jmc.Chunk;
+import org.jmc.ChunkDataBuffer;
+import org.jmc.Materials;
+import org.jmc.OBJOutputFile;
+import org.jmc.Region;
+import org.jmc.gui.OBJExportOptions.OffsetType;
+import org.jmc.gui.OBJExportOptions.OverwriteAction;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 

@@ -1,4 +1,4 @@
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import org.jmc.Texsplit;
 import org.jmc.util.Log;
 
 @SuppressWarnings("serial")

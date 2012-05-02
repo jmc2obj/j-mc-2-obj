@@ -15,6 +15,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.jmc.gui.ProgessDisplay;
 import org.jmc.util.Log;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Xml;

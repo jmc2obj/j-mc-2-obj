@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -15,7 +15,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import org.jmc.PreviewPanel.ChunkImage;
+import org.jmc.Chunk;
+import org.jmc.ChunkLoaderThread;
+import org.jmc.Region;
+import org.jmc.gui.PreviewPanel.ChunkImage;
 
 /**
  * Chunk loader that loads only the chunks visible on the screen and

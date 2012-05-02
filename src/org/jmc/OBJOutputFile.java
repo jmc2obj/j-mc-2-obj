@@ -108,7 +108,7 @@ public class OBJOutputFile extends OBJFileBase
 	}
 
 
-	void clearData(boolean remove_duplicates)
+	public void clearData(boolean remove_duplicates)
 	{
 		if(remove_duplicates)
 		{

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
-package org.jmc;
+package org.jmc.gui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
+
 
 
 /**

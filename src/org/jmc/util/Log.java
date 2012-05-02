@@ -5,7 +5,7 @@ import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
 
-import org.jmc.MainWindow;
+import org.jmc.gui.MainWindow;
 
 
 /**
