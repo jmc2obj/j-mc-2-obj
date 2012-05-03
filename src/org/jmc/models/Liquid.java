@@ -105,10 +105,11 @@ public class Liquid extends BlockModel
 			/*
 			 * Calculate corner heights
 			 * 
-			 * TODO The here doesn't exactly match Minecraft's. Specifically, I can't figure out 
-			 * how Minecraft determines the situations when the corners should be drawn *lower* 
-			 * than the block's own level. The hack implemented here (the conditions involving 
-			 * same_down) produces the correct result in some situations but not all.
+			 * TODO The logic here doesn't exactly match Minecraft's. Specifically, I can't 
+			 * figure out how Minecraft determines the situations when the corners should be 
+			 * drawn *lower* than the block's own level. The hack implemented here (the 
+			 * conditions involving same_down) produces the correct result in some situations 
+			 * but not all.
 			 */
 			if (same_up_nw || same_up_n || same_up_w)
 				h_nw = 0.5f;

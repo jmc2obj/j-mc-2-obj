@@ -1,5 +1,7 @@
 package org.jmc;
 
+import java.io.File;
+
 
 /**
  * Holds the global options for the program.
@@ -8,6 +10,12 @@ package org.jmc;
  */
 public class Options
 {
+
+	public enum UIMode
+	{
+		GUI,
+		CONSOLE
+	}
 
 	public enum OffsetType
 	{
@@ -25,12 +33,42 @@ public class Options
 
 
 	/**
-	 * How to scale the coordinates of the exported region.
+	 * User interface mode.
+	 */
+	public static UIMode uiMode = UIMode.GUI; 
+	
+	/**
+	 * Output directory.
+	 */
+	public static File outputDir = new File(".");
+	
+	/**
+	 * Path to the Minecraft world save directory. 
+	 */
+	public static File worldDir = null;
+
+	/**
+	 * Id of the world dimension to export.
+	 */
+	public static int dimension = 0;
+	
+	/**
+	 * Lower bound of the volume to export.
+	 */
+	public static int minX=-32, minY=0, minZ=-32;
+	
+	/**
+	 * Upper bound of the volume to export.
+	 */
+	public static int maxX=32, maxY=256, maxZ=32;
+	
+	/**
+	 * How to scale the exported geometry.
 	 */
 	public static float scale = 1.0f;
 	
 	/**
-	 * How to offset the coordinates of the exported region.
+	 * How to offset the coordinates of the exported geometry.
 	 */
 	public static OffsetType offsetType = OffsetType.NONE;
 

@@ -9,20 +9,18 @@ import org.jmc.Chunk.Blocks;
 
 public class ChunkDataBuffer {
 
-	private Rectangle boundaries;
-	private int export_ymin,export_ymax;
+	private Rectangle xzBoundaries;
+	private Rectangle xyBoundaries;
 	Map<Point,Blocks> chunks;
 	
 	private boolean is_anvil;
 	
-	public ChunkDataBuffer(Rectangle block_boundaries, int ymin, int ymax)
+	public ChunkDataBuffer(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
 	{
-		boundaries=block_boundaries;
-		export_ymin=ymin;
-		export_ymax=ymax;
+		xzBoundaries = new Rectangle(xmin, zmin, xmax-xmin, zmax-zmin);
+		xyBoundaries = new Rectangle(xmin, ymin, xmax-xmin, ymax-ymin);
 		
 		chunks=new HashMap<Point, Blocks>();
-	
 	}
 	
 	public void addChunk(Chunk chunk)
@@ -64,17 +62,12 @@ public class ChunkDataBuffer {
 	
 	public Rectangle getXZBoundaries()
 	{
-		return boundaries;
+		return xzBoundaries;
 	}
 	
 	public Rectangle getXYBoundaries()
 	{
-		Rectangle ret=new Rectangle();
-		ret.x=boundaries.x;
-		ret.y=export_ymin;
-		ret.width=boundaries.width;
-		ret.height=export_ymax-export_ymin;
-		return ret;
+		return xyBoundaries;
 	}
 	
 	public short getBlockID(int x, int y, int z)

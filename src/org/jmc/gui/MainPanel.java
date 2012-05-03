@@ -43,6 +43,7 @@ import javax.swing.text.BadLocationException;
 
 import org.jmc.ChunkLoaderThread;
 import org.jmc.LevelDat;
+import org.jmc.Options;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
 import org.jmc.util.Filesystem;
@@ -83,12 +84,6 @@ public class MainPanel extends JPanel
 	 */
 	private ChunkLoaderThread chunk_loader=null;
 
-	/**
-	 * Reference to the loaded file used by the export function to
-	 * be able to save the last loaded file.
-	 */
-	private File save_dir=null;
-	
 	private boolean slider_pressed=false;
 
 	/**
@@ -248,16 +243,16 @@ public class MainPanel extends JPanel
 		{			
 			public void actionPerformed(ActionEvent e)
 			{
-				String map=(String) cbPath.getSelectedItem();
-				int dimension=(Integer) cbDimension.getSelectedItem();
-				save_dir=new File(map);
-				if(!save_dir.exists() || !save_dir.isDirectory())
+				Options.worldDir=new File(cbPath.getSelectedItem().toString());
+				if(!Options.worldDir.exists() || !Options.worldDir.isDirectory())
 				{
 					JOptionPane.showMessageDialog(null, "Enter correct dir!");
+					Options.worldDir=null;
 					return;
 				}
+				Options.dimension=(Integer) cbDimension.getSelectedItem();
 
-				LevelDat levelDat=new LevelDat(save_dir);
+				LevelDat levelDat=new LevelDat(Options.worldDir);
 
 				if(!levelDat.open())
 				{
@@ -287,11 +282,11 @@ public class MainPanel extends JPanel
 				if(chunk_loader!=null && chunk_loader.isRunning())
 					chunk_loader.stopRunning();
 
-				//chunk_loader=new FullChunkLoaderThread(preview, savepath);
-				chunk_loader=new ViewChunkLoaderThread(preview, save_dir, dimension);
+				//chunk_loader=new FullChunkLoaderThread(preview);
+				chunk_loader=new ViewChunkLoaderThread(preview);
 				(new Thread(chunk_loader)).start();
 				
-				MainWindow.settings.setLastLoadedMap(map);
+				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
 			}
 		});
 
@@ -300,27 +295,28 @@ public class MainPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				if(save_dir==null)
+				if(Options.worldDir==null)
 				{
 					JOptionPane.showMessageDialog(null, "You have to load a file first!");
 					return;
 				}
-				int dimension=(Integer) cbDimension.getSelectedItem();
+				Options.dimension=(Integer) cbDimension.getSelectedItem();
 
-				int ymin=0;
-				int ymax=256;
 				Rectangle rect=preview.getSelectionBounds();
-
 				if(rect.width==0 || rect.height==0)
 				{
 					JOptionPane.showMessageDialog(null, "Click and drag the left mouse button to make a selection first!");
 					return;
 				}
+				Options.minX = rect.x;
+				Options.maxX = rect.x + rect.width;
+				Options.minZ = rect.y;
+				Options.maxZ = rect.y + rect.height;
 
-				ymin=sFloor.getValue();
-				ymax=sCeil.getValue();
+				Options.minY = sFloor.getValue();
+				Options.maxY = sCeil.getValue();
 
-				OBJExportPanel export_thread = new OBJExportPanel(save_dir, dimension, rect, ymin, ymax);
+				OBJExportPanel export_thread = new OBJExportPanel();
 
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;

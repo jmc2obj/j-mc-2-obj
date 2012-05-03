@@ -5,6 +5,8 @@ import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
 
+import org.jmc.Options;
+import org.jmc.Options.UIMode;
 import org.jmc.gui.MainWindow;
 
 
@@ -26,19 +28,20 @@ public class Log
 
 	/**
 	 * Logs an informational message to stdout.
-	 * If the UI is up, it will also be shown in the messages area of the main window.
+	 * If the GUI is up, it will also be shown in the messages area of the main window.
 	 * 
 	 * @param msg string to be logged
 	 */
 	public static void info(String msg)
 	{
 		System.out.println(msg);
-		MainWindow.log(msg);
+		if (Options.uiMode == UIMode.GUI)
+			MainWindow.log(msg);
 	}
 
 	/**
 	 * Logs an error message to stderr.
-	 * If the UI is up, it will also be shown in a popup window, and the stack trace 
+	 * If the GUI is up, it will also be shown in a popup window, and the stack trace 
 	 * written to the messages area of the main window.
 	 * 
 	 * @param msg string to be logged
@@ -50,18 +53,21 @@ public class Log
 		if (ex != null)
 			ex.printStackTrace();
 		
-		if (ex != null)
+		if (Options.uiMode == UIMode.GUI)
 		{
-			JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
-			
-			// write the full stack trace to the message area
-			final StringWriter sw = new StringWriter();
-		    ex.printStackTrace(new PrintWriter(sw));
-			MainWindow.log(sw.toString());
-		}
-		else
-		{
-			JOptionPane.showMessageDialog(MainWindow.main, msg);
+			if (ex != null)
+			{
+				JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+				
+				// write the full stack trace to the message area
+				final StringWriter sw = new StringWriter();
+			    ex.printStackTrace(new PrintWriter(sw));
+				MainWindow.log(sw.toString());
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(MainWindow.main, msg);
+			}
 		}
 	}
 
