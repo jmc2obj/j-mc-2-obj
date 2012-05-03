@@ -8,8 +8,6 @@ import org.jmc.geom.Vertex;
 
 /**
  * Model for minecart rails.
- * 
- * TODO: fix normal in inclined rail
  */
 public class Rails extends BlockModel
 {

@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import org.jmc.Chunk;
 import org.jmc.ChunkLoaderThread;
+import org.jmc.Options;
 import org.jmc.Region;
 import org.jmc.gui.PreviewPanel.ChunkImage;
 
@@ -40,7 +41,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	/**
 	 * Path to world save.
 	 */
-	private File savepath;
+	private File worldPath;
 	/**
 	 * Dimension id
 	 */
@@ -75,13 +76,13 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	/**
 	 * Main constructor.
 	 * @param preview reference to the preview panel
-	 * @param savepath path to the world save
+	 * @param worldDir path to the world save
 	 * @param dimension Dimension to load chunks from.
 	 */
-	public ViewChunkLoaderThread(PreviewPanel preview, File savepath, int dimension) {
+	public ViewChunkLoaderThread(PreviewPanel preview) {
 		this.preview=preview;
-		this.savepath=savepath;
-		this.dimension=dimension;
+		this.worldPath=Options.worldDir;
+		this.dimension=Options.dimension;
 
 		chunk_images=preview.getChunkImages();
 
@@ -166,7 +167,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						if(loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz)) continue;
 
 						try {
-							region=Region.findRegion(savepath, dimension, cx, cz);
+							region=Region.findRegion(worldPath, dimension, cx, cz);
 							chunk=region.getChunk(cx, cz);
 						} catch (Exception e) {
 							continue;
