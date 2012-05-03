@@ -193,10 +193,13 @@ public class MainPanel extends JPanel
 					if(sCeil.getValue()<=sFloor.getValue())
 						sCeil.setValue(sFloor.getValue()+1);
 				}
-				if(!slider_pressed) 
-					chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
-				preview.repaint();
+				if(Options.worldDir!=null)
+				{
+					if(!slider_pressed) 
+						chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+					preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
+					preview.repaint();
+				}
 			}
 		};
 		MouseInputAdapter slider_adapter=new MouseInputAdapter() {
@@ -208,7 +211,10 @@ public class MainPanel extends JPanel
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				slider_pressed=false;
-				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+				if(Options.worldDir!=null)
+				{
+					chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+				}
 			}
 		};
 		
@@ -284,6 +290,7 @@ public class MainPanel extends JPanel
 
 				//chunk_loader=new FullChunkLoaderThread(preview);
 				chunk_loader=new ViewChunkLoaderThread(preview);
+				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
 				(new Thread(chunk_loader)).start();
 				
 				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
@@ -297,7 +304,7 @@ public class MainPanel extends JPanel
 			{
 				if(Options.worldDir==null)
 				{
-					JOptionPane.showMessageDialog(null, "You have to load a file first!");
+					JOptionPane.showMessageDialog(MainWindow.main, "You have to load a file first!");
 					return;
 				}
 				Options.dimension=(Integer) cbDimension.getSelectedItem();
@@ -305,7 +312,7 @@ public class MainPanel extends JPanel
 				Rectangle rect=preview.getSelectionBounds();
 				if(rect.width==0 || rect.height==0)
 				{
-					JOptionPane.showMessageDialog(null, "Click and drag the left mouse button to make a selection first!");
+					JOptionPane.showMessageDialog(MainWindow.main, "Click and drag the left mouse button to make a selection first!");
 					return;
 				}
 				Options.minX = rect.x;
