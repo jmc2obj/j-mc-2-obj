@@ -15,7 +15,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.jmc.gui.ProgessDisplay;
 import org.jmc.util.Log;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Xml;
@@ -126,9 +125,11 @@ public class Texsplit
 	 * 
 	 * @param destination Directory to place the output files.
 	 * @param texturePack A Minecraft texture pack file. If null, will use minecraft's default textures.
+	 * @param alphas Whether to export separate alpha masks.
+	 * @param progress If not null, the exporter will invoke this callback to inform on the operation's progress.
 	 * @throws Exception if there is an error.
 	 */
-	public static void splitTextures(File destination, File texturePack, boolean alphas, ProgessDisplay progress) throws Exception
+	public static void splitTextures(File destination, File texturePack, boolean alphas, ProgressCallback progress) throws Exception
 	{
 		if(destination==null)
 			throw new IllegalArgumentException("destination cannot be null");
@@ -155,11 +156,8 @@ public class Texsplit
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
 		NodeList fileNodes = (NodeList)xpath.evaluate("/texsplit/file", doc, XPathConstants.NODESET);
-		if(progress!=null) progress.setProgressMax(fileNodes.getLength());
 		for (int i = 0; i < fileNodes.getLength(); i++)
 		{
-			if(progress!=null) progress.setProgress(i);
-
 			Node fileNode = fileNodes.item(i);
 			String source = Xml.getAttribute(fileNode, "source", "texturepack");
 			String fileName = Xml.getAttribute(fileNode, "name");
@@ -222,8 +220,10 @@ public class Texsplit
 				}
 
 			}
-		}
 
+			if (progress != null)
+				progress.setProgress((i+1) / (float)fileNodes.getLength());
+		}
 	}
 
 }

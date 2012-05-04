@@ -90,7 +90,7 @@ public class ObjExporter
 
 
 				int progress_count=0;
-				float progress_max=(cxe-cxs)*(cze-czs);
+				float progress_max=(cxe-cxs+1)*(cze-czs+1);
 
 				ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY, Options.maxY, Options.minZ, Options.maxZ);
 
@@ -148,6 +148,8 @@ public class ObjExporter
 
 				obj_writer.close();
 
+				if (progress != null)
+					progress.setProgress(1);					
 				Log.info("Saved model to "+objfile.getAbsolutePath());
 
 
@@ -175,7 +177,7 @@ public class ObjExporter
 	
 				FaceFile current_ff=null;
 	
-				int maxcount=(int)vertexfile.length();
+				int maxcount=(int)objfile.length();
 				if(maxcount==0) maxcount=1;
 				int count=0;
 	
@@ -290,7 +292,10 @@ public class ObjExporter
 				main.close();
 	
 				Filesystem.moveFile(mainfile, objfile);
-	
+
+				if (progress != null)
+					progress.setProgress(1);					
+				
 				if(!tmpdir.delete())
 					Log.error("Failed to erase temp dir: "+tmpdir.getAbsolutePath()+"\nPlease remove it yourself!", null);
 			}
