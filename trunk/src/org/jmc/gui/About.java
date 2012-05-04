@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.jmc.Version;
+
 
 public class About {
 	
 	private static boolean initialized=false; 
-	private static String version="0.15-dev";
-	private static String revision="r153";
 	
 	private static void init()
 	{
@@ -22,7 +22,7 @@ public class About {
 		
 		msg+="<div style=\"font-size:24pt\">jMC2Obj</div>";
 		msg+="<div style=\"font-size:14pt\">A Java Minecraft to OBJ converter</div>";
-		msg+="<div style=\"font-size:12pt;margin-bottom:20px\">version: "+version+" build "+revision+"</div>";
+		msg+="<div style=\"font-size:12pt;margin-bottom:20px\">version: "+Version.VERSION+" build "+Version.REVISION+"</div>";
 		
 		List<String> developer_list=new LinkedList<String>();
 		

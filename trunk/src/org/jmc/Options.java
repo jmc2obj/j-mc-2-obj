@@ -43,9 +43,14 @@ public class Options
 	public static File outputDir = new File(".");
 	
 	/**
-	 * Path to the Minecraft world save directory. 
+	 * Path to the Minecraft world save directory.
 	 */
 	public static File worldDir = null;
+
+	/**
+	 * Path to the texture pack to extract.
+	 */
+	public static File texturePack = null;
 
 	/**
 	 * Id of the world dimension to export.
@@ -73,14 +78,9 @@ public class Options
 	public static OffsetType offsetType = OffsetType.NONE;
 
 	/**
-	 * Custom offset X
+	 * Custom offset.
 	 */
-	public static int offsetX = 0;
-	
-	/**
-	 * Custom offset Z
-	 */
-	public static int offsetZ = 0;
+	public static int offsetX=0, offsetZ=0;
 	
 	/**
 	 * If true, will export a separate object for each material.
@@ -93,12 +93,32 @@ public class Options
 	public static boolean removeDuplicates = false;
 
 	/**
+	 * Whether to export the .obj file.
+	 * Only used in console mode.
+	 */
+	public static boolean exportObj = true;
+
+	/**
+	 * Whether to export the .mtl file.
+	 * Only used in console mode.
+	 */
+	public static boolean exportMtl = true;
+
+	/**
+	 * Whether to export the textures.
+	 * Only used in console mode.
+	 */
+	public static boolean exportTex = false;
+
+	/**
 	 * Whether to overwrite .OBJ files on export.
+	 * Only used in GUI mode.
 	 */
 	public static OverwriteAction objOverwriteAction = OverwriteAction.ASK;
 	
 	/**
 	 * Whether to overwrite .MTL files on export.
+	 * Only used in GUI mode.
 	 */
 	public static OverwriteAction mtlOverwriteAction = OverwriteAction.ASK;
 

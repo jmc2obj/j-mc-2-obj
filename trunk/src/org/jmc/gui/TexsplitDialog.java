@@ -17,12 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
+import org.jmc.ProgressCallback;
 import org.jmc.Texsplit;
 import org.jmc.util.Log;
 
 @SuppressWarnings("serial")
-public class TexsplitDialog extends JFrame implements ProgessDisplay {
-
+public class TexsplitDialog extends JFrame
+{
 	JTextField tfDest;
 	JCheckBox cbAlpha;
 	JProgressBar progress;
@@ -65,24 +66,23 @@ public class TexsplitDialog extends JFrame implements ProgessDisplay {
 		pButtons.add(bCustom);
 		
 		progress=new JProgressBar();
+		progress.setMaximum(100);
 		progress.setStringPainted(true);		
 
 		bMinecraft.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
 				texturepack=null;
 				destination=new File(tfDest.getText());
 				alphas=cbAlpha.isSelected();
 				
-				new TexsplitThread(TexsplitDialog.this).start();								
+				doExport();
 			}
 		});
 		
 		bCustom.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
 				alphas=cbAlpha.isSelected();
 				destination=new File(tfDest.getText());
 				JFileChooser jfc=new JFileChooser();
@@ -91,7 +91,7 @@ public class TexsplitDialog extends JFrame implements ProgessDisplay {
 				if(retval!=JFileChooser.APPROVE_OPTION) return;
 				texturepack=jfc.getSelectedFile();
 				
-				new TexsplitThread(TexsplitDialog.this).start();				
+				doExport();
 			}
 		});
 
@@ -123,46 +123,28 @@ public class TexsplitDialog extends JFrame implements ProgessDisplay {
 		return alphas;
 	}
 
-	@Override
-	public void setProgressMax(int val) {
-		progress.setMaximum(val);
-		
-	}
-
-	@Override
-	public void setProgress(int val) {
-		progress.setValue(val);
-		
-	}
-
-	@Override
-	public void setProgressPercent(float val) {
-		progress.setMaximum(100);
-		progress.setValue((int)val);
-		
-	}
-
-}
-
-class TexsplitThread extends Thread
-{
-	TexsplitDialog dialog;
-	
-	public TexsplitThread(TexsplitDialog dialog) 
+	private void doExport()
 	{
-		this.dialog=dialog;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Texsplit.splitTextures(
+							getDestination(), getTexturepack(), getAlphas(),
+							new ProgressCallback() {
+								@Override
+								public void setProgress(float value) {
+									progress.setValue((int)(100 * value));
+								}
+							});
+				}
+				catch (Exception e) {
+					Log.error("Error saving textures:", e);
+				}			
+				TexsplitDialog.this.dispose();
+			}
+		});
+		t.start();								
 	}
-	
-	@Override
-	public void run() {		
-		
-		try {
-			Texsplit.splitTextures(dialog.getDestination(),dialog.getTexturepack(),dialog.getAlphas(),dialog);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.error("Error saving textures:", e);
-		}			
-		
-		dialog.dispose();		
-	}	
+
 }
