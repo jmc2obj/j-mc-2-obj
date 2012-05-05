@@ -85,6 +85,8 @@ public class Mesh extends BlockModel
 	@Override
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
+		if(data<0) data=(byte) (16+data);
+		
 		if(objects[data]==null) return; 
 		
 		MeshObject object=objects[data];
