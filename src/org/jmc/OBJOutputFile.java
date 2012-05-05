@@ -16,13 +16,11 @@ import java.util.Map;
 
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
-import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
-import org.jmc.models.Cube;
 
 
 /**
