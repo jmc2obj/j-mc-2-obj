@@ -27,7 +27,7 @@ public class About {
 		List<String> developer_list=new LinkedList<String>();
 		
 		developer_list.add("Max Tangelder - programming");
-		developer_list.add("Danijel Kor�inek - programming");		
+		developer_list.add("Danijel Kor&#x017e;inek - programming");		
 		developer_list.add("Pedro Lopes - programming");
 		
 		//I hate ordering people so I used this trick...
