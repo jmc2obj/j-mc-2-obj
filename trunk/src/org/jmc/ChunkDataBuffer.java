@@ -3,9 +3,11 @@ package org.jmc;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jmc.Chunk.Blocks;
+import org.jmc.NBT.TAG_Compound;
 
 public class ChunkDataBuffer {
 
@@ -118,5 +120,29 @@ public class ChunkDataBuffer {
 			if(y>=128) return 0;
 			return blocks.data[y + (rz * 128) + (rx * 128) * 16];			
 		}
+	}
+	
+	public List<TAG_Compound> getEntities(int cx, int cz)
+	{
+		Point chunk_p=new Point();
+		chunk_p.x=cx;
+		chunk_p.y=cz;
+		
+		Blocks blocks=chunks.get(chunk_p);
+		if(blocks==null) return null;
+		
+		return blocks.entities;
+	}
+	
+	public List<TAG_Compound> getTileEntities(int cx, int cz)
+	{
+		Point chunk_p=new Point();
+		chunk_p.x=cx;
+		chunk_p.y=cz;
+		
+		Blocks blocks=chunks.get(chunk_p);
+		if(blocks==null) return null;
+		
+		return blocks.tile_entities;
 	}
 }

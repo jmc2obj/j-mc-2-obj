@@ -22,7 +22,7 @@ public class TAG_String extends NBT_Tag {
 	/**
 	 * Text string stored in this tag.
 	 */
-	String value;
+	public String value;
 	
 	/**
 	 * Main constructor.
