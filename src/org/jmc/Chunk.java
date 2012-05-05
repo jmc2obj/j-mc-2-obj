@@ -11,6 +11,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
@@ -118,6 +120,8 @@ public class Chunk {
 		{
 			id=new short[num];
 			data=new byte[num];
+			entities=new LinkedList<TAG_Compound>();
+			tile_entities=new LinkedList<TAG_Compound>();
 		}
 		/**
 		 * Block IDs.
@@ -127,6 +131,16 @@ public class Chunk {
 		 * Block meta-data.
 		 */
 		public byte [] data;
+		
+		/**
+		 * Entities.
+		 */
+		public List<TAG_Compound> entities;
+		
+		/**
+		 * Tile entities.
+		 */
+		public List<TAG_Compound> tile_entities;
 	}
 
 	/**
@@ -135,12 +149,12 @@ public class Chunk {
 	 */
 	public Blocks getBlocks()
 	{		
-		Blocks ret=null;
+		Blocks ret=null;		
+		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 		
 		if(is_anvil)
 		{
-			int ymax=0;
-			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			int ymax=0;			
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			for(NBT_Tag section: sections.elements)
 			{
@@ -190,7 +204,6 @@ public class Chunk {
 		}
 		else
 		{
-			TAG_Compound level = (TAG_Compound) root.getElement("Level");
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
@@ -206,6 +219,25 @@ public class Chunk {
 				add2=(byte) (data.data[i]>>4);
 				ret.data[2*i]=add1;
 				ret.data[2*i+1]=add2;
+			}
+		}
+		
+		TAG_List entities = (TAG_List) level.getElement("Entities");
+		if(entities!=null && entities.elements.length>0)
+		{
+			for(int i=0; i<entities.elements.length; i++)
+			{
+				ret.entities.add((TAG_Compound)entities.elements[i]);
+			}
+		}
+		
+		
+		TAG_List tile_entities = (TAG_List) level.getElement("TileEntities");
+		if(tile_entities!=null && tile_entities.elements.length>0)
+		{
+			for(int i=0; i<tile_entities.elements.length; i++)
+			{
+				ret.tile_entities.add((TAG_Compound)tile_entities.elements[i]);
 			}
 		}
 		
