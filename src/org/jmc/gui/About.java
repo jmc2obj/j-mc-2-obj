@@ -45,6 +45,7 @@ public class About {
 		donations.add("Hilum");
 		donations.add("The Pixel Artist");
 		donations.add("Justin \"Rip_Shot\" Goran");
+		donations.add("Slamacow Creations");
 		
 		Collections.shuffle(donations);
 		
