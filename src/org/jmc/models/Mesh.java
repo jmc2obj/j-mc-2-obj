@@ -11,10 +11,11 @@ import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.OBJOutputFile;
+import org.jmc.entities.EntityModel;
 import org.jmc.geom.Transform;
 import org.jmc.util.Log;
 
-public class Mesh extends BlockModel 
+public class Mesh extends BlockModel implements EntityModel
 {
 	
 	private static Map<String,OBJInputFile> files=null;
@@ -34,6 +35,11 @@ public class Mesh extends BlockModel
 	{
 		if(files==null) files=new HashMap<String, OBJInputFile>();
 		objects=new LinkedList<MeshObject>();
+	}
+	
+	public void addMesh(String objectstr)
+	{
+		addMesh(objectstr,(byte)-1,(byte)0);
 	}
 	
 	public void addMesh(String objectstr, byte data, byte mask)
@@ -91,7 +97,7 @@ public class Mesh extends BlockModel
 		{
 			if(object.data>=0)
 			{
-				if(object.mask>=0)
+				if(object.mask>0)
 				{
 					if((data&object.mask)!=object.data) continue;
 				}
@@ -106,6 +112,14 @@ public class Mesh extends BlockModel
 			
 			object.file.addObject(object.group, translate, obj);
 		}
+	}
+
+	@Override
+	public void addEntity(OBJOutputFile obj, Transform transform) 
+	{
+		if(objects.size()==0) return;
+		MeshObject object=objects.get(0);
+		object.file.addObject(object.group, transform, obj);
 	}
 
 }

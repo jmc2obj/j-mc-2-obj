@@ -108,4 +108,42 @@ public class Transform
 		ret=multiply(trans);
 		matrix=ret.matrix;
 	}
+
+	public void rotate2(float yaw, float pitch, float roll)
+	{
+		//TODO: check if this works correctly
+		//convert to rad
+		roll=(float) (roll*Math.PI/180.0);
+		pitch=(float) (pitch*Math.PI/180.0);
+		yaw=(float) (yaw*Math.PI/180.0);
+
+		identity();
+		Transform ret;
+		Transform trans=new Transform();
+
+		trans.matrix[0][0]=(float) Math.cos(yaw);
+		trans.matrix[0][2]=(float) -Math.sin(yaw);
+		trans.matrix[2][0]=(float) Math.sin(yaw);
+		trans.matrix[2][2]=(float) Math.cos(yaw);
+		ret=multiply(trans);
+		matrix=ret.matrix;
+
+		trans.identity();				
+		trans.matrix[1][1]=(float) Math.cos(pitch);
+		trans.matrix[1][2]=(float) -Math.sin(pitch);
+		trans.matrix[2][1]=(float) Math.sin(pitch);
+		trans.matrix[2][2]=(float) Math.cos(pitch);
+
+		ret=multiply(trans);
+		matrix=ret.matrix;
+
+		trans.identity();
+		trans.matrix[0][0]=(float) Math.cos(roll);
+		trans.matrix[0][1]=(float) -Math.sin(roll);
+		trans.matrix[1][0]=(float) Math.sin(roll);
+		trans.matrix[1][1]=(float) Math.cos(roll);
+
+		ret=multiply(trans);
+		matrix=ret.matrix;
+	}
 }

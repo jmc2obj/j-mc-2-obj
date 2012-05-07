@@ -53,6 +53,7 @@ public class Main
 			Configuration.initialize();
 			Materials.initialize();
 			BlockTypes.initialize();
+			EntityTypes.initialize();
 		}
 		catch (Exception e) {
 			Log.error("Error reading configuration file:", e);
