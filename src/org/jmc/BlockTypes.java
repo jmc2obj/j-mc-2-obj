@@ -132,14 +132,16 @@ public class BlockTypes
 					Node meshNode = meshNodes.item(j);
 					
 					int data = Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
+					int mask = Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
+					
 					String meshstr = meshNode.getTextContent();
-					if (data < -1 || data > 15 || meshstr.trim().isEmpty())
+					if (data < -1 || data > 15 || mask < -1 || mask > 15 || meshstr.trim().isEmpty())
 					{
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
 					}
 					
-					mesh.addMesh(meshstr, data);
+					mesh.addMesh(meshstr, (byte)data, (byte)mask);
 					
 				}
 			}

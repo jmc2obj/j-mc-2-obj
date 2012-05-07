@@ -3,6 +3,8 @@ package org.jmc.models;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.jmc.ChunkDataBuffer;
@@ -19,26 +21,28 @@ public class Mesh extends BlockModel
 	
 	private class MeshObject
 	{
+		byte data;
+		byte mask;
+		
 		OBJInputFile file;
 		OBJGroup group;		
 	}
 	
-	private MeshObject objects[];
+	private List<MeshObject> objects;
 	
 	public Mesh()
 	{
 		if(files==null) files=new HashMap<String, OBJInputFile>();
-		objects=new MeshObject[16];
+		objects=new LinkedList<MeshObject>();
 	}
 	
-	public void addMesh(String objectstr, int data)
+	public void addMesh(String objectstr, byte data, byte mask)
 	{
 		String [] tok=objectstr.trim().split("#");
 		String filename=tok[0];
 				
 		OBJInputFile objin=null;
-		
-		
+				
 		if(files.containsKey(filename))
 			objin=files.get(filename);
 		else
@@ -70,15 +74,11 @@ public class Mesh extends BlockModel
 		
 		MeshObject object=new MeshObject();
 		object.group=group;
-		object.file=objin;
+		object.file=objin;		
+		object.mask=mask;
+		object.data=data;
 		
-		if(data<0)
-		{
-			for(int i=0; i<16; i++)
-				objects[i]=object;
-		}
-		else
-			objects[data]=object;
+		objects.add(object);
 		
 	}
 
@@ -87,14 +87,25 @@ public class Mesh extends BlockModel
 	{
 		if(data<0) data=(byte) (16+data);
 		
-		if(objects[data]==null) return; 
-		
-		MeshObject object=objects[data];
-
-		Transform translate = new Transform();
-		translate.translate(x, y, z);		
-
-		object.file.addObject(object.group, translate, obj);
+		for(MeshObject object:objects)
+		{
+			if(object.data>=0)
+			{
+				if(object.mask>=0)
+				{
+					if((data&object.mask)!=object.data) continue;
+				}
+				else
+				{
+					if(object.data!=data) continue;
+				}
+			}
+			
+			Transform translate = new Transform();
+			translate.translate(x, y, z);		
+			
+			object.file.addObject(object.group, translate, obj);
+		}
 	}
 
 }
