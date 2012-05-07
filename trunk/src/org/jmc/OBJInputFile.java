@@ -149,9 +149,16 @@ public class OBJInputFile extends OBJFileBase
 				String [] vs=line.substring(2).split("\\s+");	
 				if(vs.length < 3)
 				{
-					Log.info("ERROR wrong number of vertices in face in file "+objfile.getName()+"["+line_count+"]");
+					Log.error("ERROR wrong number of vertices in face in file "+objfile.getName()+"["+line_count+"]",null);
 					continue;
 				}
+				
+				if(vs.length == 3)
+				{
+					Log.error("ERROR triangles in input OBJ are not supported at thjs time: "+objfile.getName()+"["+line_count+"]",null);
+					continue;
+				}
+				
 				Face f=new Face(vs.length);
 				boolean has_uv=false;
 				boolean has_norm=false;
