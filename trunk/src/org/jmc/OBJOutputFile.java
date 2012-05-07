@@ -18,6 +18,7 @@ import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
+import org.jmc.entities.Entity;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -376,17 +377,14 @@ public class OBJOutputFile extends OBJFileBase
 		
 		for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
 		{
-			TAG_String id = (TAG_String) entity.getElement("id");
-			if(id==null) continue;
-			
-			if(id.value.equals("Minecart"))
-			{
-				TAG_List pos = (TAG_List) entity.getElement("Pos");
-				int ex=(int)((TAG_Double)pos.getElement(0)).value;				
-				int ey=(int)((TAG_Double)pos.getElement(1)).value;
-				int ez=(int)((TAG_Double)pos.getElement(2)).value;
-				BlockTypes.get((short)5).model.addModel(this, chunk, ex, ey, ez, (byte)0);
-			}
+			Entity handler=EntityTypes.getEntity(entity);
+			if(handler!=null) handler.addEntity(this, entity);						
+		}
+		
+		for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
+		{
+			Entity handler=EntityTypes.getEntity(entity);
+			if(handler!=null) handler.addEntity(this, entity);						
 		}
 	}
 
