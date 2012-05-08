@@ -15,9 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_Double;
-import org.jmc.NBT.TAG_List;
-import org.jmc.NBT.TAG_String;
 import org.jmc.entities.Entity;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -215,12 +212,18 @@ public class OBJOutputFile extends OBJFileBase
 				last_mtl=f.mtl;
 			}
 
-			out.format((Locale)null,
-					"f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", 
-					f.vertices[0], f.uv[0], f.normals[0],
-					f.vertices[1], f.uv[1], f.normals[1],
-					f.vertices[2], f.uv[2], f.normals[2],
-					f.vertices[3], f.uv[3], f.normals[3]);
+			out.print("f");
+			for (int i = 0; i < f.vertices.length; i++)
+			{
+				if (f.normals != null && f.uv != null)
+					out.format((Locale)null, " %d/%d/%d", f.vertices[i], f.uv[i], f.normals[i]);
+				else if (f.normals == null && f.uv != null)
+					out.format((Locale)null, " %d/%d", f.vertices[i], f.uv[i]);
+				else if (f.normals != null && f.uv == null)
+					out.format((Locale)null, " %d//%d", f.vertices[i], f.normals[i]);
+				else
+					out.format((Locale)null, " %d", f.vertices[i]);
+			}
 			out.println();
 		}
 	}
@@ -229,43 +232,52 @@ public class OBJOutputFile extends OBJFileBase
 	/**
 	 * Add a face with the given vertices to the OBJ file.
 	 * 
-	 * @param verts vertices of the face (length must be 4)
-	 * @param uv texture coordinates for the vertices (length must be 4). If null, the default coordinates will be used.
+	 * @param verts vertices of the face
+	 * @param uv texture coordinates for the vertices. If null, the default coordinates will be used
+	 * (only accepted if face is a quad!).
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
 	 */
 	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl)
 	{
-		addFace(verts, null, uv, trans, mtl);
-	}
-	
-	/**
-	 * Add a face with the given vertices to the OBJ file.
-	 * TODO accept faces with any number of vertices 
-	 * TODO ignoring normals for now (must also apply transform to normals!)
-	 * 
-	 * @param verts vertices of the face (length must be 4)
-	 * @param norms normals for the vertices (length must be 4). If null, no normals will be written to file.
-	 * @param uv texture coordinates for the vertices (length must be 4). If null, the default coordinates will be used.
-	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
-	 * @param mtl Name of the material for the face
-	 */
-	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
-	{
 		if (uv == null)
 		{
-			uv = new UV[] { 
+			if (verts.length != 4)
+				throw new IllegalArgumentException("Default texture coordinates are only defined for quads.");
+			
+			uv = new UV[] {
 				new UV(0,0),
 				new UV(1,0), 
 				new UV(1,1), 
 				new UV(0,1) 
 			};
 		}
+		addFace(verts, null, uv, trans, mtl);
+	}
+	
+	/**
+	 * Add a face with the given vertices to the OBJ file.
+	 * 
+	 * @param verts vertices of the face
+	 * @param norms normals for the vertices. If null, no normals will be written to file.
+	 * @param uv texture coordinates for the vertices. If null, no uv coords will be written to file.
+	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
+	 * @param mtl Name of the material for the face
+	 */
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	{
+		// TODO must apply transform to normals!
+		if (norms != null && trans != null)
+			throw new UnsupportedOperationException("tranforming normals not implemented");
 			
-		Face face = new Face(4);
-		face.mtl = mtl;		
-		for (int i=0; i<4; i++)
+		Face face = new Face(verts.length);
+		face.mtl = mtl;
+		if (norms == null) face.normals = null;
+		if (uv == null) face.uv = null;
+
+		for (int i = 0; i < verts.length; i++)
 		{
+			// add vertices
 			Vertex vert;
 			if (trans != null)
 				vert = trans.multiply(verts[i]);
@@ -283,49 +295,40 @@ public class OBJOutputFile extends OBJFileBase
 				face.vertices[i] = vertex_counter;
 				vertex_counter++;
 			}
-		}
-		for (int i=0; i<4; i++)
-		{
-			if (texCoordMap.containsKey(uv[i]))				
+			
+			// add normals
+			if (norms != null)
 			{
-				face.uv[i] = texCoordMap.get(uv[i]);
+				if (normalsMap.containsKey(norms[i]))				
+				{
+					face.normals[i] = normalsMap.get(norms[i]);
+				}
+				else
+				{
+					normals.add(norms[i]);
+					normalsMap.put(norms[i], norm_counter);
+					face.normals[i] = norm_counter;
+					norm_counter++;
+				}
 			}
-			else
+			
+			// add texture coords
+			if (uv != null)
 			{
-				texCoords.add(uv[i]);
-				texCoordMap.put(uv[i], tex_counter);
-				face.uv[i] = tex_counter;
-				tex_counter++;
+				if (texCoordMap.containsKey(uv[i]))				
+				{
+					face.uv[i] = texCoordMap.get(uv[i]);
+				}
+				else
+				{
+					texCoords.add(uv[i]);
+					texCoordMap.put(uv[i], tex_counter);
+					face.uv[i] = tex_counter;
+					tex_counter++;
+				}
 			}
 		}
 
-
-		// XXX crude normals test
-		
-		Vertex norm = new Vertex(0,0,0);
-		int normIndex;
-		norm.x = (verts[1].y - verts[0].y) * (verts[2].z - verts[0].z) - (verts[1].z - verts[0].z) * (verts[2].y - verts[0].y);
-		norm.y = (verts[1].z - verts[0].z) * (verts[2].x - verts[0].x) - (verts[1].x - verts[0].x) * (verts[2].z - verts[0].z);
-		norm.z = (verts[1].x - verts[0].x) * (verts[2].y - verts[0].y) - (verts[1].y - verts[0].y) * (verts[2].x - verts[0].x);
-		
-		if (normalsMap.containsKey(norm))				
-		{
-			normIndex = normalsMap.get(norm);
-		}
-		else
-		{
-			normals.add(norm);
-			normalsMap.put(norm, norm_counter);
-			normIndex = norm_counter;
-			norm_counter++;
-		}
-		
-		for (int i=0; i<4; i++)
-		{
-			face.normals[i] = normIndex;
-		}		
-		
-		
 		faces.add(face);
 	}
 	

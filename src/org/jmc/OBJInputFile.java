@@ -35,16 +35,13 @@ public class OBJInputFile extends OBJFileBase
 	}
 
 	
-	OBJGroup default_object;
 	Map<String,OBJGroup> objects;
+	OBJGroup default_object;
 
 	
 	public OBJInputFile() 
 	{
 		super();
-		
-		default_object=new OBJGroup();
-		objects=new HashMap<String, OBJGroup>();
 	}
 
 	
@@ -55,13 +52,16 @@ public class OBJInputFile extends OBJFileBase
 	 */
 	public void loadFile(File objfile) throws IOException
 	{
+		objects=new HashMap<String, OBJGroup>();
+		default_object=null;
+		
 		BufferedReader in=new BufferedReader(new FileReader(objfile));
 
 		int vertex_count=1;
 		int uv_count=1;
 		int norm_count=1;
 
-		OBJGroup group=default_object;
+		OBJGroup group=null;
 		String material=null;
 		String line;
 		int line_count=0;
@@ -80,6 +80,7 @@ public class OBJInputFile extends OBJFileBase
 			{
 				group=new OBJGroup();
 				objects.put(line.substring(2).trim(), group);
+				if (default_object==null) default_object=group;
 				continue;
 			}
 
@@ -153,12 +154,6 @@ public class OBJInputFile extends OBJFileBase
 					continue;
 				}
 				
-				if(vs.length == 3)
-				{
-					Log.error("ERROR triangles in input OBJ are not supported at thjs time: "+objfile.getName()+"["+line_count+"]",null);
-					continue;
-				}
-				
 				Face f=new Face(vs.length);
 				boolean has_uv=false;
 				boolean has_norm=false;
@@ -221,6 +216,15 @@ public class OBJInputFile extends OBJFileBase
 				if(!has_uv) f.uv=null;
 				if(!has_norm) f.normals=null;
 				f.mtl=material;
+				
+				if (group==null)
+				{
+					// If for some reason there are faces before a "g" or "o" declaration,
+					// create an object with empty name
+					group=new OBJGroup();
+					objects.put("", group);
+					default_object=group;
+				}
 				
 				group.faces.add(f);
 				continue;
