@@ -266,10 +266,6 @@ public class OBJOutputFile extends OBJFileBase
 	 */
 	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
 	{
-		// TODO must apply transform to normals!
-		if (norms != null && trans != null)
-			throw new UnsupportedOperationException("tranforming normals not implemented");
-			
 		Face face = new Face(verts.length);
 		face.mtl = mtl;
 		if (norms == null) face.normals = null;
@@ -299,14 +295,20 @@ public class OBJOutputFile extends OBJFileBase
 			// add normals
 			if (norms != null)
 			{
-				if (normalsMap.containsKey(norms[i]))				
+				Vertex norm;
+				if (trans != null)
+					norm = trans.applyToNormal(norms[i]);
+				else
+					norm = norms[i];
+
+				if (normalsMap.containsKey(norm))				
 				{
-					face.normals[i] = normalsMap.get(norms[i]);
+					face.normals[i] = normalsMap.get(norm);
 				}
 				else
 				{
-					normals.add(norms[i]);
-					normalsMap.put(norms[i], norm_counter);
+					normals.add(norm);
+					normalsMap.put(norm, norm_counter);
 					face.normals[i] = norm_counter;
 					norm_counter++;
 				}
