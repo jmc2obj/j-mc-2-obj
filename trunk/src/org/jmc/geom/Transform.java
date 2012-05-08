@@ -40,19 +40,48 @@ public class Transform
 
 	public Vertex multiply(Vertex vertex)
 	{
-		Vertex ret=new Vertex(0,0,0);
+		if(matrix[3][0]+matrix[3][1]+matrix[3][2]+matrix[3][3]!=1)
+			throw new RuntimeException("matrix multiply error: last row doesn't add to 1");
 
+		Vertex ret=new Vertex(0,0,0);
 		ret.x=vertex.x*matrix[0][0]+vertex.y*matrix[0][1]+vertex.z*matrix[0][2]+matrix[0][3];		
 		ret.y=vertex.x*matrix[1][0]+vertex.y*matrix[1][1]+vertex.z*matrix[1][2]+matrix[1][3];
 		ret.z=vertex.x*matrix[2][0]+vertex.y*matrix[2][1]+vertex.z*matrix[2][2]+matrix[2][3];
-		if(matrix[3][0]+matrix[3][1]+matrix[3][2]+matrix[3][3]!=1)
-		{
-			System.out.println("matrix multiply error: last row doesn't add to 1");
-		}
-
 		return ret;
 	}
 
+	public Vertex applyToNormal(Vertex norm)
+	{
+		float[][] invt = new float[3][3];	// inverse transpose
+
+		float a = matrix[0][0];
+		float b = matrix[0][1];
+		float c = matrix[0][2];
+		float d = matrix[1][0];
+		float e = matrix[1][1];
+		float f = matrix[1][2];
+		float g = matrix[2][0];
+		float h = matrix[2][1];
+		float k = matrix[2][2];
+
+		float det = a*(e*k - f*h) + b*(f*g - d*k) + c*(d*h - e*g);
+
+		invt[0][0] = (e*k - f*h) / det;
+		invt[0][1] = (f*g - d*k) / det;
+		invt[0][2] = (d*h - e*g) / det;
+		invt[1][0] = (c*h - b*k) / det;
+		invt[1][1] = (a*k - c*g) / det;
+		invt[1][2] = (b*g - a*h) / det;
+		invt[2][0] = (b*f - c*e) / det;
+		invt[2][1] = (c*d - a*f) / det;
+		invt[2][2] = (a*e - b*d) / det;
+		
+		return new Vertex(
+				norm.x*invt[0][0] + norm.y*invt[0][1] + norm.z*invt[0][2],
+				norm.x*invt[1][0] + norm.y*invt[1][1] + norm.z*invt[1][2],
+				norm.x*invt[2][0] + norm.y*invt[2][1] + norm.z*invt[2][2]);
+	}
+	
 	public void translate(float x, float y, float z)
 	{
 		identity();
