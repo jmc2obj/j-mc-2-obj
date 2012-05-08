@@ -25,6 +25,8 @@ public class Mesh extends BlockModel implements EntityModel
 		byte data;
 		byte mask;
 		
+		Transform transform;
+		
 		OBJInputFile file;
 		OBJGroup group;		
 	}
@@ -39,10 +41,10 @@ public class Mesh extends BlockModel implements EntityModel
 	
 	public void addMesh(String objectstr)
 	{
-		addMesh(objectstr,(byte)-1,(byte)0);
+		addMesh(objectstr,(byte)-1,(byte)0,null);
 	}
 	
-	public void addMesh(String objectstr, byte data, byte mask)
+	public void addMesh(String objectstr, byte data, byte mask, Transform transform)
 	{
 		String [] tok=objectstr.trim().split("#");
 		String filename=tok[0];
@@ -83,6 +85,7 @@ public class Mesh extends BlockModel implements EntityModel
 		object.file=objin;		
 		object.mask=mask;
 		object.data=data;
+		object.transform=transform;
 		
 		objects.add(object);
 		
@@ -109,6 +112,11 @@ public class Mesh extends BlockModel implements EntityModel
 			
 			Transform translate = new Transform();
 			translate.translate(x, y, z);		
+			
+			if(object.transform!=null)
+			{
+				translate=translate.multiply(object.transform);
+			}
 			
 			object.file.addObject(object.group, translate, obj);
 		}

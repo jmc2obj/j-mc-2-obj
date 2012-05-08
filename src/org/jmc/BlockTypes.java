@@ -3,10 +3,12 @@ package org.jmc;
 import java.io.File;
 import java.util.HashMap;
 
+import javax.management.RuntimeErrorException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.jmc.geom.Transform;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.Mesh;
@@ -27,27 +29,27 @@ import org.w3c.dom.NodeList;
 public class BlockTypes
 {
 	private static final String CONFIG_FILE = "conf/blocks.conf";
-	
-	
+
+
 	private static HashMap<Short, BlockInfo> blockTable;
-	
+
 	private static BlockInfo unknownBlock;
-	
-	
+
+
 	private static void readConfig(HashMap<Short, BlockInfo> blockTable) throws Exception
 	{
 		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
 			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-		
+
 		Document doc = Xml.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
-		
+
 		NodeList blockNodes = (NodeList)xpath.evaluate("/blocks/block", doc, XPathConstants.NODESET);
 		for (int i = 0; i < blockNodes.getLength(); i++)
 		{
 			Node blockNode = blockNodes.item(i);
-			
+
 			short id = Short.parseShort(Xml.getAttribute(blockNode, "id", "0"), 10);
 			if (id < 1)
 			{
@@ -66,7 +68,7 @@ public class BlockTypes
 			{
 				modelName = aux;
 			}
-			
+
 			aux = (String)xpath.evaluate("occlusion", blockNode, XPathConstants.STRING);
 			if (aux != null && aux.length() > 0)
 			{
@@ -91,24 +93,24 @@ public class BlockTypes
 					Log.info("Block " + id + " has invalid material. Ignoring.");
 					continue;
 				}
-				
+
 				if (mask >= 0)
 					materials.setDataMask((byte)mask);
-				
+
 				if (data >= 0)
 					materials.put((byte)data, mats.split("\\s*,\\s*"));
 				else
 					materials.put(mats.split("\\s*,\\s*"));
-				
+
 				hasMtl = true;
 			}
-			
+
 			if (!hasMtl)
 			{
 				Log.info("Block " + id + " has no materials. Using default.");
 				materials.put(new String[] { "unknown" });
 			}
-			
+
 			BlockModel model;
 			try {
 				Class<?> modelClass = Class.forName("org.jmc.models." + modelName);
@@ -120,37 +122,174 @@ public class BlockTypes
 			}
 			model.setBlockId(id);
 			model.setMaterials(materials);
-			
+
 			if(modelName.equals("Mesh"))
 			{
 				Mesh mesh=(Mesh)model;
-				
-				NodeList meshNodes = (NodeList)xpath.evaluate("mesh", blockNode, XPathConstants.NODESET);
-			
+
+				NodeList meshNodes = (NodeList)xpath.evaluate("mesh", blockNode, XPathConstants.NODESET);			
 				for (int j = 0; j < meshNodes.getLength(); j++)
 				{
-					Node meshNode = meshNodes.item(j);
-					
-					int data = Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
-					int mask = Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
-					
-					String meshstr = meshNode.getTextContent();
-					if (data < -1 || data > 15 || mask < -1 || mask > 15 || meshstr.trim().isEmpty())
-					{
+					Node meshNode = meshNodes.item(j);					
+					try {
+						parseMeshNode(meshNode,mesh,-1,-1,null);
+					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
-					}
-					
-					mesh.addMesh(meshstr, (byte)data, (byte)mask);
-					
+					}					
+				}
+
+				NodeList trasNodes = (NodeList)xpath.evaluate("transform", blockNode, XPathConstants.NODESET);			
+				for (int j = 0; j < trasNodes.getLength(); j++)
+				{
+					Node transNode = trasNodes.item(j);					
+					try {
+						parseTransNode(transNode,mesh,-1,-1,null);
+					}catch (RuntimeException e) {
+						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
+						continue;
+					}					
 				}
 			}
-			
+
 			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model)); 
 		}
 	}
-	
-	
+
+	private static void parseMeshNode(Node meshNode, Mesh mesh, int data, int mask, Transform transform) throws RuntimeException
+	{
+		int new_data = Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
+		int new_mask = Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
+
+		if(new_data>=0) data=new_data;
+		if(new_mask>=0) mask=new_mask; 
+
+		NodeList children=meshNode.getChildNodes();
+
+		for(int i=0; i<children.getLength(); i++)
+		{
+			Node child=children.item(i);
+
+			if(child.getNodeType()==Node.TEXT_NODE)
+			{			
+				String meshstr = child.getTextContent();
+				if (data < -1 || data > 15 || mask < -1 || mask > 15 || meshstr.trim().isEmpty())
+				{
+					throw new RuntimeException();
+				}
+
+				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
+			}
+			else if(child.getNodeType()==Node.ELEMENT_NODE)
+			{
+				if(child.getNodeName().equals("mesh"))
+					parseMeshNode(child,mesh,data,mask,transform);
+				else if(child.getNodeName().equals("transform"))
+					parseTransNode(child, mesh, data, mask,transform);
+			}
+		}
+	}
+
+	private static void parseTransNode(Node transNode, Mesh mesh, int data, int mask, Transform transform) throws RuntimeException
+	{
+		int new_data = Integer.parseInt(Xml.getAttribute(transNode, "data", "-1"), 10);
+		int new_mask = Integer.parseInt(Xml.getAttribute(transNode, "mask", "-1"), 10);
+
+		if(new_data>=0) data=new_data;
+		if(new_mask>=0) mask=new_mask; 
+
+		NodeList children=transNode.getChildNodes();
+		
+		String type=Xml.getAttribute(transNode, "type", "");
+		String constraint=Xml.getAttribute(transNode, "const", "");
+		String valstr=Xml.getAttribute(transNode, "value", "");
+		String randval=Xml.getAttribute(transNode, "randval", "");
+		
+		float randmin=0,randmax=0;
+		if(randval.length()>0)
+		{
+			String [] vals=randval.split(",");
+			if(vals.length!=2)
+			{
+				Log.info("Wrong randval syntax.");
+				throw new RuntimeException();
+			}
+			randmin=Float.parseFloat(vals[0]);
+			randmax=Float.parseFloat(vals[1]);
+			if(randmin>randmax)
+			{
+				float t=randmin;
+				randmin=randmax;
+				randmax=t;
+			}
+		}
+		
+		constraint=constraint.toLowerCase();
+		
+		float x=0,y=0,z=0;
+		if(constraint.contains("x"))
+		{
+			if(valstr.length()>0)
+				x=Float.parseFloat(valstr);
+			else
+				x=randmin+(float)Math.random()*(randmax-randmin);
+		}
+		if(constraint.contains("y"))
+		{
+			if(valstr.length()>0)
+				y=Float.parseFloat(valstr);
+			else
+				y=randmin+(float)Math.random()*(randmax-randmin);
+		}		
+		if(constraint.contains("z"))
+		{
+			if(valstr.length()>0)
+				z=Float.parseFloat(valstr);
+			else
+				z=randmin+(float)Math.random()*(randmax-randmin);
+		}
+		
+		Transform newtransform=new Transform();
+		
+		if(type.equals("translate"))
+		{
+			newtransform.translate(x, y, z);
+		}
+		else if(type.equals("scale"))
+		{
+			newtransform.scale(x, y, z);
+		}
+		else if(type.equals("rotate"))
+		{
+			newtransform.rotate(x, y, z);
+		}
+		else if(type.equals("rotate2"))
+		{
+			newtransform.rotate2(x, y, z);	
+		}
+		else
+		{
+			Log.info("Unknown transformation: "+type);
+			throw new RuntimeException();
+		}
+		
+		if(transform!=null)
+			transform=newtransform.multiply(transform);
+		else transform=newtransform;
+
+		for(int i=0; i<children.getLength(); i++)
+		{
+			Node child=children.item(i);
+			if(child.getNodeType()==Node.ELEMENT_NODE)
+			{
+				if(child.getNodeName().equals("mesh"))
+					parseMeshNode(child,mesh,data,mask,transform);
+				else if(child.getNodeName().equals("transform"))
+					parseTransNode(child, mesh, data, mask,transform);
+			}
+		}
+	}
+		
 	/**
 	 * Reads the configuration file.
 	 * Must be called once at the start of the program.
@@ -166,9 +305,9 @@ public class BlockTypes
 		BlockModel cube = new Cube();
 		cube.setBlockId((short)-1);
 		cube.setMaterials(materials);
-		
+
 		unknownBlock = new BlockInfo(-1, "unknown", materials, BlockInfo.Occlusion.FULL, cube);
-		
+
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");
 
@@ -177,8 +316,8 @@ public class BlockTypes
 
 		Log.info("Loaded " + blockTable.size() + " block definitions.");
 	}
-	
-	
+
+
 	/**
 	 * Gets the block information for the given block id.
 	 * If the block id is not found, returns a default BlockInfo structure for 
@@ -192,5 +331,5 @@ public class BlockTypes
 		BlockInfo bi = blockTable.get(id);
 		return bi != null ? bi : unknownBlock;
 	}
-	
+
 }
