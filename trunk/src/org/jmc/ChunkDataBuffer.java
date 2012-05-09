@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jmc.Chunk.Blocks;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.util.EmptyList;
 
 public class ChunkDataBuffer {
 
@@ -129,7 +130,8 @@ public class ChunkDataBuffer {
 		chunk_p.y=cz;
 		
 		Blocks blocks=chunks.get(chunk_p);
-		if(blocks==null) return null;
+		if(blocks==null)
+			return new EmptyList<TAG_Compound>();
 		
 		return blocks.entities;
 	}
@@ -141,7 +143,8 @@ public class ChunkDataBuffer {
 		chunk_p.y=cz;
 		
 		Blocks blocks=chunks.get(chunk_p);
-		if(blocks==null) return null;
+		if(blocks==null)
+			return new EmptyList<TAG_Compound>();
 		
 		return blocks.tile_entities;
 	}
