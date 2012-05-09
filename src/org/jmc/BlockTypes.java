@@ -162,7 +162,12 @@ public class BlockTypes
 		int new_mask = Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
 
 		if(new_data>=0) data=new_data;
-		if(new_mask>=0) mask=new_mask; 
+		if(new_mask>=0) mask=new_mask;
+		
+		if (data < -1 || data > 15 || mask < -1 || mask > 15)
+		{
+			throw new RuntimeException();
+		}
 
 		NodeList children=meshNode.getChildNodes();
 
@@ -172,12 +177,10 @@ public class BlockTypes
 
 			if(child.getNodeType()==Node.TEXT_NODE)
 			{			
-				String meshstr = child.getTextContent();
-				if (data < -1 || data > 15 || mask < -1 || mask > 15 || meshstr.trim().isEmpty())
-				{
-					throw new RuntimeException();
-				}
-
+				String meshstr = child.getTextContent().trim();
+				
+				if(meshstr.isEmpty()) continue;
+				
 				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
