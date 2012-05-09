@@ -139,10 +139,34 @@ public class BlockTypes
 					}					
 				}
 
-				NodeList trasNodes = (NodeList)xpath.evaluate("transform", blockNode, XPathConstants.NODESET);			
+				NodeList trasNodes = (NodeList)xpath.evaluate("translate", blockNode, XPathConstants.NODESET);			
 				for (int j = 0; j < trasNodes.getLength(); j++)
 				{
 					Node transNode = trasNodes.item(j);					
+					try {
+						parseTransNode(transNode,mesh,-1,-1,null);
+					}catch (RuntimeException e) {
+						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
+						continue;
+					}					
+				}
+				
+				NodeList rotNodes = (NodeList)xpath.evaluate("rotate", blockNode, XPathConstants.NODESET);			
+				for (int j = 0; j < rotNodes.getLength(); j++)
+				{
+					Node transNode = rotNodes.item(j);					
+					try {
+						parseTransNode(transNode,mesh,-1,-1,null);
+					}catch (RuntimeException e) {
+						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
+						continue;
+					}					
+				}
+				
+				NodeList scaleNodes = (NodeList)xpath.evaluate("scale", blockNode, XPathConstants.NODESET);			
+				for (int j = 0; j < scaleNodes.getLength(); j++)
+				{
+					Node transNode = scaleNodes.item(j);					
 					try {
 						parseTransNode(transNode,mesh,-1,-1,null);
 					}catch (RuntimeException e) {
@@ -185,9 +209,10 @@ public class BlockTypes
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
 			{
-				if(child.getNodeName().equals("mesh"))
+				String name=child.getNodeName();
+				if(name.equals("mesh"))
 					parseMeshNode(child,mesh,data,mask,transform);
-				else if(child.getNodeName().equals("transform"))
+				else if(name.equals("translate") || name.equals("rotate") || name.equals("scale"))
 					parseTransNode(child, mesh, data, mask,transform);
 			}
 		}
@@ -203,7 +228,7 @@ public class BlockTypes
 
 		NodeList children=transNode.getChildNodes();
 		
-		String type=Xml.getAttribute(transNode, "type", "");
+		String type=transNode.getNodeName();
 		String constraint=Xml.getAttribute(transNode, "const", "");
 		String valstr=Xml.getAttribute(transNode, "value", "");
 		String randval=Xml.getAttribute(transNode, "randval", "");
@@ -266,10 +291,6 @@ public class BlockTypes
 		{
 			newtransform.rotate(x, y, z);
 		}
-		else if(type.equals("rotate2"))
-		{
-			newtransform.rotate2(x, y, z);	
-		}
 		else
 		{
 			Log.info("Unknown transformation: "+type);
@@ -283,11 +304,20 @@ public class BlockTypes
 		for(int i=0; i<children.getLength(); i++)
 		{
 			Node child=children.item(i);
-			if(child.getNodeType()==Node.ELEMENT_NODE)
+			if(child.getNodeType()==Node.TEXT_NODE)
+			{			
+				String meshstr = child.getTextContent().trim();
+				
+				if(meshstr.isEmpty()) continue;
+				
+				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
+			}
+			else if(child.getNodeType()==Node.ELEMENT_NODE)
 			{
-				if(child.getNodeName().equals("mesh"))
+				String name=child.getNodeName();
+				if(name.equals("mesh"))
 					parseMeshNode(child,mesh,data,mask,transform);
-				else if(child.getNodeName().equals("transform"))
+				else if(name.equals("translate") || name.equals("rotate") || name.equals("scale"))
 					parseTransNode(child, mesh, data, mask,transform);
 			}
 		}
