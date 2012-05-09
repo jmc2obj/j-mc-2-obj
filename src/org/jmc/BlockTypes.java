@@ -3,7 +3,6 @@ package org.jmc;
 import java.io.File;
 import java.util.HashMap;
 
-import javax.management.RuntimeErrorException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
