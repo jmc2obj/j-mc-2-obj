@@ -55,6 +55,7 @@ newmtl brewing_stand
 Kd 0.7450 0.6823 0.2902
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/brewing_stand.png
+map_d tex/brewing_stand_a.png
 
 newmtl brewing_stand_base
 Kd 0.4902 0.4902 0.4902
