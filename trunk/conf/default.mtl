@@ -1077,3 +1077,38 @@ newmtl workbench_top
 Kd 0.4196 0.2784 0.1686
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/workbench_top.png
+
+newmtl kebab_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/kebab_painting.png
+
+newmtl aztec_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/aztec_painting.png
+
+newmtl alban_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/alban_painting.png
+
+newmtl aztec2_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/aztec2_painting.png
+
+newmtl bomb_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bomb_painting.png
+
+newmtl plant_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plant_painting.png
+
+newmtl wasteland_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wasteland_painting.png
