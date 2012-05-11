@@ -132,7 +132,7 @@ public class BlockTypes
 					Node meshNode = meshNodes.item(j);					
 					try {
 						parseMeshNode(meshNode,mesh,-1,-1,null);
-					}catch (RuntimeException e) {
+					}catch (Exception e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
 					}					

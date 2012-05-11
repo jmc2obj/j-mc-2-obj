@@ -320,6 +320,7 @@ map_Kd tex/enderdragon_egg.png
 newmtl endportal
 Kd 0.0000 0.0000 0.0000
 Ks 0.0000 0.0000 0.0000
+map_Kd tex/endportal.png
 
 newmtl endportal_frame_side
 Kd 0.8632 0.8705 0.6470
