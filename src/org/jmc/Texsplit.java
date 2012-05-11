@@ -54,6 +54,20 @@ public class Texsplit
 		return result;
 	}
 
+
+	private static BufferedImage convertImageType(BufferedImage image)
+	{
+		int w = image.getWidth();
+		int h = image.getHeight();
+		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+
+		int[] pixels = new int[w*h];
+		image.getRGB(0, 0, w, h, pixels, 0, w);
+		ret.setRGB(0, 0, w, h, pixels, 0, w);
+		
+		return ret;
+	}
+
 	private static void convertToAlpha(BufferedImage img) throws ImagingOpException
 	{
 		int w=img.getWidth();
@@ -61,9 +75,7 @@ public class Texsplit
 		int c=img.getColorModel().getPixelSize()/8;
 
 		if(c!=4)
-		{
 			throw new ImagingOpException("Texture is not 32-bit!");
-		}
 
 		int buffer[]=new int[w*h*c];
 
@@ -87,9 +99,7 @@ public class Texsplit
 		int c=img.getColorModel().getPixelSize()/8;
 
 		if(c!=4)
-		{
 			throw new ImagingOpException("Texture is not 32-bit!");
-		}
 
 		int buffer[]=new int[w*h*c];
 
@@ -173,6 +183,9 @@ public class Texsplit
 			else
 				image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
 
+			if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+				image = convertImageType(image);
+			
 			int width = image.getWidth() / cols;
 			int height = image.getHeight() / rows;
 
