@@ -369,14 +369,14 @@ public class OBJOutputFile extends OBJFileBase
 			for(x = xs; x < xe; x++)
 			{
 				for(y = ymin; y < ymax; y++)
-				{						
+				{
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
 
 					if(blockID==0) continue;
 
 					BlockTypes.get(blockID).model.addModel(this, chunk, x, y, z, blockData);
-				}									
+				}
 			}
 		}
 		
