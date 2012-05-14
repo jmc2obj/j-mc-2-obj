@@ -133,7 +133,8 @@ public class ObjExporter
 								obj.appendTextures(obj_writer);
 								obj.appendNormals(obj_writer);
 								obj.appendVertices(obj_writer);
-								obj.appendFaces(obj_writer,Options.objectPerMaterial);
+								if(Options.objectPerChunk) obj_writer.println("g chunk_"+lx+"_"+lz);
+								obj.appendFaces(obj_writer);
 								obj.clearData(Options.removeDuplicates);
 							}
 
@@ -176,6 +177,7 @@ public class ObjExporter
 				int facefilecount=1;
 	
 				FaceFile current_ff=null;
+				String current_g="g default";
 	
 				int maxcount=(int)objfile.length();
 				if(maxcount==0) maxcount=1;
@@ -207,6 +209,13 @@ public class ObjExporter
 						}
 						else
 							current_ff=faces.get(line);
+						
+						if(Options.objectPerChunk)
+						{
+							current_ff.writer.println();
+							current_ff.writer.println(current_g);
+							current_ff.writer.println();
+						}
 					}
 					else if(line.startsWith("f "))
 					{
@@ -227,14 +236,14 @@ public class ObjExporter
 					{
 						uv.println(line);
 					}	
-					else if(Options.objectPerMaterial && line.startsWith("g "))
+					else if(line.startsWith("g "))
 					{
-						continue;
+						current_g=line;
 					}
 					else
 					{						
 						main.println(line);
-						if(line.startsWith("mtllib") || line.startsWith("g "))
+						if(line.startsWith("mtllib"))
 							main.println();
 					}
 				}
@@ -268,6 +277,8 @@ public class ObjExporter
 	
 				for(FaceFile ff:faces.values())
 				{
+					String current_mat=ff.name;
+					
 					ff.writer.close();
 	
 					count++;
@@ -275,14 +286,21 @@ public class ObjExporter
 						progress.setProgress(0.5f + 0.5f*(float)count/(float)maxcount);
 	
 					vertex.println();
-					if(Options.objectPerMaterial) main.println("g "+ff.name);
+					if(Options.objectPerMaterial && !Options.objectPerChunk) main.println("g "+ff.name);
+					main.println();
 					main.println("usemtl "+ff.name);
 					main.println();
 	
 					BufferedReader reader=new BufferedReader(new FileReader(ff.file));
 					while((line=reader.readLine())!=null)
 					{
-						main.println(line);
+						if(Options.objectPerChunk && line.startsWith("g "))
+						{
+							if(Options.objectPerMaterial) main.println(line+"_"+current_mat);
+							else main.println(line);
+						}
+						else
+							main.println(line);
 					}
 					reader.close();
 	

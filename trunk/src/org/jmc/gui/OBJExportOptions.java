@@ -30,6 +30,7 @@ public class OBJExportOptions extends JPanel
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
 	private JCheckBox cbObjPerMat;
+	private JCheckBox cbObjPerChunk;
 	private JCheckBox cbRemoveDuplicates;
 	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
 	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
@@ -77,6 +78,12 @@ public class OBJExportOptions extends JPanel
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbObjPerMat=new JCheckBox("Create a separate object for each material");
 		pObjPerMat.add(cbObjPerMat);
+		
+		JPanel pObjPerChunk=new JPanel();
+		pObjPerChunk.setLayout(new BoxLayout(pObjPerChunk, BoxLayout.LINE_AXIS));
+		pObjPerChunk.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbObjPerChunk=new JCheckBox("Create a separate object for each chunk");
+		pObjPerChunk.add(cbObjPerChunk);
 		
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
@@ -172,6 +179,7 @@ public class OBJExportOptions extends JPanel
 		rbMTLAlways.addActionListener(genericSaveAction);
 		rbMTLNever.addActionListener(genericSaveAction);
 		cbObjPerMat.addActionListener(genericSaveAction);
+		cbObjPerChunk.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
 
 		loadSettings();
@@ -179,6 +187,7 @@ public class OBJExportOptions extends JPanel
 		add(pScale);
 		add(pOffset);
 		add(pObjPerMat);
+		add(pObjPerChunk);
 		add(pRemoveDuplicates);
 		add(pOBJOver);
 		add(pMTLOver);
@@ -241,6 +250,7 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
+		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 
 
@@ -299,6 +309,7 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
+		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
 	}
 
@@ -334,6 +345,7 @@ public class OBJExportOptions extends JPanel
 			Options.mtlOverwriteAction = OverwriteAction.ASK;
 		
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
+		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
 	}
 	

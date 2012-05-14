@@ -196,9 +196,8 @@ public class OBJOutputFile extends OBJFileBase
 	 * This method prints faces from the current buffer to an OBJ format.
 	 * 
 	 * @param out file to append the data
-	 * @param obj_per_mat create separate object for each material
 	 */
-	public void appendFaces(PrintWriter out, boolean obj_per_mat)
+	public void appendFaces(PrintWriter out)
 	{
 		Collections.sort(faces);
 		String last_mtl=null;	
@@ -207,7 +206,6 @@ public class OBJOutputFile extends OBJFileBase
 			if(!f.mtl.equals(last_mtl))
 			{
 				out.println();
-				if(obj_per_mat) out.println("g "+identifier+"_"+f.mtl);
 				out.println("usemtl "+f.mtl);
 				last_mtl=f.mtl;
 			}
