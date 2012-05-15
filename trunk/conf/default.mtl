@@ -133,20 +133,10 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/cauldron_top.png
 map_d tex/cauldron_top_a.png
 
-newmtl chest_front
+newmtl chest
 Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/chest_front.png
-
-newmtl chest_side
-Kd 0.5137 0.3686 0.1451
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/chest_side.png
-
-newmtl chest_top
-Kd 0.5137 0.3686 0.1451
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/chest_top.png
+map_Kd tex/chest.png
 
 newmtl clay
 Kd 0.6235 0.6471 0.6941
@@ -497,25 +487,10 @@ Kd 0.4000 0.4392 0.5294
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/lapis_lazuli_ore.png
 
-newmtl largechest_left_back
+newmtl largechest
 Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/largechest_left_back.png
-
-newmtl largechest_left_front
-Kd 0.5137 0.3686 0.1451
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/largechest_left_front.png
-
-newmtl largechest_right_back
-Kd 0.5137 0.3686 0.1451
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/largechest_right_back.png
-
-newmtl largechest_right_front
-Kd 0.5137 0.3686 0.1451
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/largechest_right_front.png
+map_Kd tex/largechest.png
 
 newmtl lava
 Kd 0.9608 0.2588 0.0000
