@@ -140,6 +140,9 @@ public class CmdLineParser
 						Options.offsetZ = Integer.parseInt(parts[1]);
 					}
 				}
+				else if (a.equals("--object-per-chunk")) {
+					Options.objectPerChunk = true;
+				}
 				else if (a.equals("--object-per-mat")) {
 					Options.objectPerMaterial = true;
 				}
@@ -224,6 +227,7 @@ public class CmdLineParser
 			"                                    center - place the center of the exported\n" +
 			"                                    area at the origin; X,Z - apply the given\n" +
 			"                                    offset. Default is none.\n" +
+			"     --object-per-chunk             Export a separate object for each chunk.\n" +
 			"     --object-per-mat               Export a separate object for each material.\n" +
 			"     --remove-dup                   Try harder to merge vertexes that have the\n" +
 			"                                    same coordinates (uses slightly more RAM).\n" +
