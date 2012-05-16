@@ -6,6 +6,7 @@ import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
+import org.jmc.Options;
 import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -42,14 +43,19 @@ public abstract class BlockModel
 
 	/**
 	 * Helper method to check if the side of a cube needs to be drawn, based on 
-	 * the occlusion type of the neighboring block.
+	 * the occlusion type of the neighboring block and whether or not the block
+	 * is at the world (or selection) edge.
 	 *  
-	 * @param neighborId Id of the neighboring block
+	 * @param neighborId Id of the neighboring block, or -1 if there is no 
+	 * neighbor (because the block is at the world edge)
 	 * @param side Side to check
 	 * @return true if side needs to be drawn
 	 */
 	protected boolean drawSide(Side side, short neighborId)
 	{
+		if (neighborId == -1)
+			return Options.renderSides;
+		
 		if (neighborId == 0)
 			return true;
 		
@@ -92,16 +98,16 @@ public abstract class BlockModel
 		ymax=ymin+xy.height-1;
 		zmin=xz.y;
 		zmax=zmin+xz.height-1;
-
+		
 		boolean sides[] = new boolean[6];
 
-		sides[0] = y==ymax || drawSide(Side.TOP,    chunks.getBlockID(x, y+1, z));
-		sides[1] = z==zmin || drawSide(Side.FRONT,  chunks.getBlockID(x, y, z-1));
-		sides[2] = z==zmax || drawSide(Side.BACK,   chunks.getBlockID(x, y, z+1));
-		sides[3] = x==xmin || drawSide(Side.LEFT,   chunks.getBlockID(x-1, y, z));
-		sides[4] = x==xmax || drawSide(Side.RIGHT,  chunks.getBlockID(x+1, y, z));
-		sides[5] = y==ymin || drawSide(Side.BOTTOM, chunks.getBlockID(x, y-1, z));
-		
+		sides[0] = drawSide(Side.TOP,    y==ymax ? -1 : chunks.getBlockID(x, y+1, z));
+		sides[1] = drawSide(Side.FRONT,  z==zmin ? -1 : chunks.getBlockID(x, y, z-1));
+		sides[2] = drawSide(Side.BACK,   z==zmax ? -1 : chunks.getBlockID(x, y, z+1));
+		sides[3] = drawSide(Side.LEFT,   x==xmin ? -1 : chunks.getBlockID(x-1, y, z));
+		sides[4] = drawSide(Side.RIGHT,  x==xmax ? -1 : chunks.getBlockID(x+1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, y==ymin ? -1 : chunks.getBlockID(x, y-1, z));
+
 		return sides;
 	}
 
