@@ -29,6 +29,7 @@ public class OBJExportOptions extends JPanel
 	private JTextField tfScale;
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
+	private JCheckBox cbRenderSides;
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
 	private JCheckBox cbRemoveDuplicates;
@@ -73,6 +74,13 @@ public class OBJExportOptions extends JPanel
 		rbCenterOffset.setActionCommand("center");
 		rbCustomOffset.setActionCommand("custom");
 
+		// XXX
+		JPanel pSides=new JPanel();
+		pSides.setLayout(new BoxLayout(pSides, BoxLayout.LINE_AXIS));
+		pSides.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbRenderSides=new JCheckBox("Render world sides & bottom");
+		pSides.add(cbRenderSides);
+		
 		JPanel pObjPerMat=new JPanel();
 		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -88,7 +96,7 @@ public class OBJExportOptions extends JPanel
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
 		pRemoveDuplicates.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbRemoveDuplicates=new JCheckBox("RemoveDuplicates OBJ file");
+		cbRemoveDuplicates=new JCheckBox("Do not allow duplicate vertexes");
 		pRemoveDuplicates.add(cbRemoveDuplicates);
 		
 		JPanel pOBJOver = new JPanel();
@@ -178,6 +186,7 @@ public class OBJExportOptions extends JPanel
 		rbMTLAsk.addActionListener(genericSaveAction);
 		rbMTLAlways.addActionListener(genericSaveAction);
 		rbMTLNever.addActionListener(genericSaveAction);
+		cbRenderSides.addActionListener(genericSaveAction);
 		cbObjPerMat.addActionListener(genericSaveAction);
 		cbObjPerChunk.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
@@ -186,6 +195,7 @@ public class OBJExportOptions extends JPanel
 
 		add(pScale);
 		add(pOffset);
+		add(pSides);
 		add(pObjPerMat);
 		add(pObjPerChunk);
 		add(pRemoveDuplicates);
@@ -249,6 +259,7 @@ public class OBJExportOptions extends JPanel
 			break;
 		}
 		
+		cbRenderSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
@@ -308,6 +319,7 @@ public class OBJExportOptions extends JPanel
 			break;
 		}
 		
+		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
@@ -344,6 +356,7 @@ public class OBJExportOptions extends JPanel
 		else
 			Options.mtlOverwriteAction = OverwriteAction.ASK;
 		
+		Options.renderSides = cbRenderSides.isSelected();
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();

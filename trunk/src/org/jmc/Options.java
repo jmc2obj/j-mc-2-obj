@@ -98,6 +98,11 @@ public class Options
 	public static boolean removeDuplicates = false;
 
 	/**
+	 * XXX
+	 */
+	public static boolean renderSides = false;
+	
+	/**
 	 * Whether to export the .obj file.
 	 * Only used in console mode.
 	 */
