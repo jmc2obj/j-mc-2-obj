@@ -49,7 +49,7 @@ public class About {
 		
 		Collections.shuffle(donations);
 		
-		msg+="We would like to thank these people for their dontaions:";
+		msg+="We would like to thank these people for their donations:";
 		msg+="<ul style=\"list-style-type:none\">";
 		for(String s:donations)
 			msg+="<li>"+s+"</li>";

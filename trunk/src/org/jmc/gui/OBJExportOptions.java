@@ -74,7 +74,6 @@ public class OBJExportOptions extends JPanel
 		rbCenterOffset.setActionCommand("center");
 		rbCustomOffset.setActionCommand("custom");
 
-		// XXX
 		JPanel pSides=new JPanel();
 		pSides.setLayout(new BoxLayout(pSides, BoxLayout.LINE_AXIS));
 		pSides.setMaximumSize(new Dimension(Short.MAX_VALUE,50));

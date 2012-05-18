@@ -53,6 +53,11 @@ public class Options
 	public static File texturePack = null;
 
 	/**
+	 * Scaling to apply to textures.
+	 */
+	public static double textureScale = 1.0;
+
+	/**
 	 * Id of the world dimension to export.
 	 */
 	public static int dimension = 0;

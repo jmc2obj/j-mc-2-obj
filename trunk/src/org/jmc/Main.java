@@ -88,7 +88,9 @@ public class Main
 		if (Options.exportTex) {
 			System.out.println("Exporting textures...");
 			try {
-				Texsplit.splitTextures(new File(Options.outputDir, "tex"), Options.texturePack, true, new ConsoleProgress());
+				Texsplit.splitTextures(
+						new File(Options.outputDir, "tex"), 
+						Options.texturePack, Options.textureScale, true, new ConsoleProgress());
 			}
 			catch (Exception e) {
 				Log.error("Error saving textures:", e);
