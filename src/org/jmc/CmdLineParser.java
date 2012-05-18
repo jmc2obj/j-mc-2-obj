@@ -116,6 +116,9 @@ public class CmdLineParser
 				else if (a.startsWith("--texturepack=")) {
 					Options.texturePack = new File(a.substring(14));
 				}
+				else if (a.startsWith("--texturescale=")) {
+					Options.textureScale = Float.parseFloat(a.substring(15));
+				}
 				else if (a.startsWith("--objfile=")) {
 					Options.objFileName = a.substring(10);
 				}
@@ -222,6 +225,8 @@ public class CmdLineParser
 			"     --texturepack=FILE             When exporting textures, use this texture\n" +
 			"                                    pack. If omitted will export the default\n" +
 			"                                    Minecraft textures.\n" +
+			"     --texturescale=SCALE           When exporting textures, scale the images\n" +
+			"                                    by this factor. Default is 1 (no scaling).\n" +
 			"     --objfile=NAME                 Name of geometry file to export. Default\n" +
 			"                                    is minecraft.obj\n" +
 			"     --mtlfile=NAME                 Name of materials file to export. Default\n" +
