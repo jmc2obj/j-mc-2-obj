@@ -75,6 +75,8 @@ public class ChunkDataBuffer {
 	
 	public short getBlockID(int x, int y, int z)
 	{
+		if(y<0) return 0;
+		
 		Point chunk_p=new Point();
 		chunk_p.x=(int)Math.floor(x/16.0);
 		chunk_p.y=(int)Math.floor(z/16.0);
@@ -100,6 +102,8 @@ public class ChunkDataBuffer {
 	
 	public byte getBlockData(int x, int y, int z)
 	{
+		if(y<0) return 0;
+		
 		Point chunk_p=new Point();
 		chunk_p.x=(int)Math.floor(x/16.0);
 		chunk_p.y=(int)Math.floor(z/16.0);
