@@ -15,7 +15,7 @@ public class Stairs extends BlockModel
 	@Override
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
-		String mtl = materials.get(data)[0];
+		String[] mtls = getMtlSides(data);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		UV[] uvSide, uvFront, uvTop;
 
@@ -32,22 +32,22 @@ public class Stairs extends BlockModel
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 
 				// top
-				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
@@ -56,18 +56,18 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
-				obj.addFace(new Vertex[] {new Vertex(x,y,z-0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x,y,z-0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvFront, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvFront, null, mtls[4]);
 			}
 			else
 			{
@@ -77,21 +77,21 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
-				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvTop, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,1), new UV(0.5f,1) };
@@ -100,18 +100,18 @@ public class Stairs extends BlockModel
 
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
-				obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f)}, uvFront, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvFront, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtls[5]);
 			}
 			break;
 		case 1:
@@ -122,22 +122,22 @@ public class Stairs extends BlockModel
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 
 				// top
-				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
@@ -146,18 +146,18 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvFront, null, mtls[3]);
 				// right
-				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z+0.5f)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y+0.5f,z-0.5f), new Vertex(x,y+0.5f,z+0.5f)}, uvFront, null, mtls[4]);
 			}
 			else
 			{
@@ -167,21 +167,21 @@ public class Stairs extends BlockModel
 				
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
-				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvTop, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(0.5f,0), new UV(0.5f,1), new UV(0,1) };
@@ -190,18 +190,18 @@ public class Stairs extends BlockModel
 
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x,y,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvFront, null, mtls[3]);
 				// right
-				obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y,z+0.5f)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x,y-0.5f,z-0.5f), new Vertex(x,y,z-0.5f), new Vertex(x,y,z+0.5f)}, uvFront, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x,y-0.5f,z-0.5f)}, uvTop, null, mtls[5]);
 			}
 			break;
 		case 2:
@@ -212,22 +212,22 @@ public class Stairs extends BlockModel
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 
 				// top
-				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
@@ -236,18 +236,18 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z)}, uvTop, null, mtls[0]);
 				// front
-				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z)}, uvFront, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvFront, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[4]);
 			}
 			else
 			{
@@ -257,21 +257,21 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
-				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvTop, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
@@ -279,19 +279,19 @@ public class Stairs extends BlockModel
 				uvSide = new UV[] { new UV(0.5f,0), new UV(1,0), new UV(1,0.5f), new UV(0.5f,0.5f) };
 
 				// front
-				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z)}, uvFront, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvFront, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z)}, uvTop, null, mtls[5]);
 			}
 			break;
 		case 3:
@@ -302,22 +302,22 @@ public class Stairs extends BlockModel
 				uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 
 				// top
-				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z+0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, null, null, mtls[5]);
 
 				/* step */
 				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
@@ -326,18 +326,18 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvTop, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvFront, null, mtls[1]);
 				// back
-				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z)}, uvFront, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y+0.5f,z), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z)}, uvSide, null, mtls[4]);
 			}
 			else
 			{
@@ -347,21 +347,21 @@ public class Stairs extends BlockModel
 
 				// top
 				if (drawSides[0])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, null, null, mtls[0]);
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[1]);
 				// back
 				if (drawSides[2])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y,z-0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y+0.5f,z+0.5f), new Vertex(x-0.5f,y+0.5f,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y+0.5f,z-0.5f), new Vertex(x+0.5f,y+0.5f,z+0.5f)}, uvSide, null, mtls[4]);
 				// bottom
-				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z)}, uvTop, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x+0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z+0.5f), new Vertex(x-0.5f,y,z), new Vertex(x+0.5f,y,z)}, uvTop, null, mtls[5]);
 				
 				/* step */
 				uvTop = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
@@ -370,18 +370,18 @@ public class Stairs extends BlockModel
 
 				// front
 				if (drawSides[1])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvFront, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z-0.5f)}, uvFront, null, mtls[1]);
 				// back
-				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z)}, uvFront, null, mtl);
+				obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y,z), new Vertex(x-0.5f,y,z)}, uvFront, null, mtls[2]);
 				// left
 				if (drawSides[3])
-					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y,z), new Vertex(x-0.5f,y,z-0.5f)}, uvSide, null, mtls[3]);
 				// right
 				if (drawSides[4])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z)}, uvSide, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x+0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y,z-0.5f), new Vertex(x+0.5f,y,z)}, uvSide, null, mtls[4]);
 				// bottom
 				if (drawSides[5])
-					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtl);
+					obj.addFace(new Vertex[] {new Vertex(x+0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z), new Vertex(x-0.5f,y-0.5f,z-0.5f), new Vertex(x+0.5f,y-0.5f,z-0.5f)}, uvTop, null, mtls[5]);
 			}
 			break;		
 		}

@@ -27,12 +27,24 @@ public class Chest extends BlockModel
 		return mtlSides;
 	}
 
+	/**	Checks whether the chest is able to form double-chests */
+	private boolean canDouble()
+	{
+		return this.blockId == 54;
+	}
+	
+	/** Checks whether the chest is part of a double-chest */
+	private boolean checkConnect(short otherId)
+	{
+		return canDouble() && blockId == otherId;
+	}
+
 
 	@Override
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
 	{
 		String[] mtlSingle = getMtlSides(data, 0);
-		String[] mtlDouble = getMtlSides(data, 1);
+		String[] mtlDouble = canDouble() ? getMtlSides(data, 1) : null;
 		boolean conn_l = false;
 		boolean conn_r = false;
 		
@@ -44,23 +56,23 @@ public class Chest extends BlockModel
 		{
 			case 2:
 				rotate.rotate(0, 0, 0);
-				conn_l = chunks.getBlockID(x-1, y, z) == this.blockId;
-				conn_r = chunks.getBlockID(x+1, y, z) == this.blockId;
+				conn_l = checkConnect(chunks.getBlockID(x-1, y, z));
+				conn_r = checkConnect(chunks.getBlockID(x+1, y, z));
 				break;
 			case 3:
 				rotate.rotate(0, 180, 0);
-				conn_l = chunks.getBlockID(x+1, y, z) == this.blockId;
-				conn_r = chunks.getBlockID(x-1, y, z) == this.blockId;
+				conn_l = checkConnect(chunks.getBlockID(x+1, y, z));
+				conn_r = checkConnect(chunks.getBlockID(x-1, y, z));
 				break;
 			case 4:
 				rotate.rotate(0, -90, 0);
-				conn_l = chunks.getBlockID(x, y, z+1) == this.blockId;
-				conn_r = chunks.getBlockID(x, y, z-1) == this.blockId;
+				conn_l = checkConnect(chunks.getBlockID(x, y, z+1));
+				conn_r = checkConnect(chunks.getBlockID(x, y, z-1));
 				break;
 			case 5:
 				rotate.rotate(0, 90, 0);
-				conn_l = chunks.getBlockID(x, y, z-1) == this.blockId;
-				conn_r = chunks.getBlockID(x, y, z+1) == this.blockId;
+				conn_l = checkConnect(chunks.getBlockID(x, y, z-1));
+				conn_r = checkConnect(chunks.getBlockID(x, y, z+1));
 				break;
 		}
 		translate.translate(x, y, z);		

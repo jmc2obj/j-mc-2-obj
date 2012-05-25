@@ -5,10 +5,12 @@ import org.jmc.OBJOutputFile;
 import org.jmc.entities.EntityModel;
 import org.jmc.geom.Transform;
 
-public class Minecart extends BoxModel implements EntityModel {
+public class Minecart extends BlockModel implements EntityModel
+{
 
 	@Override
-	public void addEntity(OBJOutputFile obj, Transform transform) {
+	public void addEntity(OBJOutputFile obj, Transform transform)
+	{
 		
 		String[] mtlSides = getMtlSides((byte) 0);
 		boolean[] drawSides = new boolean[] {true,true,true,true,true,true};
@@ -17,8 +19,8 @@ public class Minecart extends BoxModel implements EntityModel {
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x,
-			int y, int z, byte data) {
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	{
 	}
 	
 

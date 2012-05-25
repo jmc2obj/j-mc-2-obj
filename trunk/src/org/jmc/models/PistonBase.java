@@ -12,8 +12,8 @@ import org.jmc.geom.UV;
 public class PistonBase extends BlockModel
 {
 
-	/** Expand the materials to the full 6 side definition used by addBox */
-	private String[] getMtlSides(byte data)
+	@Override
+	protected String[] getMtlSides(byte data)
 	{
 		boolean open = (data & 8) != 0;
 		String[] abbrMtls = materials.get(data);

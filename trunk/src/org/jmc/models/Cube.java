@@ -7,7 +7,7 @@ import org.jmc.OBJOutputFile;
 /**
  * Generic model for cube blocks.
  */
-public class Cube extends BoxModel
+public class Cube extends BlockModel
 {
 
 	@Override

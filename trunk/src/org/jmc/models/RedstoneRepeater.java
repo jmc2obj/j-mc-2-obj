@@ -13,8 +13,8 @@ import org.jmc.geom.Vertex;
 public class RedstoneRepeater extends BlockModel
 {
 
-	/** Expand the materials to the full 6 side definition used by addBox */
-	private String[] getMtlSides(byte data)
+	@Override
+	protected String[] getMtlSides(byte data)
 	{
 		String[] abbrMtls = materials.get(data);
 

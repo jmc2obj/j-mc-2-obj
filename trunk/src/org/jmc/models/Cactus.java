@@ -9,7 +9,7 @@ import org.jmc.geom.Vertex;
 /**
  * Model for cactus
  */
-public class Cactus extends BoxModel
+public class Cactus extends BlockModel
 {
 
 	@Override
