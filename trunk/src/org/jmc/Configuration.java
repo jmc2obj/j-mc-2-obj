@@ -188,11 +188,6 @@ public class Configuration
 	 */
 	private static void createFile(File dest, String path, int size) throws IOException
 	{
-		if(!dest.createNewFile())
-		{
-			throw new IOException("Cannot create file: "+path);
-		}
-
 		InputStream src=Configuration.class.getClassLoader().getResourceAsStream(path);		
 		ReadableByteChannel input=Channels.newChannel(src);
 
