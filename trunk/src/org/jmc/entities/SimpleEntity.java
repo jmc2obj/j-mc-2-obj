@@ -3,10 +3,8 @@ package org.jmc.entities;
 import org.jmc.OBJOutputFile;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
-import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.geom.Transform;
-import org.jmc.util.Log;
 
 public class SimpleEntity extends Entity {
 	

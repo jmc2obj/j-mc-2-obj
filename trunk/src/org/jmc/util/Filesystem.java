@@ -2,11 +2,15 @@ package org.jmc.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -25,7 +29,7 @@ public class Filesystem
 		String minecraft="minecraft";
 		String osname = System.getProperty("os.name").toLowerCase();
 		String default_home = System.getProperty("user.home", ".");
-		
+
 		if(osname.contains("solaris") || osname.contains("sunos") || osname.contains("linux") || osname.contains("unix"))
 		{
 			return new File(default_home, "." + minecraft);
@@ -48,7 +52,7 @@ public class Filesystem
 		return null;
 	}
 
-	
+
 	/**
 	 * Gets the directory where the program's data files are.
 	 * 
@@ -60,14 +64,14 @@ public class Filesystem
 			String codePath = URLDecoder.decode(
 					Filesystem.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
 					"UTF-8");
-			
+
 			// ASSUMPTION:
 			// - If the code is in a .jar file, then the data files are in the same directory as 
 			//   the .jar file
 			// - If not, the data files are assumed to be in the parent directory. This is intended
 			//   for running the program directly from the bin/ directory in the source distribution
 			//   (for example, when running inside an IDE).
-		
+
 			// ... in practice both cases mean returning the parent path
 			return new File(codePath).getParentFile();
 
@@ -76,7 +80,7 @@ public class Filesystem
 			throw new RuntimeException(ex);
 		}
 	}
-	
+
 
 	/**
 	 * Convenience function to copy a file.
@@ -103,7 +107,7 @@ public class Filesystem
 			if (out != null) out.close();
 		}
 	}
-	
+
 	/**
 	 *  Convenience function to move a file.
 	 * 
@@ -118,5 +122,41 @@ public class Filesystem
 			throw new IOException("Cannot delete file: "+origPath.getName());
 	}
 
+	/**
+	 * Calculates the hash of an InputStream (for example file).
+	 * @param is
+	 * @return hash as a string of hex characters
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 */
+	public static String getHash(InputStream is) throws IOException, NoSuchAlgorithmException
+	{
 
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		byte buffer[]=new byte[1024];
+		int ret;
+		while(true)
+		{
+			ret=is.read(buffer);
+			if(ret<0) break;
+			md.update(buffer, 0, ret);
+		}
+		is.close();
+
+		byte[] digest = md.digest();
+
+		char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+		char[] hexChars = new char[digest.length*2];
+		int v;
+		for (int i = 0; i < digest.length; i++ ) 
+		{
+			v = digest[i] & 0xFF;
+			hexChars[2*i] = hexArray[v>>4];
+			hexChars[2*i+1] = hexArray[v&0x0f];
+		}
+		return new String(hexChars, 0, digest.length*2); 
+	}
 }
+
+
+

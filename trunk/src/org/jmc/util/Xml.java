@@ -4,6 +4,15 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -29,6 +38,33 @@ public class Xml {
 		return builder.parse(file);
 	}
 
+	/**
+	 * Creates a new document used for saving XML files.
+	 * @return
+	 * @throws ParserConfigurationException
+	 */
+	public static Document newDocument() throws ParserConfigurationException
+	{
+		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder;
+		docBuilder = dbfac.newDocumentBuilder();
+		return docBuilder.newDocument();
+	}
+	
+	public static void saveDocument(Document doc, File file) throws TransformerException
+	{
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans;
+		trans = transfac.newTransformer();
+		trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
+		trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		trans.setOutputProperty(OutputKeys.METHOD, "xml");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		Source source = new DOMSource(doc);
+		Result result = new StreamResult(file);
+		trans.transform(source, result);
+	}
 
 	/**
 	 * Gets the value of an attribute in a XML element 
