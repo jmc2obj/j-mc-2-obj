@@ -8,7 +8,7 @@ import org.jmc.geom.UV;
 /**
  * Model for ground snow.
  */
-public class Snow extends BoxModel
+public class Snow extends BlockModel
 {
 
 	@Override

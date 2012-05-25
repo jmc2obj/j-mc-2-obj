@@ -199,10 +199,17 @@ public class Texsplit
 				throw new Exception("In " + CONFIG_FILE + ": 'file' tag is missing required attribute 'name'.");
 
 			BufferedImage image;
-			if (source.equalsIgnoreCase("texturepack"))
-				image = loadImageFromZip(zipfile, fileName);
-			else
-				image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
+			try {
+				if (source.equalsIgnoreCase("texturepack"))
+					image = loadImageFromZip(zipfile, fileName);
+				else
+					image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
+			}
+			catch (Exception e)
+			{
+				Log.info("Error loading image: " + e.getMessage());
+				continue;
+			}
 
 			if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR)
 				image = convertImageType(image);

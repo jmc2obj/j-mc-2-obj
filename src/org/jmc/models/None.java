@@ -7,7 +7,7 @@ import org.jmc.OBJOutputFile;
 /**
  * Dummy model that doesn't generate any geometry.
  */
-public class None extends BoxModel
+public class None extends BlockModel
 {
 
 	@Override

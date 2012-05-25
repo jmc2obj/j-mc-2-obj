@@ -8,7 +8,7 @@ import org.jmc.geom.UV;
 /**
  * Model for slabs (aka half-blocks).
  */
-public class Slab extends BoxModel
+public class Slab extends BlockModel
 {
 
 	@Override

@@ -9,7 +9,7 @@ import org.jmc.geom.Vertex;
 /**
  * Model for pressure plates
  */
-public class PressurePlate extends BoxModel
+public class PressurePlate extends BlockModel
 {
 
 	@Override

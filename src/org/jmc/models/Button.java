@@ -9,7 +9,7 @@ import org.jmc.geom.UV;
 /**
  * Model for Buttons.
  */
-public class Button extends BoxModel
+public class Button extends BlockModel
 {
 
 	@Override

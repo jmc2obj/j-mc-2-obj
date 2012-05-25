@@ -302,6 +302,11 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/door_wood_top.png
 map_d tex/door_wood_top_a.png
 
+newmtl emerald_ore
+Kd 0.4000 0.5294 0.4832
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/emerald_ore.png
+
 newmtl enchant_table_bottom
 Kd 0.0784 0.0706 0.1176
 Ks 0.0000 0.0000 0.0000
@@ -316,6 +321,11 @@ newmtl enchant_table_top
 Kd 0.5000 0.0313 0.0313
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/enchant_table_top.png
+
+newmtl enderchest
+Kd 0.1718 0.2421 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/enderchest.png
 
 newmtl enderdragon_egg
 Kd 0.1764 0.0039 0.2000
