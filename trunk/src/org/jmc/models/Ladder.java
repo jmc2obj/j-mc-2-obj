@@ -2,7 +2,6 @@ package org.jmc.models;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
-import org.jmc.entities.EntityModel;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 
@@ -10,7 +9,7 @@ import org.jmc.geom.Vertex;
 /**
  * Model for ladders.
  */
-public class Ladder extends BlockModel implements EntityModel
+public class Ladder extends BlockModel
 {
 
 	@Override
@@ -37,12 +36,6 @@ public class Ladder extends BlockModel implements EntityModel
 		rt = translate.multiply(rotate);
 		
 		addObject(obj, rt, materials.get(data)[0]);
-	}
-
-	@Override
-	public void addEntity(OBJOutputFile obj, Transform transform) 
-	{
-		addObject(obj, transform, materials.get((byte) 0)[0]);		
 	}
 	
 	private void addObject(OBJOutputFile obj, Transform transform, String mat)

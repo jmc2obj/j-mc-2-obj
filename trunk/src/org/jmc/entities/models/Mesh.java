@@ -1,4 +1,4 @@
-package org.jmc.models;
+package org.jmc.entities.models;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,20 +7,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
 import org.jmc.util.Log;
 
-public class Mesh extends BlockModel
+//TODO: this class is a copy of org.jmc.models.Mesh class
+//should figure out how to merge the two...
+
+@SuppressWarnings("unused")
+public class Mesh extends EntityModel
 {
 	
 	private static Map<String,OBJInputFile> files=null;
 	
 	private class MeshObject
-	{
+	{		
 		byte data;
 		byte mask;
 		
@@ -91,33 +94,11 @@ public class Mesh extends BlockModel
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addEntity(OBJOutputFile obj, Transform transform) 
 	{
-		if(data<0) data=(byte) (16+data);
-		
-		for(MeshObject object:objects)
-		{
-			if(object.data>=0)
-			{
-				if(object.mask>0)
-				{
-					if((data&object.mask)!=object.data) continue;
-				}
-				else
-				{
-					if(object.data!=data) continue;
-				}
-			}
-			
-			Transform translate = new Transform();
-			translate.translate(x, y, z);		
-			
-			if(object.transform!=null)
-			{
-				translate=translate.multiply(object.transform);
-			}
-			
-			object.file.addObject(object.group, translate, obj);
-		}
+		if(objects.size()==0) return;
+		MeshObject object=objects.get(0);
+		object.file.addObject(object.group, transform, obj);
 	}
+
 }

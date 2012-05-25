@@ -11,8 +11,8 @@ import javax.xml.xpath.XPathFactory;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_String;
 import org.jmc.entities.Entity;
-import org.jmc.entities.EntityModel;
-import org.jmc.models.Mesh;
+import org.jmc.entities.models.EntityModel;
+import org.jmc.entities.models.Mesh;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
@@ -84,7 +84,7 @@ public class EntityTypes {
 						
 			EntityModel entityModel;
 			try {
-				Class<?> entityModelClass = Class.forName("org.jmc.models." + modelName);
+				Class<?> entityModelClass = Class.forName("org.jmc.entities.models." + modelName);
 				entityModel = (EntityModel)entityModelClass.getConstructor().newInstance();
 			}
 			catch (Exception e) {
