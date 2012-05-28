@@ -240,7 +240,7 @@ public class Configuration
 			doc.appendChild(eRoot);
 
 			Element eRevision=doc.createElement("revision");
-			eRevision.setTextContent(Version.REVISION);
+			eRevision.setTextContent(Version.REVISION());
 			eRoot.appendChild(eRevision);
 
 			Element eFiles=doc.createElement("files");

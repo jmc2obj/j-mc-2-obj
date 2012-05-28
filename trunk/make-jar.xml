@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
+<!--
+
+This script generates a runnable JAR file in the JAR subdirectory.
+It also uses "svnversion" program to retrieve the SVN revision of the project and stores it in the manifest.
+
+This script requires SVN installed to run properly!
+
+Make sure to run it on a cleanly commited copy of the program or the version can contain letters appended to it.
+Example: "100M" means revision 100 that was locally modified.  
+
+-->
+
 <project default="create_run_jar" name="Create Runnable Jar for Project jMc2Obj">
 
-
     <target name="create_run_jar">
-        <jar destfile="${basedir}/JAR/jMc2Obj-dev.jar" filesetmanifest="mergewithoutmain">
+    
+    	<exec executable="svnversion" outputproperty="svnrev">
+    	</exec>    
+    
+        <jar destfile="${basedir}/JAR/jMc2Obj-dev_r${svnrev}.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="org.jmc.Main"/>
                 <attribute name="Class-Path" value="."/>
+                <attribute name="Implementation-Version" value="${svnrev}"/>
             </manifest>
             <fileset dir="${basedir}/bin"/>
         </jar>
