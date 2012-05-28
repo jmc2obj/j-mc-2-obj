@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project default="create_run_jar" name="Create Runnable Jar for Project jMc2Obj">
+
+
+    <target name="create_run_jar">
+        <jar destfile="${basedir}/JAR/jMc2Obj-dev.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="org.jmc.Main"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${basedir}/bin"/>
+        </jar>
+    </target>
+</project>
