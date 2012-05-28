@@ -60,6 +60,14 @@ public class Filesystem
 	 */
 	public static File getDatafilesDir()
 	{
+		//This checks if we are running from within an EXE file created using JSmooth
+		Object val=System.getProperties().get("jsmooth");
+		if(val!=null)
+		{
+			return new File(".");
+		}
+		
+		
 		try {
 			String codePath = URLDecoder.decode(
 					Filesystem.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
