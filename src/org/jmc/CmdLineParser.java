@@ -149,6 +149,9 @@ public class CmdLineParser
 				else if (a.equals("--render-sides")) {
 					Options.renderSides = true;
 				}
+				else if (a.equals("--render-entities")) {
+					Options.renderEntities = true;
+				}
 				else if (a.equals("--object-per-chunk")) {
 					Options.objectPerChunk = true;
 				}

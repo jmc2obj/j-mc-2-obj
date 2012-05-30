@@ -4,11 +4,11 @@ import org.jmc.OBJOutputFile;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_Float;
+import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 import org.jmc.geom.Transform;
 
-public class SimpleEntity extends Entity {
-	
+public class Slime extends Entity {
 
 	@Override
 	public void addEntity(OBJOutputFile obj, TAG_Compound entity) {
@@ -28,7 +28,15 @@ public class SimpleEntity extends Entity {
 		Transform rotate = new Transform();
 		rotate.rotate2(yaw+90, pitch ,0);		
 		
-		model.addEntity(obj, translate.multiply(rotate));					
+		int size = ((TAG_Int) entity.getElement("Size")).value;
+		
+		Transform scale = new Transform();
+		scale.scale(size, size, size);
+		
+		model.addEntity(obj, translate.multiply(rotate.multiply(scale)));	
+		
 	}
+	
+	
 
 }
