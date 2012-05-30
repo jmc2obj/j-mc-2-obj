@@ -58,6 +58,15 @@ public class Main
 		catch (Exception e) {
 			Log.error("Error reading configuration file:", e);
 		}
+		
+		if(CheckUpdate.isAvailable())
+		{
+			Log.info("New version of the program is available!");
+		}
+		else
+		{
+			Log.info("No update available...");
+		}
 	}
 	
 

@@ -22,7 +22,8 @@ public class About {
 		
 		msg+="<div style=\"font-size:24pt\">jMC2Obj</div>";
 		msg+="<div style=\"font-size:14pt\">A Java Minecraft to OBJ converter</div>";
-		msg+="<div style=\"font-size:12pt;margin-bottom:20px\">version: "+Version.VERSION+" build "+Version.REVISION()+"</div>";
+		msg+="<div style=\"font-size:12pt\">version: "+Version.VERSION+" build "+Version.REVISION()+"</div>";
+		msg+="<div style=\"font-size:12pt;margin-bottom:20px\">build date: "+Version.DATE().toString()+"</div>";
 		
 		List<String> developer_list=new LinkedList<String>();
 		

@@ -16,6 +16,8 @@ Example: "100M" means revision 100 that was locally modified.
 
     <target name="create_run_jar">
     
+    	<tstamp/>
+    	
     	<exec executable="svnversion" outputproperty="svnrev">
     	</exec>    
     
@@ -24,6 +26,7 @@ Example: "100M" means revision 100 that was locally modified.
                 <attribute name="Main-Class" value="org.jmc.Main"/>
                 <attribute name="Class-Path" value="."/>
                 <attribute name="Implementation-Version" value="${svnrev}"/>
+            	<attribute name="Built-Date" value="${DSTAMP} ${TSTAMP}"/>
             </manifest>
             <fileset dir="${basedir}/bin"/>
         </jar>

@@ -59,7 +59,7 @@ import org.jmc.util.Filesystem;
 public class MainPanel extends JPanel
 {
 	//UI elements (not described separately)
-	private JButton bLoad,bExport,bSettings,bAbout;
+	private JButton bLoad,bExport,bSettings,bUpdate,bAbout;
 	//this suppression is for compatibility with java 1.6
 	private JComboBox<String> cbPath;
 	private JComboBox<Integer> cbDimension;
@@ -119,6 +119,7 @@ public class MainPanel extends JPanel
 		bLoad = new JButton("Load");
 		bExport = new JButton("Export selection");
 		bSettings = new JButton("Settings");
+		bUpdate = new JButton("Update");
 		bAbout = new JButton("About");
 		bAbout.setForeground(Color.red);
 		Font f=bAbout.getFont();
@@ -127,6 +128,7 @@ public class MainPanel extends JPanel
 		pButtons.add(bLoad);
 		pButtons.add(bExport);
 		pButtons.add(bSettings);
+		pButtons.add(bUpdate);
 		pButtons.add(bAbout);						
 
 		pToolbar.add(spPath);
@@ -343,6 +345,17 @@ public class MainPanel extends JPanel
 				MainWindow.settings.setLocation(p);
 				MainWindow.settings.setVisible(true);
 				
+			}
+		});
+		
+		bUpdate.addActionListener(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Point p=MainWindow.main.getLocation();
+				p.x+=(MainWindow.main.getWidth()-MainWindow.settings.getWidth())/2;
+				p.y+=(MainWindow.main.getHeight()-MainWindow.settings.getHeight())/2;
+				MainWindow.update.setLocation(p);
+				MainWindow.update.setVisible(true);
 			}
 		});
 		
