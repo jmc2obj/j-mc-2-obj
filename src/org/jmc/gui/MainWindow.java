@@ -61,6 +61,11 @@ public class MainWindow extends JFrame
 		setVisible(true);
 	}
 	
+	public void highlightUpdateButton()
+	{
+		panel.highlightUpdateButton();
+	}
+	
 	/**
 	 * Global logging method called by using MainWindow.log("test")
 	 * 

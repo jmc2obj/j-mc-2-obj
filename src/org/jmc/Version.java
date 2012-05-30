@@ -1,8 +1,6 @@
 package org.jmc;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.jar.Attributes;
