@@ -107,6 +107,12 @@ public class Options
 	 */
 	public static boolean renderSides = false;
 	
+	
+	/**
+	 * If true, entities are rendered in the model. 
+	 */
+	public static boolean renderEntities = false;
+	
 	/**
 	 * Whether to export the .obj file.
 	 * Only used in console mode.

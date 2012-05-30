@@ -44,7 +44,7 @@ public class Chunk {
 	 */
 	private boolean is_anvil;
 
-	
+
 	/**
 	 * 64x64 color image of topmost blocks in chunk.  
 	 */
@@ -104,7 +104,7 @@ public class Chunk {
 	{
 		return "Chunk:\n"+root.toString();
 	}
-	
+
 	/**
 	 * Small internal class defining the return values of getBlocks method. 
 	 * @author danijel
@@ -131,12 +131,12 @@ public class Chunk {
 		 * Block meta-data.
 		 */
 		public byte [] data;
-		
+
 		/**
 		 * Entities.
 		 */
 		public List<TAG_Compound> entities;
-		
+
 		/**
 		 * Tile entities.
 		 */
@@ -151,7 +151,7 @@ public class Chunk {
 	{		
 		Blocks ret=null;		
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
-		
+
 		if(is_anvil)
 		{
 			int ymax=0;			
@@ -164,9 +164,9 @@ public class Chunk {
 			}
 
 			ymax=(ymax+1)*16;
-			
+
 			ret=new Blocks(16*16*ymax);
-			
+
 			byte add1,add2;
 
 			for(NBT_Tag section: sections.elements)
@@ -180,7 +180,7 @@ public class Chunk {
 				int base=yval.value*16*16*16;
 				for(int i=0; i<blocks.data.length; i++)
 					ret.id[base+i]=blocks.data[i];
-				
+
 				if(add!=null)
 				{
 					for(int i=0; i<add.data.length; i++)
@@ -192,7 +192,7 @@ public class Chunk {
 						//TODO: not sure if this works until there are block IDs higher than 256 limit
 					}
 				}
-				
+
 				for(int i=0; i<data.data.length; i++)
 				{
 					add1=(byte) (data.data[i]&0x0f);
@@ -206,13 +206,13 @@ public class Chunk {
 		{
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
-			
+
 			byte add1,add2;
 			ret=new Blocks(blocks.data.length);
-						
+
 			for(int i=0; i<blocks.data.length; i++)
 				ret.id[i]=blocks.data[i];
-			
+
 			for(int i=0; i<data.data.length; i++)
 			{
 				add1=(byte) (data.data[i]&0x0f);
@@ -221,26 +221,29 @@ public class Chunk {
 				ret.data[2*i+1]=add2;
 			}
 		}
-		
-		TAG_List entities = (TAG_List) level.getElement("Entities");
-		if(entities!=null && entities.elements.length>0)
+
+		if(Options.renderEntities)
 		{
-			for(int i=0; i<entities.elements.length; i++)
+			TAG_List entities = (TAG_List) level.getElement("Entities");
+			if(entities!=null && entities.elements.length>0)
 			{
-				ret.entities.add((TAG_Compound)entities.elements[i]);
+				for(int i=0; i<entities.elements.length; i++)
+				{
+					ret.entities.add((TAG_Compound)entities.elements[i]);
+				}
+			}
+
+
+			TAG_List tile_entities = (TAG_List) level.getElement("TileEntities");
+			if(tile_entities!=null && tile_entities.elements.length>0)
+			{
+				for(int i=0; i<tile_entities.elements.length; i++)
+				{
+					ret.tile_entities.add((TAG_Compound)tile_entities.elements[i]);
+				}
 			}
 		}
-		
-		
-		TAG_List tile_entities = (TAG_List) level.getElement("TileEntities");
-		if(tile_entities!=null && tile_entities.elements.length>0)
-		{
-			for(int i=0; i<tile_entities.elements.length; i++)
-			{
-				ret.tile_entities.add((TAG_Compound)tile_entities.elements[i]);
-			}
-		}
-		
+
 		return ret;
 	}	
 
@@ -274,7 +277,7 @@ public class Chunk {
 			ymax=bd.id.length/(16*16);
 		else 
 			ymax=128;
-		
+
 		if(floor>ymax)
 			return;
 		if(ceiling>ymax)
@@ -367,7 +370,7 @@ public class Chunk {
 	{
 		return height_image;
 	}
-	
+
 	public boolean isAnvil()
 	{
 		return is_anvil;

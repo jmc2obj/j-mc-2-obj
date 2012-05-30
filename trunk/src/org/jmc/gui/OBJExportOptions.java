@@ -30,6 +30,7 @@ public class OBJExportOptions extends JPanel
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
 	private JCheckBox cbRenderSides;
+	private JCheckBox cbRenderEntities;
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
 	private JCheckBox cbRemoveDuplicates;
@@ -79,6 +80,12 @@ public class OBJExportOptions extends JPanel
 		pSides.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRenderSides=new JCheckBox("Render world sides & bottom");
 		pSides.add(cbRenderSides);
+		
+		JPanel pEntities=new JPanel();
+		pEntities.setLayout(new BoxLayout(pEntities, BoxLayout.LINE_AXIS));
+		pEntities.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbRenderEntities=new JCheckBox("Render entities");
+		pEntities.add(cbRenderEntities);
 		
 		JPanel pObjPerMat=new JPanel();
 		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
@@ -186,6 +193,7 @@ public class OBJExportOptions extends JPanel
 		rbMTLAlways.addActionListener(genericSaveAction);
 		rbMTLNever.addActionListener(genericSaveAction);
 		cbRenderSides.addActionListener(genericSaveAction);
+		cbRenderEntities.addActionListener(genericSaveAction);
 		cbObjPerMat.addActionListener(genericSaveAction);
 		cbObjPerChunk.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
@@ -195,6 +203,7 @@ public class OBJExportOptions extends JPanel
 		add(pScale);
 		add(pOffset);
 		add(pSides);
+		add(pEntities);
 		add(pObjPerMat);
 		add(pObjPerChunk);
 		add(pRemoveDuplicates);
@@ -259,6 +268,7 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		cbRenderSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
+		cbRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", false));
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
@@ -319,6 +329,7 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
+		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
@@ -356,6 +367,7 @@ public class OBJExportOptions extends JPanel
 			Options.mtlOverwriteAction = OverwriteAction.ASK;
 		
 		Options.renderSides = cbRenderSides.isSelected();
+		Options.renderEntities = cbRenderEntities.isSelected();
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
