@@ -35,6 +35,8 @@ public class MainWindow extends JFrame
 	 */
 	public static Settings settings = new Settings();
 	
+	public static UpdateWindow update = new UpdateWindow();
+	
 	public static FileNames file_names = new FileNames();
 	
 	

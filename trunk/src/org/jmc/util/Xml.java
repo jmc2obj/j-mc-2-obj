@@ -1,6 +1,7 @@
 package org.jmc.util;
 
 import java.io.File;
+import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +39,20 @@ public class Xml {
 		return builder.parse(file);
 	}
 
+	/**
+	 * Loads a XML document from a URL and returns the corresponding DOM Document.
+	 * 
+	 * @param file Input file
+	 * @return Parsed document
+	 * @throws Exception if the loading or parsing fails
+	 */
+	public static Document loadDocument(URL url) throws Exception
+	{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		return builder.parse(url.openStream());
+	}
+	
 	/**
 	 * Creates a new document used for saving XML files.
 	 * @return
