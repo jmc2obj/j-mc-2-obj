@@ -3,8 +3,10 @@ package org.jmc.entities;
 import org.jmc.OBJOutputFile;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
+import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.geom.Transform;
+import org.jmc.util.Log;
 
 public class SimpleEntity extends Entity {
 	
@@ -20,21 +22,14 @@ public class SimpleEntity extends Entity {
 		Transform translate = new Transform();
 		translate.translate(ex, ey, ez);		
 		
-		model.addEntity(obj, translate);
-		
-		//TODO: I get bogus values for rotation here...
-		/*
-		
 		TAG_List rot = (TAG_List) entity.getElement("Rotation");
 		float yaw=((TAG_Float)rot.getElement(0)).value;				
 		float pitch=((TAG_Float)rot.getElement(1)).value;
 		
-		Log.debug("Y "+yaw+" P "+pitch);
-		
 		Transform rotate = new Transform();
-		rotate.rotate2(45, 22,90);		
-		model.addEntity(obj, translate.multiply(rotate));
-		*/				
+		rotate.rotate2(yaw+90, pitch ,0);		
+		
+		model.addEntity(obj, translate.multiply(rotate));					
 	}
 
 }
