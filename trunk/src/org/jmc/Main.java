@@ -62,6 +62,7 @@ public class Main
 		if(CheckUpdate.isAvailable())
 		{
 			Log.info("New version of the program is available!");
+			MainWindow.main.highlightUpdateButton();
 		}
 		else
 		{

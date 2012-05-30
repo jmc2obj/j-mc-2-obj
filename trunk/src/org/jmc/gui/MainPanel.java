@@ -496,5 +496,12 @@ public class MainPanel extends JPanel
 	{
 		(new PopulateLoadListThread()).start();
 	}
+	
+	public void highlightUpdateButton()
+	{
+		bUpdate.setForeground(Color.green);
+		Font font=bUpdate.getFont();
+		bUpdate.setFont(new Font(font.getFamily(),Font.BOLD,font.getSize()));
+	}
 
 }
