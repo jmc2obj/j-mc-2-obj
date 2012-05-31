@@ -2,12 +2,14 @@ package org.jmc.gui;
 
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.net.URI;
 import java.text.DateFormat;
 import java.util.Date;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -57,6 +59,8 @@ public class UpdateWindow extends JFrame{
 		JPanel pStatus=new JPanel();
 		pStatus.setLayout(new BoxLayout(pStatus, BoxLayout.LINE_AXIS));
 		lStatus=new JLabel();
+		Font font=lStatus.getFont();
+		lStatus.setFont(new Font(font.getFamily(),0,16));
 		pStatus.add(lStatus);
 
 		JPanel pUpdate=new JPanel();
@@ -72,6 +76,8 @@ public class UpdateWindow extends JFrame{
 		cp.add(pStatus);
 		cp.add(pUpdate);
 
+		cp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		
 		pack();
 
 

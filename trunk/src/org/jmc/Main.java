@@ -61,15 +61,7 @@ public class Main
 			Log.error("Error reading configuration file:", e);
 		}
 		
-		if(CheckUpdate.isAvailable())
-		{
-			Log.info("New version of the program is available!");
-			MainWindow.main.highlightUpdateButton();
-		}
-		else
-		{
-			Log.info("No update available...");
-		}
+		CheckUpdate.asyncCheck();
 	}
 	
 
@@ -94,6 +86,8 @@ public class Main
 			Log.error("Error reading configuration file:", e);
 			System.exit(-2);
 		}
+		
+		CheckUpdate.asyncCheck();
 		
 		ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
 
