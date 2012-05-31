@@ -54,6 +54,8 @@ public class Main
 			Materials.initialize();
 			BlockTypes.initialize();
 			EntityTypes.initialize();
+			
+			MainWindow.main.loadingFinished();
 		}
 		catch (Exception e) {
 			Log.error("Error reading configuration file:", e);

@@ -58,9 +58,74 @@ import org.jmc.util.Filesystem;
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
+	/**
+	 * A small thread to speed up window startup.
+	 * It is used to find saves in the minecraft save directory.
+	 * @author danijel
+	 *
+	 */
+	private class PopulateLoadListThread extends Thread
+	{
+		public void run()
+		{
+			File minecraft_dir=Filesystem.getMinecraftDir();
+			if(minecraft_dir==null) return;
+			File save_dir=new File(minecraft_dir.getAbsolutePath()+"/saves");
+
+			if(!save_dir.exists())
+				return;
+
+			String last_map=MainWindow.settings.getLastLoadedMap();
+			boolean found_last_save=false;
+			
+			File [] saves=save_dir.listFiles();
+
+			String p;
+			for(File f:saves)
+			{
+				if(f.isDirectory())
+				{
+					p=f.getAbsolutePath();
+					cbPath.addItem(p);
+					if(p.equals(last_map)) found_last_save=true;
+				}
+			}
+			
+			if(found_last_save)
+				cbPath.setSelectedItem(last_map);
+			else
+				addPathToList(last_map);
+			
+			fillDimensionList();
+
+			try{
+				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
+
+				ZipEntry entry = null;
+				while ((entry = zis.getNextEntry()) != null)
+				{
+					if (entry.getName().equals("title/splashes.txt"))
+						break;
+				}
+				if (entry != null)
+				{
+					BufferedReader in=new BufferedReader(new InputStreamReader(zis));
+					List<String> splashes=new LinkedList<String>();
+					String line;
+					while((line=in.readLine())!=null)
+						splashes.add(line);
+					in.close();
+					int r=(int)(Math.random()*(double)splashes.size());
+					MainWindow.main.setTitle("jMc2Obj - "+splashes.get(r));
+				}								
+				zis.close();
+			}catch (Exception e) {/* don't care */}
+		}
+	}
+
+
 	//UI elements (not described separately)
 	private JButton bLoad,bExport,bSettings,bUpdate,bAbout;
-	//this suppression is for compatibility with java 1.6
 	private JComboBox<String> cbPath;
 	private JComboBox<Integer> cbDimension;
 	private JTextArea taLog;
@@ -117,7 +182,9 @@ public class MainPanel extends JPanel
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0,5,10,5));
 		
 		bLoad = new JButton("Load");
+		bLoad.setEnabled(false);
 		bExport = new JButton("Export selection");
+		bExport.setEnabled(false);
 		bSettings = new JButton("Settings");
 		bUpdate = new JButton("Update");
 		bAbout = new JButton("About");
@@ -163,7 +230,7 @@ public class MainPanel extends JPanel
 		memory_monitor=new MemoryMonitor();
 
 
-		populateLoadList();		
+		(new PopulateLoadListThread()).start();		
 		
 		JSplitPane spMainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, preview_alts, spPane);
 		spMainSplit.setDividerLocation(400);
@@ -420,81 +487,13 @@ public class MainPanel extends JPanel
 		taLog.append(msg+"\n");
 		try {
 			taLog.setCaretPosition(taLog.getLineEndOffset(taLog.getLineCount()-1));
-		} catch (BadLocationException e) {}
-		//System.out.println(msg);
+		} catch (BadLocationException e) { /* don't care */ }
 	}
 
-	/**
-	 * A small thread to speed up window startup.
-	 * It is used to find saves in the minecraft save directory.
-	 * @author danijel
-	 *
-	 */
-	private class PopulateLoadListThread extends Thread
+	public void loadingFinished()
 	{
-		public void run()
-		{
-			File minecraft_dir=Filesystem.getMinecraftDir();
-			if(minecraft_dir==null) return;
-			File save_dir=new File(minecraft_dir.getAbsolutePath()+"/saves");
-
-			if(!save_dir.exists())
-				return;
-
-			String last_map=MainWindow.settings.getLastLoadedMap();
-			boolean found_last_save=false;
-			
-			File [] saves=save_dir.listFiles();
-
-			String p;
-			for(File f:saves)
-			{
-				if(f.isDirectory())
-				{
-					p=f.getAbsolutePath();
-					cbPath.addItem(p);
-					if(p.equals(last_map)) found_last_save=true;
-				}
-			}
-			
-			if(found_last_save)
-				cbPath.setSelectedItem(last_map);
-			else
-				addPathToList(last_map);
-			
-			fillDimensionList();
-
-			try{
-				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
-
-				ZipEntry entry = null;
-				while ((entry = zis.getNextEntry()) != null)
-				{
-					if (entry.getName().equals("title/splashes.txt"))
-						break;
-				}
-				if (entry != null)
-				{
-					BufferedReader in=new BufferedReader(new InputStreamReader(zis));
-					List<String> splashes=new LinkedList<String>();
-					String line;
-					while((line=in.readLine())!=null)
-						splashes.add(line);
-					in.close();
-					int r=(int)(Math.random()*(double)splashes.size());
-					MainWindow.main.setTitle("jMc2Obj - "+splashes.get(r));
-				}								
-				zis.close();
-			}catch (Exception e) {/* don't care */}
-		}
-	}
-
-	/**
-	 * Runs the populate list thread.
-	 */
-	private void populateLoadList()
-	{
-		(new PopulateLoadListThread()).start();
+		bLoad.setEnabled(true);
+		bExport.setEnabled(true);
 	}
 	
 	public void highlightUpdateButton()

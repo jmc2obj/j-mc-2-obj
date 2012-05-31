@@ -61,6 +61,11 @@ public class MainWindow extends JFrame
 		setVisible(true);
 	}
 	
+	public void loadingFinished()
+	{
+		panel.loadingFinished();
+	}
+	
 	public void highlightUpdateButton()
 	{
 		panel.highlightUpdateButton();
