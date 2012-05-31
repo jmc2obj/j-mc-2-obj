@@ -179,7 +179,7 @@ public class Chunk {
 
 				int base=yval.value*16*16*16;
 				for(int i=0; i<blocks.data.length; i++)
-					ret.id[base+i]=blocks.data[i];
+					ret.id[base+i]=(short)(blocks.data[i]&0xff);	//silly trick to convert signed to unsigned
 
 				if(add!=null)
 				{
