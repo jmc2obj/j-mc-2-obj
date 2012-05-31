@@ -35,7 +35,7 @@ Example: "100M" means revision 100 that was locally modified.
 		<echo message="&lt;update&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
 		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
 		<echo message="    &lt;url&gt;http://j-mc-2-obj.googlecode.com/files/jMc2Obj-dev_r${svnrev}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
-		<echo message="&lt;/update&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
+		<echo message="&lt;/update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 
 	</target>
 
@@ -66,7 +66,7 @@ Example: "100M" means revision 100 that was locally modified.
 				       passive="yes"		       
 				       binary="yes">
 			<fileset dir="${basedir}/JAR/">
-				<include name="output.xml"/>
+				<include name="update.xml"/>
 			</fileset>
 		</ftp>
 
