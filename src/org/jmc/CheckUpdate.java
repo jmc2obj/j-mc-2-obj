@@ -8,12 +8,33 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.jmc.Options.UIMode;
+import org.jmc.gui.MainWindow;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
 
 public class CheckUpdate {
 
+	public static void asyncCheck()
+	{
+		new Thread(new Runnable() {			
+			@Override
+			public void run() {
+				if(isAvailable())
+				{
+					Log.info("New version of the program is available!");
+					if (Options.uiMode == UIMode.GUI)
+						MainWindow.main.highlightUpdateButton();
+				}
+				else
+				{
+					Log.info("No update available...");
+				}				
+			}
+		}).start();		
+	}
+	
 	public static boolean isAvailable()
 	{
 		try{

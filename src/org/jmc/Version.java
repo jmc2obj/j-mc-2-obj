@@ -14,41 +14,49 @@ public class Version
 {
 	public static final String VERSION = "0.2-dev";
 
+	private static final Object syncobj=new Object();
+
 	private static String revstr=null;
 	public static String REVISION()
 	{
-		if(revstr==null)
+		synchronized(syncobj)
 		{
-			revstr=Version.class.getPackage().getImplementationVersion();
 			if(revstr==null)
-				revstr= "(local)";
+			{
+				revstr=Version.class.getPackage().getImplementationVersion();
+				if(revstr==null)
+					revstr= "(local)";
+			}
 		}
+		
 		return revstr;
-
 	}
 
 	private static Date dateval=null;
 	public static Date DATE()
 	{
-		if(dateval==null)
+		synchronized(syncobj)
 		{
-			try{
-				SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
+			if(dateval==null)
+			{
+				try{
+					SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
 
-				InputStream stream = Version.class.getResourceAsStream("/META-INF/MANIFEST.MF");				
-				
-				Manifest manifest = new Manifest(stream);            
+					InputStream stream = Version.class.getResourceAsStream("/META-INF/MANIFEST.MF");				
 
-				Attributes attributes = manifest.getMainAttributes();
+					Manifest manifest = new Manifest(stream);            
 
-				String datestr=attributes.getValue("Built-Date");
+					Attributes attributes = manifest.getMainAttributes();
 
-				if(datestr==null) datestr="";
+					String datestr=attributes.getValue("Built-Date");
 
-				dateval=sdf.parse(datestr);
+					if(datestr==null) datestr="";
 
-			}catch (Exception e) {
-				dateval=new Date(0);
+					dateval=sdf.parse(datestr);
+
+				}catch (Exception e) {
+					dateval=new Date(0);
+				}
 			}
 		}
 
