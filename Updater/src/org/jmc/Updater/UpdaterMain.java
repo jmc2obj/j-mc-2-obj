@@ -85,7 +85,9 @@ public class UpdaterMain {
 
 		if(Options.remove_file!=null)
 		{
-			if(Options.remove_file.equals(jarfile))
+			File a=new File(Options.remove_file);
+			File b=new File(jarfile);
+			if(a.equals(b))
 			{
 				Log.info("Skipping removal of same file as the program I'm trying to run!");
 			}
