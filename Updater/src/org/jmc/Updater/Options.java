@@ -7,6 +7,8 @@ public class Options {
 	
 	public static String dest_folder=null;
 	
+	public static String remove_file=null;
+	
 	public static boolean gui=false;
 	
 	public static boolean help=false;
@@ -26,6 +28,11 @@ public class Options {
 				else if(a.equals("-f"))
 				{
 					dest_folder=args[i+1];
+					i++;
+				}
+				else if(a.equals("-r"))
+				{
+					remove_file=args[i+1];
 					i++;
 				}
 				else if(a.equals("-g"))
@@ -60,6 +67,7 @@ public class Options {
 		Log.info("options:");
 		Log.info("  -d - program download link (mandatory)");
 		Log.info("  -f - destination folder (mandatory)");
+		Log.info("  -r - remove file after download is succesful");
 		Log.info("  -g - display progress in a GUI application");
 		Log.info("  -h - display this help");
 	}

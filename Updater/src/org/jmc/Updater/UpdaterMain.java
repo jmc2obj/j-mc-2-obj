@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -14,6 +15,8 @@ import org.jmc.Updater.Options.CmdLineException;
 
 public class UpdaterMain {
 
+	public static Window window=null;
+	
 	public static void main(String[] args) {
 
 		try {
@@ -35,6 +38,11 @@ public class UpdaterMain {
 		{
 			Options.printUsage();
 			return;
+		}
+		
+		if(Options.gui)
+		{
+			window=new Window();
 		}
 		
 		Log.info("File URL: "+Options.download_url);
@@ -75,6 +83,13 @@ public class UpdaterMain {
 			return;
 		}
 		
+		if(Options.remove_file!=null)
+		{
+			Log.info("Removing old program: "+Options.remove_file);
+			File file=new File(Options.remove_file);
+			file.delete();
+		}
+		
 		Log.info("Shutting down.");
 		
 		System.exit(0);
@@ -94,7 +109,7 @@ public class UpdaterMain {
 		}
 		
 		URL url=new URL(Options.download_url);			
-		url.openConnection();
+		URLConnection conn=url.openConnection();
 		InputStream istream=url.openStream();						
 		
 		FileOutputStream ostream = new FileOutputStream(dest_folder+"/"+filename);
@@ -104,8 +119,14 @@ public class UpdaterMain {
 		
 		ByteBuffer buffer=ByteBuffer.allocateDirect(32*1024);
 		
-		while(reader.read(buffer)!=-1)
+		Log.setProgressMax(conn.getContentLength());
+		
+		int read=0,ret;
+		while((ret=reader.read(buffer))!=-1)
 		{
+			read+=ret;
+			Log.setProgress(read);
+			
 			buffer.flip();
 			writer.write(buffer);
 			buffer.compact();
