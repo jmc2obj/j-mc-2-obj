@@ -1,7 +1,7 @@
 package org.jmc;
 
 import java.net.URL;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.xml.xpath.XPath;
@@ -45,8 +45,8 @@ public class CheckUpdate {
 			
 			String datestr = (String)xpath.evaluate("/update/date", doc, XPathConstants.STRING);
 			
-			DateFormat df=DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-			Date newdate=df.parse(datestr);
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
+			Date newdate=sdf.parse(datestr);
 			
 			Date currdate=Version.DATE();
 			
@@ -68,8 +68,8 @@ public class CheckUpdate {
 			
 			String datestr = (String)xpath.evaluate("/update/date", doc, XPathConstants.STRING);
 			
-			DateFormat df=DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-			Date newdate=df.parse(datestr);
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
+			Date newdate=sdf.parse(datestr);
 			
 			return newdate;
 			
