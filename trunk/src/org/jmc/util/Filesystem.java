@@ -66,8 +66,8 @@ public class Filesystem
 		{
 			return new File(".");
 		}
-		
-		
+
+
 		try {
 			String codePath = URLDecoder.decode(
 					Filesystem.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
@@ -82,6 +82,38 @@ public class Filesystem
 
 			// ... in practice both cases mean returning the parent path
 			return new File(codePath).getParentFile();
+
+		} catch (UnsupportedEncodingException ex) {
+			// should never happen, UTF-8 encoding always exists
+			throw new RuntimeException(ex);
+		}
+	}
+
+	/**
+	 * Gets the binary used to run the program. 
+	 * 
+	 * @return
+	 */
+	public static File getProgramExecutable()
+	{
+		//This checks if we are running from within an EXE file created using JSmooth
+		Object val=System.getProperties().get("jsmooth");
+		if(val!=null)
+		{
+			//TODO: figure out how to deal with this
+			return null;
+		}
+
+
+		try {
+			String codePath = URLDecoder.decode(
+					Filesystem.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
+					"UTF-8");
+			
+			if(!codePath.endsWith(".jar"))
+				return null;
+
+			return new File(codePath);
 
 		} catch (UnsupportedEncodingException ex) {
 			// should never happen, UTF-8 encoding always exists

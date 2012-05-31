@@ -4,6 +4,8 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.text.DateFormat;
 import java.util.Date;
@@ -20,6 +22,8 @@ import javax.swing.JTextField;
 
 import org.jmc.CheckUpdate;
 import org.jmc.Version;
+import org.jmc.util.Filesystem;
+import org.jmc.util.Log;
 
 @SuppressWarnings("serial")
 public class UpdateWindow extends JFrame{
@@ -77,7 +81,7 @@ public class UpdateWindow extends JFrame{
 		cp.add(pUpdate);
 
 		cp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		
+
 		pack();
 
 
@@ -105,9 +109,40 @@ public class UpdateWindow extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				//TODO: make a separate program that will download and run the new version automatically
+				File folder=Filesystem.getDatafilesDir();
+				File updater=new File(folder,"conf/Updater.jar");
+				if(updater.exists())
+				{
+					File program=Filesystem.getProgramExecutable();
+					
+					
+					if(program==null)
+					{
+						Log.info("Cannot run updater for this type of program!");
+					}
+					else
+					{
+						String url=CheckUpdate.getUrl();
+						try {
+							String cmd="java -jar "+updater.getAbsolutePath()+
+									" -d "+url+
+									" -f "+folder.getAbsolutePath()+
+									" -r "+program.getAbsolutePath()+
+									" -g";
+							
+							Log.info("running: "+cmd);
+							
+							Runtime.getRuntime().exec(cmd);
+							
+							System.exit(0);
+							
+						} catch (IOException e1) {
+							Log.info("Cannot run updater: "+e1);
+						}
+					}
+				}
+
 				
-				String url=CheckUpdate.getUrl();
 				try{
 					if(Desktop.isDesktopSupported())
 					{
@@ -115,7 +150,7 @@ public class UpdateWindow extends JFrame{
 
 						if(desktop.isSupported(Desktop.Action.BROWSE))
 						{
-							desktop.browse( new URI(url) );
+							desktop.browse( new URI("http://www.jmc2obj.net/downloads/") );
 							return;
 						}
 					}
@@ -123,6 +158,7 @@ public class UpdateWindow extends JFrame{
 
 				JOptionPane.showMessageDialog(UpdateWindow.this, "Cannot open browser!\nVisit http://www.jmc2obj.net/ to udpate manually.");
 			}
+
 		});
 	}
 
