@@ -31,10 +31,10 @@ Example: "100M" means revision 100 that was locally modified.
 			<fileset dir="${basedir}/bin"/>
 		</jar>
 
-		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/JAR/output.xml" />
-		<echo message="&lt;update&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
-		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
-		<echo message="    &lt;url&gt;http://j-mc-2-obj.googlecode.com/files/jMc2Obj-dev_r${svnrev}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/output.xml" />
+		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/JAR/update.xml" />
+		<echo message="&lt;update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
+		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
+		<echo message="    &lt;url&gt;http://jmc2obj.net/downloads/jMc2Obj-dev_r${svnrev}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 		<echo message="&lt;/update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 
 	</target>
