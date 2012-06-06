@@ -18,7 +18,7 @@ public class CheckUpdate {
 
 	public static void asyncCheck()
 	{
-		new Thread(new Runnable() {			
+		Thread t = new Thread(new Runnable() {			
 			@Override
 			public void run() {
 				if(isAvailable())
@@ -32,7 +32,9 @@ public class CheckUpdate {
 					Log.info("No update available...");
 				}				
 			}
-		}).start();		
+		});
+		t.setDaemon(true);
+		t.start();		
 	}
 	
 	public static boolean isAvailable()
