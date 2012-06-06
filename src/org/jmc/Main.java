@@ -87,8 +87,6 @@ public class Main
 			System.exit(-2);
 		}
 		
-		CheckUpdate.asyncCheck();
-		
 		ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
 
 		if (Options.exportTex) {
