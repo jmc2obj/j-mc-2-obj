@@ -361,6 +361,9 @@ public class BlockTypes
 	public static BlockInfo get(short id)
 	{
 		BlockInfo bi = blockTable.get(id);
+		//if (bi == null)
+		//	Log.debug("Unknow block id: " + id);
+		
 		return bi != null ? bi : unknownBlock;
 	}
 

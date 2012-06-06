@@ -307,6 +307,11 @@ Kd 0.4000 0.5294 0.4832
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/emerald_ore.png
 
+newmtl emerald_block
+Kd 0.2461 0.8086 0.3906
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/emerald_block.png
+
 newmtl enchant_table_bottom
 Kd 0.0784 0.0706 0.1176
 Ks 0.0000 0.0000 0.0000
@@ -943,6 +948,24 @@ Kd 1.0000 0.8549 0.4000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/torch.png
 map_d tex/torch_a.png
+
+newmtl torch_flame
+Kd 1.0000 0.8438 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/torch_flame.png
+map_d tex/torch_flame_a.png
+
+newmtl tripwire
+Kd 0.9000 0.9000 0.9000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tripwire.png
+map_d tex/tripwire_a.png
+
+newmtl tripwire_hook
+Kd 0.7500 0.7500 0.7500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tripwire_hook.png
+map_d tex/tripwire_hook_a.png
 
 newmtl vines
 Kd 0.2896 0.4060 0.1555
