@@ -88,20 +88,31 @@ public class UpdateWindow extends JFrame{
 		bCheck.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				tfCurrent.setText("Checking...");
+				tfNew.setText("Checking...");
+				
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						DateFormat df=DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);				
+						Date curr=Version.DATE();				
+						Date newd=CheckUpdate.getDate();
 
-				DateFormat df=DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);				
-				Date curr=Version.DATE();				
-				Date newd=CheckUpdate.getDate();
+						tfCurrent.setText(df.format(curr));
+						tfNew.setText(df.format(newd));
 
-				tfCurrent.setText(df.format(curr));
-				tfNew.setText(df.format(newd));
+						if(newd.after(curr))
+							lStatus.setText("New version is available!");
+						else
+							lStatus.setText("You have the newest version.");
 
-				if(newd.after(curr))
-					lStatus.setText("New version is available!");
-				else
-					lStatus.setText("You have the newest version.");
+						pack();
 
-				pack();
+						
+					}
+				}).start();
 			}
 		});
 
