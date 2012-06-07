@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.jmc.util.Log;
+
 
 /**
  * Version constants.
@@ -28,7 +30,7 @@ public class Version
 					revstr= "(local)";
 			}
 		}
-		
+
 		return revstr;
 	}
 
@@ -42,19 +44,29 @@ public class Version
 				try{
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
 
-					InputStream stream = Version.class.getResourceAsStream("/META-INF/MANIFEST.MF");				
+					InputStream stream = Version.class.getResourceAsStream("/META-INF/MANIFEST.MF");
 
-					Manifest manifest = new Manifest(stream);            
+					if(stream != null)
+					{
 
-					Attributes attributes = manifest.getMainAttributes();
+						Manifest manifest = new Manifest(stream);            
 
-					String datestr=attributes.getValue("Built-Date");
+						Attributes attributes = manifest.getMainAttributes();
 
-					if(datestr==null) datestr="";
+						String datestr=attributes.getValue("Built-Date");
 
-					dateval=sdf.parse(datestr);
+						if(datestr==null) datestr="";
+
+						dateval=sdf.parse(datestr);
+					}
+					else
+					{
+						Log.error("Cannot load manifest", null, false);
+						dateval=new Date(0);
+					}
 
 				}catch (Exception e) {
+					Log.error("Cannot find date of current version",e,false);					
 					dateval=new Date(0);
 				}
 			}

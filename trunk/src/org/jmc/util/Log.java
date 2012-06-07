@@ -46,18 +46,21 @@ public class Log
 	 * 
 	 * @param msg string to be logged
 	 * @param ex (optional) exception that caused the error
+	 * @param popup pop a message
 	 */
-	public static void error(String msg, Throwable ex)
+	public static void error(String msg, Throwable ex, boolean popup)
 	{
 		System.err.println(msg);
 		if (ex != null)
 			ex.printStackTrace();
 		
-		if (Options.uiMode == UIMode.GUI)
+		if (Options.uiMode == UIMode.GUI )
 		{
+			MainWindow.log("ERROR: "+msg);	
 			if (ex != null)
 			{
-				JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+				if(popup == true)
+					JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 				
 				// write the full stack trace to the message area
 				final StringWriter sw = new StringWriter();
@@ -66,9 +69,20 @@ public class Log
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(MainWindow.main, msg);
+				if(popup == true)
+					JOptionPane.showMessageDialog(MainWindow.main, msg);
 			}
 		}
+	}
+	
+	/**
+	 * Version that automatically pops a message.
+	 * @param msg
+	 * @param ex
+	 */
+	public static void error(String msg, Throwable ex)
+	{
+		error(msg,ex,true);
 	}
 
 }
