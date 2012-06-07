@@ -168,16 +168,19 @@ newmtl cocoa_plant_1
 Kd 0.5742 0.5937 0.2695
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/cocoa_plant_1.png
+map_d tex/cocoa_plant_1_a.png
 
 newmtl cocoa_plant_2
 Kd 0.6758 0.5313 0.2734
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/cocoa_plant_2.png
+map_d tex/cocoa_plant_2_a.png
 
 newmtl cocoa_plant_3
 Kd 0.6313 0.3554 0.1328
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/cocoa_plant_3.png
+map_d tex/cocoa_plant_3_a.png
 
 newmtl crops_1
 Kd 0.5137 0.7569 0.2667
