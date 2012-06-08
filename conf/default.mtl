@@ -383,7 +383,7 @@ map_Kd tex/fern.png
 map_d tex/fern_a.png
 
 newmtl fire
-Kd 1.0000 0.4667 0.0000
+Kd 1.0000 0.6187 0.0000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/fire.png
 map_d tex/fire_a.png
