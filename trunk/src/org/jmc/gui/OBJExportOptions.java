@@ -30,6 +30,7 @@ public class OBJExportOptions extends JPanel
 	private JRadioButton rbNoOffset,rbCenterOffset,rbCustomOffset;
 	private JTextField tfXOffset,tfZOffset;
 	private JCheckBox cbRenderSides;
+	private JCheckBox cbRenderBiomes;
 	private JCheckBox cbRenderEntities;
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
@@ -80,6 +81,12 @@ public class OBJExportOptions extends JPanel
 		pSides.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRenderSides=new JCheckBox("Render world sides & bottom");
 		pSides.add(cbRenderSides);
+		
+		JPanel pBiomes=new JPanel();
+		pBiomes.setLayout(new BoxLayout(pBiomes, BoxLayout.LINE_AXIS));
+		pBiomes.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbRenderBiomes=new JCheckBox("Render biomes");
+		pBiomes.add(cbRenderBiomes);
 		
 		JPanel pEntities=new JPanel();
 		pEntities.setLayout(new BoxLayout(pEntities, BoxLayout.LINE_AXIS));
@@ -193,6 +200,7 @@ public class OBJExportOptions extends JPanel
 		rbMTLAlways.addActionListener(genericSaveAction);
 		rbMTLNever.addActionListener(genericSaveAction);
 		cbRenderSides.addActionListener(genericSaveAction);
+		cbRenderBiomes.addActionListener(genericSaveAction);
 		cbRenderEntities.addActionListener(genericSaveAction);
 		cbObjPerMat.addActionListener(genericSaveAction);
 		cbObjPerChunk.addActionListener(genericSaveAction);
@@ -203,6 +211,7 @@ public class OBJExportOptions extends JPanel
 		add(pScale);
 		add(pOffset);
 		add(pSides);
+		add(pBiomes);
 		add(pEntities);
 		add(pObjPerMat);
 		add(pObjPerChunk);
@@ -268,6 +277,7 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		cbRenderSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
+		cbRenderBiomes.setSelected(prefs.getBoolean("RENDER_BIOMES", true));
 		cbRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", false));
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
@@ -329,6 +339,7 @@ public class OBJExportOptions extends JPanel
 		}
 		
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
+		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
@@ -367,6 +378,7 @@ public class OBJExportOptions extends JPanel
 			Options.mtlOverwriteAction = OverwriteAction.ASK;
 		
 		Options.renderSides = cbRenderSides.isSelected();
+		Options.renderBiomes = cbRenderBiomes.isSelected();
 		Options.renderEntities = cbRenderEntities.isSelected();
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();

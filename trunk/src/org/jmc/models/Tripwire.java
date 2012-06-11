@@ -18,9 +18,9 @@ public class Tripwire extends BlockModel
 	}
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String mtl = materials.get(data)[0];
+		String mtl = materials.get(data,biome)[0];
 		
 		boolean active = (data & 4) != 0;
 		

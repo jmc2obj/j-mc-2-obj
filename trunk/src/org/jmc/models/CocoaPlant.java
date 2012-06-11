@@ -14,11 +14,11 @@ public class CocoaPlant extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data)
+	protected String[] getMtlSides(byte data, byte biome)
 	{
 		int growth = (data >> 2) & 3;
 		
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[growth];
@@ -32,7 +32,7 @@ public class CocoaPlant extends BlockModel
 
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = data & 3;
 		int growth = (data >> 2) & 3;
@@ -68,7 +68,7 @@ public class CocoaPlant extends BlockModel
 					-0.25f, -0.3125f, -0.4375f,
 					0.25f, 0.25f, 0.0625f,
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 		}
@@ -82,7 +82,7 @@ public class CocoaPlant extends BlockModel
 					-0.1875f, -0.1875f, -0.4375f, 
 					0.1875f, 0.25f, -0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 		}
@@ -96,7 +96,7 @@ public class CocoaPlant extends BlockModel
 					-0.125f, -0.0625f, -0.4375f,
 					0.125f, 0.25f, -0.1875f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 		}
@@ -109,7 +109,7 @@ public class CocoaPlant extends BlockModel
 		vertices[1] = new Vertex(0, 0.25f, -0.5f);
 		vertices[2] = new Vertex(0, 0.5f, -0.5f);
 		vertices[3] = new Vertex(0, 0.5f, 0);
-		obj.addFace(vertices, uvSide, rt, materials.get(data)[growth]);
+		obj.addFace(vertices, uvSide, rt, materials.get(data,biome)[growth]);
 	}
 
 }

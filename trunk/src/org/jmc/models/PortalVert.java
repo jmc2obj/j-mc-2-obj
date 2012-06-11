@@ -13,7 +13,7 @@ public class PortalVert extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		// find in which direction are the other portal blocks
 		boolean ns = chunks.getBlockID(x, y, z-1) == blockId || chunks.getBlockID(x, y, z+1) == blockId;
@@ -33,13 +33,13 @@ public class PortalVert extends BlockModel
 		vertices[1] = new Vertex(-0.5f, -0.5f, -0.125f);
 		vertices[2] = new Vertex(-0.5f,  0.5f, -0.125f);
 		vertices[3] = new Vertex( 0.5f,  0.5f, -0.125f);
-		obj.addFace(vertices, null, rt, materials.get(data)[0]);
+		obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);
 
 		vertices[0] = new Vertex(-0.5f, -0.5f, 0.125f);
 		vertices[1] = new Vertex( 0.5f, -0.5f, 0.125f);
 		vertices[2] = new Vertex( 0.5f,  0.5f, 0.125f);
 		vertices[3] = new Vertex(-0.5f,  0.5f, 0.125f);
-		obj.addFace(vertices, null, rt, materials.get(data)[0]);
+		obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);
 	}
 
 }

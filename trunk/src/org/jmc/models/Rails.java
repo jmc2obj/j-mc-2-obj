@@ -13,23 +13,23 @@ public class Rails extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		String mtl;
 		if (blockId == 27) {
 			// powered rail (off / on)
-			mtl = (data & 8) == 0 ? materials.get(data)[1] : materials.get(data)[0];
+			mtl = (data & 8) == 0 ? materials.get(data,biome)[1] : materials.get(data,biome)[0];
 			data = (byte)(data & 7);
 		}
 		else if (blockId == 28)
 		{
 			// detector
-			mtl = materials.get(data)[0];
+			mtl = materials.get(data,biome)[0];
 		}
 		else
 		{
 			// regular rail (straight / curved)
-			mtl = data < 6 ? materials.get(data)[0] : materials.get(data)[1];
+			mtl = data < 6 ? materials.get(data,biome)[0] : materials.get(data,biome)[1];
 		}
 		
 		

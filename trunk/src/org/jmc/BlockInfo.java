@@ -58,9 +58,9 @@ public class BlockInfo
 	 * @param data Block data
 	 * @return Block color
 	 */
-	public Color getPreviewColor(byte data)
+	public Color getPreviewColor(byte data, byte biome)
 	{
-		String[] mtlNames = materials.get(data);
+		String[] mtlNames = materials.get(data,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
 			Log.debug("block " + id + " (" + name + ") has no mtl for data="+data);

@@ -14,7 +14,7 @@ public class Door extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean top;
 		int open;
@@ -37,7 +37,7 @@ public class Door extends BlockModel
 			direction = (data & 3);
 		}
 
-		String mtl = top ? materials.get(data)[0] : materials.get(data)[1];
+		String mtl = top ? materials.get(data,biome)[0] : materials.get(data,biome)[1];
 		
 		/*
 		  The model is rendered in the middle of the block facing North, then 

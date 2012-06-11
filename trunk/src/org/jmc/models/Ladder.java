@@ -13,7 +13,7 @@ public class Ladder extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
@@ -35,7 +35,7 @@ public class Ladder extends BlockModel
 			
 		rt = translate.multiply(rotate);
 		
-		addObject(obj, rt, materials.get(data)[0]);
+		addObject(obj, rt, materials.get(data,biome)[0]);
 	}
 	
 	private void addObject(OBJOutputFile obj, Transform transform, String mat)

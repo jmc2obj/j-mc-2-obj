@@ -12,7 +12,7 @@ public class Slab extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		UV[] uvSide;
@@ -42,7 +42,7 @@ public class Slab extends BlockModel
 				x - 0.5f, y + ys, z - 0.5f,
 				x + 0.5f, y + ye, z + 0.5f, 
 				null, 
-				getMtlSides(data),
+				getMtlSides(data,biome),
 				uvSides, 
 				drawSides);
 	}

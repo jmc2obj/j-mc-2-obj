@@ -13,9 +13,9 @@ public class Stairs extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String[] mtls = getMtlSides(data);
+		String[] mtls = getMtlSides(data,biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		UV[] uvSide, uvFront, uvTop;
 

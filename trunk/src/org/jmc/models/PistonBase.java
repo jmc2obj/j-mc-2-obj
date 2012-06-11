@@ -13,10 +13,10 @@ public class PistonBase extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data)
+	protected String[] getMtlSides(byte data, byte biome)
 	{
 		boolean open = (data & 8) != 0;
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = open ? abbrMtls[1] : abbrMtls[0];
@@ -30,7 +30,7 @@ public class PistonBase extends BlockModel
 
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean open = (data & 8) != 0;
 		int dir = (data & 7);
@@ -64,7 +64,7 @@ public class PistonBase extends BlockModel
 					-0.5f, -0.5f, -0.5f,
 					0.5f, 0.25f, 0.5f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 		}
@@ -74,7 +74,7 @@ public class PistonBase extends BlockModel
 					-0.5f, -0.5f, -0.5f,
 					0.5f, 0.5f, 0.5f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					null, 
 					null);
 		}

@@ -13,9 +13,9 @@ public class SignBoard extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String[] mtlSides = getMtlSides(data);
+		String[] mtlSides = getMtlSides(data,biome);
 		boolean[] drawSides = new boolean[] { true, true, false, true, true, true };
 		
 		Transform rotate = new Transform();

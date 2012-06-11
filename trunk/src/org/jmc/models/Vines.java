@@ -15,7 +15,7 @@ public class Vines extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		short topId = chunks.getBlockID(x, y+1, z);
 		
@@ -37,31 +37,31 @@ public class Vines extends BlockModel
 		if (n)
 		{
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, null, trans, materials.get(data)[0]);
+			obj.addFace(vertices, null, trans, materials.get(data,biome)[0]);
 		}
 		if (s)
 		{
 			rot.rotate(0, 180, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
 		}
 		if (e)
 		{
 			rot.rotate(0, 90, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
 		}
 		if (w)
 		{
 			rot.rotate(0, -90, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
 		}
 		if (top)
 		{
 			rot.rotate(90, 0, 0);
 			trans.translate(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
 		}
 			
 		

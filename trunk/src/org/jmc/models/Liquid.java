@@ -40,7 +40,7 @@ public class Liquid extends BlockModel
 
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int level = data & 7;
 		boolean falling = (data & 8) != 0;
@@ -175,7 +175,7 @@ public class Liquid extends BlockModel
 			drawSides[0] = true;
 		}
 		
-		mtl = (level != 0 || falling) ? materials.get(data)[1] : materials.get(data)[0];
+		mtl = (level != 0 || falling) ? materials.get(data,biome)[1] : materials.get(data,biome)[0];
 
 		Vertex[] vertices = new Vertex[4];
 		UV[] uv = new UV[4];

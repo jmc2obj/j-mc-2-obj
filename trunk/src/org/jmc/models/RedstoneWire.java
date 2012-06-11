@@ -22,11 +22,11 @@ public class RedstoneWire extends BlockModel
 	}
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean on = (data & 15) > 0;
-		String mtlCross = on ? materials.get(data)[0] : materials.get(data)[2];
-		String mtlLine  = on ? materials.get(data)[1] : materials.get(data)[3];
+		String mtlCross = on ? materials.get(data,biome)[0] : materials.get(data,biome)[2];
+		String mtlLine  = on ? materials.get(data,biome)[1] : materials.get(data,biome)[3];
 		
 		boolean conn_n_up = isConnectable(chunks.getBlockID(x, y+1, z-1), false);
 		boolean conn_s_up = isConnectable(chunks.getBlockID(x, y+1, z+1), false);

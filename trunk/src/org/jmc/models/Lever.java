@@ -12,9 +12,9 @@ import org.jmc.geom.UV;
 public class Lever extends BlockModel
 {
 
-	private String[] getMtlSidesBase(byte data)
+	private String[] getMtlSidesBase(byte data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[1];
@@ -26,9 +26,9 @@ public class Lever extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesLever(byte data)
+	private String[] getMtlSidesLever(byte data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[0];
@@ -42,7 +42,7 @@ public class Lever extends BlockModel
 
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean on = (data & 8) != 0;
 		int dir = (data & 7);
@@ -85,7 +85,7 @@ public class Lever extends BlockModel
 				-0.1875f, -0.25f, -0.5f, 
 				0.1875f, 0.25f, -0.3125f, 
 				rt, 
-				getMtlSidesBase(data),
+				getMtlSidesBase(data,biome),
 				uvSides,
 				drawSides);
 
@@ -133,7 +133,7 @@ public class Lever extends BlockModel
 				-0.0625f, -0.0625f, -0.5f, 
 				0.0625f, 0.0625f, 0.125f,
 				rt, 
-				getMtlSidesLever(data),
+				getMtlSidesLever(data,biome),
 				uvSides,
 				drawSides);
 	}
