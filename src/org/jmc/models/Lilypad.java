@@ -13,7 +13,7 @@ public class Lilypad extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		// Minecraft decides which direction the lilypad faces based on some 
 		// on-the-fly calculation (it's not stored in the data value)
@@ -45,7 +45,7 @@ public class Lilypad extends BlockModel
 		vertices[1] = new Vertex( 0.5f, -0.49f,  0.5f);
 		vertices[2] = new Vertex( 0.5f, -0.49f, -0.5f);			
 		vertices[3] = new Vertex(-0.5f, -0.49f, -0.5f);
-		obj.addFace(vertices, null, rt, materials.get(data)[0]);
+		obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);
 	}
 
 }

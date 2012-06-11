@@ -14,7 +14,7 @@ public class Bed extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = (data & 3);
 		boolean head = (data & 8) != 0;
@@ -44,25 +44,25 @@ public class Bed extends BlockModel
 			vertices[1] = new Vertex( 0.5f, 0.0625f,  0.5f); uv[1] = new UV(0, 0);
 			vertices[2] = new Vertex( 0.5f, 0.0625f, -0.5f); uv[2] = new UV(1, 0);
 			vertices[3] = new Vertex(-0.5f, 0.0625f, -0.5f); uv[3] = new UV(1, 1);
-			obj.addFace(vertices, uv, rt, materials.get(data)[0]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[0]);
 			// front
 			vertices[0] = new Vertex( 0.5f,   -0.5f, -0.5f); uv[0] = new UV(0, 0);
 			vertices[1] = new Vertex(-0.5f,   -0.5f, -0.5f); uv[1] = new UV(1, 0);
 			vertices[2] = new Vertex(-0.5f, 0.0625f, -0.5f); uv[2] = new UV(1, 9/16f);
 			vertices[3] = new Vertex( 0.5f, 0.0625f, -0.5f); uv[3] = new UV(0, 9/16f);
-			obj.addFace(vertices, uv, rt, materials.get(data)[2]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[2]);
 			// left
 			vertices[0] = new Vertex(-0.5f,   -0.5f, -0.5f); uv[0] = new UV(1, 0);
 			vertices[1] = new Vertex(-0.5f,   -0.5f,  0.5f); uv[1] = new UV(0, 0);
 			vertices[2] = new Vertex(-0.5f, 0.0625f,  0.5f); uv[2] = new UV(0, 9/16f);
 			vertices[3] = new Vertex(-0.5f, 0.0625f, -0.5f); uv[3] = new UV(1, 9/16f);
-			obj.addFace(vertices, uv, rt, materials.get(data)[1]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[1]);
 			// right
 			vertices[0] = new Vertex(0.5f,   -0.5f,  0.5f); uv[0] = new UV(0, 0);
 			vertices[1] = new Vertex(0.5f,   -0.5f, -0.5f); uv[1] = new UV(1, 0);
 			vertices[2] = new Vertex(0.5f, 0.0625f, -0.5f); uv[2] = new UV(1, 9/16f);
 			vertices[3] = new Vertex(0.5f, 0.0625f,  0.5f); uv[3] = new UV(0, 9/16f);
-			obj.addFace(vertices, uv, rt, materials.get(data)[1]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[1]);
 		}
 		else
 		{
@@ -71,25 +71,25 @@ public class Bed extends BlockModel
 			vertices[1] = new Vertex( 0.5f, 0.0625f,  0.5f); uv[1] = new UV(0, 0);
 			vertices[2] = new Vertex( 0.5f, 0.0625f, -0.5f); uv[2] = new UV(1, 0);
 			vertices[3] = new Vertex(-0.5f, 0.0625f, -0.5f); uv[3] = new UV(1, 1);
-			obj.addFace(vertices, uv, rt, materials.get(data)[3]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[3]);
 			// left
 			vertices[0] = new Vertex(-0.5f,   -0.5f, -0.5f); uv[0] = new UV(1, 0);
 			vertices[1] = new Vertex(-0.5f,   -0.5f,  0.5f); uv[1] = new UV(0, 0);
 			vertices[2] = new Vertex(-0.5f, 0.0625f,  0.5f); uv[2] = new UV(0, 9/16f);
 			vertices[3] = new Vertex(-0.5f, 0.0625f, -0.5f); uv[3] = new UV(1, 9/16f);
-			obj.addFace(vertices, uv, rt, materials.get(data)[4]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[4]);
 			// right
 			vertices[0] = new Vertex(0.5f,   -0.5f,  0.5f); uv[0] = new UV(0, 0);
 			vertices[1] = new Vertex(0.5f,   -0.5f, -0.5f); uv[1] = new UV(1, 0);
 			vertices[2] = new Vertex(0.5f, 0.0625f, -0.5f); uv[2] = new UV(1, 9/16f);
 			vertices[3] = new Vertex(0.5f, 0.0625f,  0.5f); uv[3] = new UV(0, 9/16f);
-			obj.addFace(vertices, uv, rt, materials.get(data)[4]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[4]);
 			// back
 			vertices[0] = new Vertex( 0.5f,   -0.5f, 0.5f); uv[0] = new UV(0, 0);
 			vertices[1] = new Vertex(-0.5f,   -0.5f, 0.5f); uv[1] = new UV(1, 0);
 			vertices[2] = new Vertex(-0.5f, 0.0625f, 0.5f); uv[2] = new UV(1, 9/16f);
 			vertices[3] = new Vertex( 0.5f, 0.0625f, 0.5f); uv[3] = new UV(0, 9/16f);
-			obj.addFace(vertices, uv, rt, materials.get(data)[5]);
+			obj.addFace(vertices, uv, rt, materials.get(data, biome)[5]);
 		}
 		
 	}

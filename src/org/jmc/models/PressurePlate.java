@@ -13,9 +13,9 @@ public class PressurePlate extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String[] mtlSides = getMtlSides(data);
+		String[] mtlSides = getMtlSides(data,biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 
 		Vertex[] vertices = new Vertex[4];

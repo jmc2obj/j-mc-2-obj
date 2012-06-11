@@ -13,7 +13,7 @@ public class Painting extends EntityModel
 	@Override
 	public void addEntity(OBJOutputFile obj, Transform transform) 
 	{
-		addObject(obj, transform, materials.get((byte) 0)[0]);		
+		addObject(obj, transform, materials.get((byte) -1, (byte) -1)[0]);		
 	}
 	
 	private void addObject(OBJOutputFile obj, Transform transform, String mat)

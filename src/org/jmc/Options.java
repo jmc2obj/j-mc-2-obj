@@ -114,6 +114,11 @@ public class Options
 	public static boolean renderEntities = false;
 	
 	/**
+	 * If true, biomes are taken into account during export.
+	 */
+	public static boolean renderBiomes = true;
+	
+	/**
 	 * Whether to export the .obj file.
 	 * Only used in console mode.
 	 */

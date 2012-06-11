@@ -44,9 +44,9 @@ public abstract class BlockModel
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data)
+	protected String[] getMtlSides(byte data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data, biome);
 		
 		String[] mtlSides = new String[6];
 		if (abbrMtls.length < 2)
@@ -241,6 +241,6 @@ public abstract class BlockModel
 	 * @param z Block z coordinate
 	 * @param data Block data value
 	 */
-	public abstract void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data);
+	public abstract void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome);
 	
 }

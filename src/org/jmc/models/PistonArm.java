@@ -12,10 +12,10 @@ import org.jmc.geom.UV;
 public class PistonArm extends BlockModel
 {
 
-	private String[] getMtlSidesTop(byte data)
+	private String[] getMtlSidesTop(byte data, byte biome)
 	{
 		boolean sticky = (data & 8) != 0;
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = sticky ? abbrMtls[1] : abbrMtls[0];
@@ -27,9 +27,9 @@ public class PistonArm extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesArm(byte data)
+	private String[] getMtlSidesArm(byte data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[2];
@@ -43,7 +43,7 @@ public class PistonArm extends BlockModel
 
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = (data & 7);
 
@@ -78,7 +78,7 @@ public class PistonArm extends BlockModel
 				-0.5f, 0.25f, -0.5f,
 				0.5f, 0.5f, 0.5f, 
 				rt, 
-				getMtlSidesTop(data), 
+				getMtlSidesTop(data,biome), 
 				uvSides, 
 				null);
 
@@ -90,7 +90,7 @@ public class PistonArm extends BlockModel
 				-0.125f, -0.75f, -0.125f,
 				0.125f, 0.25f, 0.125f, 
 				rt, 
-				getMtlSidesArm(data), 
+				getMtlSidesArm(data,biome), 
 				uvSides, 
 				drawSides);
 		

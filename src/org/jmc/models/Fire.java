@@ -13,9 +13,9 @@ public class Fire extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String[] mtlSides = getMtlSides(data);
+		String[] mtlSides = getMtlSides(data,biome);
 
 		Transform t = new Transform();
 		t.translate(x, y, z);

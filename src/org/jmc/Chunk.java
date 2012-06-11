@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -116,10 +117,12 @@ public class Chunk {
 		 * Main constructor.
 		 * @param num number of blocks to allocate
 		 */
-		public Blocks(int num)
+		public Blocks(int block_num, int biome_num)
 		{
-			id=new short[num];
-			data=new byte[num];
+			id=new short[block_num];
+			data=new byte[block_num];
+			biome=new byte[biome_num];
+			Arrays.fill(biome, (byte)255);
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
 		}
@@ -131,6 +134,11 @@ public class Chunk {
 		 * Block meta-data.
 		 */
 		public byte [] data;
+		
+		/**
+		 * Biome IDSs (only XZ axes).
+		 */
+		public byte [] biome;
 
 		/**
 		 * Entities.
@@ -165,7 +173,7 @@ public class Chunk {
 
 			ymax=(ymax+1)*16;
 
-			ret=new Blocks(16*16*ymax);
+			ret=new Blocks(16*16*ymax,16*16);
 
 			byte add1,add2;
 
@@ -173,7 +181,8 @@ public class Chunk {
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte_Array data = (TAG_Byte_Array) c_section.getElement("Data");
-				TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");			
+				TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");
+				TAG_Byte_Array biomes = (TAG_Byte_Array) level.getElement("Biomes");
 				TAG_Byte_Array add = (TAG_Byte_Array) c_section.getElement("AddBlocks");
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 
@@ -200,6 +209,9 @@ public class Chunk {
 					ret.data[base+2*i]=add1;
 					ret.data[base+2*i+1]=add2;
 				}
+				
+				for(int i=0; i<biomes.data.length; i++)
+					ret.biome[i]=biomes.data[i];
 			}			
 		}
 		else
@@ -208,7 +220,7 @@ public class Chunk {
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 
 			byte add1,add2;
-			ret=new Blocks(blocks.data.length);
+			ret=new Blocks(blocks.data.length,256);
 
 			for(int i=0; i<blocks.data.length; i++)
 				ret.id[i]=blocks.data[i];
@@ -220,6 +232,8 @@ public class Chunk {
 				ret.data[2*i]=add1;
 				ret.data[2*i+1]=add2;
 			}
+			
+			
 		}
 
 		if(Options.renderEntities)
@@ -269,6 +283,7 @@ public class Chunk {
 
 		short blockID=0;
 		byte blockData=0;
+		byte blockBiome=0;
 		Color c;
 		Blocks bd=getBlocks();		
 
@@ -290,6 +305,7 @@ public class Chunk {
 
 		short ids[]=new short[16*16];
 		byte data[]=new byte[16*16];
+		byte biome[]=new byte[16*16];
 		int himage[]=new int[16*16];
 
 		int x,y,z;
@@ -301,6 +317,8 @@ public class Chunk {
 
 				for(y = floor; y < ceiling; y++)
 				{
+					blockBiome = bd.biome[x*16+z]; 
+							
 					if(is_anvil)
 					{
 						blockID = bd.id[x + (z * 16) + (y * 16) * 16];
@@ -316,6 +334,7 @@ public class Chunk {
 					{
 						ids[z*16+x]=blockID;
 						data[z*16+x]=blockData;
+						biome[z*16+x]=blockBiome;
 						himage[z*16+x]=y;
 					}
 				}
@@ -329,9 +348,10 @@ public class Chunk {
 			{
 				blockID = ids[z*16+x];
 				blockData = data[z*16+x];
+				blockBiome = biome[z*16+x];
 				if(blockID != 0)
 				{
-					c = BlockTypes.get(blockID).getPreviewColor(blockData);
+					c = BlockTypes.get(blockID).getPreviewColor(blockData,blockBiome);
 					if(c!=null)
 					{
 						gb.setColor(c);

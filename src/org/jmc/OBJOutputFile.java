@@ -370,10 +370,11 @@ public class OBJOutputFile extends OBJFileBase
 				{
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
+					byte blockBiome=chunk.getBlockBiome(x, z);
 
 					if(blockID==0) continue;
 
-					BlockTypes.get(blockID).model.addModel(this, chunk, x, y, z, blockData);
+					BlockTypes.get(blockID).model.addModel(this, chunk, x, y, z, blockData, blockBiome);
 				}
 			}
 		}

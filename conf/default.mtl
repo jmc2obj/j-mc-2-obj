@@ -261,6 +261,16 @@ Kd 0.3216 0.4510 0.1725
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/dirt_grass_top.png
 
+newmtl dirt_grass_top-desert
+Kd 0.8085 0.9912 0.6992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_grass_top-desert.png
+
+newmtl dirt_grass_top-forest
+Kd 0.4453 0.6953 0.2773
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_grass_top-forest.png
+
 newmtl dirt_mycelium_side
 Kd 0.5255 0.3765 0.2627
 Ks 0.0000 0.0000 0.0000

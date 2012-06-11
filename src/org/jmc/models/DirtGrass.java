@@ -10,9 +10,9 @@ import org.jmc.OBJOutputFile;
 public class DirtGrass extends BlockModel
 {
 
-	protected String[] getMtlSides(byte data, boolean snow)
+	protected String[] getMtlSides(byte data, byte biome, boolean snow)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 		
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[0];
@@ -27,7 +27,7 @@ public class DirtGrass extends BlockModel
 	
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean snow = chunks.getBlockID(x, y+1, z) == 78;
 		
@@ -35,7 +35,7 @@ public class DirtGrass extends BlockModel
 				x - 0.5f, y - 0.5f, z - 0.5f,
 				x + 0.5f, y + 0.5f, z + 0.5f, 
 				null, 
-				getMtlSides(data, snow), 
+				getMtlSides(data, biome, snow), 
 				null, 
 				drawSides(chunks, x, y, z));
 	}

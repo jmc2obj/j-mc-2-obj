@@ -13,7 +13,7 @@ public class FenceGate extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = (data & 3);
 		boolean open = (data & 4) != 0;
@@ -47,7 +47,7 @@ public class FenceGate extends BlockModel
 					-0.5f, -0.1875f, -0.0625f,
 					-0.375f, 0.5f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 
@@ -59,7 +59,7 @@ public class FenceGate extends BlockModel
 					-0.5f, -0.125f, 0.375f,
 					-0.375f, 0.4375f, 0.5f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 
@@ -73,7 +73,7 @@ public class FenceGate extends BlockModel
 					-0.5f, 0.25f, 0.0625f,
 					-0.375f, 0.4375f, 0.375f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 
@@ -84,7 +84,7 @@ public class FenceGate extends BlockModel
 					-0.5f, -0.125f, 0.0625f,
 					-0.375f, 0.0625f, 0.375f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 			
@@ -97,7 +97,7 @@ public class FenceGate extends BlockModel
 					0.375f, -0.1875f, -0.0625f,
 					0.5f, 0.5f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 
@@ -109,7 +109,7 @@ public class FenceGate extends BlockModel
 					0.375f, -0.125f, 0.375f,
 					0.5f, 0.4375f, 0.5f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 			
@@ -121,7 +121,7 @@ public class FenceGate extends BlockModel
 					0.375f, 0.25f, 0.0625f,
 					0.5f, 0.4375f, 0.375f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 
@@ -132,7 +132,7 @@ public class FenceGate extends BlockModel
 					0.375f, -0.125f, 0.0625f,
 					0.5f, 0.0625f, 0.375f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 		}
@@ -147,7 +147,7 @@ public class FenceGate extends BlockModel
 					-0.5f, -0.1875f, -0.0625f,
 					-0.375f, 0.5f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 
@@ -160,7 +160,7 @@ public class FenceGate extends BlockModel
 					0.375f, -0.1875f, -0.0625f,
 					0.5f, 0.5f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					null);
 
@@ -174,7 +174,7 @@ public class FenceGate extends BlockModel
 					-0.375f, 0.25f, -0.0625f,
 					0.375f, 0.4375f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 
@@ -186,7 +186,7 @@ public class FenceGate extends BlockModel
 					-0.375f, -0.125f, -0.0625f,
 					0.375f, 0.0625f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 
@@ -200,7 +200,7 @@ public class FenceGate extends BlockModel
 					-0.125f, 0.0625f, -0.0625f,
 					0.125f, 0.25f, 0.0625f, 
 					rt, 
-					getMtlSides(data), 
+					getMtlSides(data,biome), 
 					uvSides, 
 					drawSides);
 		}

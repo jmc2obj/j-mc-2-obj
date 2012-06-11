@@ -13,9 +13,9 @@ public class Chest extends BlockModel
 {
 
 	/** Expand the materials to the full 6 side definition used by addBox */
-	private String[] getMtlSides(byte data, int i)
+	private String[] getMtlSides(byte data, byte biome, int i)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[i];
@@ -41,10 +41,10 @@ public class Chest extends BlockModel
 
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String[] mtlSingle = getMtlSides(data, 0);
-		String[] mtlDouble = canDouble() ? getMtlSides(data, 1) : null;
+		String[] mtlSingle = getMtlSides(data, biome, 0);
+		String[] mtlDouble = canDouble() ? getMtlSides(data, biome, 1) : null;
 		boolean conn_l = false;
 		boolean conn_r = false;
 		

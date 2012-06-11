@@ -13,9 +13,9 @@ public class Torch extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String[] mtls = materials.get(data);
+		String[] mtls = materials.get(data,biome);
 
 		Transform rotate = new Transform();
 		Transform translate = new Transform();

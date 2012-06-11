@@ -13,7 +13,7 @@ public class Hatch extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = (data & 3);
 		boolean open = (data & 4) != 0;
@@ -61,7 +61,7 @@ public class Hatch extends BlockModel
 				-0.5f, -0.09375f, -0.5f,
 				0.5f, 0.09375f, 0.5f, 
 				rt, 
-				getMtlSides(data), 
+				getMtlSides(data,biome), 
 				uvSides, 
 				null);
 

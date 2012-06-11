@@ -86,8 +86,9 @@ public class BlockTypes
 
 				int data = Integer.parseInt(Xml.getAttribute(matNode, "data", "-1"), 10);
 				int mask = Integer.parseInt(Xml.getAttribute(matNode, "mask", "-1"), 10);
+				int biome = Integer.parseInt(Xml.getAttribute(matNode, "biome", "-1"), 10);
 				String mats = matNode.getTextContent();
-				if (data < -1 || data > 15 || mats.trim().isEmpty())
+				if (data < -1 || data > 15 || mats.trim().isEmpty() || biome < -1 || biome > 255 )
 				{
 					Log.info("Block " + id + " has invalid material. Ignoring.");
 					continue;
@@ -96,10 +97,17 @@ public class BlockTypes
 				if (mask >= 0)
 					materials.setDataMask((byte)mask);
 
-				if (data >= 0)
-					materials.put((byte)data, mats.split("\\s*,\\s*"));
+				if(biome >= 0)
+				{
+					materials.put((byte)biome, (byte)data, mats.split("\\s*,\\s*"));
+				}
 				else
-					materials.put(mats.split("\\s*,\\s*"));
+				{
+					if (data >= 0)
+						materials.put((byte)data, mats.split("\\s*,\\s*"));
+					else
+						materials.put(mats.split("\\s*,\\s*"));
+				}
 
 				hasMtl = true;
 			}
@@ -149,7 +157,7 @@ public class BlockTypes
 						continue;
 					}					
 				}
-				
+
 				NodeList rotNodes = (NodeList)xpath.evaluate("rotate", blockNode, XPathConstants.NODESET);			
 				for (int j = 0; j < rotNodes.getLength(); j++)
 				{
@@ -161,7 +169,7 @@ public class BlockTypes
 						continue;
 					}					
 				}
-				
+
 				NodeList scaleNodes = (NodeList)xpath.evaluate("scale", blockNode, XPathConstants.NODESET);			
 				for (int j = 0; j < scaleNodes.getLength(); j++)
 				{
@@ -186,7 +194,7 @@ public class BlockTypes
 
 		if(new_data>=0) data=new_data;
 		if(new_mask>=0) mask=new_mask;
-		
+
 		if (data < -1 || data > 15 || mask < -1 || mask > 15)
 		{
 			throw new RuntimeException();
@@ -201,9 +209,9 @@ public class BlockTypes
 			if(child.getNodeType()==Node.TEXT_NODE)
 			{			
 				String meshstr = child.getTextContent().trim();
-				
+
 				if(meshstr.isEmpty()) continue;
-				
+
 				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
@@ -226,12 +234,12 @@ public class BlockTypes
 		if(new_mask>=0) mask=new_mask; 
 
 		NodeList children=transNode.getChildNodes();
-		
+
 		String type=transNode.getNodeName();
 		String constraint=Xml.getAttribute(transNode, "const", "");
 		String valstr=Xml.getAttribute(transNode, "value", "");
 		String randval=Xml.getAttribute(transNode, "randval", "");
-		
+
 		float randmin=0,randmax=0;
 		if(randval.length()>0)
 		{
@@ -250,9 +258,9 @@ public class BlockTypes
 				randmax=t;
 			}
 		}
-		
+
 		constraint=constraint.toLowerCase();
-		
+
 		float x=0,y=0,z=0;
 		if(constraint.contains("x"))
 		{
@@ -275,9 +283,9 @@ public class BlockTypes
 			else
 				z=randmin+(float)Math.random()*(randmax-randmin);
 		}
-		
+
 		Transform newtransform=new Transform();
-		
+
 		if(type.equals("translate"))
 		{
 			newtransform.translate(x, y, z);
@@ -295,7 +303,7 @@ public class BlockTypes
 			Log.info("Unknown transformation: "+type);
 			throw new RuntimeException();
 		}
-		
+
 		if(transform!=null)
 			transform=newtransform.multiply(transform);
 		else transform=newtransform;
@@ -306,9 +314,9 @@ public class BlockTypes
 			if(child.getNodeType()==Node.TEXT_NODE)
 			{			
 				String meshstr = child.getTextContent().trim();
-				
+
 				if(meshstr.isEmpty()) continue;
-				
+
 				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
@@ -321,7 +329,7 @@ public class BlockTypes
 			}
 		}
 	}
-		
+
 	/**
 	 * Reads the configuration file.
 	 * Must be called once at the start of the program.
@@ -363,7 +371,7 @@ public class BlockTypes
 		BlockInfo bi = blockTable.get(id);
 		//if (bi == null)
 		//	Log.debug("Unknow block id: " + id);
-		
+
 		return bi != null ? bi : unknownBlock;
 	}
 

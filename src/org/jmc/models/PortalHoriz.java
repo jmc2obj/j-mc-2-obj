@@ -12,9 +12,9 @@ public class PortalHoriz extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String mtl = materials.get(data)[0];
+		String mtl = materials.get(data,biome)[0];
 		Vertex[] vertices = new Vertex[4];
 		
 		vertices[0] = new Vertex(x-0.5f, y+0.25f, z+0.5f);

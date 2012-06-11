@@ -27,10 +27,10 @@ public class Pane extends BlockModel
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		String mtl = materials.get(data)[0];
-		String mtlSide = materials.get(data)[1];
+		String mtl = materials.get(data,biome)[0];
+		String mtlSide = materials.get(data,biome)[1];
 		
 		boolean n = checkConnect(chunks.getBlockID(x, y, z-1));
 		boolean s = checkConnect(chunks.getBlockID(x, y, z+1));

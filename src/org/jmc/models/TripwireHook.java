@@ -13,9 +13,9 @@ import org.jmc.geom.Vertex;
 public class TripwireHook extends BlockModel
 {
 
-	private String[] getMtlSides(byte data, int i)
+	private String[] getMtlSides(byte data, byte biome, int i)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[i];
@@ -29,7 +29,7 @@ public class TripwireHook extends BlockModel
 
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = (data & 3);
 		boolean connected = (data & 4) != 0;
@@ -68,7 +68,7 @@ public class TripwireHook extends BlockModel
 				-0.125f, -0.4375f, -0.5f, 
 				0.125f, 0.0625f, -0.375f, 
 				baseTrans, 
-				getMtlSides(data, 0),
+				getMtlSides(data,biome,0),
 				uvSides,
 				drawSides);
 
@@ -93,7 +93,7 @@ public class TripwireHook extends BlockModel
 				-0.05f, -0.05f, -0.4f, 
 				0.05f, 0.05f, -0.05f, 
 				baseTrans.multiply(translate).multiply(rotate), 
-				getMtlSides(data, 1),
+				getMtlSides(data,biome,1),
 				uvSides,
 				drawSides);
 
@@ -117,7 +117,7 @@ public class TripwireHook extends BlockModel
 				-0.1f, -0.02f, -0.1f, 
 				0.1f, 0.02f, 0.1f, 
 				baseTrans.multiply(translate).multiply(rotate), 
-				getMtlSides(data, 1),
+				getMtlSides(data,biome,1),
 				uvSides,
 				null);
 		
@@ -131,13 +131,13 @@ public class TripwireHook extends BlockModel
 			vertices[1] = new Vertex( 0.0156f, -0.4375f, 0.5f);
 			vertices[2] = new Vertex( 0.0156f, -0.4375f, 0.25f);
 			vertices[3] = new Vertex(-0.0156f, -0.4375f, 0.25f);
-			obj.addFace(vertices, uvTop, baseTrans, materials.get(data)[2]);
+			obj.addFace(vertices, uvTop, baseTrans, materials.get(data,biome)[2]);
 
 			vertices[0] = new Vertex(-0.0156f, -0.4375f, 0.25f);
 			vertices[1] = new Vertex( 0.0156f, -0.4375f, 0.25f);
 			vertices[2] = new Vertex( 0.0156f, -0.25f, 0.1f);
 			vertices[3] = new Vertex(-0.0156f, -0.25f, 0.1f);
-			obj.addFace(vertices, uvTop, baseTrans, materials.get(data)[2]);
+			obj.addFace(vertices, uvTop, baseTrans, materials.get(data,biome)[2]);
 		}
 	}
 

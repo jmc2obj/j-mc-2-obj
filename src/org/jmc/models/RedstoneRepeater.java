@@ -14,9 +14,9 @@ public class RedstoneRepeater extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data)
+	protected String[] getMtlSides(byte data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[0];
@@ -29,7 +29,7 @@ public class RedstoneRepeater extends BlockModel
 	}
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		int dir = data & 3;
 		int delay = (data>>2) & 3;
@@ -55,8 +55,8 @@ public class RedstoneRepeater extends BlockModel
 		rt = translate.multiply(rotate);
 
 		
-		String[] mtlsBase = getMtlSides(data);
-		String mtlTorch = materials.get(data)[3];
+		String[] mtlsBase = getMtlSides(data,biome);
+		String mtlTorch = materials.get(data,biome)[3];
 
 		// base
 		boolean[] drawSides = new boolean[] { true, true, true, true, true, drawSides(chunks,x,y,z)[5] };

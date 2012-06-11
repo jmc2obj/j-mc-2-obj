@@ -13,7 +13,7 @@ public class Stalk extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		boolean n,s,e,w;
 		
@@ -51,7 +51,7 @@ public class Stalk extends BlockModel
 			vertices[1] = new Vertex(-0.5f, -0.5f, 0.0f);
 			vertices[2] = new Vertex(-0.5f,  0.5f, 0.0f); 				
 			vertices[3] = new Vertex( 0.5f,  0.5f, 0.0f);	
-			obj.addFace(vertices, null, translate.multiply(rotate), materials.get(data)[1]);
+			obj.addFace(vertices, null, translate.multiply(rotate), materials.get(data,biome)[1]);
 		}
 		else
 		{
@@ -64,13 +64,13 @@ public class Stalk extends BlockModel
 			vertices[1] = new Vertex(-0.5f, -0.5f,  0.5f);
 			vertices[2] = new Vertex(-0.5f,  0.5f,  0.5f); 				
 			vertices[3] = new Vertex( 0.5f,  0.5f, -0.5f);	
-			obj.addFace(vertices, null, translate, materials.get(data)[0]);
+			obj.addFace(vertices, null, translate, materials.get(data,biome)[0]);
 			
 			vertices[0] = new Vertex(-0.5f, -0.5f, -0.5f);		
 			vertices[1] = new Vertex( 0.5f, -0.5f,  0.5f);
 			vertices[2] = new Vertex( 0.5f,  0.5f,  0.5f);	
 			vertices[3] = new Vertex(-0.5f,  0.5f, -0.5f);
-			obj.addFace(vertices, null, translate, materials.get(data)[0]);						
+			obj.addFace(vertices, null, translate, materials.get(data,biome)[0]);						
 		}
 	}
 

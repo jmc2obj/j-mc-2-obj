@@ -44,9 +44,9 @@ public abstract class EntityModel
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data)
+	protected String[] getMtlSides(byte data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data);
+		String[] abbrMtls = materials.get(data, biome);
 		
 		String[] mtlSides = new String[6];
 		if (abbrMtls.length < 2)

@@ -127,6 +127,22 @@ public class ChunkDataBuffer {
 		}
 	}
 	
+	public byte getBlockBiome(int x, int z)
+	{
+		Point chunk_p=new Point();
+		chunk_p.x=(int)Math.floor(x/16.0);
+		chunk_p.y=(int)Math.floor(z/16.0);
+		
+		Blocks blocks=chunks.get(chunk_p);
+		
+		if(blocks==null) return (byte)255;
+		
+		int rx=x-(chunk_p.x*16);
+		int rz=z-(chunk_p.y*16);		
+					
+		return blocks.biome[rx*16+rz];
+	}
+	
 	public List<TAG_Compound> getEntities(int cx, int cz)
 	{
 		Point chunk_p=new Point();
