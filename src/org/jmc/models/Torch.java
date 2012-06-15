@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
+import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 
 
@@ -28,7 +29,7 @@ public class Torch extends BlockModel
 				translate.translate(x-0.3f, y+0.125f, z);
 				txTorch = translate.multiply(rotate);
 
-				translate.translate(x-0.26f, y+0.1f, z);
+				translate.translate(x-0.26f, y+0.125f, z);
 				txFlame = translate;
 				break;
 			case 2:
@@ -36,7 +37,7 @@ public class Torch extends BlockModel
 				translate.translate(x+0.3f, y+0.125f, z);
 				txTorch = translate.multiply(rotate);
 
-				translate.translate(x+0.26f, y+0.1f, z);
+				translate.translate(x+0.26f, y+0.125f, z);
 				txFlame = translate;
 				break;
 			case 3:
@@ -44,7 +45,7 @@ public class Torch extends BlockModel
 				translate.translate(x, y+0.125f, z-0.3f);
 				txTorch = translate.multiply(rotate);
 
-				translate.translate(x, y+0.1f, z-0.26f);
+				translate.translate(x, y+0.125f, z-0.26f);
 				txFlame = translate;
 				break;
 			case 4:
@@ -52,7 +53,7 @@ public class Torch extends BlockModel
 				translate.translate(x, y+0.125f, z+0.3f);
 				txTorch = translate.multiply(rotate);
 
-				translate.translate(x, y+0.1f, z+0.26f);
+				translate.translate(x, y+0.125f, z+0.26f);
 				txFlame = translate;
 				break;
 			default:
@@ -63,7 +64,15 @@ public class Torch extends BlockModel
 		}
 		
 		Vertex[] vertices = new Vertex[4];
+		UV[] uv = new UV[4];
 
+		// top
+		vertices[0] = new Vertex(-1/16f, 2/16f,  1/16f); uv[0] = new UV(7/16f, 8/16f);
+		vertices[1] = new Vertex( 1/16f, 2/16f,  1/16f); uv[1] = new UV(9/16f, 8/16f);
+		vertices[2] = new Vertex( 1/16f, 2/16f, -1/16f); uv[2] = new UV(9/16f, 10/16f);
+		vertices[3] = new Vertex(-1/16f, 2/16f, -1/16f); uv[3] = new UV(7/16f, 10/16f);
+		obj.addFace(vertices, uv, txTorch, mtls[0]);
+		
 		// front
 		vertices[0] = new Vertex( 0.5f, -0.5f, -1/16f);
 		vertices[1] = new Vertex(-0.5f, -0.5f, -1/16f);
@@ -91,6 +100,16 @@ public class Torch extends BlockModel
 		vertices[2] = new Vertex(1/16f,  0.5f,  0.5f);
 		vertices[3] = new Vertex(1/16f,  0.5f, -0.5f);
 		obj.addFace(vertices, null, txTorch, mtls[0]);
+		
+		// bottom
+		if (data != 5 || drawSides(chunks,x,y,z)[5])
+		{
+			vertices[0] = new Vertex( 1/16f, -0.5f,  1/16f); uv[0] = new UV(7/16f, 0);
+			vertices[1] = new Vertex(-1/16f, -0.5f,  1/16f); uv[1] = new UV(9/16f, 0);
+			vertices[2] = new Vertex(-1/16f, -0.5f, -1/16f); uv[2] = new UV(9/16f, 2/16f);
+			vertices[3] = new Vertex( 1/16f, -0.5f, -1/16f); uv[3] = new UV(7/16f, 2/16f);
+			obj.addFace(vertices, uv, txTorch, mtls[0]);
+		}
 		
 		// flame (only if a texture was specified for it)
 		if (mtls.length > 1)
