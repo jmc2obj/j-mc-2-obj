@@ -143,9 +143,19 @@ public class UpdateWindow extends JFrame{
 							
 							Log.info("running: "+cmd);
 							
-							Runtime.getRuntime().exec(cmd);
+							Process p = Runtime.getRuntime().exec(cmd);
 							
-							System.exit(0);
+							int ret=0;
+							try{
+								
+								Thread.sleep(1000);							
+								ret=p.exitValue();
+								
+							}catch (Exception ex) {
+								System.exit(0);
+							}
+							
+							Log.info("Updater exited with value: "+ret);
 							
 						} catch (IOException e1) {
 							Log.info("Cannot run updater: "+e1);
