@@ -29,13 +29,16 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
@@ -47,6 +50,7 @@ import org.jmc.Options;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
 import org.jmc.util.Filesystem;
+import org.jmc.util.Log;
 
 
 /**
@@ -77,7 +81,7 @@ public class MainPanel extends JPanel
 
 			String last_map=MainWindow.settings.getLastLoadedMap();
 			boolean found_last_save=false;
-			
+
 			File [] saves=save_dir.listFiles();
 
 			String p;
@@ -90,12 +94,12 @@ public class MainPanel extends JPanel
 					if(p.equals(last_map)) found_last_save=true;
 				}
 			}
-			
+
 			if(found_last_save)
 				cbPath.setSelectedItem(last_map);
 			else
 				addPathToList(last_map);
-			
+
 			fillDimensionList();
 
 			try{
@@ -125,13 +129,13 @@ public class MainPanel extends JPanel
 
 
 	//UI elements (not described separately)
-	private JButton bLoad,bExport,bSettings,bUpdate,bAbout;
+	private JButton bLoad,bGoto,bExport,bSettings,bUpdate,bAbout;
 	private JComboBox<String> cbPath;
 	private JComboBox<Integer> cbDimension;
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private JSlider sFloor,sCeil;
-	
+
 	/**
 	 * Main map preview panel. 
 	 */
@@ -142,7 +146,7 @@ public class MainPanel extends JPanel
 	 * Also a thread constantly making memory measurements.
 	 */
 	private MemoryMonitor memory_monitor;
-	
+
 	/**
 	 * Thread object used for monitoring the state of the chunk loading thread.
 	 * Necessary for restarting the thread when loading a new map.
@@ -157,11 +161,11 @@ public class MainPanel extends JPanel
 	public MainPanel()
 	{
 		setLayout(new BorderLayout());
-		
-		
+
+
 		JPanel pToolbar = new JPanel();
 		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));
-		
+
 		JPanel pPath=new JPanel();
 		pPath.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
@@ -173,16 +177,18 @@ public class MainPanel extends JPanel
 		pPath.add(bPath);
 		pPath.add(cbPath);
 		pPath.add(cbDimension);
-		
+
 		JScrollPane spPath=new JScrollPane(pPath);
 		spPath.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		JPanel pButtons = new JPanel();
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0,5,10,5));
-		
+
 		bLoad = new JButton("Load");
 		bLoad.setEnabled(false);
+		bGoto = new JButton("Goto");
+		bGoto.setEnabled(false);
 		bExport = new JButton("Export selection");
 		bExport.setEnabled(false);
 		bSettings = new JButton("Settings");
@@ -191,8 +197,9 @@ public class MainPanel extends JPanel
 		bAbout.setForeground(Color.red);
 		Font f=bAbout.getFont();
 		bAbout.setFont(new Font(f.getFamily(),Font.BOLD,f.getSize()));
-				
+
 		pButtons.add(bLoad);
+		pButtons.add(bGoto);
 		pButtons.add(bExport);
 		pButtons.add(bSettings);
 		pButtons.add(bUpdate);
@@ -200,10 +207,10 @@ public class MainPanel extends JPanel
 
 		pToolbar.add(spPath);
 		pToolbar.add(pButtons);
-		
+
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110,150,100));
-		
+
 		JPanel preview_alts=new JPanel();
 		preview_alts.setLayout(new BorderLayout());
 		JPanel alts=new JPanel();
@@ -220,35 +227,35 @@ public class MainPanel extends JPanel
 		sCeil.setMinimum(0);
 		sCeil.setMaximum(256);
 		sCeil.setValue(256);
-			
+
 		taLog = new JTextArea(5,1);
 		taLog.setLineWrap(true);
 		taLog.setEditable(false);
 		taLog.setFont(new Font("Courier", 0, 14));
-				
+
 		spPane = new JScrollPane(taLog);
 		memory_monitor=new MemoryMonitor();
 
 
 		(new PopulateLoadListThread()).start();		
-		
+
 		JSplitPane spMainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, preview_alts, spPane);
 		spMainSplit.setDividerLocation(400);
 		spMainSplit.setResizeWeight(1);
-		
-		
-		
+
+
+
 		alts.add(sCeil);
 		alts.add(sFloor);
-		
+
 		preview_alts.add(preview);
 		preview_alts.add(alts,BorderLayout.EAST);
-		
+
 		add(pToolbar, BorderLayout.NORTH);		
 		add(spMainSplit);		
 		add(memory_monitor, BorderLayout.SOUTH);	
-		
-		
+
+
 		ChangeListener slider_listener=new ChangeListener() {			
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -286,13 +293,13 @@ public class MainPanel extends JPanel
 				}
 			}
 		};
-		
+
 		sCeil.addChangeListener(slider_listener);
 		sCeil.addMouseListener(slider_adapter);
 		sFloor.addChangeListener(slider_listener);
 		sFloor.addMouseListener(slider_adapter);
 		preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
-		
+
 		bPath.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -306,14 +313,14 @@ public class MainPanel extends JPanel
 				}
 			}
 		});
-		
+
 		cbPath.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				fillDimensionList();
 			}
 		});
-		
+
 		bLoad.addActionListener(new ActionListener()
 		{			
 			public void actionPerformed(ActionEvent e)
@@ -361,8 +368,41 @@ public class MainPanel extends JPanel
 				chunk_loader=new ViewChunkLoaderThread(preview);
 				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
 				(new Thread(chunk_loader)).start();
-				
+
 				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
+			}
+		});
+
+		bGoto.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+				
+				JTextField xpos = new JTextField();
+				JTextField zpos = new JTextField();
+				final JComponent[] inputs = new JComponent[] {
+						new JLabel("Write the coordinates you want to move to on the map:"),
+						new JLabel("X"),
+						xpos,
+						new JLabel("Z"),
+						zpos		           
+				};
+								
+
+				int ret = JOptionPane.showConfirmDialog(MainPanel.this, inputs, "Goto...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				
+				if(ret!=JOptionPane.OK_OPTION) return;
+				
+				int x=0,z=0;
+				try{
+					x=Integer.parseInt(xpos.getText());
+					z=Integer.parseInt(zpos.getText());
+				}catch (NumberFormatException ex) {
+					Log.error("The values entered in the message box are not proper numbers!", ex, true);
+					return;
+				}
+				
+				preview.setPosition(x, z);
+
 			}
 		});
 
@@ -402,7 +442,7 @@ public class MainPanel extends JPanel
 				export_thread.setBounds(mx-xw/2, my-xh/2, xw, xh);
 			}
 		});
-		
+
 		bSettings.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -411,10 +451,10 @@ public class MainPanel extends JPanel
 				p.y+=(MainWindow.main.getHeight()-MainWindow.settings.getHeight())/2;
 				MainWindow.settings.setLocation(p);
 				MainWindow.settings.setVisible(true);
-				
+
 			}
 		});
-		
+
 		bUpdate.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -425,12 +465,12 @@ public class MainPanel extends JPanel
 				MainWindow.update.setVisible(true);
 			}
 		});
-		
+
 		bAbout.addActionListener(new AbstractAction() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				About.show();
 			}
 		});
@@ -439,7 +479,7 @@ public class MainPanel extends JPanel
 		(new Thread(memory_monitor)).start();
 
 	}
-	
+
 	private void addPathToList(String path)
 	{
 		for(int i=0; i<cbPath.getItemCount(); i++)
@@ -450,11 +490,11 @@ public class MainPanel extends JPanel
 				return;
 			}
 		}
-		
+
 		cbPath.addItem(path);
 		cbPath.setSelectedItem(path);
 	}
-	
+
 	private void fillDimensionList()
 	{
 		File save_dir = new File((String)cbPath.getSelectedItem());
@@ -494,8 +534,9 @@ public class MainPanel extends JPanel
 	{
 		bLoad.setEnabled(true);
 		bExport.setEnabled(true);
+		bGoto.setEnabled(true);
 	}
-	
+
 	public void highlightUpdateButton()
 	{
 		bUpdate.setForeground(Color.green);
