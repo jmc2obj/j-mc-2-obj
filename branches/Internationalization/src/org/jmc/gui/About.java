@@ -1,0 +1,78 @@
+package org.jmc.gui;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import org.jmc.Version;
+
+
+public class About {
+	
+	private static boolean initialized=false; 
+	
+	private static void init()
+	{
+		if(initialized)
+			return;
+		
+		String logo=About.class.getResource("logo.png").toExternalForm();
+		
+		// define the about box with a width of 300px
+        String msg="<html><div style='width:300px'><div style='text-align:center;'><img src=\""+logo+"\"></div>";
+        msg+="<div style='text-align:center;font-weight:bold; font-size:20pt;'>jMC2Obj</div>";
+        msg+="<div style='text-align:center;font-weight:bold; font-size:16pt;'>A Java Minecraft to OBJ converter</div><p>";
+        msg+="<table width=\"100%\" border=\"0\"><tr><td width=\"100px\">version:</td><td>"+Version.VERSION+Version.REVISION()+"</td></tr>"
+                +"<tr><td width=\"100px\">build date:</td><td>"+Version.DATE().toString()+"</td></tr>"
+                + "</table><p>";
+        List<String> developer_list=new LinkedList<String>();
+        
+        developer_list.add("<td>Max Tangelder</td><td>programming</td>");
+        developer_list.add("<td>Danijel Kor&#x017e;inek</td><td>programming</td>");             
+        developer_list.add("<td>Pedro Lopes</td><td>programming</td>");        
+
+        Collections.shuffle(developer_list);
+        
+        msg+="<table width=\"100%\" border=\"0\">";
+        msg+="<tr><td width=\"100px\"<b>name</b></td><td>&nbsp;</td></tr>";
+        
+        for(String s:developer_list)
+                msg+="<tr>"+s+"</tr>";
+        
+        msg+="</table><br><p>";
+        
+        List<String> donations=new LinkedList<String>();
+        
+        donations.add("Hilum");
+        donations.add("The Pixel Artist");
+        donations.add("Justin \"Rip_Shot\" Goran");
+        donations.add("Slamacow Creations");
+        donations.add("darkinnit");
+        
+        Collections.shuffle(donations);
+        
+        msg+="<u>We would like to thank these people for their donations:</u><br><p>";
+        msg+="<table width=\"100%\" border=\"0\">";
+        for(String s:donations)
+                msg+="<tr><td>"+s+"</td></tr>";
+        
+        msg+="</table><p><br>";
+        msg+="<div style='text-align:center;'>Source and Binary avilable at Google Source:<br>" +
+        		"http://code.google.com/p/j-mc-2-obj/<br>" +
+        		"<a href=\"http://www.jmc2obj.net/\">http://www.jmc2obj.net/</a></div>";
+        msg+="</div><p><br></html>";
+        about_msg=msg;
+		initialized=true;
+	}
+	
+	private static String about_msg="";
+	
+	public static void show()
+	{
+		init();
+		
+		JOptionPane.showMessageDialog(MainWindow.main, about_msg,"About...",JOptionPane.PLAIN_MESSAGE);
+	}
+}

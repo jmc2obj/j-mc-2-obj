@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsmoothproject>
+<JVMSearchPath>registry</JVMSearchPath>
+<JVMSearchPath>javahome</JVMSearchPath>
+<JVMSearchPath>jrepath</JVMSearchPath>
+<JVMSearchPath>jdkpath</JVMSearchPath>
+<JVMSearchPath>exepath</JVMSearchPath>
+<JVMSearchPath>jview</JVMSearchPath>
+<arguments></arguments>
+<currentDirectory>${EXECUTABLEPATH}</currentDirectory>
+<embeddedJar>true</embeddedJar>
+<executableName>..\JAR\jMc2Obj-dev_r214.exe</executableName>
+<initialMemoryHeap>-1</initialMemoryHeap>
+<jarLocation>..\JAR\jMc2Obj-dev_r214.jar</jarLocation>
+<javaProperties>
+<name>jsmooth</name>
+<value>true</value>
+</javaProperties>
+<mainClassName>org.jmc.Main</mainClassName>
+<maximumMemoryHeap>-1</maximumMemoryHeap>
+<maximumVersion></maximumVersion>
+<minimumVersion>1.6</minimumVersion>
+<skeletonName>Windowed Wrapper</skeletonName>
+<skeletonProperties>
+<key>Message</key>
+<value>Java has not been found on your computer. Do you want to download it? 
+
+Clicking Yes will open a browser with the download site. You can download the Java Runtime Enivironemnt (JRE) from there.</value>
+</skeletonProperties>
+<skeletonProperties>
+<key>URL</key>
+<value>http://www.oracle.com/technetwork/java/javase/downloads/index.html</value>
+</skeletonProperties>
+<skeletonProperties>
+<key>SingleProcess</key>
+<value>0</value>
+</skeletonProperties>
+<skeletonProperties>
+<key>SingleInstance</key>
+<value>0</value>
+</skeletonProperties>
+<skeletonProperties>
+<key>JniSmooth</key>
+<value>0</value>
+</skeletonProperties>
+<skeletonProperties>
+<key>Debug</key>
+<value>0</value>
+</skeletonProperties>
+</jsmoothproject>
