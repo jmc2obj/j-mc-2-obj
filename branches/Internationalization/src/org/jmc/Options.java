@@ -1,6 +1,7 @@
 package org.jmc;
 
 import java.io.File;
+import java.util.Locale;
 
 
 /**
@@ -31,7 +32,8 @@ public class Options
 		NEVER
 	}
 
-
+	public static Locale availableLocales[] = { Locale.ENGLISH, Locale.GERMAN };
+	
 	/**
 	 * User interface mode.
 	 */

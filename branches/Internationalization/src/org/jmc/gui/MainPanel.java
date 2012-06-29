@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -162,6 +164,7 @@ public class MainPanel extends JPanel
 	{
 		setLayout(new BorderLayout());
 
+		ResourceBundle bundle=ResourceBundle.getBundle("strings", Locale.getDefault());
 
 		JPanel pToolbar = new JPanel();
 		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));
@@ -185,15 +188,15 @@ public class MainPanel extends JPanel
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0,5,10,5));
 
-		bLoad = new JButton("Load");
+		bLoad = new JButton(bundle.getString("LOAD_BUTTON"));
 		bLoad.setEnabled(false);
-		bGoto = new JButton("Goto");
+		bGoto = new JButton(bundle.getString("GOTO_BUTTON"));
 		bGoto.setEnabled(false);
-		bExport = new JButton("Export selection");
+		bExport = new JButton(bundle.getString("EXPORT_BUTTON"));
 		bExport.setEnabled(false);
-		bSettings = new JButton("Settings");
-		bUpdate = new JButton("Update");
-		bAbout = new JButton("About");
+		bSettings = new JButton(bundle.getString("SETTINGS_BUTTON"));
+		bUpdate = new JButton(bundle.getString("UPDATE_BUTTON"));
+		bAbout = new JButton(bundle.getString("ABOUT_BUTTON"));
 		bAbout.setForeground(Color.red);
 		Font f=bAbout.getFont();
 		bAbout.setFont(new Font(f.getFamily(),Font.BOLD,f.getSize()));
@@ -217,13 +220,13 @@ public class MainPanel extends JPanel
 		alts.setLayout(new BoxLayout(alts, BoxLayout.PAGE_AXIS));
 		sFloor=new JSlider();
 		sFloor.setOrientation(JSlider.VERTICAL);
-		sFloor.setToolTipText("Export floor");
+		sFloor.setToolTipText(bundle.getString("FLOOR_SLIDER"));
 		sFloor.setMinimum(0);
 		sFloor.setMaximum(256);//TODO: this should really be read from the file, IMO
 		sFloor.setValue(0);
 		sCeil=new JSlider();
 		sCeil.setOrientation(JSlider.VERTICAL);
-		sCeil.setToolTipText("Export ceiling");
+		sCeil.setToolTipText(bundle.getString("CEILING_SLIDER"));
 		sCeil.setMinimum(0);
 		sCeil.setMaximum(256);
 		sCeil.setValue(256);

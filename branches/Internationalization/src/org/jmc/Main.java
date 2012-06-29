@@ -1,11 +1,14 @@
 package org.jmc;
 
 import java.io.File;
+import java.util.Locale;
+import java.util.prefs.Preferences;
 
 import javax.swing.UIManager;
 
 import org.jmc.Options.UIMode;
 import org.jmc.gui.MainWindow;
+import org.jmc.gui.Settings;
 import org.jmc.util.Log;
 
 
@@ -23,8 +26,12 @@ public class Main
 			public void uncaughtException(Thread t, Throwable e) { 
 				Log.error("Uncaught exception in thread: "+t.getName(), e);
 			}
-		});
+		});		
 
+		Preferences prefs = Preferences.userNodeForPackage(Settings.class);	
+		int loc_num=prefs.getInt("LANGUAGE", 0);
+		Locale.setDefault(Options.availableLocales[loc_num]);
+		
 		System.out.println("jmc2obj "+Version.VERSION+" ("+Version.REVISION()+")");
 
 		if (args.length == 0) {

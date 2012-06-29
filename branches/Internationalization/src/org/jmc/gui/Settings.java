@@ -1,7 +1,9 @@
 package org.jmc.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -20,10 +22,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.jmc.Options;
 
 public class Settings extends JFrame implements WindowListener, ChangeListener {
 
@@ -31,7 +36,8 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private Preferences prefs;
 
-	JComboBox<String> cbMove,cbSelect;
+	JComboBox<String> cbMove,cbSelect,cbLang;
+	JTextArea taRestart;
 
 	@SuppressWarnings("serial")
 	public Settings()
@@ -55,6 +61,12 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 				"shift + left mouse button",
 				"shift + right mouse button",
 		"shift + middle mouse button"};
+		
+		String languages[] = new String[Options.availableLocales.length];
+		for(int i=0; i<languages.length; i++) 
+		{
+			languages[i]=Options.availableLocales[i].getDisplayLanguage(); 
+		}
 
 		JPanel pMove=new JPanel();
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -71,9 +83,35 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbSelect=new JComboBox<String>(actions);
 		pSelect.add(lSelect);
 		pSelect.add(cbSelect);
+		
+		JPanel pLang=new JPanel();
+		pLang.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pLang.setLayout(new BoxLayout(pLang, BoxLayout.LINE_AXIS));
+		JLabel lLang=new JLabel("Language: ");
+		cbLang=new JComboBox<String>(languages);
+		pLang.add(lLang);
+		pLang.add(cbLang);
+		
+		JPanel pRestart=new JPanel();
+		pRestart.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pRestart.setLayout(new BoxLayout(pRestart, BoxLayout.LINE_AXIS));
+		taRestart=new JTextArea("Please restart the program for\nthese settings to take effect!");
+		taRestart.setLineWrap(true);
+		Font fRestart = taRestart.getFont();
+		taRestart.setFont(new Font(fRestart.getFamily(),Font.BOLD,16));
+		taRestart.setForeground(Color.red);
+		taRestart.setBackground(getBackground());
+		taRestart.setVisible(false);
+		pRestart.add(taRestart);
 
-		JButton reset=new JButton("Restore to factory settings");
-		reset.addActionListener(new AbstractAction() {			
+		JPanel pReset=new JPanel();
+		pReset.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pReset.setLayout(new BoxLayout(pReset, BoxLayout.LINE_AXIS));
+		JButton bReset=new JButton("Restore to factory settings");
+		pReset.add(bReset);
+		
+		
+		bReset.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int retval=JOptionPane.showConfirmDialog(Settings.this, "Are you sure?");
@@ -106,14 +144,12 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 			}
 		};
 
-		pMove.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pSelect.setAlignmentX(Component.LEFT_ALIGNMENT);
-		reset.setAlignmentX(Component.LEFT_ALIGNMENT);
-
 		mp.add(pMove);
 		mp.add(pSelect);
+		mp.add(pLang);
 		mp.add(Box.createVerticalGlue());
-		mp.add(reset);		
+		mp.add(pRestart);
+		mp.add(pReset);		
 
 		mp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
@@ -122,6 +158,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		addWindowListener(this);
 		cbMove.addActionListener(saveAction);
 		cbSelect.addActionListener(saveAction);
+		cbLang.addActionListener(saveAction);
 	}
 
 	public Preferences getPreferences()
@@ -191,12 +228,22 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 	{
 		cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
 		cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
+		cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
 	}
 
 	private void saveSettings()
 	{
+		taRestart.setVisible(false);
+		
 		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex());
 		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex());
+		
+		int l=prefs.getInt("LANGUAGE", 0);
+		if(cbLang.getSelectedIndex()!=l)
+		{
+			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex());
+			taRestart.setVisible(true);
+		}
 	}
 
 	private void resetSettings()
@@ -205,6 +252,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 			prefs.clear();
 			cbMove.setSelectedIndex(1);
 			cbSelect.setSelectedIndex(0);
+			cbLang.setSelectedIndex(0);
 		} catch (BackingStoreException e) {}
 		loadSettings();
 		setFields();
