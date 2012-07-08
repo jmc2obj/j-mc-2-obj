@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.jmc.Version;
+import org.jmc.util.Messages;
 
 
 public class About {
@@ -23,8 +24,8 @@ public class About {
 		// define the about box with a width of 300px
         String msg="<html><div style='width:300px'><div style='text-align:center;'><img src=\""+logo+"\"></div>";
         msg+="<div style='text-align:center;font-weight:bold; font-size:20pt;'>jMC2Obj</div>";
-        msg+="<div style='text-align:center;font-weight:bold; font-size:16pt;'>A Java Minecraft to OBJ converter</div><p>";
-        msg+="<table width=\"100%\" border=\"0\"><tr><td width=\"100px\">version:</td><td>"+Version.VERSION+Version.REVISION()+"</td></tr>"
+        msg+="<div style='text-align:center;font-weight:bold; font-size:16pt;'>"+Messages.getString("About.PROG_DESC")+"</div><p>";
+        msg+="<table width=\"100%\" border=\"0\"><tr><td width=\"100px\">"+Messages.getString("About.VERSION")+":</td><td>"+Version.VERSION+Version.REVISION()+"</td></tr>"
                 +"<tr><td width=\"100px\">build date:</td><td>"+Version.DATE().toString()+"</td></tr>"
                 + "</table><p>";
         List<String> developer_list=new LinkedList<String>();
@@ -36,7 +37,6 @@ public class About {
         Collections.shuffle(developer_list);
         
         msg+="<table width=\"100%\" border=\"0\">";
-        msg+="<tr><td width=\"100px\"<b>name</b></td><td>&nbsp;</td></tr>";
         
         for(String s:developer_list)
                 msg+="<tr>"+s+"</tr>";
@@ -53,7 +53,7 @@ public class About {
         
         Collections.shuffle(donations);
         
-        msg+="<u>We would like to thank these people for their donations:</u><br><p>";
+        msg+="<u>"+Messages.getString("About.THANKS")+"</u><br><p>";
         msg+="<table width=\"100%\" border=\"0\">";
         for(String s:donations)
                 msg+="<tr><td>"+s+"</td></tr>";
@@ -73,6 +73,6 @@ public class About {
 	{
 		init();
 		
-		JOptionPane.showMessageDialog(MainWindow.main, about_msg,"About...",JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(MainWindow.main, about_msg,Messages.getString("MainPanel.ABOUT_BUTTON"),JOptionPane.PLAIN_MESSAGE);
 	}
 }

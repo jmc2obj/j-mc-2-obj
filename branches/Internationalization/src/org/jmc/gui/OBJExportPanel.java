@@ -31,6 +31,7 @@ import org.jmc.Options;
 import org.jmc.ProgressCallback;
 import org.jmc.StopCallback;
 import org.jmc.Options.OverwriteAction;
+import org.jmc.util.Messages;
 
 
 /**
@@ -65,7 +66,7 @@ public class OBJExportPanel extends JFrame
 	 */
 	public OBJExportPanel() 
 	{		
-		super("Export selection");		
+		super(Messages.getString("OBJExportPanel.WIN_TITLE"));		 
 
 		setSize(400,200);
 		setMinimumSize(new Dimension(400,0));
@@ -77,10 +78,10 @@ public class OBJExportPanel extends JFrame
 
 		JPanel pSavePath=new JPanel();
 		pSavePath.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lSavePath=new JLabel("Save folder: ");
+		JLabel lSavePath=new JLabel(Messages.getString("OBJExportPanel.SAVEDIR")); 
 		pSavePath.setLayout(new BoxLayout(pSavePath, BoxLayout.LINE_AXIS));		
 		tfSavePath = new JTextField();		
-		JButton bObj=new JButton("Browse");
+		JButton bObj=new JButton(Messages.getString("OBJExportPanel.BROWSE")); 
 		pSavePath.add(lSavePath);
 		pSavePath.add(tfSavePath);
 		pSavePath.add(bObj);
@@ -90,7 +91,7 @@ public class OBJExportPanel extends JFrame
 
 		JPanel pOptions=new JPanel();
 		pOptions.setLayout(new BoxLayout(pOptions, BoxLayout.LINE_AXIS));
-		bOptions=new JButton("Show more options...");
+		bOptions=new JButton(Messages.getString("OBJExportPanel.SHOW")); 
 		bOptions.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pOptions.add(bOptions);
 		main.add(pOptions);
@@ -103,12 +104,12 @@ public class OBJExportPanel extends JFrame
 
 		JPanel pRun=new JPanel();
 		pRun.setLayout(new BoxLayout(pRun, BoxLayout.LINE_AXIS));
-		bRun=new JButton("Export");
+		bRun=new JButton(Messages.getString("OBJExportPanel.EXPORT_BTN")); 
 		bRun.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		Font fRun=bRun.getFont();
 		bRun.setFont(new Font(fRun.getFamily(),fRun.getStyle()+Font.BOLD,fRun.getSize()));
 		bRun.setForeground(Color.red);
-		bStop=new JButton("Stop");
+		bStop=new JButton(Messages.getString("OBJExportPanel.STOP_BTN")); 
 		bStop.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		bStop.setEnabled(false);
 		pRun.add(bRun);
@@ -117,7 +118,7 @@ public class OBJExportPanel extends JFrame
 
 		JPanel pTex=new JPanel();
 		pTex.setLayout(new BoxLayout(pTex, BoxLayout.LINE_AXIS));
-		bTex=new JButton("Export Textures");
+		bTex=new JButton(Messages.getString("OBJExportPanel.EXPORT_TEX")); 
 		bTex.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pTex.add(bTex);
 		main.add(pTex);
@@ -133,7 +134,7 @@ public class OBJExportPanel extends JFrame
 
 				JFileChooser jfcSave=new JFileChooser();
 				jfcSave.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				jfcSave.setDialogTitle("Save folder");
+				jfcSave.setDialogTitle(Messages.getString("OBJExportPanel.SAVE_DLG_TITLE")); 
 				if(jfcSave.showSaveDialog(OBJExportPanel.this)!=JFileChooser.APPROVE_OPTION)
 				{
 					bRun.setEnabled(true);
@@ -163,7 +164,7 @@ public class OBJExportPanel extends JFrame
 					if(Options.objOverwriteAction==OverwriteAction.NEVER)
 						write_obj=false;
 					else if(Options.objOverwriteAction==OverwriteAction.ASK && 
-							JOptionPane.showConfirmDialog(OBJExportPanel.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+							JOptionPane.showConfirmDialog(OBJExportPanel.this, Messages.getString("OBJExportPanel.OBJ_ERR"))!=JOptionPane.YES_OPTION) 
 						write_obj=false;
 					else
 						write_obj=true;
@@ -177,7 +178,7 @@ public class OBJExportPanel extends JFrame
 					if(Options.mtlOverwriteAction==OverwriteAction.NEVER)
 						write_mtl=false;
 					else if(Options.mtlOverwriteAction==OverwriteAction.ASK &&
-							JOptionPane.showConfirmDialog(OBJExportPanel.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+							JOptionPane.showConfirmDialog(OBJExportPanel.this, Messages.getString("OBJExportPanel.MTL_ERR"))!=JOptionPane.YES_OPTION) 
 						write_mtl=false;
 					else
 						write_mtl=true;
@@ -233,13 +234,13 @@ public class OBJExportPanel extends JFrame
 				if(!options.isVisible())
 				{
 					options.setVisible(true);
-					bOptions.setText("Hide options...");		
+					bOptions.setText(Messages.getString("OBJExportPanel.HIDE_BTN"));		 
 					pack();
 				}
 				else
 				{
 					options.setVisible(false);
-					bOptions.setText("Show options...");
+					bOptions.setText(Messages.getString("OBJExportPanel.SHOW_BTN")); 
 					pack();
 				}
 			}
@@ -248,7 +249,7 @@ public class OBJExportPanel extends JFrame
 		bTex.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
-				TexsplitDialog tsdiag=new TexsplitDialog(tfSavePath.getText()+"/tex");
+				TexsplitDialog tsdiag=new TexsplitDialog(tfSavePath.getText()+"/tex"); 
 				Point p=getLocation();
 				p.x+=(getWidth()-tsdiag.getWidth())/2;
 				p.y+=(getHeight()-tsdiag.getHeight())/2;

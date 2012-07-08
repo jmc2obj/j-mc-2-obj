@@ -31,7 +31,10 @@ public class Options
 		ALWAYS,
 		NEVER
 	}
-
+	
+	/**
+	 * A list of available locales in the program.
+	 */
 	public static Locale availableLocales[] = { Locale.ENGLISH, Locale.GERMAN };
 	
 	/**

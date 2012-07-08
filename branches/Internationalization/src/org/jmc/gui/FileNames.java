@@ -16,6 +16,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jmc.Options;
+import org.jmc.util.Messages;
 
 
 
@@ -37,7 +38,7 @@ public class FileNames extends JFrame {
 		JPanel pObj=new JPanel();
 		pObj.setLayout(new BoxLayout(pObj, BoxLayout.LINE_AXIS));
 		pObj.setMaximumSize(new Dimension(Short.MAX_VALUE,20));		
-		JLabel lObj=new JLabel("OBJ file name: ");
+		JLabel lObj=new JLabel(Messages.getString("FileNames.FNAME_OBJ"));
 		tfObj=new JTextField();
 		pObj.add(lObj);
 		pObj.add(tfObj);
@@ -45,7 +46,7 @@ public class FileNames extends JFrame {
 		JPanel pMtl=new JPanel();
 		pMtl.setLayout(new BoxLayout(pMtl, BoxLayout.LINE_AXIS));
 		pMtl.setMaximumSize(new Dimension(Short.MAX_VALUE,20));
-		JLabel lMtl=new JLabel("MTL file name: ");
+		JLabel lMtl=new JLabel(Messages.getString("FileNames.FNAME_MTL"));
 		tfMtl=new JTextField();		
 		pMtl.add(lMtl);
 		pMtl.add(tfMtl);
@@ -73,7 +74,7 @@ public class FileNames extends JFrame {
 		JPanel pClose=new JPanel();
 		pClose.setLayout(new BoxLayout(pClose, BoxLayout.LINE_AXIS));
 		pClose.setMaximumSize(new Dimension(Short.MAX_VALUE,20));
-		JButton bClose=new JButton("Close");
+		JButton bClose=new JButton(Messages.getString("FileNames.CLOSE"));
 		bClose.setMaximumSize(new Dimension(Short.MAX_VALUE,20));
 		pClose.add(bClose);
 		

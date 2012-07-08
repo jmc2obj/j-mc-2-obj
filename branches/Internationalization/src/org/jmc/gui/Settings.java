@@ -1,7 +1,6 @@
 package org.jmc.gui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -9,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -29,6 +30,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jmc.Options;
+import org.jmc.util.Filesystem;
+import org.jmc.util.Log;
+import org.jmc.util.Messages;
 
 public class Settings extends JFrame implements WindowListener, ChangeListener {
 
@@ -46,7 +50,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 		loadSettings();
 
-		setTitle("Settings");
+		setTitle(Messages.getString("Settings.SETTINGS")); 
 
 		setSize(400,300);
 
@@ -55,13 +59,13 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 		mp.setLayout(new BoxLayout(mp, BoxLayout.PAGE_AXIS));
 
-		String actions[]={"left mouse button",
-				"right mouse button",
-				"middle mouse button",
-				"shift + left mouse button",
-				"shift + right mouse button",
-		"shift + middle mouse button"};
-		
+		String actions[]={Messages.getString("Settings.LMB"), 
+				Messages.getString("Settings.RMB"), 
+				Messages.getString("Settings.MMB"), 
+				Messages.getString("Settings.SLMB"), 
+				Messages.getString("Settings.SRMB"), 
+		Messages.getString("Settings.SMMB")}; 
+
 		String languages[] = new String[Options.availableLocales.length];
 		for(int i=0; i<languages.length; i++) 
 		{
@@ -71,7 +75,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		JPanel pMove=new JPanel();
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pMove.setLayout(new BoxLayout(pMove, BoxLayout.LINE_AXIS));
-		JLabel lMove=new JLabel("Drag map using: ");
+		JLabel lMove=new JLabel(Messages.getString("Settings.DRAG")); 
 		cbMove=new JComboBox<String>(actions);
 		pMove.add(lMove);
 		pMove.add(cbMove);
@@ -79,23 +83,23 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		JPanel pSelect=new JPanel();
 		pSelect.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pSelect.setLayout(new BoxLayout(pSelect, BoxLayout.LINE_AXIS));
-		JLabel lSelect=new JLabel("Select using: ");
+		JLabel lSelect=new JLabel(Messages.getString("Settings.SELECT")); 
 		cbSelect=new JComboBox<String>(actions);
 		pSelect.add(lSelect);
 		pSelect.add(cbSelect);
-		
+
 		JPanel pLang=new JPanel();
 		pLang.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pLang.setLayout(new BoxLayout(pLang, BoxLayout.LINE_AXIS));
-		JLabel lLang=new JLabel("Language: ");
+		JLabel lLang=new JLabel(Messages.getString("Settings.LANGUAGE")); 
 		cbLang=new JComboBox<String>(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
-		
+
 		JPanel pRestart=new JPanel();
 		pRestart.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pRestart.setLayout(new BoxLayout(pRestart, BoxLayout.LINE_AXIS));
-		taRestart=new JTextArea("Please restart the program for\nthese settings to take effect!");
+		taRestart=new JTextArea(Messages.getString("Settings.RESTART_MSG")); 
 		taRestart.setLineWrap(true);
 		Font fRestart = taRestart.getFont();
 		taRestart.setFont(new Font(fRestart.getFamily(),Font.BOLD,16));
@@ -104,21 +108,49 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		taRestart.setVisible(false);
 		pRestart.add(taRestart);
 
-		JPanel pReset=new JPanel();
-		pReset.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		pReset.setLayout(new BoxLayout(pReset, BoxLayout.LINE_AXIS));
-		JButton bReset=new JButton("Restore to factory settings");
-		pReset.add(bReset);
-		
-		
+		JPanel pButtons=new JPanel();
+		pButtons.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
+		JButton bReset=new JButton(Messages.getString("Settings.RESTORE")); 
+		JButton bRestart=new JButton(Messages.getString("Settings.RESTART_BTN")); 
+		pButtons.add(bReset);
+		pButtons.add(bRestart);
+
+
 		bReset.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int retval=JOptionPane.showConfirmDialog(Settings.this, "Are you sure?");
+				int retval=JOptionPane.showConfirmDialog(Settings.this, Messages.getString("Settings.ARE_YOU_SURE")); 
 				if(retval==JOptionPane.YES_OPTION)
 					resetSettings();
 			}
 		});	
+
+		bRestart.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File prog=Filesystem.getProgramExecutable();
+				if(prog!=null)
+				{
+					final ArrayList<String> command = new ArrayList<String>();
+					command.add("java"); 
+					command.add("-jar"); 
+					command.add(prog.getPath());
+
+					final ProcessBuilder builder = new ProcessBuilder(command);
+					try {
+						builder.start();
+					} catch (IOException e1) {
+						Log.error(Messages.getString("Settings.RESTART_FAIL"), e1, true); 
+					}
+					System.exit(0);
+				}
+				else
+				{
+					Log.error(Messages.getString("Settings.RESTART_FAIL"), null, true); 
+				}
+			}
+		});
 
 		ActionListener saveAction=new AbstractAction() {			
 			@Override
@@ -149,7 +181,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		mp.add(pLang);
 		mp.add(Box.createVerticalGlue());
 		mp.add(pRestart);
-		mp.add(pReset);		
+		mp.add(pButtons);		
 
 		mp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
@@ -168,49 +200,49 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	public void setLastLoadedMap(String path)
 	{
-		prefs.put("LAST_MAP", path);	
+		prefs.put("LAST_MAP", path);	 
 	}
 
 	public String getLastLoadedMap()
 	{
-		return prefs.get("LAST_MAP", "");
+		return prefs.get("LAST_MAP", "");  //$NON-NLS-2$
 	}
 
 	public void setLastExportPath(String path)
 	{
-		prefs.put("LAST_EXPORT_PATH", path);	
+		prefs.put("LAST_EXPORT_PATH", path);	 
 	}
 
 	public String getLastExportPath()
 	{
-		File cwd=new File(".");
-		String str="";
+		File cwd=new File("."); 
+		String str=""; 
 		try{
 			str=cwd.getCanonicalPath();
 		}catch(Exception e){}
-		return prefs.get("LAST_EXPORT_PATH", str);
+		return prefs.get("LAST_EXPORT_PATH", str); 
 	}
-	
+
 	public void setLastVisitedDir(String path)
 	{
-		prefs.put("LAST_VISITED_DIR", path);
+		prefs.put("LAST_VISITED_DIR", path); 
 	}
-	
+
 	public String getLastVisitedDir()
 	{
-		return prefs.get("LAST_VISITED_DIR", getLastExportPath());
+		return prefs.get("LAST_VISITED_DIR", getLastExportPath()); 
 	}
 
 	public int getMoveAction()
 	{
 		return cbMove.getSelectedIndex();
 	}
-	
+
 	public int getSelectAction()
 	{
 		return cbSelect.getSelectedIndex();
 	}
-	
+
 	private void getFields()
 	{
 		saveSettings();
@@ -226,22 +258,22 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private void loadSettingsAfter()
 	{
-		cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
-		cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
-		cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
+		cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1)); 
+		cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0)); 
+		cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0)); 
 	}
 
 	private void saveSettings()
 	{
 		taRestart.setVisible(false);
-		
-		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex());
-		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex());
-		
-		int l=prefs.getInt("LANGUAGE", 0);
+
+		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex()); 
+		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex()); 
+
+		int l=prefs.getInt("LANGUAGE", 0); 
 		if(cbLang.getSelectedIndex()!=l)
 		{
-			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex());
+			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex()); 
 			taRestart.setVisible(true);
 		}
 	}
