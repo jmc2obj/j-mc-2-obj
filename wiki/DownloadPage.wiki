@@ -1,25 +1,5 @@
 =Download and usage instructions=
 
-To download go to the following page and download the executable JAR:
-
-[http://code.google.com/p/j-mc-2-obj/downloads/list]
-
-You can place the file anywhere you like and double-click it to run the program.
-
-If you prefer using the console, simply run: {{{java -jar jMc2Obj.jar}}}
-
-The interface has a toolbar on the top with a few buttons and edit boxes:
-  # The first combo box should be populated with a list of saves from Minecraft. If it is empty, or you simply wish to load a save from a different location, you can manually enter the path to the save folder here.
-  # The Load button loads the chosen save file.
-  # The Export selection button saves the selected area in the preview below.
-  # The Ground field lets you define the altitude level from which you wish to export the selection (0 is bedrock, export is always to the top of the save)
-
-The main preview area should start displaying your world as soon as you click the Load button. Use the right mouse button to scroll the world and left mouse button to select the area for export. The mouse wheel lets you zoom in and out. The red cross is your characters current position and the green cross is the location of the spawn.
-
-After you choose the export, the program will generate an OBJ file with the name of your choice and a "minecraft.mtl" file linked in the OBJ file in the same folder as the OBJ file.
-
-Current version doesn't support many things. For now only the cube meshes are generated, so no signs, flowers, torches, fences, etc. Also, no textures are yet generated, so all the materials are simple diffuse colors.
-
-Below is a sample render made in Blender using the current version of the software.
+The wiki was moved to http://wiki.jmc2obj.net for the time being.
 
 <a href="http://imgur.com/oBzkV"><img src="http://i.imgur.com/oBzkV.png" alt="" width=640 /></a>
