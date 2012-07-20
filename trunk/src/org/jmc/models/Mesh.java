@@ -12,112 +12,172 @@ import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
+import org.jmc.geom.Vertex;
 import org.jmc.util.Log;
 
 public class Mesh extends BlockModel
 {
-	
+
 	private static Map<String,OBJInputFile> files=null;
-	
-	private class MeshObject
+
+	public static class MeshData
 	{
-		byte data;
-		byte mask;
-		
-		Transform transform;
-		
-		OBJInputFile file;
-		OBJGroup group;		
+		public byte data;
+		public byte mask;		
+		public Vertex offset;
+		public short id;		
+		public Transform transform;
+		public boolean fallthrough;
+
+		public MeshData()
+		{
+			data=-1;
+			mask=-1;
+			id=-1;
+			offset=null;
+			transform=null;
+			fallthrough=false;
+		}
+
+		public boolean matches(ChunkDataBuffer chunks, int x, int y, int z, byte block_data)
+		{			
+			if(offset==null || offset==new Vertex(0,0,0))
+			{
+				byte d=block_data;
+				if(mask>0) d=(byte)(block_data&mask);
+				if(data>=0 && data!=d) return false;
+				return true;
+			}
+			else
+			{
+				byte d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				short i=chunks.getBlockID(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+
+				if(mask>0) d=(byte)(d&mask);
+
+				if(data>=0 && data!=d) return false;
+
+				if(id>=0 && i!=id) return false;
+
+				return true;
+			}
+		}
+
 	}
-	
-	private List<MeshObject> objects;
-	
+
+	@SuppressWarnings("unused")
+	private String obj_str;
+	public OBJInputFile objin_file;
+	public OBJGroup group;
+
+	private List<Mesh> objects;
+	public MeshData mesh_data;
+
 	public Mesh()
 	{
 		if(files==null) files=new HashMap<String, OBJInputFile>();
-		objects=new LinkedList<MeshObject>();
+		objects=new LinkedList<Mesh>();
+		mesh_data=new MeshData();
+
+		objin_file=null;
+		group=null;
+		obj_str="";
 	}
-	
-	public void addMesh(String objectstr)
+
+	public void parseString(String objectstr)
 	{
-		addMesh(objectstr,(byte)-1,(byte)0,null);
-	}
-	
-	public void addMesh(String objectstr, byte data, byte mask, Transform transform)
-	{
+		obj_str=objectstr;
 		String [] tok=objectstr.trim().split("#");
 		String filename=tok[0];
-				
-		OBJInputFile objin=null;
-				
+
 		if(files.containsKey(filename))
-			objin=files.get(filename);
+			objin_file=files.get(filename);
 		else
 		{
-			objin=new OBJInputFile();
+			objin_file=new OBJInputFile();
 
 			try {
-				objin.loadFile(new File("conf",filename));
+				objin_file.loadFile(new File("conf",filename));
 			} catch (IOException e) {
 				Log.error("Cannot load mesh file!", e);
 				return;
 			}
-			
-			files.put(filename, objin);
+
+			files.put(filename, objin_file);
 		}
-		
-		OBJGroup group=null;
-		
+
 		if(tok.length>1)
-			group=objin.getObject(tok[1]);
+			group=objin_file.getObject(tok[1]);
 		else
-			group=objin.getDefaultObject();
-			
+			group=objin_file.getDefaultObject();
+
 		if(group==null)
 		{
 			Log.info("Cannot find "+objectstr+" object!");
 			return;
 		}
-		
-		MeshObject object=new MeshObject();
-		object.group=group;
-		object.file=objin;		
-		object.mask=mask;
-		object.data=data;
-		object.transform=transform;
-		
-		objects.add(object);
-		
+	}
+
+	public void addMesh(Mesh mesh)
+	{
+		objects.add(mesh);
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte block_data, byte biome)
 	{
-		if(data<0) data=(byte) (16+data);
-		
-		for(MeshObject object:objects)
+		if(block_data<0) block_data=(byte) (16+block_data);
+
+		Transform translate = new Transform();
+		translate.translate(x, y, z);
+
+		addModel(obj,chunks,x,y,z,block_data,biome,translate);
+	}
+
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z , byte block_data, byte biome, Transform trans)
+	{
+
+		boolean match=mesh_data.matches(chunks, x, y, z, block_data);
+
+		if(match)
 		{
-			if(object.data>=0)
+			if(mesh_data.transform!=null)
 			{
-				if(object.mask>0)
-				{
-					if((data&object.mask)!=object.data) continue;
-				}
-				else
-				{
-					if(object.data!=data) continue;
-				}
+				trans=trans.multiply(mesh_data.transform);
 			}
-			
-			Transform translate = new Transform();
-			translate.translate(x, y, z);		
-			
-			if(object.transform!=null)
+
+			if(group!=null && objin_file!=null)
 			{
-				translate=translate.multiply(object.transform);
+				objin_file.addObject(group, trans, obj);
+				Log.info("ADDING");
 			}
-			
-			object.file.addObject(object.group, translate, obj);
+		}
+
+
+		if(mesh_data.fallthrough || match)
+		{
+			for(Mesh object:objects)
+			{
+				object.addModel(obj,chunks,x,y,z,block_data,biome,trans);
+			}
 		}
 	}
+
+	//DEBUG
+	/*
+	public String toString()
+	{
+		String ret;
+
+		ret="MESH ("+this.hashCode()+")\n";
+		ret+="STR "+obj_str+"\n";
+		ret+="DATA "+mesh_data.data+" & "+mesh_data.mask+"\n";
+		ret+="OBJECTS "+objects.size()+":\n";
+		for(Mesh object:objects)
+			ret+=object.toString();
+		ret+="------\n";
+
+		return ret;
+	}
+	*/
 }
