@@ -8,11 +8,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.jmc.geom.Transform;
+import org.jmc.geom.Vertex;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.Mesh;
-import org.jmc.util.Log;
 import org.jmc.util.Filesystem;
+import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -139,7 +140,7 @@ public class BlockTypes
 				{
 					Node meshNode = meshNodes.item(j);					
 					try {
-						parseMeshNode(meshNode,mesh,-1,-1,null);
+						parseMeshNode(meshNode,mesh);
 					}catch (Exception e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
@@ -151,7 +152,7 @@ public class BlockTypes
 				{
 					Node transNode = trasNodes.item(j);					
 					try {
-						parseTransNode(transNode,mesh,-1,-1,null);
+						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
@@ -163,7 +164,7 @@ public class BlockTypes
 				{
 					Node transNode = rotNodes.item(j);					
 					try {
-						parseTransNode(transNode,mesh,-1,-1,null);
+						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
@@ -175,7 +176,7 @@ public class BlockTypes
 				{
 					Node transNode = scaleNodes.item(j);					
 					try {
-						parseTransNode(transNode,mesh,-1,-1,null);
+						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
@@ -187,21 +188,34 @@ public class BlockTypes
 		}
 	}
 
-	private static void parseMeshNode(Node meshNode, Mesh mesh, int data, int mask, Transform transform) throws RuntimeException
+	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		int new_data = Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
-		int new_mask = Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
-
-		if(new_data>=0) data=new_data;
-		if(new_mask>=0) mask=new_mask;
-
-		if (data < -1 || data > 15 || mask < -1 || mask > 15)
+		mesh.mesh_data.data = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
+		mesh.mesh_data.mask = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
+		mesh.mesh_data.id  = (short) Integer.parseInt(Xml.getAttribute(meshNode, "id", "-1"), 10);
+		String offset_str = Xml.getAttribute(meshNode, "offset", "");
+		if(offset_str.length()>0)
 		{
-			throw new RuntimeException();
+			String [] tok=offset_str.split(",");
+			if(tok.length!=3)
+			{
+				Log.info("Error parsing offset string: offset=\""+offset_str+"\"");
+			}
+			else
+			{
+				int x=Integer.parseInt(tok[0],10);
+				int y=Integer.parseInt(tok[1],10);
+				int z=Integer.parseInt(tok[2],10);
+				mesh.mesh_data.offset = new Vertex(x,y,z);
+			}
 		}
-
-		NodeList children=meshNode.getChildNodes();
-
+		
+		if(Xml.getAttribute(meshNode, "fallthrough", "").toLowerCase().equals("true"))
+			mesh.mesh_data.fallthrough=true;
+	}
+	
+	private static void recurseChildren(NodeList children, Mesh mesh)
+	{
 		for(int i=0; i<children.getLength(); i++)
 		{
 			Node child=children.item(i);
@@ -212,28 +226,38 @@ public class BlockTypes
 
 				if(meshstr.isEmpty()) continue;
 
-				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
+				Mesh new_mesh=new Mesh();
+				new_mesh.parseString(meshstr);
+				parseAttributes(child, new_mesh);
+				mesh.addMesh(new_mesh);
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
 			{
+				Mesh new_mesh=new Mesh();				
+				
 				String name=child.getNodeName();
 				if(name.equals("mesh"))
-					parseMeshNode(child,mesh,data,mask,transform);
+					parseMeshNode(child,new_mesh);
 				else if(name.equals("translate") || name.equals("rotate") || name.equals("scale"))
-					parseTransNode(child, mesh, data, mask,transform);
+					parseTransNode(child, new_mesh);
+				
+				mesh.addMesh(new_mesh);
 			}
 		}
 	}
-
-	private static void parseTransNode(Node transNode, Mesh mesh, int data, int mask, Transform transform) throws RuntimeException
+	
+	private static void parseMeshNode(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		int new_data = Integer.parseInt(Xml.getAttribute(transNode, "data", "-1"), 10);
-		int new_mask = Integer.parseInt(Xml.getAttribute(transNode, "mask", "-1"), 10);
+		parseAttributes(meshNode, mesh);
 
-		if(new_data>=0) data=new_data;
-		if(new_mask>=0) mask=new_mask; 
+		NodeList children=meshNode.getChildNodes();
 
-		NodeList children=transNode.getChildNodes();
+		recurseChildren(children, mesh);
+	}
+
+	private static void parseTransNode(Node transNode, Mesh mesh) throws RuntimeException
+	{
+		parseAttributes(transNode, mesh);
 
 		String type=transNode.getNodeName();
 		String constraint=Xml.getAttribute(transNode, "const", "");
@@ -304,30 +328,11 @@ public class BlockTypes
 			throw new RuntimeException();
 		}
 
-		if(transform!=null)
-			transform=newtransform.multiply(transform);
-		else transform=newtransform;
+		mesh.mesh_data.transform=newtransform;
 
-		for(int i=0; i<children.getLength(); i++)
-		{
-			Node child=children.item(i);
-			if(child.getNodeType()==Node.TEXT_NODE)
-			{			
-				String meshstr = child.getTextContent().trim();
-
-				if(meshstr.isEmpty()) continue;
-
-				mesh.addMesh(meshstr, (byte)data, (byte)mask, transform);
-			}
-			else if(child.getNodeType()==Node.ELEMENT_NODE)
-			{
-				String name=child.getNodeName();
-				if(name.equals("mesh"))
-					parseMeshNode(child,mesh,data,mask,transform);
-				else if(name.equals("translate") || name.equals("rotate") || name.equals("scale"))
-					parseTransNode(child, mesh, data, mask,transform);
-			}
-		}
+		NodeList children=transNode.getChildNodes();
+		
+		recurseChildren(children, mesh);
 	}
 
 	/**
