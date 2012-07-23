@@ -20,7 +20,14 @@ Example: "100M" means revision 100 that was locally modified.
 
 		<exec executable="svnversion" outputproperty="svnrev">
 		</exec>
+		
+		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/data/version.xml" />
+		<echo message="&lt;version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
+		<echo message="    &lt;revision&gt;${svnrev}&lt;/revision&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
+		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
+		<echo message="&lt;/version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 
+		
 		<jar destfile="${basedir}/JAR/jMc2Obj-dev_r${svnrev}.jar" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="org.jmc.Main"/>

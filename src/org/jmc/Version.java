@@ -6,7 +6,13 @@ import java.util.Date;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import org.jmc.util.Log;
+import org.jmc.util.Xml;
+import org.w3c.dom.Document;
 
 
 /**
@@ -18,60 +24,57 @@ public class Version
 
 	private static final Object syncobj=new Object();
 
+	private static void initialize()
+	{	
+		synchronized(syncobj)
+		{
+			if(revstr!=null && dateval!=null) return;
+
+			try{
+				SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
+
+				InputStream stream = Version.class.getClassLoader().getResourceAsStream("data/version.xml");
+
+				if(stream != null)
+				{
+
+					Document doc = Xml.loadDocument(stream);
+					XPath xpath = XPathFactory.newInstance().newXPath();            
+
+					revstr=(String) xpath.evaluate("/version/revision", doc, XPathConstants.STRING);
+					String datestr=(String) xpath.evaluate("/version/date", doc, XPathConstants.STRING);						
+
+					if(datestr==null) datestr="";
+
+					dateval=sdf.parse(datestr);
+				}
+				else
+				{
+					Log.error("Cannot load program version!", null, false);
+					dateval=new Date(0);
+					revstr="r0";
+				}
+
+			}catch (Exception e) {
+				Log.error("Cannot load program version",e,false);					
+				dateval=new Date(0);
+				revstr="r0";
+			}
+		}
+	}
+
+
 	private static String revstr=null;
 	public static String REVISION()
 	{
-		synchronized(syncobj)
-		{
-			if(revstr==null)
-			{
-				revstr=Version.class.getPackage().getImplementationVersion();
-				if(revstr==null)
-					revstr= "(local)";
-			}
-		}
-
+		initialize();
 		return revstr;
 	}
 
 	private static Date dateval=null;
 	public static Date DATE()
 	{
-		synchronized(syncobj)
-		{
-			if(dateval==null)
-			{
-				try{
-					SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
-
-					InputStream stream = Version.class.getResourceAsStream("/META-INF/MANIFEST.MF");
-
-					if(stream != null)
-					{
-
-						Manifest manifest = new Manifest(stream);            
-
-						Attributes attributes = manifest.getMainAttributes();
-
-						String datestr=attributes.getValue("Built-Date");
-
-						if(datestr==null) datestr="";
-
-						dateval=sdf.parse(datestr);
-					}
-					else
-					{
-						Log.error("Cannot load manifest", null, false);
-						dateval=new Date(0);
-					}
-
-				}catch (Exception e) {
-					Log.error("Cannot find date of current version",e,false);					
-					dateval=new Date(0);
-				}
-			}
-		}
-
+		initialize();
 		return dateval;
 	}
 
