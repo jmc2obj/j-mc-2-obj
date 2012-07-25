@@ -21,24 +21,25 @@ public class Materials
 {
 
 	private static final String CONFIG_FILE = "conf/default.mtl";
-	
-	
+	private static final String SINGLE_CONFIG_FILE = "conf/single.mtl";
+
+
 	private static HashMap<String, Color> mtlColors;
-	
-	
+
+
 	private static void readConfig(HashMap<String, Color> mtlColors) throws Exception
 	{
 		File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!mtlFile.canRead())
 			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-		
+
 		BufferedReader reader = new BufferedReader(new FileReader(mtlFile));
 		try
 		{
 			String currMtl = null;
 			Pattern rxNewmtl = Pattern.compile("^\\s*newmtl\\s+(.*?)\\s*$");
 			Pattern rxKd = Pattern.compile("^\\s*Kd\\s+([0-9.]+)\\s+([0-9.]+)\\s+([0-9.]+)\\s*$");
-			
+
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
@@ -53,7 +54,7 @@ public class Materials
 					float r = Float.parseFloat(mKd.group(1));
 					float g = Float.parseFloat(mKd.group(2));
 					float b = Float.parseFloat(mKd.group(3));
-					
+
 					mtlColors.put(currMtl.toLowerCase(), new Color(r,g,b,1));
 				}
 			}
@@ -63,8 +64,8 @@ public class Materials
 			reader.close();
 		}
 	}
-	
-	
+
+
 	/**
 	 * Reads the configuration file.
 	 * Must be called once at the start of the program.
@@ -81,8 +82,8 @@ public class Materials
 
 		Log.info("Loaded " + mtlColors.size() + " materials.");
 	}
-	
-	
+
+
 	/**
 	 * Copies the .mtl file to the given location.
 	 * 
@@ -90,8 +91,16 @@ public class Materials
 	 */
 	public static void copyMTLFile(File dest) throws IOException
 	{
-		File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
-		Filesystem.copyFile(mtlFile, dest);
+		if(Options.useUVFile)
+		{
+			File mtlFile = new File(Filesystem.getDatafilesDir(), SINGLE_CONFIG_FILE);
+			Filesystem.copyFile(mtlFile, dest);
+		}
+		else
+		{
+			File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
+			Filesystem.copyFile(mtlFile, dest);
+		}
 	}
 
 

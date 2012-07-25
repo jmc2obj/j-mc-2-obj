@@ -2,6 +2,7 @@ package org.jmc.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -10,16 +11,20 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.jmc.Options;
 import org.jmc.Options.OffsetType;
 import org.jmc.Options.OverwriteAction;
+import org.jmc.util.Log;
 
 
 @SuppressWarnings("serial")
@@ -35,6 +40,8 @@ public class OBJExportOptions extends JPanel
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
 	private JCheckBox cbRemoveDuplicates;
+	private JCheckBox cbUseUV;
+	private JTextField tfUVFile;
 	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
 	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
 
@@ -44,7 +51,7 @@ public class OBJExportOptions extends JPanel
 
 		prefs=MainWindow.settings.getPreferences();
 
-		JPanel pScale=new JPanel();		
+		JPanel pScale=new JPanel();		 
 		pScale.setLayout(new BoxLayout(pScale,BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		JLabel lScale=new JLabel("Map Scale: ");
@@ -59,14 +66,16 @@ public class OBJExportOptions extends JPanel
 		rbNoOffset=new JRadioButton("None");
 		rbCenterOffset=new JRadioButton("Center");
 		rbCustomOffset=new JRadioButton("Custom");
-		tfXOffset=new JTextField("0");
-		tfZOffset=new JTextField("0");
+		tfXOffset=new JTextField();
+		tfZOffset=new JTextField();
+		JLabel lUnit=new JLabel("(blocks)");
 		pOffset.add(lOffset);
 		pOffset.add(rbNoOffset);
 		pOffset.add(rbCenterOffset);
 		pOffset.add(rbCustomOffset);
 		pOffset.add(tfXOffset);
 		pOffset.add(tfZOffset);
+		pOffset.add(lUnit);
 
 		ButtonGroup gOffset=new ButtonGroup();
 		gOffset.add(rbNoOffset);
@@ -81,37 +90,47 @@ public class OBJExportOptions extends JPanel
 		pSides.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRenderSides=new JCheckBox("Render world sides & bottom");
 		pSides.add(cbRenderSides);
-		
+
 		JPanel pBiomes=new JPanel();
 		pBiomes.setLayout(new BoxLayout(pBiomes, BoxLayout.LINE_AXIS));
 		pBiomes.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRenderBiomes=new JCheckBox("Render biomes");
 		pBiomes.add(cbRenderBiomes);
-		
+
 		JPanel pEntities=new JPanel();
 		pEntities.setLayout(new BoxLayout(pEntities, BoxLayout.LINE_AXIS));
 		pEntities.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRenderEntities=new JCheckBox("Render entities");
 		pEntities.add(cbRenderEntities);
-		
+
 		JPanel pObjPerMat=new JPanel();
 		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbObjPerMat=new JCheckBox("Create a separate object for each material");
 		pObjPerMat.add(cbObjPerMat);
-		
+
 		JPanel pObjPerChunk=new JPanel();
 		pObjPerChunk.setLayout(new BoxLayout(pObjPerChunk, BoxLayout.LINE_AXIS));
 		pObjPerChunk.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbObjPerChunk=new JCheckBox("Create a separate object for each chunk");
 		pObjPerChunk.add(cbObjPerChunk);
-		
+
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
 		pRemoveDuplicates.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRemoveDuplicates=new JCheckBox("Do not allow duplicate vertexes");
 		pRemoveDuplicates.add(cbRemoveDuplicates);
 		
+		JPanel pUseUV=new JPanel();
+		pUseUV.setLayout(new BoxLayout(pUseUV, BoxLayout.LINE_AXIS));
+		pUseUV.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbUseUV=new JCheckBox("Use single texture file");
+		tfUVFile=new JTextField();
+		JButton bUVFile=new JButton("Browse");
+		pUseUV.add(cbUseUV);
+		pUseUV.add(tfUVFile);
+		pUseUV.add(bUVFile);
+
 		JPanel pOBJOver = new JPanel();
 		pOBJOver.setLayout(new BoxLayout(pOBJOver, BoxLayout.LINE_AXIS));
 		pOBJOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -123,7 +142,7 @@ public class OBJExportOptions extends JPanel
 		pOBJOver.add(rbOBJAsk);
 		pOBJOver.add(rbOBJAlways);
 		pOBJOver.add(rbOBJNever);
-		
+
 		ButtonGroup gOBJOver=new ButtonGroup();
 		gOBJOver.add(rbOBJAsk);
 		gOBJOver.add(rbOBJAlways);
@@ -131,7 +150,7 @@ public class OBJExportOptions extends JPanel
 		rbOBJAsk.setActionCommand("ask");
 		rbOBJAlways.setActionCommand("always");
 		rbOBJNever.setActionCommand("never");
-		
+
 		JPanel pMTLOver = new JPanel();
 		pMTLOver.setLayout(new BoxLayout(pMTLOver, BoxLayout.LINE_AXIS));
 		pMTLOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -143,13 +162,13 @@ public class OBJExportOptions extends JPanel
 		pMTLOver.add(rbMTLAsk);
 		pMTLOver.add(rbMTLAlways);
 		pMTLOver.add(rbMTLNever);
-		
+
 		JPanel pNames=new JPanel();
 		pNames.setLayout(new BoxLayout(pNames, BoxLayout.LINE_AXIS));
 		pNames.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		JButton bNames=new JButton("Rename files...");
 		pNames.add(bNames);
-		
+
 		bNames.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {	
@@ -157,6 +176,22 @@ public class OBJExportOptions extends JPanel
 			}
 		});
 		
+		bUVFile.addActionListener(new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				JFileChooser jfcFile=new JFileChooser();
+				jfcFile.setDialogTitle("UV File");
+				if(jfcFile.showSaveDialog(OBJExportOptions.this)!=JFileChooser.APPROVE_OPTION)
+				{
+					return;
+				}
+
+				File save_path=jfcFile.getSelectedFile();													
+				tfUVFile.setText(save_path.getAbsolutePath());
+			}
+		});
+
 		ButtonGroup gMTLOver=new ButtonGroup();
 		gMTLOver.add(rbMTLAsk);
 		gMTLOver.add(rbMTLAlways);
@@ -164,6 +199,28 @@ public class OBJExportOptions extends JPanel
 		rbMTLAsk.setActionCommand("ask");
 		rbMTLAlways.setActionCommand("always");
 		rbMTLNever.setActionCommand("never");
+
+		loadSettings();
+		
+		DocumentListener tf_listener=new DocumentListener() {			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				saveSettings();
+			}			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				saveSettings();
+			}			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				saveSettings();
+			}
+		}; 
+
+		tfScale.getDocument().addDocumentListener(tf_listener);
+		tfXOffset.getDocument().addDocumentListener(tf_listener);
+		tfZOffset.getDocument().addDocumentListener(tf_listener);
+		tfUVFile.getDocument().addDocumentListener(tf_listener);
 
 		AbstractAction offsetSaveAction=new AbstractAction() {			
 			@Override
@@ -185,14 +242,14 @@ public class OBJExportOptions extends JPanel
 		rbNoOffset.addActionListener(offsetSaveAction);
 		rbCenterOffset.addActionListener(offsetSaveAction);
 		rbCustomOffset.addActionListener(offsetSaveAction);
-		
+
 		AbstractAction genericSaveAction=new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				saveSettings();
 			}	
 		};
-		
+
 		rbOBJAsk.addActionListener(genericSaveAction);
 		rbOBJAlways.addActionListener(genericSaveAction);
 		rbOBJNever.addActionListener(genericSaveAction);
@@ -205,8 +262,7 @@ public class OBJExportOptions extends JPanel
 		cbObjPerMat.addActionListener(genericSaveAction);
 		cbObjPerChunk.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
-
-		loadSettings();
+		cbUseUV.addActionListener(genericSaveAction);
 
 		add(pScale);
 		add(pOffset);
@@ -216,6 +272,7 @@ public class OBJExportOptions extends JPanel
 		add(pObjPerMat);
 		add(pObjPerChunk);
 		add(pRemoveDuplicates);
+		add(pUseUV);
 		add(pOBJOver);
 		add(pMTLOver);
 		add(pNames);
@@ -228,7 +285,7 @@ public class OBJExportOptions extends JPanel
 	private void loadSettings()
 	{
 		tfScale.setText(""+prefs.getFloat("DEFAULT_SCALE", 1.0f));
-		
+
 		switch(prefs.getInt("OFFSET_TYPE", 0))
 		{
 		case 0:
@@ -249,7 +306,7 @@ public class OBJExportOptions extends JPanel
 		}
 		tfXOffset.setText(""+prefs.getInt("OFFSET_X", 0));
 		tfZOffset.setText(""+prefs.getInt("OFFSET_Z", 0));
-		
+
 		switch(prefs.getInt("OBJ_OVERWRITE", 0))
 		{
 		case 0:
@@ -262,7 +319,7 @@ public class OBJExportOptions extends JPanel
 			rbOBJNever.setSelected(true);
 			break;
 		}
-		
+
 		switch(prefs.getInt("MTL_OVERWRITE", 0))
 		{
 		case 0:
@@ -275,14 +332,15 @@ public class OBJExportOptions extends JPanel
 			rbMTLNever.setSelected(true);
 			break;
 		}
-		
+
 		cbRenderSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
 		cbRenderBiomes.setSelected(prefs.getBoolean("RENDER_BIOMES", true));
 		cbRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", false));
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
-
+		cbUseUV.setSelected(prefs.getBoolean("USE_UV_FILE", false));
+		tfUVFile.setText(prefs.get("UV_FILE", ""));
 
 		updateOptions();
 	}
@@ -311,7 +369,7 @@ public class OBJExportOptions extends JPanel
 			prefs.putInt("OFFSET_TYPE", 2);
 			break;
 		}
-		
+
 		switch(Options.objOverwriteAction)
 		{
 		case ASK:
@@ -324,7 +382,7 @@ public class OBJExportOptions extends JPanel
 			prefs.putInt("OBJ_OVERWRITE", 2);
 			break;
 		}
-		
+
 		switch(Options.mtlOverwriteAction)
 		{
 		case ASK:
@@ -337,13 +395,15 @@ public class OBJExportOptions extends JPanel
 			prefs.putInt("MTL_OVERWRITE", 2);
 			break;
 		}
-		
+
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
 		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
+		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
+		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
 	}
 
 	/**
@@ -352,9 +412,18 @@ public class OBJExportOptions extends JPanel
 	private void updateOptions()
 	{
 		Options.scale = getScale();
-		
-		Options.offsetX = Integer.parseInt(tfXOffset.getText());
-		Options.offsetZ = Integer.parseInt(tfZOffset.getText());
+
+		try{
+			String txt=tfXOffset.getText();
+			if(!txt.isEmpty() && !txt.equals("-"))
+				Options.offsetX = Integer.parseInt(txt);
+			txt=tfZOffset.getText();
+			if(!txt.isEmpty() && !txt.equals("-"))
+				Options.offsetZ = Integer.parseInt(txt);
+			
+		}catch (NumberFormatException e) {
+			Log.error("Offset number format error!", e, false);
+		}
 
 		if(rbCenterOffset.isSelected())
 			Options.offsetType = OffsetType.CENTER;
@@ -362,7 +431,7 @@ public class OBJExportOptions extends JPanel
 			Options.offsetType = OffsetType.CUSTOM;
 		else
 			Options.offsetType = OffsetType.NONE;
-		
+
 		if(rbOBJAlways.isSelected())
 			Options.objOverwriteAction = OverwriteAction.ALWAYS;
 		else if(rbOBJNever.isSelected())
@@ -376,15 +445,17 @@ public class OBJExportOptions extends JPanel
 			Options.mtlOverwriteAction = OverwriteAction.NEVER;
 		else
 			Options.mtlOverwriteAction = OverwriteAction.ASK;
-		
+
 		Options.renderSides = cbRenderSides.isSelected();
 		Options.renderBiomes = cbRenderBiomes.isSelected();
 		Options.renderEntities = cbRenderEntities.isSelected();
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
+		Options.useUVFile=cbUseUV.isSelected();
+		Options.UVFile=new File(tfUVFile.getText());
 	}
-	
+
 	private float getScale()
 	{
 		float ret=1;
@@ -399,5 +470,4 @@ public class OBJExportOptions extends JPanel
 
 		return ret;
 	}
-
 }

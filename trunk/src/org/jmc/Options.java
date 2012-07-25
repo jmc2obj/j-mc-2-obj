@@ -56,7 +56,17 @@ public class Options
 	 * Scaling to apply to textures.
 	 */
 	public static double textureScale = 1.0;
-
+	
+	/**
+	 * Export alpha channel as separate file(s).
+	 */
+	public static boolean textureAlpha = false;
+	
+	/**
+	 * Merge textures into one file.
+	 */
+	public static boolean textureMerge = false;
+	
 	/**
 	 * Id of the world dimension to export.
 	 */
@@ -103,10 +113,9 @@ public class Options
 	public static boolean removeDuplicates = false;
 
 	/**
-	 * XXX
+	 * If true, sides and bottom of the model are rendered as well.
 	 */
-	public static boolean renderSides = false;
-	
+	public static boolean renderSides = false;	
 	
 	/**
 	 * If true, entities are rendered in the model. 
@@ -117,6 +126,16 @@ public class Options
 	 * If true, biomes are taken into account during export.
 	 */
 	public static boolean renderBiomes = true;
+	
+	/**
+	 * If true, UV file is used to convert UVs during export.
+	 */
+	public static boolean useUVFile = false;
+	
+	/**
+	 * UV file from the setting above.
+	 */
+	public static File UVFile;
 	
 	/**
 	 * Whether to export the .obj file.

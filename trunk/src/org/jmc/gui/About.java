@@ -53,12 +53,14 @@ public class About {
         
         Collections.shuffle(donations);
         
-        msg+="<u>We would like to thank these people for their donations:</u><br><p>";
+        msg+="<u>We would like to thank these people for their donations:</u><p>";
         msg+="<table width=\"100%\" border=\"0\">";
         for(String s:donations)
                 msg+="<tr><td>"+s+"</td></tr>";
         
-        msg+="</table><p><br>";
+        msg+="</table></p>";
+        msg+="<p>And we also thank all the other donators " +
+        		"and contributors not mentioned above!<p>";
         msg+="<div style='text-align:center;'>Source and Binary avilable at Google Source:<br>" +
         		"http://code.google.com/p/j-mc-2-obj/<br>" +
         		"<a href=\"http://www.jmc2obj.net/\">http://www.jmc2obj.net/</a></div>";

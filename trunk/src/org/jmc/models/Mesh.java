@@ -149,7 +149,6 @@ public class Mesh extends BlockModel
 			if(group!=null && objin_file!=null)
 			{
 				objin_file.addObject(group, trans, obj);
-				Log.info("ADDING");
 			}
 		}
 

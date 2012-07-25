@@ -60,7 +60,7 @@ public class ObjExporter
 			}
 
 			if(writeObj)
-			{
+			{				
 				PrintWriter obj_writer=new PrintWriter(new FileWriter(objfile));
 
 				int cxs=(int)Math.floor(Options.minX/16.0f);
@@ -71,15 +71,17 @@ public class ObjExporter
 
 				if(Options.offsetType==OffsetType.CENTER)
 				{
-					oxs=cxs+(cxe-cxs)/2;
-					oys=Options.minY;
-					ozs=czs+(cze-czs)/2;
+					oxs=-(Options.minX+(Options.maxX-Options.minX)/2);
+					oys=-Options.minY;
+					ozs=-(Options.minZ+(Options.maxZ-Options.minZ)/2);
+					Log.info("Center offset: "+oxs+"/"+oys+"/"+ozs);
 				}
 				else if(Options.offsetType==OffsetType.CUSTOM)
 				{
 					oxs=Options.offsetX;
 					oys=0;
 					ozs=Options.offsetZ;
+					Log.info("Custom offset: "+oxs+"/"+oys+"/"+ozs);
 				}
 				else
 				{
@@ -88,6 +90,17 @@ public class ObjExporter
 					ozs=0;
 				}
 
+				if(Options.useUVFile)
+				{
+					Log.info("Using file to recalculate UVs: "+Options.UVFile.getAbsolutePath());
+					try{
+						UVRecalculate.load(Options.UVFile);
+					}catch (Exception e) {
+						Log.error("Cannot load UV file!", e);
+						return;
+					}
+				}
+				
 
 				int progress_count=0;
 				float progress_max=(cxe-cxs+1)*(cze-czs+1);
@@ -95,7 +108,7 @@ public class ObjExporter
 				ChunkDataBuffer chunk_buffer=new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY, Options.maxY, Options.minZ, Options.maxZ);
 
 				OBJOutputFile obj=new OBJOutputFile("minecraft");
-				obj.setOffset(-oxs*16, -oys, -ozs*16);
+				obj.setOffset(oxs, oys, ozs);
 				obj.setScale(Options.scale);
 
 				obj.appendMtl(obj_writer, mtlfile.getName());

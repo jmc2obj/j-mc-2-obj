@@ -12,6 +12,7 @@ import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -35,7 +36,7 @@ public class UpdateWindow extends JFrame{
 
 		super("Program Update");
 
-		setSize(400,300);
+		setSize(250,170);
 
 		JPanel cp=new JPanel();
 		cp.setLayout(new BoxLayout(cp,BoxLayout.PAGE_AXIS));
@@ -62,7 +63,7 @@ public class UpdateWindow extends JFrame{
 
 		JPanel pStatus=new JPanel();
 		pStatus.setLayout(new BoxLayout(pStatus, BoxLayout.LINE_AXIS));
-		lStatus=new JLabel();
+		lStatus=new JLabel(" ");
 		Font font=lStatus.getFont();
 		lStatus.setFont(new Font(font.getFamily(),0,16));
 		pStatus.add(lStatus);
@@ -77,12 +78,13 @@ public class UpdateWindow extends JFrame{
 		cp.add(pCheck);
 		cp.add(pCurrent);
 		cp.add(pNew);
-		cp.add(pStatus);
+		cp.add(pStatus);		
 		cp.add(pUpdate);
+		cp.add(Box.createVerticalGlue());
 
 		cp.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-		pack();
+	
 
 
 		bCheck.addActionListener(new AbstractAction() {			
@@ -108,8 +110,7 @@ public class UpdateWindow extends JFrame{
 						else
 							lStatus.setText("You have the newest version.");
 
-						pack();
-
+						
 						
 					}
 				}).start();
