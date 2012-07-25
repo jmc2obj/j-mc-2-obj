@@ -42,17 +42,17 @@ public class OBJOutputFile extends OBJFileBase
 	 * Map of vertices to their respective IDs used in the faces of the mesh.
 	 */
 	private Map<Vertex, Integer> vertexMap;
-	
+
 	/**
 	 * Map of texture coordinates to their respective indexes in the OBJ file.
 	 */
 	private Map<UV, Integer> texCoordMap;
-	
+
 	/**
 	 * Map of normals to their respective indexes in the OBJ file.
 	 */
 	private Map<Vertex, Integer> normalsMap;
-	
+
 	/**
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
@@ -71,7 +71,7 @@ public class OBJOutputFile extends OBJFileBase
 	public OBJOutputFile(String ident)
 	{
 		super();
-		
+
 		identifier = ident;
 		vertexMap = new HashMap<Vertex, Integer>();
 		vertex_counter = 1;
@@ -79,7 +79,7 @@ public class OBJOutputFile extends OBJFileBase
 		tex_counter = 1;
 		normalsMap = new HashMap<Vertex, Integer>();
 		norm_counter = 1;
-		
+
 		x_offset = 0;
 		y_offset = 0;
 		z_offset = 0;
@@ -139,7 +139,7 @@ public class OBJOutputFile extends OBJFileBase
 		out.println("mtllib "+mtlFile);
 		out.println();
 	}
-	
+
 	/**
 	 * Appends an object name line to the file.
 	 * @param out
@@ -225,7 +225,7 @@ public class OBJOutputFile extends OBJFileBase
 			out.println();
 		}
 	}
-	
+
 
 	/**
 	 * Add a face with the given vertices to the OBJ file.
@@ -242,17 +242,18 @@ public class OBJOutputFile extends OBJFileBase
 		{
 			if (verts.length != 4)
 				throw new IllegalArgumentException("Default texture coordinates are only defined for quads.");
-			
+
 			uv = new UV[] {
-				new UV(0,0),
-				new UV(1,0), 
-				new UV(1,1), 
-				new UV(0,1) 
+					new UV(0,0),
+					new UV(1,0), 
+					new UV(1,1), 
+					new UV(0,1) 
 			};
 		}
+
 		addFace(verts, null, uv, trans, mtl);
 	}
-	
+
 	/**
 	 * Add a face with the given vertices to the OBJ file.
 	 * 
@@ -267,7 +268,14 @@ public class OBJOutputFile extends OBJFileBase
 		Face face = new Face(verts.length);
 		face.mtl = mtl;
 		if (norms == null) face.normals = null;
-		if (uv == null) face.uv = null;
+		if (uv == null) 
+		{
+			face.uv = null;
+		}
+		else if(Options.useUVFile)
+		{
+			uv=UVRecalculate.recalculate(uv, mtl);
+		}
 
 		for (int i = 0; i < verts.length; i++)
 		{
@@ -289,7 +297,7 @@ public class OBJOutputFile extends OBJFileBase
 				face.vertices[i] = vertex_counter;
 				vertex_counter++;
 			}
-			
+
 			// add normals
 			if (norms != null)
 			{
@@ -311,7 +319,7 @@ public class OBJOutputFile extends OBJFileBase
 					norm_counter++;
 				}
 			}
-			
+
 			// add texture coords
 			if (uv != null)
 			{
@@ -331,7 +339,7 @@ public class OBJOutputFile extends OBJFileBase
 
 		faces.add(face);
 	}
-	
+
 	/**
 	 * Adds all blocks from the given chunk buffer into the file.
 	 * @param chunk
@@ -378,13 +386,13 @@ public class OBJOutputFile extends OBJFileBase
 				}
 			}
 		}
-		
+
 		for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
 		{
 			Entity handler=EntityTypes.getEntity(entity);
 			if(handler!=null) handler.addEntity(this, entity);						
 		}
-		
+
 		for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
 		{
 			Entity handler=EntityTypes.getEntity(entity);

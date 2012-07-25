@@ -10,7 +10,6 @@ package org.jmc.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -28,9 +27,9 @@ import javax.swing.JTextField;
 
 import org.jmc.ObjExporter;
 import org.jmc.Options;
+import org.jmc.Options.OverwriteAction;
 import org.jmc.ProgressCallback;
 import org.jmc.StopCallback;
-import org.jmc.Options.OverwriteAction;
 
 
 /**
@@ -41,13 +40,14 @@ import org.jmc.Options.OverwriteAction;
  *
  */
 @SuppressWarnings("serial")
-public class OBJExportPanel extends JFrame
+public class OBJExportWindow extends JFrame implements ProgressCallback
 {
 
 	private boolean stop;
 
 	//UI elements (not described)
 	OBJExportOptions options;
+	TexsplitPanel texsplit;
 	JProgressBar progress;
 	JTextField tfSavePath;
 	JButton bRun,bStop;
@@ -63,7 +63,7 @@ public class OBJExportPanel extends JFrame
 	 * @param bounds region being saved
 	 * @param ymin minimum altitude being saved
 	 */
-	public OBJExportPanel() 
+	public OBJExportWindow() 
 	{		
 		super("Export selection");		
 
@@ -90,7 +90,7 @@ public class OBJExportPanel extends JFrame
 
 		JPanel pOptions=new JPanel();
 		pOptions.setLayout(new BoxLayout(pOptions, BoxLayout.LINE_AXIS));
-		bOptions=new JButton("Show more options...");
+		bOptions=new JButton("Export options...");
 		bOptions.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pOptions.add(bOptions);
 		main.add(pOptions);
@@ -98,7 +98,18 @@ public class OBJExportPanel extends JFrame
 		options=new OBJExportOptions();
 		options.setVisible(false);
 		main.add(options);
-
+		
+		JPanel pTex=new JPanel();
+		pTex.setLayout(new BoxLayout(pTex, BoxLayout.LINE_AXIS));
+		bTex=new JButton("Texture options...");
+		bTex.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		pTex.add(bTex);
+		main.add(pTex);
+		
+		texsplit=new TexsplitPanel(this);
+		texsplit.setVisible(false);
+		main.add(texsplit);
+		
 		main.add(Box.createVerticalGlue());
 
 		JPanel pRun=new JPanel();
@@ -115,13 +126,6 @@ public class OBJExportPanel extends JFrame
 		pRun.add(bStop);
 		main.add(pRun);
 
-		JPanel pTex=new JPanel();
-		pTex.setLayout(new BoxLayout(pTex, BoxLayout.LINE_AXIS));
-		bTex=new JButton("Export Textures");
-		bTex.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		pTex.add(bTex);
-		main.add(pTex);
-
 		progress=new JProgressBar();
 		progress.setMaximum(100);
 		progress.setStringPainted(true);
@@ -134,7 +138,7 @@ public class OBJExportPanel extends JFrame
 				JFileChooser jfcSave=new JFileChooser();
 				jfcSave.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				jfcSave.setDialogTitle("Save folder");
-				if(jfcSave.showSaveDialog(OBJExportPanel.this)!=JFileChooser.APPROVE_OPTION)
+				if(jfcSave.showSaveDialog(OBJExportWindow.this)!=JFileChooser.APPROVE_OPTION)
 				{
 					bRun.setEnabled(true);
 					bStop.setEnabled(false);
@@ -143,6 +147,7 @@ public class OBJExportPanel extends JFrame
 
 				File save_path=jfcSave.getSelectedFile();													
 				tfSavePath.setText(save_path.getAbsolutePath());
+				texsplit.setSaveDir(save_path);
 			}
 		});
 
@@ -163,7 +168,7 @@ public class OBJExportPanel extends JFrame
 					if(Options.objOverwriteAction==OverwriteAction.NEVER)
 						write_obj=false;
 					else if(Options.objOverwriteAction==OverwriteAction.ASK && 
-							JOptionPane.showConfirmDialog(OBJExportPanel.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+							JOptionPane.showConfirmDialog(OBJExportWindow.this, "OBJ file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
 						write_obj=false;
 					else
 						write_obj=true;
@@ -177,7 +182,7 @@ public class OBJExportPanel extends JFrame
 					if(Options.mtlOverwriteAction==OverwriteAction.NEVER)
 						write_mtl=false;
 					else if(Options.mtlOverwriteAction==OverwriteAction.ASK &&
-							JOptionPane.showConfirmDialog(OBJExportPanel.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
+							JOptionPane.showConfirmDialog(OBJExportWindow.this, "MTL file already exists. Do you want to overwrite?")!=JOptionPane.YES_OPTION)
 						write_mtl=false;
 					else
 						write_mtl=true;
@@ -188,7 +193,7 @@ public class OBJExportPanel extends JFrame
 				
 				Options.outputDir = savePath;
 				MainWindow.settings.setLastExportPath(tfSavePath.getText());
-				
+								
 				bRun.setEnabled(false);
 				bStop.setEnabled(true);
 				
@@ -197,12 +202,7 @@ public class OBJExportPanel extends JFrame
 					public void run() {
 						stop=false;
 
-						ObjExporter.export(new ProgressCallback() {
-								@Override
-								public void setProgress(float value) {
-									progress.setValue((int)(value*100f));
-								}
-							},
+						ObjExporter.export(OBJExportWindow.this,
 							new StopCallback() {
 								@Override
 								public boolean stopRequested() {
@@ -233,13 +233,13 @@ public class OBJExportPanel extends JFrame
 				if(!options.isVisible())
 				{
 					options.setVisible(true);
-					bOptions.setText("Hide options...");		
+					bOptions.setText("Hide export options...");		
 					pack();
 				}
 				else
 				{
 					options.setVisible(false);
-					bOptions.setText("Show options...");
+					bOptions.setText("Export options...");
 					pack();
 				}
 			}
@@ -248,16 +248,29 @@ public class OBJExportPanel extends JFrame
 		bTex.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
-				TexsplitDialog tsdiag=new TexsplitDialog(tfSavePath.getText()+"/tex");
-				Point p=getLocation();
-				p.x+=(getWidth()-tsdiag.getWidth())/2;
-				p.y+=(getHeight()-tsdiag.getHeight())/2;
-				tsdiag.setLocation(p);
+				if(!texsplit.isVisible())
+				{
+					texsplit.setVisible(true);
+					bTex.setText("Hide texture options...");		
+					pack();
+				}
+				else
+				{
+					texsplit.setVisible(false);
+					bTex.setText("Texture options...");
+					pack();
+				}
 			}
 		});
 
 		pack();
 		setVisible(true);
+	}
+
+
+	@Override
+	public void setProgress(float value) {
+		progress.setValue((int)(value*100f));		
 	}
 
 }

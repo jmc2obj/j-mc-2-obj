@@ -432,7 +432,7 @@ public class MainPanel extends JPanel
 				Options.minY = sFloor.getValue();
 				Options.maxY = sCeil.getValue();
 
-				OBJExportPanel export_thread = new OBJExportPanel();
+				OBJExportWindow export_thread = new OBJExportWindow();
 
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;

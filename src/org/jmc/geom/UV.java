@@ -7,6 +7,7 @@ package org.jmc.geom;
 public class UV
 {
 	public float u,v;
+	public boolean recalculated;
 
 	/**
 	 * Constructor.
@@ -17,6 +18,7 @@ public class UV
 	{
 		this.u = u;
 		this.v = v;
+		recalculated=false;
 	}
 
 	/**
@@ -27,6 +29,7 @@ public class UV
 	{
 		this.u = other.u;
 		this.v = other.v;
+		this.recalculated=other.recalculated;
 	}
 
 

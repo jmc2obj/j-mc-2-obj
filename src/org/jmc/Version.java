@@ -3,8 +3,6 @@ package org.jmc;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
