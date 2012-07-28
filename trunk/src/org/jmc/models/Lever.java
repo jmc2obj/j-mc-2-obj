@@ -64,12 +64,14 @@ public class Lever extends BlockModel
 		// base
 		switch (dir)
 		{
-			case 1: rotate.rotate(0, -90, 0); break;
-			case 2: rotate.rotate(0, 90, 0); break;
-			case 3: rotate.rotate(0, 0, 0); break;
-			case 4: rotate.rotate(0, 180, 0); break;
-			case 5: rotate.rotate(-90, 0, 0); break;
-			case 6: rotate.rotate(-90, 0, 90); break;
+			case 1: rotate.rotate(0, -90, 0); break;	// wall e
+			case 2: rotate.rotate(0, 90, 0); break;		// wall w
+			case 3: rotate.rotate(0, 0, 0); break;		// wall s
+			case 4: rotate.rotate(0, 180, 0); break;	// wall n
+			case 5: rotate.rotate(-90, 0, 0); break;	// ground n-s
+			case 6: rotate.rotate(-90, 0, 90); break;	// ground e-w
+			case 7: rotate.rotate(90, 0, 0); break;		// ceiling n-s
+			case 0: rotate.rotate(90, 0, 90); break;	// ceiling e-w
 		}
 		translate.translate(x, y, z);
 		rt = translate.multiply(rotate);
@@ -116,6 +118,14 @@ public class Lever extends BlockModel
 				break;
 			case 6:
 				rotate.rotate(-90, (on ? 35 : -35), 90);
+				translate.translate(x + (on ? -0.35f : 0.35f), y, z);
+				break;
+			case 7:
+				rotate.rotate(90 + (on ? 35 : -35), 0, 0);
+				translate.translate(x, y, z + (on ? -0.35f : 0.35f));
+				break;
+			case 0:
+				rotate.rotate(90, (on ? 35 : -35), 90);
 				translate.translate(x + (on ? -0.35f : 0.35f), y, z);
 				break;
 		}
