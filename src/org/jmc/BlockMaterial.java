@@ -59,8 +59,8 @@ public class BlockMaterial
 	 */
 	public void put(byte biomeValue, byte dataValue, String[] mtlNames)
 	{
-		if(dataValue < -1 || dataValue > 15 )
-			throw new IllegalArgumentException("dataValue must be between 0 and 15");				
+		if (dataValue < -1 || dataValue > 15)
+			throw new IllegalArgumentException("dataValue must be between -1 and 15");				
 		if (mtlNames == null || mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be null or empty");
 
