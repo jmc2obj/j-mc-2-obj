@@ -134,7 +134,7 @@ public class Chunk {
 		 * Block meta-data.
 		 */
 		public byte [] data;
-		
+
 		/**
 		 * Biome IDSs (only XZ axes).
 		 */
@@ -209,9 +209,17 @@ public class Chunk {
 					ret.data[base+2*i]=add1;
 					ret.data[base+2*i+1]=add2;
 				}
-				
-				for(int i=0; i<biomes.data.length; i++)
-					ret.biome[i]=biomes.data[i];
+
+				if(biomes!=null)
+				{
+					for(int i=0; i<biomes.data.length; i++)
+						ret.biome[i]=biomes.data[i];
+				}
+				else
+				{
+					for(int i=0; i<ret.biome.length; i++)
+						ret.biome[i]=1; //if biomes are missing set everything to plains
+				}
 			}			
 		}
 		else
@@ -232,8 +240,8 @@ public class Chunk {
 				ret.data[2*i]=add1;
 				ret.data[2*i+1]=add2;
 			}
-			
-			
+
+
 		}
 
 		if(Options.renderEntities)
@@ -318,7 +326,7 @@ public class Chunk {
 				for(y = floor; y < ceiling; y++)
 				{
 					blockBiome = bd.biome[x*16+z]; 
-							
+
 					if(is_anvil)
 					{
 						blockID = bd.id[x + (z * 16) + (y * 16) * 16];
