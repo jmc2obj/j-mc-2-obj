@@ -33,11 +33,11 @@ public class MainWindow extends JFrame
 	/**
 	 * Global main settings and settings window reference.
 	 */
-	public static Settings settings = new Settings();
+	public static Settings settings;
 	
-	public static UpdateWindow update = new UpdateWindow();
+	public static UpdateWindow update;
 	
-	public static FileNames file_names = new FileNames();
+	public static FileNames file_names;
 	
 	
 	/**
@@ -47,6 +47,10 @@ public class MainWindow extends JFrame
 	{
 		super("Main Window");
 
+		settings = new Settings();
+		update = new UpdateWindow();
+		file_names = new FileNames();
+		
 		main = this;
 		
 		setSize(800,600);

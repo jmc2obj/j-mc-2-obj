@@ -28,6 +28,8 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
+import org.jmc.util.Messages;
+
 
 
 /**
@@ -141,7 +143,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
 
-		gui_font=new Font("Verdana",Font.BOLD,10);
+		gui_font=new Font("Verdana",Font.BOLD,10); 
 		gui_color=Color.white;
 		gui_bg_color=Color.black;
 		gui_bg_alpha=0.3f;		
@@ -226,13 +228,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,gui_bg_alpha));
 		gui_text.clear();
-		gui_text.add(zoom_level+"x");
-		gui_text.add("("+px+","+py+")");
-		gui_text.add("Selection:");
-		gui_text.add("("+selection_start_x+","+selection_start_z+")");
-		gui_text.add("("+selection_end_x+","+selection_end_z+")");
-		gui_text.add("Floor: "+alt_floor);
-		gui_text.add("Ceiling: "+alt_ceil);
+		gui_text.add(zoom_level+"x"); 
+		gui_text.add("("+px+","+py+")");  //$NON-NLS-2$ //$NON-NLS-3$
+		gui_text.add(Messages.getString("PreviewPanel.SELECTION")); 
+		gui_text.add("("+selection_start_x+","+selection_start_z+")");  //$NON-NLS-2$ //$NON-NLS-3$
+		gui_text.add("("+selection_end_x+","+selection_end_z+")");  //$NON-NLS-2$ //$NON-NLS-3$
+		gui_text.add(Messages.getString("PreviewPanel.FLOOR")+alt_floor); 
+		gui_text.add(Messages.getString("PreviewPanel.CEILING")+alt_ceil); 
 
 
 

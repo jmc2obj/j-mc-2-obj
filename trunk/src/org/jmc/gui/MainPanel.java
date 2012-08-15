@@ -51,6 +51,7 @@ import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
+import org.jmc.util.Messages;
 
 
 /**
@@ -162,7 +163,6 @@ public class MainPanel extends JPanel
 	{
 		setLayout(new BorderLayout());
 
-
 		JPanel pToolbar = new JPanel();
 		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));
 
@@ -185,15 +185,15 @@ public class MainPanel extends JPanel
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0,5,10,5));
 
-		bLoad = new JButton("Load");
+		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
 		bLoad.setEnabled(false);
-		bGoto = new JButton("Goto");
+		bGoto = new JButton(Messages.getString("MainPanel.GOTO_BUTTON"));
 		bGoto.setEnabled(false);
-		bExport = new JButton("Export selection");
+		bExport = new JButton(Messages.getString("MainPanel.EXPORT_BUTTON"));
 		bExport.setEnabled(false);
-		bSettings = new JButton("Settings");
-		bUpdate = new JButton("Update");
-		bAbout = new JButton("About");
+		bSettings = new JButton(Messages.getString("MainPanel.SETTINGS_BUTTON"));
+		bUpdate = new JButton(Messages.getString("MainPanel.UPDATE_BUTTON"));
+		bAbout = new JButton(Messages.getString("MainPanel.ABOUT_BUTTON"));
 		bAbout.setForeground(Color.red);
 		Font f=bAbout.getFont();
 		bAbout.setFont(new Font(f.getFamily(),Font.BOLD,f.getSize()));
@@ -217,13 +217,13 @@ public class MainPanel extends JPanel
 		alts.setLayout(new BoxLayout(alts, BoxLayout.PAGE_AXIS));
 		sFloor=new JSlider();
 		sFloor.setOrientation(JSlider.VERTICAL);
-		sFloor.setToolTipText("Export floor");
+		sFloor.setToolTipText(Messages.getString("MainPanel.FLOOR_SLIDER"));
 		sFloor.setMinimum(0);
 		sFloor.setMaximum(256);//TODO: this should really be read from the file, IMO
 		sFloor.setValue(0);
 		sCeil=new JSlider();
 		sCeil.setOrientation(JSlider.VERTICAL);
-		sCeil.setToolTipText("Export ceiling");
+		sCeil.setToolTipText(Messages.getString("MainPanel.CEILING_SLIDER"));
 		sCeil.setMinimum(0);
 		sCeil.setMaximum(256);
 		sCeil.setValue(256);
@@ -305,7 +305,7 @@ public class MainPanel extends JPanel
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastVisitedDir());
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				if(jfc.showDialog(MainPanel.this, "Choose save folder")==JFileChooser.APPROVE_OPTION)
+				if(jfc.showDialog(MainPanel.this, Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER"))==JFileChooser.APPROVE_OPTION)
 				{
 					String path=jfc.getSelectedFile().getAbsolutePath();
 					addPathToList(path);
@@ -328,7 +328,7 @@ public class MainPanel extends JPanel
 				Options.worldDir=new File(cbPath.getSelectedItem().toString());
 				if(!Options.worldDir.exists() || !Options.worldDir.isDirectory())
 				{
-					JOptionPane.showMessageDialog(null, "Enter correct dir!");
+					JOptionPane.showMessageDialog(null, Messages.getString("MainPanel.ENTER_CORRECT_DIR"));
 					Options.worldDir=null;
 					return;
 				}
@@ -338,7 +338,7 @@ public class MainPanel extends JPanel
 
 				if(!levelDat.open())
 				{
-					JOptionPane.showMessageDialog(null, "Cannot open level.dat in folder!");
+					JOptionPane.showMessageDialog(null, Messages.getString("MainPanel.ERR_LEVEL"));
 					return;
 				}				
 
@@ -380,7 +380,7 @@ public class MainPanel extends JPanel
 				JTextField xpos = new JTextField();
 				JTextField zpos = new JTextField();
 				final JComponent[] inputs = new JComponent[] {
-						new JLabel("Write the coordinates you want to move to on the map:"),
+						new JLabel(Messages.getString("MainPanel.GOTO_MSG")),
 						new JLabel("X"),
 						xpos,
 						new JLabel("Z"),
@@ -388,7 +388,7 @@ public class MainPanel extends JPanel
 				};
 								
 
-				int ret = JOptionPane.showConfirmDialog(MainPanel.this, inputs, "Goto...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int ret = JOptionPane.showConfirmDialog(MainPanel.this, inputs, Messages.getString("MainPanel.GOTO_BUTTON"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				
 				if(ret!=JOptionPane.OK_OPTION) return;
 				
@@ -397,7 +397,7 @@ public class MainPanel extends JPanel
 					x=Integer.parseInt(xpos.getText());
 					z=Integer.parseInt(zpos.getText());
 				}catch (NumberFormatException ex) {
-					Log.error("The values entered in the message box are not proper numbers!", ex, true);
+					Log.error(Messages.getString("MainPanel.NUM_ERR"), ex, true);
 					return;
 				}
 				
@@ -413,7 +413,7 @@ public class MainPanel extends JPanel
 			{
 				if(Options.worldDir==null)
 				{
-					JOptionPane.showMessageDialog(MainWindow.main, "You have to load a file first!");
+					JOptionPane.showMessageDialog(MainWindow.main, Messages.getString("MainPanel.LOAD_ERR"));
 					return;
 				}
 				Options.dimension=(Integer) cbDimension.getSelectedItem();
@@ -421,7 +421,7 @@ public class MainPanel extends JPanel
 				Rectangle rect=preview.getSelectionBounds();
 				if(rect.width==0 || rect.height==0)
 				{
-					JOptionPane.showMessageDialog(MainWindow.main, "Click and drag the left mouse button to make a selection first!");
+					JOptionPane.showMessageDialog(MainWindow.main, Messages.getString("MainPanel.SEL_ERR"));
 					return;
 				}
 				Options.minX = rect.x;

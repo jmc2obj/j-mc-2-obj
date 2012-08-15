@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.jmc.Version;
+import org.jmc.util.Messages;
 
 
 public class About {
@@ -23,9 +24,9 @@ public class About {
 		// define the about box with a width of 300px
         String msg="<html><div style='width:300px'><div style='text-align:center;'><img src=\""+logo+"\"></div>";
         msg+="<div style='text-align:center;font-weight:bold; font-size:20pt;'>jMC2Obj</div>";
-        msg+="<div style='text-align:center;font-weight:bold; font-size:16pt;'>A Java Minecraft to OBJ converter</div><p>";
-        msg+="<table width=\"100%\" border=\"0\"><tr><td width=\"100px\">version:</td><td>"+Version.VERSION+Version.REVISION()+"</td></tr>"
-                +"<tr><td width=\"100px\">build date:</td><td>"+Version.DATE().toString()+"</td></tr>"
+        msg+="<div style='text-align:center;font-weight:bold; font-size:16pt;'>"+Messages.getString("About.PROG_DESC")+"</div><p>";
+        msg+="<table width=\"100%\" border=\"0\"><tr><td width=\"100px\">"+Messages.getString("About.VERSION")+":</td><td>"+Version.VERSION+Version.REVISION()+"</td></tr>"
+                +"<tr><td width=\"100px\">"+Messages.getString("About.BUILD")+":</td><td>"+Version.DATE().toString()+"</td></tr>"
                 + "</table><p>";
         List<String> developer_list=new LinkedList<String>();
         
@@ -35,8 +36,9 @@ public class About {
 
         Collections.shuffle(developer_list);
         
-        msg+="<table width=\"100%\" border=\"0\">";
-        msg+="<tr><td width=\"100px\"<b>name</b></td><td>&nbsp;</td></tr>";
+        msg+="<u>"+Messages.getString("About.AUTHORS")+"</u><br>";
+        
+        msg+="<table width=\"100%\" border=\"0\">";        
         
         for(String s:developer_list)
                 msg+="<tr>"+s+"</tr>";
@@ -53,15 +55,14 @@ public class About {
         
         Collections.shuffle(donations);
         
-        msg+="<u>We would like to thank these people for their donations:</u><p>";
+        msg+="<u>"+Messages.getString("About.THANKS")+"</u><br><p>";
         msg+="<table width=\"100%\" border=\"0\">";
         for(String s:donations)
                 msg+="<tr><td>"+s+"</td></tr>";
         
         msg+="</table></p>";
-        msg+="<p>And we also thank all the other donators " +
-        		"and contributors not mentioned above!<p>";
-        msg+="<div style='text-align:center;'>Source and Binary avilable at Google Source:<br>" +
+        msg+="<p>"+Messages.getString("About.ALSO")+"<p>";
+        msg+="<div style='text-align:center;'>"+Messages.getString("About.URL")+"<br>" +
         		"http://code.google.com/p/j-mc-2-obj/<br>" +
         		"<a href=\"http://www.jmc2obj.net/\">http://www.jmc2obj.net/</a></div>";
         msg+="</div><p><br></html>";
@@ -75,6 +76,6 @@ public class About {
 	{
 		init();
 		
-		JOptionPane.showMessageDialog(MainWindow.main, about_msg,"About...",JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(MainWindow.main, about_msg,Messages.getString("MainPanel.ABOUT_BUTTON"),JOptionPane.PLAIN_MESSAGE);
 	}
 }
