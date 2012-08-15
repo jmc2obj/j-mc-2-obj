@@ -21,6 +21,7 @@ import javax.swing.border.BevelBorder;
 import org.jmc.Options;
 import org.jmc.Texsplit;
 import org.jmc.util.Log;
+import org.jmc.util.Messages;
 
 @SuppressWarnings("serial")
 public class TexsplitPanel extends JPanel
@@ -50,7 +51,7 @@ public class TexsplitPanel extends JPanel
 		JPanel pDest=new JPanel();
 		pDest.setLayout(new BoxLayout(pDest, BoxLayout.LINE_AXIS));
 		pDest.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lDest=new JLabel("Destination:");
+		JLabel lDest=new JLabel(Messages.getString("TexsplitDialog.DESTINATION"));
 		tfDest=new JTextField(MainWindow.settings.getLastExportPath()+"/tex");
 		pDest.add(lDest);
 		pDest.add(tfDest);
@@ -58,7 +59,7 @@ public class TexsplitPanel extends JPanel
 		JPanel pScale = new JPanel();
 		pScale.setLayout(new BoxLayout(pScale, BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lScale=new JLabel("Pre-scale textures:");
+		JLabel lScale=new JLabel(Messages.getString("TexsplitDialog.PRESCALE"));
 		cScale=new JComboBox<String>(new String[] {"1x","2x","4x","8x","16x"});
 		pScale.add(lScale);
 		pScale.add(cScale);
@@ -66,24 +67,24 @@ public class TexsplitPanel extends JPanel
 		JPanel pAlpha = new JPanel();
 		pAlpha.setLayout(new BoxLayout(pAlpha, BoxLayout.LINE_AXIS));
 		pAlpha.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbAlpha=new JCheckBox("Export alpha channel in separate file(s)", true);
+		cbAlpha=new JCheckBox(Messages.getString("TexsplitDialog.EXP_ALPHA"), true);
 		pAlpha.add(cbAlpha);
 
 		JPanel pMerge = new JPanel();
 		pMerge.setLayout(new BoxLayout(pMerge, BoxLayout.LINE_AXIS));
 		pMerge.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbMerge=new JCheckBox("Export all textures in a single file", Options.textureMerge);
+		cbMerge=new JCheckBox(Messages.getString("TexsplitDialog.EXP_SINGLE"), Options.textureMerge);
 		pMerge.add(cbMerge);
 
 		JPanel pQuest=new JPanel();
 		pQuest.setLayout(new BoxLayout(pQuest, BoxLayout.LINE_AXIS));
-		JLabel lQuest=new JLabel("Export textures from:");
+		JLabel lQuest=new JLabel(Messages.getString("TexsplitDialog.TEX_LOC"));
 		pQuest.add(lQuest);
 
 		JPanel pButtons=new JPanel();
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
-		JButton bMinecraft=new JButton("Minecraft");
-		JButton bCustom=new JButton("Custom texturepack");
+		JButton bMinecraft=new JButton(Messages.getString("TexsplitDialog.MINECRAFT"));
+		JButton bCustom=new JButton(Messages.getString("TexsplitDialog.CUSTOM"));
 		pButtons.add(bMinecraft);
 		pButtons.add(bCustom);	
 
@@ -109,7 +110,7 @@ public class TexsplitPanel extends JPanel
 				destination=new File(tfDest.getText());
 				JFileChooser jfc=new JFileChooser();
 				jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-				int retval=jfc.showDialog(TexsplitPanel.this,"Select texture pack file");
+				int retval=jfc.showDialog(TexsplitPanel.this,Messages.getString("TexsplitDialog.SEL_PACK"));
 				if(retval!=JFileChooser.APPROVE_OPTION) return;
 				Options.texturePack=jfc.getSelectedFile();
 				Options.textureScale=Double.parseDouble(cScale.getSelectedItem().toString().replace("x",""));
@@ -165,7 +166,7 @@ public class TexsplitPanel extends JPanel
 					}
 				}
 				catch (Exception e) {
-					Log.error("Error saving textures:", e);
+					Log.error(Messages.getString("TexsplitDialog.ERR_EXP"), e);
 				}			
 			}
 		}).start();								
@@ -199,7 +200,7 @@ public class TexsplitPanel extends JPanel
 			try{
 				Options.textureScale=Double.parseDouble(txt);
 			}catch (NumberFormatException e) {
-				Log.error("Error parsing scale value!", e,false);
+				Log.error(Messages.getString("TexsplitDialog.ERR_SCALE"), e,false);
 			}
 		}
 		

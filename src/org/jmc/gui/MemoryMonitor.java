@@ -44,11 +44,14 @@ public class MemoryMonitor extends JPanel implements Runnable {
 		bar1.setStringPainted(true);
 		bar2.setStringPainted(true);
 		
-		label.setPreferredSize(new Dimension(100, 20));
+		label.setPreferredSize(new Dimension(150, 20));
 		label.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
+		add(new JLabel(" Memory: "));
 		add(label);
+		add(new JLabel(" Total used: "));
 		add(bar1);
+		add(new JLabel(" Max used: "));
 		add(bar2);
 	}
 	
@@ -87,7 +90,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
 			long free=Runtime.getRuntime().freeMemory();
 			long max=Runtime.getRuntime().maxMemory();
 			
-			label.setText("T:"+toSize(total)+" F:"+toSize(free));		
+			label.setText("T:"+toSize(total)+" F:"+toSize(free)+" M:"+toSize(max));		
 			
 			bar1.setMaximum((int) total);
 			bar1.setValue((int) (total-free));

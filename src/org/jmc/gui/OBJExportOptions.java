@@ -25,6 +25,7 @@ import org.jmc.Options;
 import org.jmc.Options.OffsetType;
 import org.jmc.Options.OverwriteAction;
 import org.jmc.util.Log;
+import org.jmc.util.Messages;
 
 
 @SuppressWarnings("serial")
@@ -54,21 +55,21 @@ public class OBJExportOptions extends JPanel
 		JPanel pScale=new JPanel();		 
 		pScale.setLayout(new BoxLayout(pScale,BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lScale=new JLabel("Map Scale: ");
+		JLabel lScale=new JLabel(Messages.getString("OBJExportOptions.MAP_SCALE"));
 		tfScale=new JTextField("");
 		pScale.add(lScale);
 		pScale.add(tfScale);
 
 		JPanel pOffset=new JPanel();
 		pOffset.setLayout(new BoxLayout(pOffset,BoxLayout.LINE_AXIS));
+		JLabel lOffset=new JLabel(Messages.getString("OBJExportOptions.OFFSET")); 
+		rbNoOffset=new JRadioButton(Messages.getString("OBJExportOptions.NONE")); 
+		rbCenterOffset=new JRadioButton(Messages.getString("OBJExportOptions.CENTER")); 
+		rbCustomOffset=new JRadioButton(Messages.getString("OBJExportOptions.CUSTOM")); 		
 		pOffset.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lOffset=new JLabel("Offset: ");
-		rbNoOffset=new JRadioButton("None");
-		rbCenterOffset=new JRadioButton("Center");
-		rbCustomOffset=new JRadioButton("Custom");
 		tfXOffset=new JTextField();
 		tfZOffset=new JTextField();
-		JLabel lUnit=new JLabel("(blocks)");
+		JLabel lUnit=new JLabel(Messages.getString("OBJExportOptions.BLOCKS"));
 		pOffset.add(lOffset);
 		pOffset.add(rbNoOffset);
 		pOffset.add(rbCenterOffset);
@@ -81,52 +82,52 @@ public class OBJExportOptions extends JPanel
 		gOffset.add(rbNoOffset);
 		gOffset.add(rbCenterOffset);
 		gOffset.add(rbCustomOffset);
-		rbNoOffset.setActionCommand("none");
-		rbCenterOffset.setActionCommand("center");
-		rbCustomOffset.setActionCommand("custom");
+		rbNoOffset.setActionCommand(Messages.getString("OBJExportOptions.NONE"));
+		rbCenterOffset.setActionCommand(Messages.getString("OBJExportOptions.CENTER"));
+		rbCustomOffset.setActionCommand(Messages.getString("OBJExportOptions.CUSTOM"));
 
 		JPanel pSides=new JPanel();
 		pSides.setLayout(new BoxLayout(pSides, BoxLayout.LINE_AXIS));
 		pSides.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbRenderSides=new JCheckBox("Render world sides & bottom");
+		cbRenderSides=new JCheckBox(Messages.getString("OBJExportOptions.R_SIDES"));
 		pSides.add(cbRenderSides);
 
 		JPanel pBiomes=new JPanel();
 		pBiomes.setLayout(new BoxLayout(pBiomes, BoxLayout.LINE_AXIS));
 		pBiomes.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbRenderBiomes=new JCheckBox("Render biomes");
+		cbRenderBiomes=new JCheckBox(Messages.getString("OBJExportOptions.R_BIOMES"));
 		pBiomes.add(cbRenderBiomes);
 
 		JPanel pEntities=new JPanel();
 		pEntities.setLayout(new BoxLayout(pEntities, BoxLayout.LINE_AXIS));
 		pEntities.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbRenderEntities=new JCheckBox("Render entities");
+		cbRenderEntities=new JCheckBox(Messages.getString("OBJExportOptions.R_ENTITIES"));
 		pEntities.add(cbRenderEntities);
 
 		JPanel pObjPerMat=new JPanel();
 		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbObjPerMat=new JCheckBox("Create a separate object for each material");
+		cbObjPerMat=new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_MTL"));
 		pObjPerMat.add(cbObjPerMat);
 
 		JPanel pObjPerChunk=new JPanel();
 		pObjPerChunk.setLayout(new BoxLayout(pObjPerChunk, BoxLayout.LINE_AXIS));
 		pObjPerChunk.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbObjPerChunk=new JCheckBox("Create a separate object for each chunk");
+		cbObjPerChunk=new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_CHUNK"));
 		pObjPerChunk.add(cbObjPerChunk);
 
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
 		pRemoveDuplicates.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbRemoveDuplicates=new JCheckBox("Do not allow duplicate vertexes");
+		cbRemoveDuplicates=new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
 		pRemoveDuplicates.add(cbRemoveDuplicates);
 		
 		JPanel pUseUV=new JPanel();
 		pUseUV.setLayout(new BoxLayout(pUseUV, BoxLayout.LINE_AXIS));
 		pUseUV.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		cbUseUV=new JCheckBox("Use single texture file");
+		cbUseUV=new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_TEX"));
 		tfUVFile=new JTextField();
-		JButton bUVFile=new JButton("Browse");
+		JButton bUVFile=new JButton(Messages.getString("OBJExportPanel.BROWSE"));
 		pUseUV.add(cbUseUV);
 		pUseUV.add(tfUVFile);
 		pUseUV.add(bUVFile);
@@ -134,10 +135,10 @@ public class OBJExportOptions extends JPanel
 		JPanel pOBJOver = new JPanel();
 		pOBJOver.setLayout(new BoxLayout(pOBJOver, BoxLayout.LINE_AXIS));
 		pOBJOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lOBJOver=new JLabel("Overwrite OBJ: ");
-		rbOBJAsk=new JRadioButton("Ask");
-		rbOBJAlways=new JRadioButton("Always");
-		rbOBJNever=new JRadioButton("Never");		
+		JLabel lOBJOver=new JLabel(Messages.getString("OBJExportOptions.OVER_OBJ"));
+		rbOBJAsk=new JRadioButton(Messages.getString("OBJExportOptions.ASK"));
+		rbOBJAlways=new JRadioButton(Messages.getString("OBJExportOptions.ALWAYS"));
+		rbOBJNever=new JRadioButton(Messages.getString("OBJExportOptions.NEVER"));		
 		pOBJOver.add(lOBJOver);
 		pOBJOver.add(rbOBJAsk);
 		pOBJOver.add(rbOBJAlways);
@@ -154,10 +155,10 @@ public class OBJExportOptions extends JPanel
 		JPanel pMTLOver = new JPanel();
 		pMTLOver.setLayout(new BoxLayout(pMTLOver, BoxLayout.LINE_AXIS));
 		pMTLOver.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JLabel lMTLOver=new JLabel("Overwrite MTL: ");
-		rbMTLAsk=new JRadioButton("Ask");
-		rbMTLAlways=new JRadioButton("Always");
-		rbMTLNever=new JRadioButton("Never");		
+		JLabel lMTLOver=new JLabel(Messages.getString("OBJExportOptions.OVER_MTL"));
+		rbMTLAsk=new JRadioButton(Messages.getString("OBJExportOptions.ASK"));
+		rbMTLAlways=new JRadioButton(Messages.getString("OBJExportOptions.ALWAYS"));
+		rbMTLNever=new JRadioButton(Messages.getString("OBJExportOptions.NEVER"));		
 		pMTLOver.add(lMTLOver);
 		pMTLOver.add(rbMTLAsk);
 		pMTLOver.add(rbMTLAlways);
@@ -166,7 +167,7 @@ public class OBJExportOptions extends JPanel
 		JPanel pNames=new JPanel();
 		pNames.setLayout(new BoxLayout(pNames, BoxLayout.LINE_AXIS));
 		pNames.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
-		JButton bNames=new JButton("Rename files...");
+		JButton bNames=new JButton(Messages.getString("OBJExportOptions.RENAME"));
 		pNames.add(bNames);
 
 		bNames.addActionListener(new AbstractAction() {			
@@ -464,7 +465,7 @@ public class OBJExportOptions extends JPanel
 		{
 			ret=Float.parseFloat(tfScale.getText());
 		}catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(OBJExportOptions.this, "Cannot parse the scale value! Assuming 1!");
+			JOptionPane.showMessageDialog(OBJExportOptions.this, Messages.getString("OBJExportOptions.SCALE_NUM_ERR"));
 			return 1.0f;
 		}
 
