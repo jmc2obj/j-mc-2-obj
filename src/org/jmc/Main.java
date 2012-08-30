@@ -28,9 +28,16 @@ public class Main
 			}
 		});		
 
-		Preferences prefs = Preferences.userNodeForPackage(Settings.class);	
-		int loc_num=prefs.getInt("LANGUAGE", 0);
-		Locale.setDefault(Options.availableLocales[loc_num]);
+		try
+		{
+			Preferences prefs = Preferences.userNodeForPackage(Settings.class);	
+			int loc_num=prefs.getInt("LANGUAGE", 0);
+			Locale.setDefault(Options.availableLocales[loc_num]);
+		} catch(Exception e)
+		{
+			Log.info("WARNING: cannot change language on this system!");
+			Locale.setDefault(Locale.ENGLISH);			
+		}
 		
 		System.out.println("jmc2obj "+Version.VERSION+" ("+Version.REVISION()+")");
 
