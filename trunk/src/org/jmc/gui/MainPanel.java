@@ -510,8 +510,14 @@ public class MainPanel extends JPanel
 				String dirname = f.getName();
 				if (dirname.startsWith("DIM"))
 				{
-					int dim_id = Integer.parseInt(dirname.substring(3));
-					cbDimension.addItem(dim_id);
+					try
+					{
+						int dim_id = Integer.parseInt(dirname.substring(3));
+						cbDimension.addItem(dim_id);
+					}catch(NumberFormatException ex)
+					{
+						Log.info("Error parsing dimension \""+dirname.substring(3)+"\"! Skipping...");
+					}
 				}
 			}
 		}
