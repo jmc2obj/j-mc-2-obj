@@ -7,7 +7,7 @@ import org.jmc.geom.UV;
 
 
 /**
- * Model for wall signs.
+ * Model for sign posts.
  */
 public class SignPost extends BlockModel
 {
