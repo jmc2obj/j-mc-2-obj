@@ -14,7 +14,7 @@ public class Liquid extends BlockModel
 	
 	/**
 	 * Gets the block height (from -0.5 to 0.5) corresponding to the fluid level.
-	 * Fluid level goes form 0 (highest) to 7 (lowest)
+	 * Fluid level goes from 0 (highest) to 7 (lowest)
 	 */
 	private static float heigthForLevel(int level)
 	{
