@@ -17,6 +17,7 @@ public class Hatch extends BlockModel
 	{
 		int dir = (data & 3);
 		boolean open = (data & 4) != 0;
+		boolean top = (data & 8) != 0;
 
 		/*
 		  The model is rendered in the middle of the block, then rotated
@@ -48,7 +49,10 @@ public class Hatch extends BlockModel
 		}
 		else
 		{
-			translate.translate(x, y-0.40625f, z);
+			if (top)
+				translate.translate(x, y+0.40625f, z);
+			else
+				translate.translate(x, y-0.40625f, z);
 		}
 		
 		Transform rt = translate.multiply(rotate);

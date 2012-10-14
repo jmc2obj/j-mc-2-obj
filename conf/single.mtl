@@ -2,6 +2,41 @@ newmtl unknown
 Kd 1.0000 0.0000 1.0000
 Ks 0.0000 0.0000 0.0000
 
+newmtl anvil_side
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl anvil_top_1
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl anvil_top_2
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl anvil_top_3
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl beacon
+Kd 0.3922 0.8627 0.8392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl beacon_beam
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl bed_foot_front
 Kd 0.5608 0.0902 0.0902
 Ks 0.0000 0.0000 0.0000
@@ -181,6 +216,11 @@ Kd 0.6313 0.3554 0.1328
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
+
+newmtl command_side
+Kd 0.7960 0.5700 0.4242
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
 
 newmtl crops_1
 Kd 0.5137 0.7569 0.2667
@@ -406,6 +446,12 @@ map_d tex/texture_a.png
 
 newmtl flower_yellow
 Kd 0.7569 0.7804 0.0078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl flowerpot
+Kd 0.4882 0.2718 0.2121
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
