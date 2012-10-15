@@ -24,29 +24,29 @@ public class Options
 		CENTER,
 		CUSTOM
 	}
-	
+
 	public enum OverwriteAction
 	{
 		ASK,
 		ALWAYS,
 		NEVER
 	}
-	
+
 	/**
 	 * A list of available locales in the program.
-	 */
-	public static Locale availableLocales[] = { Locale.ENGLISH, Locale.GERMAN, Locale.forLanguageTag("pl") };
-	
+	 */	
+	public static Locale availableLocales[] = { Locale.ENGLISH, Locale.GERMAN, new Locale("pl") };
+
 	/**
 	 * User interface mode.
 	 */
 	public static UIMode uiMode = UIMode.GUI; 
-	
+
 	/**
 	 * Output directory.
 	 */
 	public static File outputDir = new File(".");
-	
+
 	/**
 	 * Path to the Minecraft world save directory.
 	 */
@@ -61,37 +61,37 @@ public class Options
 	 * Scaling to apply to textures.
 	 */
 	public static double textureScale = 1.0;
-	
+
 	/**
 	 * Export alpha channel as separate file(s).
 	 */
 	public static boolean textureAlpha = false;
-	
+
 	/**
 	 * Merge textures into one file.
 	 */
 	public static boolean textureMerge = false;
-	
+
 	/**
 	 * Id of the world dimension to export.
 	 */
 	public static int dimension = 0;
-	
+
 	/**
 	 * Lower bound of the volume to export.
 	 */
 	public static int minX=-32, minY=0, minZ=-32;
-	
+
 	/**
 	 * Upper bound of the volume to export.
 	 */
 	public static int maxX=32, maxY=256, maxZ=32;
-	
+
 	/**
 	 * How to scale the exported geometry.
 	 */
 	public static float scale = 1.0f;
-	
+
 	/**
 	 * How to offset the coordinates of the exported geometry.
 	 */
@@ -101,17 +101,17 @@ public class Options
 	 * Custom offset.
 	 */
 	public static int offsetX=0, offsetZ=0;
-	
+
 	/**
 	 * If true, will export a separate object for each material.
 	 */
 	public static boolean objectPerMaterial = false;
-	
+
 	/**
 	 * If true, will export a separate object for each chunk.
 	 */
 	public static boolean objectPerChunk = false;
-	
+
 	/**
 	 * If true, will try harder to merge vertices that have the same coordinates.
 	 */
@@ -121,27 +121,27 @@ public class Options
 	 * If true, sides and bottom of the model are rendered as well.
 	 */
 	public static boolean renderSides = false;	
-	
+
 	/**
 	 * If true, entities are rendered in the model. 
 	 */
 	public static boolean renderEntities = false;
-	
+
 	/**
 	 * If true, biomes are taken into account during export.
 	 */
 	public static boolean renderBiomes = true;
-	
+
 	/**
 	 * If true, UV file is used to convert UVs during export.
 	 */
 	public static boolean useUVFile = false;
-	
+
 	/**
 	 * UV file from the setting above.
 	 */
 	public static File UVFile;
-	
+
 	/**
 	 * Whether to export the .obj file.
 	 * Only used in console mode.
@@ -165,7 +165,7 @@ public class Options
 	 * Only used in GUI mode.
 	 */
 	public static OverwriteAction objOverwriteAction = OverwriteAction.ASK;
-	
+
 	/**
 	 * Whether to overwrite .MTL files on export.
 	 * Only used in GUI mode.
@@ -181,5 +181,5 @@ public class Options
 	 * Name of .MTL file to export.
 	 */
 	public static String mtlFileName = "minecraft.mtl";
-	
+
 }
