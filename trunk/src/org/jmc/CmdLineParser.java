@@ -161,6 +161,9 @@ public class CmdLineParser
 				else if (a.equals("--object-per-mat")) {
 					Options.objectPerMaterial = true;
 				}
+				else if (a.equals("--object-per-block")) {
+					Options.objectPerBlock = true;
+				}
 				else if (a.equals("--remove-dup")) {
 					Options.removeDuplicates = true;
 				}

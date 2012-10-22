@@ -22,9 +22,11 @@ public abstract class OBJFileBase
 		public int[] normals;
 		public int[] uv;
 		public String mtl;
+		public Long obj_idx;
 		
 		public Face(int sides)
 		{
+			obj_idx=Long.valueOf(-1);
 			vertices=new int[sides];
 			normals=new int[sides];
 			uv=new int[sides];
@@ -32,6 +34,8 @@ public abstract class OBJFileBase
 		
 		@Override
 		public int compareTo(Face o) {
+			if(this.obj_idx!=o.obj_idx)
+				return this.obj_idx.compareTo(o.obj_idx);
 			return this.mtl.compareTo(o.mtl);
 		}
 	}

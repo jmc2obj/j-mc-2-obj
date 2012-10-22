@@ -1,5 +1,6 @@
 package org.jmc.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -17,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.ToolTipManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -40,6 +42,7 @@ public class OBJExportOptions extends JPanel
 	private JCheckBox cbRenderEntities;
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
+	private JCheckBox cbObjPerBlock;
 	private JCheckBox cbRemoveDuplicates;
 	private JCheckBox cbUseUV;
 	private JTextField tfUVFile;
@@ -47,6 +50,9 @@ public class OBJExportOptions extends JPanel
 	private JRadioButton rbMTLAlways, rbMTLNever, rbMTLAsk;
 
 	public OBJExportOptions() {
+		
+		ToolTipManager.sharedInstance().setInitialDelay(100);
+		
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -116,12 +122,22 @@ public class OBJExportOptions extends JPanel
 		cbObjPerChunk=new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_CHUNK"));
 		pObjPerChunk.add(cbObjPerChunk);
 
+		JPanel pObjPerBlock=new JPanel();
+		pObjPerBlock.setLayout(new BoxLayout(pObjPerBlock, BoxLayout.LINE_AXIS));
+		pObjPerBlock.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbObjPerBlock=new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK"));
+		JLabel lObjPerBlockWarn=new JLabel("[!]");		
+		lObjPerBlockWarn.setToolTipText(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK_WARNING"));
+		lObjPerBlockWarn.setForeground(Color.red);
+		pObjPerBlock.add(cbObjPerBlock);
+		pObjPerBlock.add(lObjPerBlockWarn);
+
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
 		pRemoveDuplicates.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRemoveDuplicates=new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
 		pRemoveDuplicates.add(cbRemoveDuplicates);
-		
+
 		JPanel pUseUV=new JPanel();
 		pUseUV.setLayout(new BoxLayout(pUseUV, BoxLayout.LINE_AXIS));
 		pUseUV.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -176,7 +192,7 @@ public class OBJExportOptions extends JPanel
 				MainWindow.file_names.display();
 			}
 		});
-		
+
 		bUVFile.addActionListener(new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -202,7 +218,7 @@ public class OBJExportOptions extends JPanel
 		rbMTLNever.setActionCommand("never");
 
 		loadSettings();
-		
+
 		DocumentListener tf_listener=new DocumentListener() {			
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -250,7 +266,7 @@ public class OBJExportOptions extends JPanel
 				saveSettings();
 			}	
 		};
-
+			
 		rbOBJAsk.addActionListener(genericSaveAction);
 		rbOBJAlways.addActionListener(genericSaveAction);
 		rbOBJNever.addActionListener(genericSaveAction);
@@ -262,9 +278,10 @@ public class OBJExportOptions extends JPanel
 		cbRenderEntities.addActionListener(genericSaveAction);
 		cbObjPerMat.addActionListener(genericSaveAction);
 		cbObjPerChunk.addActionListener(genericSaveAction);
+		cbObjPerBlock.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
 		cbUseUV.addActionListener(genericSaveAction);
-
+		
 		add(pScale);
 		add(pOffset);
 		add(pSides);
@@ -272,6 +289,7 @@ public class OBJExportOptions extends JPanel
 		add(pEntities);
 		add(pObjPerMat);
 		add(pObjPerChunk);
+		add(pObjPerBlock);
 		add(pRemoveDuplicates);
 		add(pUseUV);
 		add(pOBJOver);
@@ -339,6 +357,7 @@ public class OBJExportOptions extends JPanel
 		cbRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", false));
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
+		cbObjPerBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 		cbUseUV.setSelected(prefs.getBoolean("USE_UV_FILE", false));
 		tfUVFile.setText(prefs.get("UV_FILE", ""));
@@ -402,6 +421,7 @@ public class OBJExportOptions extends JPanel
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
+		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
 		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
 		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
@@ -421,7 +441,7 @@ public class OBJExportOptions extends JPanel
 			txt=tfZOffset.getText();
 			if(!txt.isEmpty() && !txt.equals("-"))
 				Options.offsetZ = Integer.parseInt(txt);
-			
+
 		}catch (NumberFormatException e) {
 			Log.error("Offset number format error!", e, false);
 		}
@@ -452,6 +472,7 @@ public class OBJExportOptions extends JPanel
 		Options.renderEntities = cbRenderEntities.isSelected();
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
+		Options.objectPerBlock = cbObjPerBlock.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
 		Options.useUVFile=cbUseUV.isSelected();
 		Options.UVFile=new File(tfUVFile.getText());

@@ -61,6 +61,8 @@ public class OBJOutputFile extends OBJFileBase
 	private float file_scale;
 
 	private int vertex_counter, tex_counter, norm_counter;
+	
+	private long obj_idx_count=-1;
 
 
 	/**
@@ -155,7 +157,7 @@ public class OBJOutputFile extends OBJFileBase
 	 * @param out writer of the OBJ file
 	 */
 	public void appendTextures(PrintWriter out)
-	{
+	{		
 		for (UV uv : texCoords)
 		{
 			out.format((Locale)null, "vt %.4f %.4f", uv.u, uv.v);
@@ -198,9 +200,10 @@ public class OBJOutputFile extends OBJFileBase
 	 * @param out file to append the data
 	 */
 	public void appendFaces(PrintWriter out)
-	{
+	{		
 		Collections.sort(faces);
 		String last_mtl=null;	
+		Long last_obj_idx=Long.valueOf(-1);
 		for(Face f:faces)
 		{
 			if(!f.mtl.equals(last_mtl))
@@ -208,6 +211,12 @@ public class OBJOutputFile extends OBJFileBase
 				out.println();
 				out.println("usemtl "+f.mtl);
 				last_mtl=f.mtl;
+			}
+			
+			if(!f.obj_idx.equals(last_obj_idx))
+			{
+				out.println("g o"+f.obj_idx);
+				last_obj_idx=f.obj_idx;
 			}
 
 			out.print("f");
@@ -266,6 +275,7 @@ public class OBJOutputFile extends OBJFileBase
 	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
 	{
 		Face face = new Face(verts.length);
+		face.obj_idx=Long.valueOf(obj_idx_count);
 		face.mtl = mtl;
 		if (norms == null) face.normals = null;
 		if (uv == null) 
@@ -382,6 +392,8 @@ public class OBJOutputFile extends OBJFileBase
 
 					if(blockID==0) continue;
 
+					if(Options.objectPerBlock) obj_idx_count++;
+					
 					BlockTypes.get(blockID).model.addModel(this, chunk, x, y, z, blockData, blockBiome);
 				}
 			}
