@@ -101,6 +101,9 @@ public abstract class BlockModel
 	 */
 	protected boolean drawSide(Side side, short neighborId)
 	{
+		if(Options.objectPerBlock)
+			return true;
+		
 		if (neighborId == -1)
 			return Options.renderSides;
 		

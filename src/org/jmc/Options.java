@@ -113,6 +113,12 @@ public class Options
 	public static boolean objectPerChunk = false;
 
 	/**
+	 * If true, will export a separate object for each block.
+	 */
+	public static boolean objectPerBlock = false;
+
+	
+	/**
 	 * If true, will try harder to merge vertices that have the same coordinates.
 	 */
 	public static boolean removeDuplicates = false;
