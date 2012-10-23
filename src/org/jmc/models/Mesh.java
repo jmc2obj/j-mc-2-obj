@@ -67,8 +67,8 @@ public class Mesh extends BlockModel
 
 	@SuppressWarnings("unused")
 	private String obj_str;
-	public OBJInputFile objin_file;
-	public OBJGroup group;
+	private OBJInputFile objin_file;
+	private OBJGroup group;
 
 	private List<Mesh> objects;
 	public MeshData mesh_data;
@@ -84,7 +84,7 @@ public class Mesh extends BlockModel
 		obj_str="";
 	}
 
-	public void parseString(String objectstr)
+	public void loadObjFile(String objectstr)
 	{
 		obj_str=objectstr;
 		String [] tok=objectstr.trim().split("#");
@@ -124,20 +124,19 @@ public class Mesh extends BlockModel
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte block_data, byte biome)
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		if(block_data<0) block_data=(byte) (16+block_data);
+		if(data<0) data=(byte) (16+data);
 
 		Transform translate = new Transform();
 		translate.translate(x, y, z);
 
-		addModel(obj,chunks,x,y,z,block_data,biome,translate);
+		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}
 
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z , byte block_data, byte biome, Transform trans)
+	private void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z , byte data, byte biome, Transform trans)
 	{
-
-		boolean match=mesh_data.matches(chunks, x, y, z, block_data);
+		boolean match=mesh_data.matches(chunks, x, y, z, data);
 
 		if(match)
 		{
@@ -148,7 +147,7 @@ public class Mesh extends BlockModel
 
 			if(group!=null && objin_file!=null)
 			{
-				objin_file.addObject(group, trans, obj);
+				objin_file.addObjectToOutput(group, trans, obj);
 			}
 		}
 
@@ -157,7 +156,7 @@ public class Mesh extends BlockModel
 		{
 			for(Mesh object:objects)
 			{
-				object.addModel(obj,chunks,x,y,z,block_data,biome,trans);
+				object.addModel(obj,chunks,x,y,z,data,biome,trans);
 			}
 		}
 	}
