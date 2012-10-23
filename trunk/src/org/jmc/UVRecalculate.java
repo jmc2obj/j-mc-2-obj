@@ -48,13 +48,28 @@ public class UVRecalculate {
 		}		
 	}
 	
+	/*DEBUG method
+	private static String uvs2str(UV[] uvs)
+	{
+		String ret="";
+		for(UV uv:uvs)
+		{
+			if(uv.recalculated) ret+="[";
+			else ret+="(";
+			ret+=uv.u+","+uv.v;
+			if(uv.recalculated) ret+="]";
+			else ret+=")";
+		}
+		return ret;
+	}
+	*/
 	
 	public static UV[] recalculate(UV[] uvs, String mtl_name)
 	{		
 		if(uv_map==null) return uvs;
 		
 		Rectangle rect=uv_map.get(mtl_name);
-		
+				
 		if(rect==null)
 		{
 			Log.info("WARNING: cannot recalculate material: "+mtl_name);
@@ -66,8 +81,13 @@ public class UVRecalculate {
 		float sw=rect.width/(float)width;
 		float sh=rect.height/(float)height;
 		
-		for(UV uv:uvs)
+		UV[] ret=new UV[uvs.length];
+		
+		for(int i=0; i<uvs.length; i++)
 		{
+			UV uv=new UV(uvs[i]);
+			ret[i]=uv;
+			
 			if(uv.recalculated) continue;
 
 			uv.u=uv.u*sw+sx;
@@ -75,6 +95,6 @@ public class UVRecalculate {
 			uv.recalculated=true;
 		}
 		
-		return uvs;
+		return ret;
 	}
 }
