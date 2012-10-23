@@ -144,6 +144,12 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
 
+newmtl carrot_crop
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl cauldron_feet
 Kd 0.1765 0.1765 0.1765
 Ks 0.0000 0.0000 0.0000
@@ -476,6 +482,24 @@ Kd 0.3059 0.3059 0.3059
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl generic_crop_1
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl generic_crop_2
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl generic_crop_3
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl glass
 Kd 1.0000 1.0000 1.0000
 map_Kd tex/texture.png
@@ -745,6 +769,12 @@ map_Kd tex/texture.png
 
 newmtl portal
 Kd 0.2196 0.1137 0.3333
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl potato_crop
+Kd 0.5137 0.7569 0.2667
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
