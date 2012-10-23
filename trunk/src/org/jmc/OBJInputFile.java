@@ -250,7 +250,7 @@ public class OBJInputFile extends OBJFileBase
 		return objects.get(objname);
 	}
 
-	public void addObject(OBJGroup group, Transform trans, OBJOutputFile out)
+	public void addObjectToOutput(OBJGroup group, Transform trans, OBJOutputFile out)
 	{
 		for(Face f:group.faces)
 		{

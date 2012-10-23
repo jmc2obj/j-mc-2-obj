@@ -138,7 +138,7 @@ public class BlockTypes
 				NodeList meshNodes = (NodeList)xpath.evaluate("mesh", blockNode, XPathConstants.NODESET);			
 				for (int j = 0; j < meshNodes.getLength(); j++)
 				{
-					Node meshNode = meshNodes.item(j);					
+					Node meshNode = meshNodes.item(j);
 					try {
 						parseMeshNode(meshNode,mesh);
 					}catch (Exception e) {
@@ -227,7 +227,7 @@ public class BlockTypes
 				if(meshstr.isEmpty()) continue;
 
 				Mesh new_mesh=new Mesh();
-				new_mesh.parseString(meshstr);
+				new_mesh.loadObjFile(meshstr);
 				parseAttributes(child, new_mesh);
 				mesh.addMesh(new_mesh);
 			}
