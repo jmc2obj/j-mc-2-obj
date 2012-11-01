@@ -656,6 +656,31 @@ Kd 0.6157 0.7294 0.2980
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/melon_top.png
 
+newmtl mob_char
+Kd 0.1529 0.1098 0.0470
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_char.png
+
+newmtl mob_creeper
+Kd 0.4274 0.7294 0.3882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_creeper.png
+
+newmtl mob_skeleton
+Kd 0.6078 0.6078 0.6078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_skeleton.png
+
+newmtl mob_skeleton_wither
+Kd 0.1725 0.1725 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_skeleton_wither.png
+
+newmtl mob_zombie
+Kd 0.2745 0.4275 0.2118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_zombie.png
+
 newmtl mushroom_brown
 Kd 0.5882 0.4431 0.3451
 Ks 0.0000 0.0000 0.0000

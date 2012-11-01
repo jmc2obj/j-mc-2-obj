@@ -399,16 +399,19 @@ public class OBJOutputFile extends OBJFileBase
 			}
 		}
 
-		for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
+		if(Options.renderEntities)
 		{
-			Entity handler=EntityTypes.getEntity(entity);
-			if(handler!=null) handler.addEntity(this, entity);						
-		}
-
-		for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
-		{
-			Entity handler=EntityTypes.getEntity(entity);
-			if(handler!=null) handler.addEntity(this, entity);						
+			for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
+			{
+				Entity handler=EntityTypes.getEntity(entity);
+				if(handler!=null) handler.addEntity(this, entity);						
+			}
+	
+			for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
+			{
+				Entity handler=EntityTypes.getEntity(entity);
+				if(handler!=null) handler.addEntity(this, entity);						
+			}
 		}
 	}
 

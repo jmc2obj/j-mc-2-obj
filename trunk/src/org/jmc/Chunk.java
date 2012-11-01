@@ -244,25 +244,22 @@ public class Chunk {
 
 		}
 
-		if(Options.renderEntities)
+		TAG_List entities = (TAG_List) level.getElement("Entities");
+		if(entities!=null && entities.elements.length>0)
 		{
-			TAG_List entities = (TAG_List) level.getElement("Entities");
-			if(entities!=null && entities.elements.length>0)
+			for(int i=0; i<entities.elements.length; i++)
 			{
-				for(int i=0; i<entities.elements.length; i++)
-				{
-					ret.entities.add((TAG_Compound)entities.elements[i]);
-				}
+				ret.entities.add((TAG_Compound)entities.elements[i]);
 			}
+		}
 
 
-			TAG_List tile_entities = (TAG_List) level.getElement("TileEntities");
-			if(tile_entities!=null && tile_entities.elements.length>0)
+		TAG_List tile_entities = (TAG_List) level.getElement("TileEntities");
+		if(tile_entities!=null && tile_entities.elements.length>0)
+		{
+			for(int i=0; i<tile_entities.elements.length; i++)
 			{
-				for(int i=0; i<tile_entities.elements.length; i++)
-				{
-					ret.tile_entities.add((TAG_Compound)tile_entities.elements[i]);
-				}
+				ret.tile_entities.add((TAG_Compound)tile_entities.elements[i]);
 			}
 		}
 

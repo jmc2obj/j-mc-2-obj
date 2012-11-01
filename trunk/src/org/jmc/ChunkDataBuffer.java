@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.jmc.Chunk.Blocks;
+import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_Int;
 import org.jmc.util.EmptyList;
 
 public class ChunkDataBuffer {
@@ -167,5 +169,28 @@ public class ChunkDataBuffer {
 			return new EmptyList<TAG_Compound>();
 		
 		return blocks.tile_entities;
+	}
+
+	public TAG_Compound getTileEntity(int x, int y, int z)
+	{
+		int cx = (int)Math.floor(x/16.0);
+		int cz = (int)Math.floor(z/16.0);
+		
+		for (TAG_Compound tag : getTileEntities(cx, cz))
+		{
+			int entx = Integer.MAX_VALUE;
+			int enty = Integer.MAX_VALUE;
+			int entz = Integer.MAX_VALUE;
+			for (NBT_Tag subtag : tag.elements)
+			{
+				if (subtag.getName().equals("x")) entx = ((TAG_Int)subtag).value;
+				if (subtag.getName().equals("y")) enty = ((TAG_Int)subtag).value;
+				if (subtag.getName().equals("z")) entz = ((TAG_Int)subtag).value;
+			}
+			if (entx == x && enty == y && entz == z)
+				return tag;
+		}
+		
+		return null;
 	}
 }
