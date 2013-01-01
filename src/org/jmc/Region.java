@@ -214,8 +214,10 @@ public class Region implements Iterable<Chunk> {
 			return new Chunk(is,is_anvil);
 		}
 		else
+		{
+			raf.close();
 			throw new Exception("Wrong compression type!");
-
+		}
 	}
 
 	/**

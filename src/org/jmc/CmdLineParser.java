@@ -149,6 +149,9 @@ public class CmdLineParser
 				else if (a.equals("--render-sides")) {
 					Options.renderSides = true;
 				}
+				else if (a.equals("--include-unknown")) {
+					Options.renderUnknown = true;
+				}
 				else if (a.equals("--ignore-biomes")) {
 					Options.renderBiomes = false;
 				}
@@ -248,7 +251,8 @@ public class CmdLineParser
 			"                                    area at the origin; X,Z - apply the given\n" +
 			"                                    offset. Default is none.\n" +
 			"  -s --render-sides                 Render world sides and bottom.\n" +
-			"     --ignore-biomes                Don't render biomes.\n"+
+			"     --include-unknown              Include blocks with unknown block ids.\n" +
+			"     --ignore-biomes                Don't render biomes.\n" +
 			"     --object-per-chunk             Export a separate object for each chunk.\n" +
 			"     --object-per-mat               Export a separate object for each material.\n" +
 			"     --remove-dup                   Try harder to merge vertexes that have the\n" +

@@ -107,7 +107,7 @@ public abstract class EntityModel
 		if (neighborId == 0)
 			return true;
 		
-		switch(BlockTypes.get(neighborId).occlusion)
+		switch(BlockTypes.get(neighborId).getOcclusion())
 		{
 			case FULL:
 				return false;

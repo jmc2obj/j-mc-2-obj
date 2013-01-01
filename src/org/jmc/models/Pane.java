@@ -23,7 +23,7 @@ public class Pane extends BlockModel
 			return false;
 		if (otherId == blockId)
 			return true;
-		return BlockTypes.get(otherId).occlusion == BlockInfo.Occlusion.FULL;
+		return BlockTypes.get(otherId).getOcclusion() == BlockInfo.Occlusion.FULL;
 	}
 
 	@Override

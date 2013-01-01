@@ -92,9 +92,9 @@ public class OBJInputFile extends OBJFileBase
 
 			if(line.startsWith("v "))
 			{
+				Scanner scanner=new Scanner(line.substring(2));
 				try {
 					float x,y,z;
-					Scanner scanner=new Scanner(line.substring(2));
 					scanner.useLocale(Locale.ROOT);
 					x=scanner.nextFloat();
 					y=scanner.nextFloat();
@@ -106,6 +106,9 @@ public class OBJInputFile extends OBJFileBase
 				}
 				catch (Exception e) {
 					Log.info("ERROR vertex format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
+				}
+				finally {
+					scanner.close();
 				}
 				continue;
 			}
@@ -232,6 +235,7 @@ public class OBJInputFile extends OBJFileBase
 
 			Log.info("ERROR unknown line in OBJ file "+objfile.getName()+"["+line_count+"]: "+line);
 		}
+		in.close();
 	}
 
 	

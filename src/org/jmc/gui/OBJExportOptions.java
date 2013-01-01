@@ -40,6 +40,7 @@ public class OBJExportOptions extends JPanel
 	private JCheckBox cbRenderSides;
 	private JCheckBox cbRenderBiomes;
 	private JCheckBox cbRenderEntities;
+	private JCheckBox cbRenderUnknown;
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
 	private JCheckBox cbObjPerBlock;
@@ -110,6 +111,12 @@ public class OBJExportOptions extends JPanel
 		cbRenderEntities=new JCheckBox(Messages.getString("OBJExportOptions.R_ENTITIES"));
 		pEntities.add(cbRenderEntities);
 
+		JPanel pUnknown=new JPanel();
+		pUnknown.setLayout(new BoxLayout(pUnknown, BoxLayout.LINE_AXIS));
+		pUnknown.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbRenderUnknown=new JCheckBox(Messages.getString("OBJExportOptions.R_UNKNOWN"));
+		pUnknown.add(cbRenderUnknown);
+		
 		JPanel pObjPerMat=new JPanel();
 		pObjPerMat.setLayout(new BoxLayout(pObjPerMat, BoxLayout.LINE_AXIS));
 		pObjPerMat.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -276,6 +283,7 @@ public class OBJExportOptions extends JPanel
 		cbRenderSides.addActionListener(genericSaveAction);
 		cbRenderBiomes.addActionListener(genericSaveAction);
 		cbRenderEntities.addActionListener(genericSaveAction);
+		cbRenderUnknown.addActionListener(genericSaveAction);
 		cbObjPerMat.addActionListener(genericSaveAction);
 		cbObjPerChunk.addActionListener(genericSaveAction);
 		cbObjPerBlock.addActionListener(genericSaveAction);
@@ -287,6 +295,7 @@ public class OBJExportOptions extends JPanel
 		add(pSides);
 		add(pBiomes);
 		add(pEntities);
+		add(pUnknown);
 		add(pObjPerMat);
 		add(pObjPerChunk);
 		add(pObjPerBlock);
@@ -355,6 +364,7 @@ public class OBJExportOptions extends JPanel
 		cbRenderSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
 		cbRenderBiomes.setSelected(prefs.getBoolean("RENDER_BIOMES", true));
 		cbRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", false));
+		cbRenderUnknown.setSelected(prefs.getBoolean("RENDER_UNKNOWN", false));
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbObjPerBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
@@ -419,6 +429,7 @@ public class OBJExportOptions extends JPanel
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
 		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
+		prefs.putBoolean("RENDER_UNKNOWN", Options.renderUnknown);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
@@ -470,6 +481,7 @@ public class OBJExportOptions extends JPanel
 		Options.renderSides = cbRenderSides.isSelected();
 		Options.renderBiomes = cbRenderBiomes.isSelected();
 		Options.renderEntities = cbRenderEntities.isSelected();
+		Options.renderUnknown = cbRenderUnknown.isSelected();
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.objectPerBlock = cbObjPerBlock.isSelected();

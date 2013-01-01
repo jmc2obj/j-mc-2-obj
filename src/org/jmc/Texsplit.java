@@ -48,20 +48,25 @@ public class Texsplit
 
 	private static BufferedImage loadImageFromZip(File zipfile, String imagePath) throws IOException
 	{
-		ZipInputStream zis = new ZipInputStream(new FileInputStream(zipfile));
-
-		ZipEntry entry = null;
-		while ((entry = zis.getNextEntry()) != null)
-			if (!entry.isDirectory() && entry.getName().equals(imagePath))
-				break;
-
-		if (entry == null)
-			throw new IOException("Couldn't find " + imagePath + " in " + zipfile.getName());
-
-		BufferedImage result = ImageIO.read(zis);
-		zis.close();
-
-		return result;
+		ZipInputStream zis = null;
+		try {
+			zis = new ZipInputStream(new FileInputStream(zipfile));
+	
+			ZipEntry entry = null;
+			while ((entry = zis.getNextEntry()) != null)
+				if (!entry.isDirectory() && entry.getName().equals(imagePath))
+					break;
+	
+			if (entry == null)
+				throw new IOException("Couldn't find " + imagePath + " in " + zipfile.getName());
+	
+			BufferedImage result = ImageIO.read(zis);
+			return result;
+		}
+		finally {
+			if (zis != null)
+				zis.close();
+		}
 	}
 
 

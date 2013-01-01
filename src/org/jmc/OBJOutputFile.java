@@ -394,7 +394,7 @@ public class OBJOutputFile extends OBJFileBase
 
 					if(Options.objectPerBlock) obj_idx_count++;
 					
-					BlockTypes.get(blockID).model.addModel(this, chunk, x, y, z, blockData, blockBiome);
+					BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
 				}
 			}
 		}
