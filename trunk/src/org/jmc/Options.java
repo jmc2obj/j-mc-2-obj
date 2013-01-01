@@ -124,6 +124,11 @@ public class Options
 	public static boolean removeDuplicates = false;
 
 	/**
+	 * If true, includes blocks with unknown block ids in the output. 
+	 */
+	public static boolean renderUnknown = false;	
+
+	/**
 	 * If true, sides and bottom of the model are rendered as well.
 	 */
 	public static boolean renderSides = false;	

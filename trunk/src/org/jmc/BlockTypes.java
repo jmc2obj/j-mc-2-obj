@@ -2,6 +2,7 @@ package org.jmc;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -33,6 +34,8 @@ public class BlockTypes
 
 	private static HashMap<Short, BlockInfo> blockTable;
 
+	private static HashSet<Short> unknownBlockIds;
+	
 	private static BlockInfo unknownBlock;
 
 
@@ -344,15 +347,11 @@ public class BlockTypes
 	public static void initialize() throws Exception
 	{
 		// create a block to use when dealing with unknown block ids
-		BlockMaterial materials = new BlockMaterial();
-		materials.put(new String[] { "unknown" });
+		unknownBlock = new UnknownBlockInfo();
 
-		BlockModel cube = new Cube();
-		cube.setBlockId((short)-1);
-		cube.setMaterials(materials);
-
-		unknownBlock = new BlockInfo(-1, "unknown", materials, BlockInfo.Occlusion.FULL, cube);
-
+		// create table to keep track of unknown block ids found
+		unknownBlockIds = new HashSet<Short>();
+		
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");
 
@@ -366,7 +365,7 @@ public class BlockTypes
 	/**
 	 * Gets the block information for the given block id.
 	 * If the block id is not found, returns a default BlockInfo structure for 
-	 * "unknown" blocks
+	 * "unknown" blocks. The block id of the unknown block is always -1. 
 	 * 
 	 * @param id Block id
 	 * @return BlockInfo structure
@@ -374,8 +373,10 @@ public class BlockTypes
 	public static BlockInfo get(short id)
 	{
 		BlockInfo bi = blockTable.get(id);
-		//if (bi == null)
-		//	Log.debug("Unknow block id: " + id);
+		if (bi == null && !unknownBlockIds.contains(id)) {
+			Log.info("Found unknow block id: " + id);
+			unknownBlockIds.add(id);
+		}
 
 		return bi != null ? bi : unknownBlock;
 	}

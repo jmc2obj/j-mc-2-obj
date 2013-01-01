@@ -19,7 +19,7 @@ public class Vines extends BlockModel
 	{
 		short topId = chunks.getBlockID(x, y+1, z);
 		
-		boolean top = topId != 0 && BlockTypes.get(topId).occlusion == BlockInfo.Occlusion.FULL;
+		boolean top = topId != 0 && BlockTypes.get(topId).getOcclusion() == BlockInfo.Occlusion.FULL;
 		boolean s = (data & 1) != 0;
 		boolean w = (data & 2) != 0;
 		boolean n = (data & 4) != 0;

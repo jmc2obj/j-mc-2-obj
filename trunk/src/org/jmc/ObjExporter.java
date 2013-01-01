@@ -97,6 +97,7 @@ public class ObjExporter
 						UVRecalculate.load(Options.UVFile);
 					}catch (Exception e) {
 						Log.error("Cannot load UV file!", e);
+						obj_writer.close();
 						return;
 					}
 				}

@@ -25,20 +25,46 @@ public class BlockInfo
 
 	
 	/** Block id */
-	public int id;
+	protected int id;
 	
 	/** Block name */
-	public String name;
+	protected String name;
 
 	/** Materials defined for this block */
-	public BlockMaterial materials;
+	protected BlockMaterial materials;
 	
 	/** How this block occludes adjacent blocks */
-	public Occlusion occlusion;
+	protected Occlusion occlusion;
 
 	/** 3D model handler for this block */
-	public BlockModel model;
+	protected BlockModel model;
 	
+
+	/** @return Block id */
+	public int getId() {
+		return id;
+	}
+
+	/** @return Block name */
+	public String getName() {
+		return name;
+	}
+
+	/** @return Materials defined for this block */
+	public BlockMaterial getMaterials() {
+		return materials;
+	}
+
+	/** @return How this block occludes adjacent blocks */
+	public Occlusion getOcclusion() {
+		return occlusion;
+	}
+
+	/** @return 3D model handler for this block */
+	public BlockModel getModel() {
+		return model;
+	}
+
 	
 	/** Convenience constructor */
 	BlockInfo(int id, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
@@ -60,14 +86,13 @@ public class BlockInfo
 	 */
 	public Color getPreviewColor(byte data, byte biome)
 	{
-		String[] mtlNames = materials.get(data,biome);
+		String[] mtlNames = getMaterials().get(data,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
-			Log.debug("block " + id + " (" + name + ") has no mtl for data="+data);
+			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+data);
 			return Materials.getColor("unknown");
 		}
 		return Materials.getColor(mtlNames[0]);
 	}
-	
 
 }

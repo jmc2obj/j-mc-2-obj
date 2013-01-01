@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.security.CodeSource;
 import java.security.NoSuchAlgorithmException;
@@ -188,15 +187,13 @@ public class Configuration
 	 */
 	private static void createFile(File dest, String path, int size) throws IOException
 	{
-		InputStream src=Configuration.class.getClassLoader().getResourceAsStream(path);		
-		ReadableByteChannel input=Channels.newChannel(src);
+		InputStream src = Configuration.class.getClassLoader().getResourceAsStream(path);		
+		ReadableByteChannel input = Channels.newChannel(src);
 
-		FileChannel output=new FileOutputStream(dest).getChannel();
-
-		output.transferFrom(input, 0, size);
+		FileOutputStream output = new FileOutputStream(dest);
+		output.getChannel().transferFrom(input, 0, size);
+		output.close();
 	}
-
-
 
 
 	/**
