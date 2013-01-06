@@ -819,7 +819,17 @@ Kd 0.7725 0.4745 0.0941
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl pumpkin_side_lit
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl pumpkin_top
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl pumpkin_top_lit
 Kd 0.7725 0.4745 0.0941
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
