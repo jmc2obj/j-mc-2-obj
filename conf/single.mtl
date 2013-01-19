@@ -197,6 +197,11 @@ Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl chest_trapped
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl clay
 Kd 0.6235 0.6471 0.6941
 Ks 0.0000 0.0000 0.0000
@@ -378,6 +383,11 @@ Kd 0.6157 0.5020 0.3098
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
+
+newmtl dropper_front
+Kd 0.4235 0.4235 0.4235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
 
 newmtl emerald_ore
 Kd 0.4000 0.5294 0.4832
@@ -586,6 +596,11 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
 newmtl largechest
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl largechest_trapped
 Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png

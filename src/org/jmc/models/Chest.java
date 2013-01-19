@@ -30,7 +30,7 @@ public class Chest extends BlockModel
 	/**	Checks whether the chest is able to form double-chests */
 	private boolean canDouble()
 	{
-		return this.blockId == 54;
+		return this.blockId != 130;
 	}
 	
 	/** Checks whether the chest is part of a double-chest */
