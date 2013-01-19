@@ -184,59 +184,59 @@ public class Liquid extends BlockModel
 		{	// top
 			if (flow_nw)
 			{
+				 uv[0] = new UV(1.2071f,0.5f);
+				 uv[1] = new UV(0.5f,1.2071f);
+				 uv[2] = new UV(-0.2071f,0.5f);
+				 uv[3] = new UV(0.5f,-0.2071f);
+			}
+			else if (flow_ne)
+			{
 				 uv[0] = new UV(0.5f,1.2071f);
 				 uv[1] = new UV(-0.2071f,0.5f);
 				 uv[2] = new UV(0.5f,-0.2071f);
 				 uv[3] = new UV(1.2071f,0.5f);
 			}
-			else if (flow_ne)
+			else if (flow_se)
 			{
 				 uv[0] = new UV(-0.2071f,0.5f);
 				 uv[1] = new UV(0.5f,-0.2071f);
 				 uv[2] = new UV(1.2071f,0.5f);
 				 uv[3] = new UV(0.5f,1.2071f);
 			}
-			else if (flow_se)
+			else if (flow_sw)
 			{
 				 uv[0] = new UV(0.5f,-0.2071f);
 				 uv[1] = new UV(1.2071f,0.5f);
 				 uv[2] = new UV(0.5f,1.2071f);
 				 uv[3] = new UV(-0.2071f,0.5f);
 			}
-			else if (flow_sw)
-			{
-				 uv[0] = new UV(1.2071f,0.5f);
-				 uv[1] = new UV(0.5f,1.2071f);
-				 uv[2] = new UV(-0.2071f,0.5f);
-				 uv[3] = new UV(0.5f,-0.2071f);
-			}
 			else if (flow_n)
-			{
-				 uv[0] = new UV(0,1);
-				 uv[1] = new UV(0,0);
-				 uv[2] = new UV(1,0);
-				 uv[3] = new UV(1,1);
-			}
-			else if (flow_s)
-			{
-				 uv[0] = new UV(1,0);
-				 uv[1] = new UV(1,1);
-				 uv[2] = new UV(0,1);
-				 uv[3] = new UV(0,0);
-			}
-			else if (flow_w)
 			{
 				 uv[0] = new UV(1,1);
 				 uv[1] = new UV(0,1);
 				 uv[2] = new UV(0,0);
 				 uv[3] = new UV(1,0);
 			}
-			else if (flow_e)
+			else if (flow_s)
 			{
 				 uv[0] = new UV(0,0);
 				 uv[1] = new UV(1,0);
 				 uv[2] = new UV(1,1);
 				 uv[3] = new UV(0,1);
+			}
+			else if (flow_w)
+			{
+				 uv[0] = new UV(1,0);
+				 uv[1] = new UV(1,1);
+				 uv[2] = new UV(0,1);
+				 uv[3] = new UV(0,0);
+			}
+			else if (flow_e)
+			{
+				 uv[0] = new UV(0,1);
+				 uv[1] = new UV(0,0);
+				 uv[2] = new UV(1,0);
+				 uv[3] = new UV(1,1);
 			}
 			else
 			{
@@ -253,34 +253,34 @@ public class Liquid extends BlockModel
 		}
 		if (drawSides[1])
 		{	// front
-			vertices[0] = new Vertex(x+0.5f, y-0.5f, z-0.5f); uv[0] = new UV(1,1);
-			vertices[1] = new Vertex(x-0.5f, y-0.5f, z-0.5f); uv[1] = new UV(1,0);
-			vertices[2] = new Vertex(x-0.5f, y+h_nw, z-0.5f); uv[2] = new UV(0.5f-h_nw,0);
-			vertices[3] = new Vertex(x+0.5f, y+h_ne, z-0.5f); uv[3] = new UV(0.5f-h_ne,1);
+			vertices[0] = new Vertex(x+0.5f, y-0.5f, z-0.5f); uv[0] = new UV(1,0);
+			vertices[1] = new Vertex(x-0.5f, y-0.5f, z-0.5f); uv[1] = new UV(0,0);
+			vertices[2] = new Vertex(x-0.5f, y+h_nw, z-0.5f); uv[2] = new UV(0,0.5f+h_ne);
+			vertices[3] = new Vertex(x+0.5f, y+h_ne, z-0.5f); uv[3] = new UV(1,0.5f+h_nw);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[2])
 		{	// back
-			vertices[0] = new Vertex(x-0.5f, y-0.5f, z+0.5f); uv[0] = new UV(1,0);
-			vertices[1] = new Vertex(x+0.5f, y-0.5f, z+0.5f); uv[1] = new UV(1,1);
-			vertices[2] = new Vertex(x+0.5f, y+h_se, z+0.5f); uv[2] = new UV(0.5f-h_se,1);
-			vertices[3] = new Vertex(x-0.5f, y+h_sw, z+0.5f); uv[3] = new UV(0.5f-h_sw,0);
+			vertices[0] = new Vertex(x-0.5f, y-0.5f, z+0.5f); uv[0] = new UV(0,0);
+			vertices[1] = new Vertex(x+0.5f, y-0.5f, z+0.5f); uv[1] = new UV(1,0);
+			vertices[2] = new Vertex(x+0.5f, y+h_se, z+0.5f); uv[2] = new UV(1,0.5f+h_se);
+			vertices[3] = new Vertex(x-0.5f, y+h_sw, z+0.5f); uv[3] = new UV(0,0.5f+h_sw);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[3])
 		{	// left
-			vertices[0] = new Vertex(x-0.5f, y-0.5f, z-0.5f); uv[0] = new UV(1,0);
-			vertices[1] = new Vertex(x-0.5f, y-0.5f, z+0.5f); uv[1] = new UV(1,1);
-			vertices[2] = new Vertex(x-0.5f, y+h_sw, z+0.5f); uv[2] = new UV(0.5f-h_sw,1);
-			vertices[3] = new Vertex(x-0.5f, y+h_nw, z-0.5f); uv[3] = new UV(0.5f-h_nw,0);
+			vertices[0] = new Vertex(x-0.5f, y-0.5f, z-0.5f); uv[0] = new UV(0,0);
+			vertices[1] = new Vertex(x-0.5f, y-0.5f, z+0.5f); uv[1] = new UV(1,0);
+			vertices[2] = new Vertex(x-0.5f, y+h_sw, z+0.5f); uv[2] = new UV(1,0.5f+h_sw);
+			vertices[3] = new Vertex(x-0.5f, y+h_nw, z-0.5f); uv[3] = new UV(0,0.5f+h_nw);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[4])
 		{	// right
-			vertices[0] = new Vertex(x+0.5f, y-0.5f, z+0.5f); uv[0] = new UV(1,1);
-			vertices[1] = new Vertex(x+0.5f, y-0.5f, z-0.5f); uv[1] = new UV(1,0);
-			vertices[2] = new Vertex(x+0.5f, y+h_ne, z-0.5f); uv[2] = new UV(0.5f-h_ne,0);
-			vertices[3] = new Vertex(x+0.5f, y+h_se, z+0.5f); uv[3] = new UV(0.5f-h_se,1);
+			vertices[0] = new Vertex(x+0.5f, y-0.5f, z+0.5f); uv[0] = new UV(1,0);
+			vertices[1] = new Vertex(x+0.5f, y-0.5f, z-0.5f); uv[1] = new UV(0,0);
+			vertices[2] = new Vertex(x+0.5f, y+h_ne, z-0.5f); uv[2] = new UV(0,0.5f+h_se);
+			vertices[3] = new Vertex(x+0.5f, y+h_se, z+0.5f); uv[3] = new UV(1,0.5f+h_ne);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[5])

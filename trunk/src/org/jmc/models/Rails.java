@@ -16,7 +16,7 @@ public class Rails extends BlockModel
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		String mtl;
-		if (blockId == 27) {
+		if (blockId == 27 || blockId == 157) {
 			// powered rail (off / on)
 			mtl = (data & 8) == 0 ? materials.get(data,biome)[1] : materials.get(data,biome)[0];
 			data = (byte)(data & 7);
