@@ -175,45 +175,43 @@ public class Chunk {
 
 			ret=new Blocks(16*16*ymax,16*16);
 
-			byte add1,add2;
-
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
-				TAG_Byte_Array data = (TAG_Byte_Array) c_section.getElement("Data");
-				TAG_Byte_Array blocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-				TAG_Byte_Array biomes = (TAG_Byte_Array) level.getElement("Biomes");
-				TAG_Byte_Array add = (TAG_Byte_Array) c_section.getElement("AddBlocks");
+				TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
+				TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
+				TAG_Byte_Array tagBiomes = (TAG_Byte_Array) level.getElement("Biomes");
+				TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 
 				int base=yval.value*16*16*16;
-				for(int i=0; i<blocks.data.length; i++)
-					ret.id[base+i]=(short)(blocks.data[i]&0xff);	//silly trick to convert signed to unsigned
+				for(int i=0; i<tagBlocks.data.length; i++)
+					ret.id[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
 
-				if(add!=null)
+				if(tagAdd!=null)
 				{
-					for(int i=0; i<add.data.length; i++)
+					for(int i=0; i<tagAdd.data.length; i++)
 					{
-						add1=(byte) (add.data[i]&0x0f);
-						add2=(byte) (add.data[i]>>4);
-						ret.id[base+2*i]+=(add1<<8);
-						ret.id[base+2*i+1]+=(add2<<8);
-						//TODO: not sure if this works until there are block IDs higher than 256 limit
+						short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
+						short add1 = (short)(add&0x0f);
+						short add2 = (short)(add>>4);
+						ret.id[base+2*i] += (add1<<8);
+						ret.id[base+2*i+1] += (add2<<8);
 					}
 				}
 
-				for(int i=0; i<data.data.length; i++)
+				for(int i=0; i<tagData.data.length; i++)
 				{
-					add1=(byte) (data.data[i]&0x0f);
-					add2=(byte) (data.data[i]>>4);
+					byte add1=(byte)(tagData.data[i]&0x0f);
+					byte add2=(byte)(tagData.data[i]>>4);
 					ret.data[base+2*i]=add1;
 					ret.data[base+2*i+1]=add2;
 				}
 
-				if(biomes!=null)
+				if(tagBiomes!=null)
 				{
-					for(int i=0; i<biomes.data.length; i++)
-						ret.biome[i]=biomes.data[i];
+					for(int i=0; i<tagBiomes.data.length; i++)
+						ret.biome[i]=tagBiomes.data[i];
 				}
 				else
 				{
