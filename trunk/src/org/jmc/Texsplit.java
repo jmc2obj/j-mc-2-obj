@@ -270,8 +270,10 @@ public class Texsplit
 			try {
 				if (source.equalsIgnoreCase("texturepack"))
 					image = loadImageFromZip(zipfile, fileName);
-				else
+				else if (source.equalsIgnoreCase("distr"))
 					image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
+				else
+					image = loadImageFromFile(new File(fileName));
 			}
 			catch (Exception e)
 			{
