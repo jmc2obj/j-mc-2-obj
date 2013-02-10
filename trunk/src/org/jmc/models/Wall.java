@@ -49,9 +49,10 @@ public class Wall extends BlockModel
 		boolean conn_s = checkConnect(chunks, data, x, y, z+1);
 		boolean conn_e = checkConnect(chunks, data, x-1, y, z);
 		boolean conn_w = checkConnect(chunks, data, x+1, y, z);
+		boolean conn_u = checkConnect(chunks, data, x, y+1, z);
 				
 		// center column
-		if (!(conn_n && conn_s && !conn_e && !conn_w) && !(!conn_n && !conn_s && conn_e && conn_w))
+		if (!(conn_n && conn_s && !conn_e && !conn_w) && !(!conn_n && !conn_s && conn_e && conn_w) || conn_u)
 		{
 			uvTop = new UV[] { new UV(4/16f, 4/16f), new UV(12/16f, 4/16f), new UV(12/16f, 12/16f), new UV(4/16f, 12/16f) };
 			uvSide = new UV[] { new UV(4/16f, 0), new UV(12/16f, 0), new UV(12/16f, 1), new UV(4/16f, 1) };
