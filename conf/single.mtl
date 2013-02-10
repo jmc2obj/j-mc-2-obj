@@ -1208,7 +1208,7 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
 newmtl wood_oak_side
-Kd 0.4000 0.3176 0.1961
+Kd 0.4313 0.3490 0.2193
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
@@ -1218,7 +1218,7 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
 newmtl wood_top
-Kd 0.4000 0.3176 0.1961
+Kd 0.7098 0.5725 0.3686
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
