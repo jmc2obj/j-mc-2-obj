@@ -44,6 +44,7 @@ public class OBJExportOptions extends JPanel
 	private JCheckBox cbObjPerMat;
 	private JCheckBox cbObjPerChunk;
 	private JCheckBox cbObjPerBlock;
+	private JCheckBox cbSingleMaterial;
 	private JCheckBox cbRemoveDuplicates;
 	private JCheckBox cbUseUV;
 	private JTextField tfUVFile;
@@ -138,6 +139,12 @@ public class OBJExportOptions extends JPanel
 		lObjPerBlockWarn.setForeground(Color.red);
 		pObjPerBlock.add(cbObjPerBlock);
 		pObjPerBlock.add(lObjPerBlockWarn);
+		
+		JPanel pSingleMaterial=new JPanel();
+		pSingleMaterial.setLayout(new BoxLayout(pSingleMaterial, BoxLayout.LINE_AXIS));
+		pSingleMaterial.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbSingleMaterial=new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_MTL"));
+		pSingleMaterial.add(cbSingleMaterial);
 
 		JPanel pRemoveDuplicates=new JPanel();
 		pRemoveDuplicates.setLayout(new BoxLayout(pRemoveDuplicates, BoxLayout.LINE_AXIS));
@@ -289,6 +296,7 @@ public class OBJExportOptions extends JPanel
 		cbObjPerBlock.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
 		cbUseUV.addActionListener(genericSaveAction);
+		cbSingleMaterial.addActionListener(genericSaveAction);
 		
 		add(pScale);
 		add(pOffset);
@@ -299,6 +307,7 @@ public class OBJExportOptions extends JPanel
 		add(pObjPerMat);
 		add(pObjPerChunk);
 		add(pObjPerBlock);
+		add(pSingleMaterial);
 		add(pRemoveDuplicates);
 		add(pUseUV);
 		add(pOBJOver);
@@ -368,6 +377,7 @@ public class OBJExportOptions extends JPanel
 		cbObjPerMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbObjPerBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
+		cbSingleMaterial.setSelected(prefs.getBoolean("SINGLE_MTL", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 		cbUseUV.setSelected(prefs.getBoolean("USE_UV_FILE", false));
 		tfUVFile.setText(prefs.get("UV_FILE", ""));
@@ -433,6 +443,7 @@ public class OBJExportOptions extends JPanel
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
+		prefs.putBoolean("SINGLE_MTL", Options.singleMaterial);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
 		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
 		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
@@ -485,6 +496,7 @@ public class OBJExportOptions extends JPanel
 		Options.objectPerMaterial = cbObjPerMat.isSelected();
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.objectPerBlock = cbObjPerBlock.isSelected();
+		Options.singleMaterial = cbSingleMaterial.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
 		Options.useUVFile=cbUseUV.isSelected();
 		Options.UVFile=new File(tfUVFile.getText());

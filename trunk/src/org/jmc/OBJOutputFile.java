@@ -63,6 +63,11 @@ public class OBJOutputFile extends OBJFileBase
 	private int vertex_counter, tex_counter, norm_counter;
 	
 	private long obj_idx_count=-1;
+	
+	/**
+	 * Decides whether to print "usemtl" lines in OBJ file
+	 */
+	private boolean print_usemtl;
 
 
 	/**
@@ -86,6 +91,7 @@ public class OBJOutputFile extends OBJFileBase
 		y_offset = 0;
 		z_offset = 0;
 		file_scale = 1.0f;
+		print_usemtl=true;
 	}
 
 	/**
@@ -111,6 +117,14 @@ public class OBJOutputFile extends OBJFileBase
 		file_scale=scale;
 	}
 
+	/**
+	 * Sets the print usemtl switch.
+	 * @param val
+	 */
+	public void setPrintUseMTL(boolean val)
+	{
+		print_usemtl=val;
+	}
 
 	public void clearData(boolean remove_duplicates)
 	{
@@ -206,7 +220,7 @@ public class OBJOutputFile extends OBJFileBase
 		Long last_obj_idx=Long.valueOf(-1);
 		for(Face f:faces)
 		{
-			if(!f.mtl.equals(last_mtl))
+			if(!f.mtl.equals(last_mtl) && print_usemtl)
 			{
 				out.println();
 				out.println("usemtl "+f.mtl);
