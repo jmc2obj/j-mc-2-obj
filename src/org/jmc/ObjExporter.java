@@ -114,6 +114,15 @@ public class ObjExporter
 
 				obj.appendMtl(obj_writer, mtlfile.getName());
 				if(!Options.objectPerMaterial && !Options.objectPerBlock && !Options.objectPerChunk) obj.appendObjectname(obj_writer);
+				
+				if(Options.singleMaterial)
+				{
+					obj_writer.println("usemtl minecraft_material");
+					obj_writer.println();
+					
+					if(Options.objectPerBlock)
+						obj.setPrintUseMTL(false);
+				}
 
 				Log.info("Processing chunks...");
 
@@ -270,6 +279,12 @@ public class ObjExporter
 					normal.close();
 					uv.close();
 
+					if(Options.singleMaterial)
+					{
+						main.println("usemtl minecraft_material");
+						main.println();
+					}
+					
 					BufferedReader norm_reader=new BufferedReader(new FileReader(normalfile));
 					while((line=norm_reader.readLine())!=null)
 						main.println(line);
@@ -304,8 +319,12 @@ public class ObjExporter
 						vertex.println();
 						if(Options.objectPerMaterial && !Options.objectPerChunk) main.println("g "+ff.name);
 						main.println();
-						main.println("usemtl "+ff.name);
-						main.println();
+						
+						if(!Options.singleMaterial)
+						{
+							main.println("usemtl "+ff.name);
+							main.println();
+						}
 
 						BufferedReader reader=new BufferedReader(new FileReader(ff.file));
 						while((line=reader.readLine())!=null)

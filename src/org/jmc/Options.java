@@ -116,6 +116,11 @@ public class Options
 	 * If true, will export a separate object for each block.
 	 */
 	public static boolean objectPerBlock = false;
+	
+	/**
+	 * If true, will export a separate object for each block.
+	 */
+	public static boolean singleMaterial = false;
 
 	
 	/**

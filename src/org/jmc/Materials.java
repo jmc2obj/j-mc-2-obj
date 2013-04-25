@@ -21,7 +21,8 @@ public class Materials
 {
 
 	private static final String CONFIG_FILE = "conf/default.mtl";
-	private static final String SINGLE_CONFIG_FILE = "conf/single.mtl";
+	private static final String SINGLE_TEXTURE_MTLS_FILE = "conf/singletex.mtl";
+	private static final String SINGLE_MTL_FILE = "conf/single.mtl";
 
 
 	private static HashMap<String, Color> mtlColors;
@@ -91,9 +92,14 @@ public class Materials
 	 */
 	public static void copyMTLFile(File dest) throws IOException
 	{
-		if(Options.useUVFile)
+		if(Options.singleMaterial)
 		{
-			File mtlFile = new File(Filesystem.getDatafilesDir(), SINGLE_CONFIG_FILE);
+			File mtlFile = new File(Filesystem.getDatafilesDir(), SINGLE_MTL_FILE);
+			Filesystem.copyFile(mtlFile, dest);
+		}
+		else if(Options.useUVFile)
+		{
+			File mtlFile = new File(Filesystem.getDatafilesDir(), SINGLE_TEXTURE_MTLS_FILE);
 			Filesystem.copyFile(mtlFile, dest);
 		}
 		else
