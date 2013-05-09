@@ -256,7 +256,7 @@ public class OBJExportOptions extends JPanel
 		AbstractAction offsetSaveAction=new AbstractAction() {			
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				if(ev.getActionCommand().equals("custom"))
+				if(ev.getSource() == rbCustomOffset)
 				{
 					tfXOffset.setEnabled(true);
 					tfZOffset.setEnabled(true);
