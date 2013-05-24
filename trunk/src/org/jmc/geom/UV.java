@@ -32,7 +32,6 @@ public class UV
 		this.recalculated=other.recalculated;
 	}
 
-
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -54,6 +53,13 @@ public class UV
 		result = prime * result + Float.floatToIntBits(u);
 		result = prime * result + Float.floatToIntBits(v);
 		return result;
+	}
+	
+	public static UV midpoint(UV uv1, UV uv2)
+	{
+		float u = (uv1.u+uv2.u)/2.0f;
+		float v = (uv1.v+uv2.v)/2.0f;
+		return new UV(u,v);
 	}
 
 }

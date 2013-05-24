@@ -35,6 +35,11 @@ public class Vertex implements Comparable<Vertex>
 	}
 	
 	
+	public String toString()
+	{
+		return "("+x+","+y+","+z+")";
+	}
+	
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -71,5 +76,13 @@ public class Vertex implements Comparable<Vertex>
 		if(this.z>o.z) return 1;
 		if(this.z<o.z) return -1;
 		return 0;
+	}
+	
+	public static Vertex midpoint(Vertex v1, Vertex v2)
+	{
+		float x=(v1.x+v2.x)/2.0f;
+		float y=(v1.y+v2.y)/2.0f;
+		float z=(v1.z+v2.z)/2.0f;
+		return new Vertex(x, y, z);
 	}
 }
