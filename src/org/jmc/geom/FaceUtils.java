@@ -171,67 +171,147 @@ public class FaceUtils {
 		ret.uvs = new UV[] { face.uvs[0], face.uvs[3], face.uvs[2], face.uvs[1] };
 		return ret;
 	}
-	
-	private final static float e=0.001f;
-	
-	private static boolean similar(float a, float b)
-	{
-		if(Math.abs(a-b)<e) return true;
-		else return false;
+
+	private final static float e = 0.001f;
+
+	private static boolean similar(float a, float b) {
+		if (Math.abs(a - b) < e)
+			return true;
+		else
+			return false;
 	}
 
 	/**
-	 * Checks if the face is occluded. 
-	 * @param face the face that needs to be checked
-	 * @param drawSides array with values if sides should be drawn (is not occluded by block)
-	 * @return true if occluded (so don't render); false if not occluded (so do render)
+	 * Checks if the face is occluded.
+	 * 
+	 * @param face
+	 *            the face that needs to be checked
+	 * @param drawSides
+	 *            array with values if sides should be drawn (is not occluded by
+	 *            block)
+	 * @return true if occluded (so don't render); false if not occluded (so do
+	 *         render)
 	 */
-	public static boolean checkOcclusion(Face face, boolean [] drawSides)
-	{		
-		boolean x=true,y=true,z=true;
-		for(int i=1; i<4; i++)
-		{
-			if(!similar(face.vertices[i].x,face.vertices[0].x)) x=false;
-			if(!similar(face.vertices[i].y,face.vertices[0].y)) y=false;
-			if(!similar(face.vertices[i].z,face.vertices[0].z)) z=false;
+	public static boolean checkOcclusion(Face face, boolean[] drawSides) {
+		boolean x = true, y = true, z = true;
+		for (int i = 1; i < 4; i++) {
+			if (!similar(face.vertices[i].x, face.vertices[0].x))
+				x = false;
+			if (!similar(face.vertices[i].y, face.vertices[0].y))
+				y = false;
+			if (!similar(face.vertices[i].z, face.vertices[0].z))
+				z = false;
 		}
-	
+
 		float val;
-		
-		//occluded order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
-		//                0     1     2      3     4      5
-		
-		System.out.println("DBG: ["+face.vertices[0]+" "+face.vertices[1]+" "+face.vertices[2]+" "+face.vertices[3]+"]");
-		System.out.println("DBG: "+x+" / "+y+" / "+z);
-		System.out.println("DBG: "+drawSides[0]+" - "+drawSides[1]+" - "+drawSides[2]+" - "+drawSides[3]+" - "+drawSides[4]+" - "+drawSides[5]);
-		
-		if(x)
-		{
-			val=face.vertices[0].x;
-			System.out.println("xval "+val);
-			if(similar(val,-0.5f) && !drawSides[3]) return true;
-			if(similar(val,0.5f) && !drawSides[4]) return true;
+
+		// occluded order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
+		// 0 1 2 3 4 5
+
+		if (x) {
+			val = face.vertices[0].x;
+			if (similar(val, -0.5f) && !drawSides[3])
+				return true;
+			if (similar(val, 0.5f) && !drawSides[4])
+				return true;
+			return false;
+		} else if (y) {
+			val = face.vertices[0].y;
+			if (similar(val, -0.5f) && !drawSides[5])
+				return true;
+			if (similar(val, 0.5f) && !drawSides[0])
+				return true;
+			return false;
+		} else if (z) {
+			val = face.vertices[0].z;
+			if (similar(val, -0.5f) && !drawSides[1])
+				return true;
+			if (similar(val, 0.5f) && !drawSides[2])
+				return true;
 			return false;
 		}
-		else if(y)
-		{
-			val=face.vertices[0].y;
-			System.out.println("yval "+val);
-			if(similar(val,-0.5f) && !drawSides[5]) return true;
-			if(similar(val,0.5f) && !drawSides[0]) return true;
-			return false;
-		}
-		else if(z)
-		{
-			val=face.vertices[0].z;
-			System.out.println("zval "+val);
-			if(similar(val,-0.5f) && !drawSides[1]) return true;
-			if(similar(val,0.5f) && !drawSides[2]) return true;
-			return false;
-		}
-		
+
 		return false;
 	}
 
-}
+	/**
+	 * Maps the UV coordinates to be proportional to the world coordinates.
+	 * 
+	 * @param face
+	 *            Face to fix the UVs for.
+	 * @param bounds
+	 *            Bounds in 3D that limit the size of this object (so this value
+	 *            in every direction around 0,0,0).
+	 */
+	public static void UVprojectFromView(Face face, float bounds) {
 
+		// calculate normal
+		Vertex U, V, N;
+
+		U = Vertex.subtract(face.vertices[1], face.vertices[0]);
+		V = Vertex.subtract(face.vertices[2], face.vertices[0]);
+
+		N = new Vertex(0, 0, 0);
+
+		N.x = U.y * V.z - U.z * V.y;
+		N.y = U.z * V.x - U.x * V.z;
+		N.z = U.x * V.y - U.y * V.x;
+
+		float u, v;
+
+		if (similar(N.y, 0) && similar(N.z, 0)) {
+			if (N.x > 0) {
+				face.uvs = new UV[face.vertices.length];
+				for (int i = 0; i < face.uvs.length; i++) {
+					u = face.vertices[i].z + bounds;
+					v = face.vertices[i].y + bounds;
+					face.uvs[i] = new UV(u, v);
+				}
+			} else {
+				face.uvs = new UV[face.vertices.length];
+				for (int i = 0; i < face.uvs.length; i++) {
+					u = bounds - face.vertices[i].z;
+					v = face.vertices[i].y + bounds;
+					face.uvs[i] = new UV(u, v);
+				}
+			}
+		} else if (similar(N.x, 0) && similar(N.z, 0)) {
+			if (N.y > 0) {
+				face.uvs = new UV[face.vertices.length];
+				for (int i = 0; i < face.uvs.length; i++) {
+					u = face.vertices[i].x + bounds;
+					v = face.vertices[i].z + bounds;
+					face.uvs[i] = new UV(u, v);
+				}
+			} else {
+				face.uvs = new UV[face.vertices.length];
+				for (int i = 0; i < face.uvs.length; i++) {
+					u = bounds - face.vertices[i].x;
+					v = face.vertices[i].z + bounds;
+					face.uvs[i] = new UV(u, v);
+				}
+			}
+		} else if (similar(N.x, 0) && similar(N.y, 0)) {
+			if (N.z > 0) {
+				face.uvs = new UV[face.vertices.length];
+				for (int i = 0; i < face.uvs.length; i++) {
+					u = face.vertices[i].x + bounds;
+					v = face.vertices[i].y + bounds;
+					face.uvs[i] = new UV(u, v);
+				}
+			} else {
+				face.uvs = new UV[face.vertices.length];
+				for (int i = 0; i < face.uvs.length; i++) {
+					u = bounds - face.vertices[i].x;
+					v = face.vertices[i].y + bounds;
+					face.uvs[i] = new UV(u, v);
+				}
+			}
+		}
+
+		// in other cases, the normal isn't perpendicular, so simply skip fixing
+		// UVs
+
+	}
+
+}

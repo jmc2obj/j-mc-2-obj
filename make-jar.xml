@@ -21,7 +21,7 @@ Example: "100M" means revision 100 that was locally modified.
 		<!--<exec executable="svnversion" outputproperty="svnrev">
 		</exec>-->
 		<echo message="WARNING: svnversion disabled! Change the ant script manually!" />
-		<property name="svnrev" value="278"></property>
+		<property name="svnrev" value="279"></property>
 		
 		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/data/version.xml" />
 		<echo message="&lt;version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
