@@ -215,7 +215,10 @@ public class Stairs extends BlockModel {
 			Face transface=trans.multiply(face);
 			
 			if(!FaceUtils.checkOcclusion(transface, drawSides))
+			{
+				FaceUtils.UVprojectFromView(transface, 0.5f);
 				obj.addFace(transface.vertices, transface.uvs, shift, mtls[transface.mtl_idx]);
+			}
 		}
 
 	}

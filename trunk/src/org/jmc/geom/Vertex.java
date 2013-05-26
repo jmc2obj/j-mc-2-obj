@@ -85,4 +85,12 @@ public class Vertex implements Comparable<Vertex>
 		float z=(v1.z+v2.z)/2.0f;
 		return new Vertex(x, y, z);
 	}
+	
+	public static Vertex subtract(Vertex a, Vertex b)
+	{
+		float x=a.x-b.x;
+		float y=a.y-b.y;
+		float z=a.z-b.z;
+		return new Vertex(x, y, z);
+	}
 }
