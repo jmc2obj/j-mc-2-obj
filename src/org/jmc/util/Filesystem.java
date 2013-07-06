@@ -18,7 +18,26 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Filesystem
 {
-
+	/**
+	 * Compare two version numbers
+	 */
+	private static int compareVersions(String v1, String v2) {
+		String[] parts1 = v1.split("\\.");
+		String[] parts2 = v2.split("\\.");
+		
+		int len = Math.max(parts1.length, parts2.length);
+		for (int i = 0; i < len; i++) {
+			int p1 = 0;
+			int p2 = 0;
+			try { p1 = Integer.parseInt(parts1[i], 10); } catch (Exception ex) {}
+			try { p2 = Integer.parseInt(parts2[i], 10); } catch (Exception ex) {}
+			int comp = Integer.compare(p1, p2);
+			if (comp != 0) return comp;
+		}
+		return 0;
+	}
+	
+	
 	/**
 	 * Gets the directory that Minecraft keeps its save files in.
 	 * It works on all systems that Minecraft 1.2 works in.
@@ -52,7 +71,39 @@ public class Filesystem
 		return null;
 	}
 
+	
+	/**
+	 * Gets the location of the Minecraft .jar file.
+	 * 
+	 * Prior to version 1.6 the file is always "bin/minecraft.jar"
+	 * 
+	 * In version 1.6 and later there can be multiple versions of the game, 
+	 * which will be in "versions/x.x.x/x.x.x.jar", where x.x.x is the 
+	 * Minecraft version. When there are multiple versions installed this 
+	 * function tries to return the highest one.
+	 * 
+	 * @return Path to the Minecraft .jar file.
+	 */
+	public static File getMinecraftJar() {
+		File mcdir = getMinecraftDir();
+		File versdir = new File(mcdir, "versions");
 
+		if (versdir.isDirectory()) {
+			File best = null;
+			for (File entry : versdir.listFiles()) {
+				if (entry.isDirectory() && new File(entry, entry.getName() + ".jar").exists()) {
+					if (best == null || compareVersions(best.getName(), entry.getName()) > 0)
+						best = entry;
+				}
+			}
+			if (best != null)
+				return new File(best, best.getName() + ".jar");
+		}
+
+		return new File(mcdir, "bin/minecraft.jar");
+	}
+	
+	
 	/**
 	 * Gets the directory where the program's data files are.
 	 * 

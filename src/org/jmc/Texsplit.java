@@ -37,8 +37,10 @@ import org.w3c.dom.NodeList;
  * packs.
  */
 public class Texsplit {
-	private static final String CONFIG_FILE_NEW = "conf/texsplit.conf";
-	private static final String CONFIG_FILE_OLD = "conf/texsplit_old.conf";
+	private static final int FORMAT_1_6 = 3;		// 1.6 resource pack
+	private static final int FORMAT_1_5 = 2;		// 1.5 texture pack
+	private static final int FORMAT_PRE_1_5 = 1;	// pre-1.5 texture pack
+	private static final int FORMAT_INVALID = 0;	// unrecognized format
 
 	/**
 	 * Holds a single texture
@@ -170,32 +172,36 @@ public class Texsplit {
 
 	/**
 	 * Looks inside the given zip file to determine the format of the texture
-	 * pack, and returns the name of the appropriate config file.
+	 * pack.
 	 * 
 	 * @param zipfile
-	 * @return Config file that should be used to process the texture pack, or
-	 *         null if the given zip file does not appear to be a Minecraft
-	 *         texture pack.
+	 * @return Constant indicating texture pack format.
 	 * @throws IOException
 	 */
-	private static String detectTexturePackFormat(File zipfile) throws IOException {
+	private static int detectTexturePackFormat(File zipfile) throws IOException {
 		ZipInputStream zis = null;
 		try {
 			zis = new ZipInputStream(new FileInputStream(zipfile));
 
+			boolean foundAssetsDir = false;
 			boolean foundBlocksDir = false;
 			boolean foundTerrainPng = false;
 
 			ZipEntry entry = null;
 			while ((entry = zis.getNextEntry()) != null) {
 				String entryName = entry.getName();
-				if (entryName.startsWith("textures/blocks/"))
+				if (entryName.startsWith("assets/minecraft/"))
+					foundAssetsDir = true;
+				else if (entryName.startsWith("textures/blocks/"))
 					foundBlocksDir = true;
 				else if (entryName.equals("terrain.png"))
 					foundTerrainPng = true;
 			}
 
-			return foundBlocksDir ? CONFIG_FILE_NEW : foundTerrainPng ? CONFIG_FILE_OLD : null;
+			return	foundAssetsDir ? FORMAT_1_6 :
+					foundBlocksDir ? FORMAT_1_5 :
+					foundTerrainPng ? FORMAT_PRE_1_5 :
+					FORMAT_INVALID;
 		} finally {
 			if (zis != null)
 				zis.close();
@@ -220,19 +226,34 @@ public class Texsplit {
 
 		File zipfile;
 		if (texturePack == null)
-			zipfile = new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar");
+			zipfile = Filesystem.getMinecraftJar();
 		else
 			zipfile = texturePack;
 		if (!zipfile.canRead())
 			throw new Exception("Cannot open " + zipfile.getName());
 
-		String configFile = detectTexturePackFormat(zipfile);
-		if (configFile == null)
-			throw new Exception(zipfile.toString() + " does not appear to contain a Minecraft texture pack.");
-
-		File confFile = new File(Filesystem.getDatafilesDir(), configFile);
+		String confFilePath;
+		switch (detectTexturePackFormat(zipfile)) {
+			case FORMAT_1_6:
+				Log.info("Found resource pack (Minecraft 1.6 or later)");
+				confFilePath = "conf/texsplit_1.6.conf";
+				break;
+			case FORMAT_1_5:
+				Log.info("Found texture pack (Minecraft 1.5)");
+				confFilePath = "conf/texsplit_1.5.conf";
+				break;
+			case FORMAT_PRE_1_5:
+				Log.info("Found texture pack (Minecraft 1.4 or earlier)");
+				confFilePath = "conf/texsplit_old.conf";
+				break;
+			case FORMAT_INVALID:
+			default:
+				throw new Exception(zipfile.toString() + " does not appear to contain a Minecraft texture pack.");
+		}
+		
+		File confFile = new File(Filesystem.getDatafilesDir(), confFilePath);
 		if (!confFile.canRead())
-			throw new Exception("Cannot open configuration file " + configFile);
+			throw new Exception("Cannot open configuration file " + confFilePath);
 
 		Document doc = Xml.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
@@ -246,7 +267,7 @@ public class Texsplit {
 			String cols = Xml.getAttribute(fileNode, "cols", "1");
 
 			if (fileName == null || fileName.length() == 0)
-				throw new Exception("In " + configFile + ": 'file' tag is missing required attribute 'name'.");
+				throw new Exception("In " + confFilePath + ": 'file' tag is missing required attribute 'name'.");
 
 			BufferedImage image;
 			try {
@@ -290,7 +311,7 @@ public class Texsplit {
 
 				String[] parts = pos.split("\\s*,\\s*");
 				if (parts.length != 2)
-					throw new Exception("In " + configFile + ": attribute 'pos' has invalid format.");
+					throw new Exception("In " + confFilePath + ": attribute 'pos' has invalid format.");
 				int rowPos = Integer.parseInt(parts[0], 10) - 1;
 				int colPos = Integer.parseInt(parts[1], 10) - 1;
 
