@@ -373,7 +373,7 @@ public class BlockTypes
 	public static BlockInfo get(short id)
 	{
 		BlockInfo bi = blockTable.get(id);
-		if (bi == null && !unknownBlockIds.contains(id)) {
+		if (bi == null && id > 0 && !unknownBlockIds.contains(id)) {
 			Log.info("Found unknow block id: " + id);
 			unknownBlockIds.add(id);
 		}
