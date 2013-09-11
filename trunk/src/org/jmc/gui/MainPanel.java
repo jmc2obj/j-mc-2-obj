@@ -153,6 +153,11 @@ public class MainPanel extends JPanel
 	 * Necessary for restarting the thread when loading a new map.
 	 */
 	private ChunkLoaderThread chunk_loader=null;
+	
+	/**
+	 * The export window created after clicking "export". 
+	 */
+	private OBJExportWindow export_window=null;
 
 	private boolean slider_pressed=false;
 
@@ -410,36 +415,26 @@ public class MainPanel extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent arg0)
-			{
+			{				
 				if(Options.worldDir==null)
 				{
 					JOptionPane.showMessageDialog(MainWindow.main, Messages.getString("MainPanel.LOAD_ERR"));
 					return;
 				}
-				Options.dimension=(Integer) cbDimension.getSelectedItem();
-
-				Rectangle rect=preview.getSelectionBounds();
-				if(rect.width==0 || rect.height==0)
-				{
-					JOptionPane.showMessageDialog(MainWindow.main, Messages.getString("MainPanel.SEL_ERR"));
-					return;
-				}
-				Options.minX = rect.x;
-				Options.maxX = rect.x + rect.width;
-				Options.minZ = rect.y;
-				Options.maxZ = rect.y + rect.height;
-
-				Options.minY = sFloor.getValue();
-				Options.maxY = sCeil.getValue();
-
-				OBJExportWindow export_thread = new OBJExportWindow();
-
+		
+				updateSelectionOptions();
+				
+				if(export_window==null)
+					export_window = new OBJExportWindow();
+				
 				Rectangle win_bounds=MainWindow.main.getBounds();
 				int mx=win_bounds.x+win_bounds.width/2;
 				int my=win_bounds.y+win_bounds.height/2;
-				int xw=export_thread.getWidth();
-				int xh=export_thread.getHeight();
-				export_thread.setBounds(mx-xw/2, my-xh/2, xw, xh);
+				int xw=export_window.getWidth();
+				int xh=export_window.getHeight();
+				export_window.setBounds(mx-xw/2, my-xh/2, xw, xh);
+				
+				export_window.setVisible(true);
 			}
 		});
 
@@ -548,6 +543,26 @@ public class MainPanel extends JPanel
 		bUpdate.setForeground(Color.green);
 		Font font=bUpdate.getFont();
 		bUpdate.setFont(new Font(font.getFamily(),Font.BOLD,font.getSize()));
+	}
+	
+	public void updateSelectionOptions()
+	{
+		Options.dimension=(Integer) cbDimension.getSelectedItem();
+
+		Rectangle rect=preview.getSelectionBounds();
+		if(rect.width==0 || rect.height==0)
+		{
+			JOptionPane.showMessageDialog(MainWindow.main, Messages.getString("MainPanel.SEL_ERR"));
+			return;
+		}
+		Options.minX = rect.x;
+		Options.maxX = rect.x + rect.width;
+		Options.minZ = rect.y;
+		Options.maxZ = rect.y + rect.height;
+
+		Options.minY = sFloor.getValue();
+		Options.maxY = sCeil.getValue();
+
 	}
 
 }
