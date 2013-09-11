@@ -33,7 +33,7 @@ public class TexsplitPanel extends JPanel
 	private boolean alphas;
 	
 	private JTextField tfDest;
-	private JComboBox<String> cScale;
+	private JComboBox cScale;
 	private JCheckBox cbAlpha;
 	private JCheckBox cbMerge;
 
@@ -60,7 +60,7 @@ public class TexsplitPanel extends JPanel
 		pScale.setLayout(new BoxLayout(pScale, BoxLayout.LINE_AXIS));
 		pScale.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		JLabel lScale=new JLabel(Messages.getString("TexsplitDialog.PRESCALE"));
-		cScale=new JComboBox<String>(new String[] {"1x","2x","4x","8x","16x"});
+		cScale=new JComboBox(new String[] {"1x","2x","4x","8x","16x"});
 		pScale.add(lScale);
 		pScale.add(cScale);
 

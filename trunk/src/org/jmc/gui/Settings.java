@@ -40,7 +40,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private Preferences prefs;
 
-	JComboBox<String> cbMove,cbSelect,cbLang;
+	JComboBox cbMove,cbSelect,cbLang;
 	JTextArea taRestart;
 
 	@SuppressWarnings("serial")
@@ -76,7 +76,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pMove.setLayout(new BoxLayout(pMove, BoxLayout.LINE_AXIS));
 		JLabel lMove=new JLabel(Messages.getString("Settings.DRAG")); 
-		cbMove=new JComboBox<String>(actions);
+		cbMove=new JComboBox(actions);
 		pMove.add(lMove);
 		pMove.add(cbMove);
 
@@ -84,7 +84,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		pSelect.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pSelect.setLayout(new BoxLayout(pSelect, BoxLayout.LINE_AXIS));
 		JLabel lSelect=new JLabel(Messages.getString("Settings.SELECT")); 
-		cbSelect=new JComboBox<String>(actions);
+		cbSelect=new JComboBox(actions);
 		pSelect.add(lSelect);
 		pSelect.add(cbSelect);
 
@@ -92,7 +92,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		pLang.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		pLang.setLayout(new BoxLayout(pLang, BoxLayout.LINE_AXIS));
 		JLabel lLang=new JLabel(Messages.getString("Settings.LANGUAGE")); 
-		cbLang=new JComboBox<String>(languages);
+		cbLang=new JComboBox(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
 
