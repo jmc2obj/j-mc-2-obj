@@ -31,7 +31,7 @@ public class Filesystem
 			int p2 = 0;
 			try { p1 = Integer.parseInt(parts1[i], 10); } catch (Exception ex) {}
 			try { p2 = Integer.parseInt(parts2[i], 10); } catch (Exception ex) {}
-			int comp = Integer.compare(p1, p2);
+			int comp = p1 - p2;
 			if (comp != 0) return comp;
 		}
 		return 0;

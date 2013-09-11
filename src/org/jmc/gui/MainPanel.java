@@ -124,15 +124,15 @@ public class MainPanel extends JPanel
 					MainWindow.main.setTitle("jMc2Obj - "+splashes.get(r));
 				}								
 				zis.close();
-			}catch (Exception e) {/* don't care */}
+			}catch (Exception e) {}
 		}
 	}
 
 
 	//UI elements (not described separately)
 	private JButton bLoad,bGoto,bExport,bSettings,bUpdate,bAbout;
-	private JComboBox<String> cbPath;
-	private JComboBox<Integer> cbDimension;
+	private JComboBox cbPath;
+	private JComboBox cbDimension;
 	private JTextArea taLog;
 	private JScrollPane spPane;
 	private JSlider sFloor,sCeil;
@@ -169,10 +169,10 @@ public class MainPanel extends JPanel
 		JPanel pPath=new JPanel();
 		pPath.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
-		cbPath = new JComboBox<String>();
+		cbPath = new JComboBox();
 		//cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
 		cbPath.setEditable(true);
-		cbDimension = new JComboBox<Integer>();
+		cbDimension = new JComboBox();
 		JButton bPath=new JButton("...");
 		pPath.add(bPath);
 		pPath.add(cbPath);
