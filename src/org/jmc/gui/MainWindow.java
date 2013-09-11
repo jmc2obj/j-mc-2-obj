@@ -84,4 +84,12 @@ public class MainWindow extends JFrame
 	{
 		if(main!=null) main.panel.log(msg);
 	}
+	
+	/**
+	 * Global method that syncs the GUI selection with options.
+	 */
+	public static void updateSelectionOptions()
+	{
+		if(main!=null) main.panel.updateSelectionOptions();
+	}
 }
