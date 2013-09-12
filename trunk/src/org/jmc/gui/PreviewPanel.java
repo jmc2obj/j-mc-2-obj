@@ -637,8 +637,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		shaping_selection=false;
 		redraw(false);
 		repaint();
-		
-		MainWindow.updateSelectionOptions();
 	}
 
 	/**
