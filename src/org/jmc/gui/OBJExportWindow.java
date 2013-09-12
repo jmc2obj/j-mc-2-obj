@@ -194,6 +194,7 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 				
 				Options.outputDir = savePath;
 				MainWindow.settings.setLastExportPath(tfSavePath.getText());
+				MainWindow.updateSelectionOptions();
 								
 				bRun.setEnabled(false);
 				bStop.setEnabled(true);
