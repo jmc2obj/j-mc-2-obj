@@ -34,6 +34,7 @@ import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;

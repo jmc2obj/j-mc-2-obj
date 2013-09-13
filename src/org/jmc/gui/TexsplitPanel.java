@@ -23,7 +23,7 @@ import org.jmc.Texsplit;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial","rawtypes","unchecked"})
 public class TexsplitPanel extends JPanel
 {
 	

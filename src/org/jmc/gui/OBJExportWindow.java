@@ -266,7 +266,6 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 		});
 
 		pack();
-		setVisible(true);
 	}
 
 

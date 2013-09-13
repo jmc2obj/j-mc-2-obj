@@ -39,6 +39,8 @@ public class MainWindow extends JFrame
 	
 	public static FileNames file_names;
 	
+	public static OBJExportWindow export;
+	
 	
 	/**
 	 * Window contructor.
@@ -50,6 +52,7 @@ public class MainWindow extends JFrame
 		settings = new Settings();
 		update = new UpdateWindow();
 		file_names = new FileNames();
+		export = new OBJExportWindow();
 		
 		main = this;
 		
