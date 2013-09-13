@@ -59,7 +59,7 @@ import org.jmc.util.Messages;
  * @author max, danijel
  * 
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial","rawtypes","unchecked"})
 public class MainPanel extends JPanel {
 	/**
 	 * A small thread to speed up window startup. It is used to find saves in
@@ -149,11 +149,7 @@ public class MainPanel extends JPanel {
 	 * Necessary for restarting the thread when loading a new map.
 	 */
 	private ChunkLoaderThread chunk_loader = null;
-
-	/**
-	 * The export window created after clicking "export".
-	 */
-	private OBJExportWindow export_window = null;
+	
 
 	private boolean slider_pressed = false;
 
@@ -400,17 +396,14 @@ public class MainPanel extends JPanel {
 
 				updateSelectionOptions();
 
-				if (export_window == null)
-					export_window = new OBJExportWindow();
-
 				Rectangle win_bounds = MainWindow.main.getBounds();
 				int mx = win_bounds.x + win_bounds.width / 2;
 				int my = win_bounds.y + win_bounds.height / 2;
-				int xw = export_window.getWidth();
-				int xh = export_window.getHeight();
-				export_window.setBounds(mx - xw / 2, my - xh / 2, xw, xh);
+				int xw = MainWindow.export.getWidth();
+				int xh = MainWindow.export.getHeight();
+				MainWindow.export.setBounds(mx - xw / 2, my - xh / 2, xw, xh);
 
-				export_window.setVisible(true);
+				MainWindow.export.setVisible(true);
 			}
 		});
 
