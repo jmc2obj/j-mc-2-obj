@@ -88,7 +88,7 @@ public abstract class BlockModel {
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(short thisId, Side side, short neighborId) {
+	protected boolean drawSide(Side side, short neighborId) {
 		if (Options.objectPerBlock)
 			return true;
 
@@ -98,12 +98,17 @@ public abstract class BlockModel {
 		if (neighborId == 0)
 			return true;
 
+		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.VOLUME) {
+			return blockId != neighborId;
+		}
+
 		switch (BlockTypes.get(neighborId).getOcclusion()) {
 		case FULL:
 			return false;
 		case NONE:
 			return true;
 		case TRANSPARENT:
+		case VOLUME:
 			return neighborId != blockId;
 		case BOTTOM:
 		case SNOW:
@@ -143,28 +148,26 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		short id = chunks.getBlockID(x, y, z);
+		sides[0] = drawSide(Side.TOP, y == ymax ? -1 : chunks.getBlockID(x, y + 1, z));
+		sides[1] = drawSide(Side.FRONT, z == zmin ? -1 : chunks.getBlockID(x, y, z - 1));
+		sides[2] = drawSide(Side.BACK, z == zmax ? -1 : chunks.getBlockID(x, y, z + 1));
+		sides[3] = drawSide(Side.LEFT, x == xmin ? -1 : chunks.getBlockID(x - 1, y, z));
+		sides[4] = drawSide(Side.RIGHT, x == xmax ? -1 : chunks.getBlockID(x + 1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, y == ymin ? -1 : chunks.getBlockID(x, y - 1, z));
 
-		sides[0] = drawSide(id, Side.TOP, y == ymax ? -1 : chunks.getBlockID(x, y + 1, z));
-		sides[1] = drawSide(id, Side.FRONT, z == zmin ? -1 : chunks.getBlockID(x, y, z - 1));
-		sides[2] = drawSide(id, Side.BACK, z == zmax ? -1 : chunks.getBlockID(x, y, z + 1));
-		sides[3] = drawSide(id, Side.LEFT, x == xmin ? -1 : chunks.getBlockID(x - 1, y, z));
-		sides[4] = drawSide(id, Side.RIGHT, x == xmax ? -1 : chunks.getBlockID(x + 1, y, z));
-		sides[5] = drawSide(id, Side.BOTTOM, y == ymin ? -1 : chunks.getBlockID(x, y - 1, z));
-
-		if (BlockTypes.get(id).getOcclusion() == Occlusion.SNOW) {
+		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
 			short data = chunks.getBlockData(x, y, z);
-			if (id == chunks.getBlockID(x, y + 1, z) && data == chunks.getBlockData(x, y + 1, z))
+			if (blockId == chunks.getBlockID(x, y + 1, z) && data == chunks.getBlockData(x, y + 1, z))
 				sides[0] = false;
-			if (id == chunks.getBlockID(x, y, z - 1) && data == chunks.getBlockData(x, y, z - 1))
+			if (blockId == chunks.getBlockID(x, y, z - 1) && data == chunks.getBlockData(x, y, z - 1))
 				sides[1] = false;
-			if (id == chunks.getBlockID(x, y, z + 1) && data == chunks.getBlockData(x, y, z + 1))
+			if (blockId == chunks.getBlockID(x, y, z + 1) && data == chunks.getBlockData(x, y, z + 1))
 				sides[2] = false;
-			if (id == chunks.getBlockID(x - 1, y, z) && data == chunks.getBlockData(x - 1, y, z))
+			if (blockId == chunks.getBlockID(x - 1, y, z) && data == chunks.getBlockData(x - 1, y, z))
 				sides[3] = false;
-			if (id == chunks.getBlockID(x + 1, y, z) && data == chunks.getBlockData(x + 1, y, z))
+			if (blockId == chunks.getBlockID(x + 1, y, z) && data == chunks.getBlockData(x + 1, y, z))
 				sides[4] = false;
-			if (id == chunks.getBlockID(x, y - 1, z) && data == chunks.getBlockData(x, y - 1, z))
+			if (blockId == chunks.getBlockID(x, y - 1, z) && data == chunks.getBlockData(x, y - 1, z))
 				sides[5] = false;
 		}
 
