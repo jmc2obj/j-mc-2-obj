@@ -22,7 +22,9 @@ public class BlockInfo
 		/** The top face of the block below is not drawn */
 		BOTTOM,
 		/** Special rules for snow */
-		SNOW
+		SNOW,
+		/** A closed transparent volume */
+		VOLUME
 	}
 
 	
