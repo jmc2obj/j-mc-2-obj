@@ -65,8 +65,11 @@ public class ObjExporter {
 		}
 
 		try {
-			objfile.createNewFile();
-			mtlfile.createNewFile();
+			if (writeObj)
+				objfile.createNewFile();
+
+			if (writeMtl)
+				mtlfile.createNewFile();
 		} catch (IOException e) {
 			Log.error("Cannot write to the chosen location!", e);
 			return;
