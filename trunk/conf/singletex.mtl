@@ -365,6 +365,16 @@ Kd 0.4392 0.3921 0.4156
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl dirt_podzol_side
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl dirt_podzol_top
+Kd 0.3438 0.2353 0.1176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl dirt_snow_side
 Kd 0.5255 0.3765 0.2627
 Ks 0.0000 0.0000 0.0000
@@ -661,6 +671,18 @@ Kd 0.9608 0.2588 0.0000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl leaves_acacia
+Kd 0.1098 0.2784 0.0196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl leaves_big_oak
+Kd 0.1098 0.2784 0.0196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl leaves_birch
 Kd 0.2549 0.3294 0.1725
 Ks 0.0000 0.0000 0.0000
@@ -843,6 +865,16 @@ Kd 0.3059 0.3059 0.3059
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl plank_acacia
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl plank_big_oak
+Kd 0.2392 0.1523 0.0703
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl plank_birch
 Kd 0.7686 0.7019 0.4784
 Ks 0.0000 0.0000 0.0000
@@ -1018,6 +1050,11 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
 
+newmtl red_sand
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl redstone_block
 Kd 0.7059 0.1137 0.0314
 Ks 0.0000 0.0000 0.0000
@@ -1124,6 +1161,12 @@ Kd 0.8353 0.8039 0.5804
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl sapling_acacia
+Kd 0.4414 0.5312 0.1059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl sapling_birch
 Kd 0.1882 0.2039 0.1176
 Ks 0.0000 0.0000 0.0000
@@ -1131,6 +1174,12 @@ map_Kd tex/texture.png
 map_d tex/texture_a.png
 
 newmtl sapling_jungle
+Kd 0.4667 0.5882 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl sapling_roofed_oak
 Kd 0.4667 0.5882 0.3373
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
@@ -1355,6 +1404,26 @@ newmtl water_flowing
 Kd 0.0000 0.6039 1.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
+
+newmtl log_acacia_side
+Kd 0.4196 0.3945 0.3529
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl log_acacia_top
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl log_big_oak_side
+Kd 0.2109 0.1686 0.0977
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl log_big_oak_top
+Kd 0.3359 0.2656 0.1765
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
 
 newmtl log_birch_side
 Kd 0.8118 0.8078 0.7882
