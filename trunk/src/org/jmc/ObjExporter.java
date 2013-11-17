@@ -19,6 +19,26 @@ import org.jmc.util.Messages;
  * .MTL file)
  */
 public class ObjExporter {
+	private static boolean addChunkIfExists(ChunkDataBuffer chunk_buffer, int x, int z) {
+		if (chunk_buffer.hasChunk(x, z))
+			return true;
+
+		try {
+			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);
+			if (region == null)
+				return false;
+
+			Chunk chunk = region.getChunk(x, z);
+			if (chunk == null)
+				return false;
+
+			chunk_buffer.addChunk(chunk);
+			return true;
+		} catch (Exception e) {
+		}
+
+		return false;
+	}
 
 	/**
 	 * Do the export. Export settings are taken from the global Options.
@@ -131,27 +151,15 @@ public class ObjExporter {
 						if (progress != null)
 							progress.setProgress(progress_count / progress_max);
 
+						if (!addChunkIfExists(chunk_buffer, cx, cz))
+							continue;
+
 						for (int lx = cx - 1; lx <= cx + 1; lx++)
 							for (int lz = cz - 1; lz <= cz + 1; lz++) {
-								if (lx < cxs || lx > cxe || lz < czs || lz > cze)
+								if (lx < cxs || lx > cxe || lz < czs || lz > cze || lx == cx || lz == cz)
 									continue;
 
-								if (chunk_buffer.hasChunk(lx, lz))
-									continue;
-
-								Chunk chunk = null;
-								try {
-									Region region = Region.findRegion(Options.worldDir, Options.dimension, lx, lz);
-									if (region == null)
-										continue;
-									chunk = region.getChunk(lx, lz);
-									if (chunk == null)
-										continue;
-								} catch (Exception e) {
-									continue;
-								}
-
-								chunk_buffer.addChunk(chunk);
+								addChunkIfExists(chunk_buffer, lx, lz);
 							}
 
 						obj.addChunkBuffer(chunk_buffer, cx, cz);
