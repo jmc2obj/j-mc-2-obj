@@ -206,6 +206,11 @@ Kd 0.6235 0.6471 0.6941
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/clay.png
 
+newmtl coal_block
+Kd 0.0745 0.0745 0.0745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/coal_block.png
+
 newmtl coal_ore
 Kd 0.4510 0.4510 0.4510
 Ks 0.0000 0.0000 0.0000
@@ -1383,7 +1388,7 @@ map_Kd tex/log_oak_top.png
 newmtl log_spruce_side
 Kd 0.1804 0.1137 0.0471
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/log_pine_side.png
+map_Kd tex/log_spruce_side.png
 
 newmtl log_spruce_top
 Kd 0.7098 0.5725 0.3686

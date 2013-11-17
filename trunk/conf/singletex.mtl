@@ -207,6 +207,11 @@ Kd 0.6235 0.6471 0.6941
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl coal_block
+Kd 0.0745 0.0745 0.0745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl coal_ore
 Kd 0.4510 0.4510 0.4510
 Ks 0.0000 0.0000 0.0000
