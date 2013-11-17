@@ -16,28 +16,31 @@ Example: "100M" means revision 100 that was locally modified.
 
 	<target name="create_run_jar">
 
-		<tstamp/>
+		<tstamp />
 
 		<!--<exec executable="svnversion" outputproperty="svnrev">
 		</exec>-->
 		<echo message="WARNING: svnversion disabled! Change the ant script manually!" />
-		<property name="svnrev" value="283"></property>
-		
+		<property name="svnrev" value="289">
+		</property>
+
 		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/data/version.xml" />
 		<echo message="&lt;version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 		<echo message="    &lt;revision&gt;${svnrev}&lt;/revision&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 		<echo message="&lt;/version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 
-		
+		<copy file="${basedir}/data/version.xml" tofile="${basedir}/bin/data/version.xml" overwrite="true" />
+
+
 		<jar destfile="${basedir}/JAR/jMc2Obj-dev_r${svnrev}.jar" filesetmanifest="mergewithoutmain">
 			<manifest>
-				<attribute name="Main-Class" value="org.jmc.Main"/>
-				<attribute name="Class-Path" value="."/>
-				<attribute name="Implementation-Version" value="${svnrev}"/>
-				<attribute name="Built-Date" value="${DSTAMP} ${TSTAMP}"/>
+				<attribute name="Main-Class" value="org.jmc.Main" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Implementation-Version" value="${svnrev}" />
+				<attribute name="Built-Date" value="${DSTAMP} ${TSTAMP}" />
 			</manifest>
-			<fileset dir="${basedir}/bin"/>
+			<fileset dir="${basedir}/bin" />
 		</jar>
 
 		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/JAR/update.xml" />
@@ -49,40 +52,29 @@ Example: "100M" means revision 100 that was locally modified.
 	</target>
 
 	<target name="uploadtoftp">
-		
+
 		<!--<exec executable="svnversion" outputproperty="svnrev">
 		</exec>-->
 		<echo message="WARNING: svnversion disabled! Change the ant script manually!" />
-		<property name="svnrev" value="283"></property>
+		<property name="svnrev" value="289">
+		</property>
 
 		<exec executable="svnversion" outputproperty="svnrev">
 		</exec>
 
-		<xmlproperty file="passwd.xml"/>
-		
+		<xmlproperty file="passwd.xml" />
+
 		<fail unless="ftp.server" message="Missing passwd.xml file! " />
 
-		<ftp server="${ftp.server}"
-		       port="21"
-		       remotedir="/jmc2obj"
-		       userid="${ftp.user}"
-		       password="${ftp.password}"
-		       passive="yes"		       
-		       binary="yes">
+		<ftp server="${ftp.server}" port="21" remotedir="/jmc2obj" userid="${ftp.user}" password="${ftp.password}" passive="yes" binary="yes">
 			<fileset dir="${basedir}/JAR/">
-				<include name="jMc2Obj-dev_r${svnrev}.jar"/>
+				<include name="jMc2Obj-dev_r${svnrev}.jar" />
 			</fileset>
 		</ftp>
 
-		<ftp server="${ftp.server}"
-				       port="21"
-				       remotedir="/jmc2obj"
-				       userid="${ftp.user}"
-				       password="${ftp.password}"
-				       passive="yes"		       
-				       binary="yes">
+		<ftp server="${ftp.server}" port="21" remotedir="/jmc2obj" userid="${ftp.user}" password="${ftp.password}" passive="yes" binary="yes">
 			<fileset dir="${basedir}/JAR/">
-				<include name="update.xml"/>
+				<include name="update.xml" />
 			</fileset>
 		</ftp>
 
