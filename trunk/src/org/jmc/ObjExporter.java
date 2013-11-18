@@ -1,5 +1,6 @@
 package org.jmc;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -90,10 +91,8 @@ public class ObjExporter {
 
 				PrintWriter obj_writer = new PrintWriter(new FileWriter(objfile));
 
-				int cxs = (int) Math.floor(Options.minX / 16.0f);
-				int czs = (int) Math.floor(Options.minZ / 16.0f);
-				int cxe = (int) Math.ceil(Options.maxX / 16.0f);
-				int cze = (int) Math.ceil(Options.maxZ / 16.0f);
+				Point cs = Chunk.getChunkPos(Options.minX, Options.minZ);
+				Point ce = Chunk.getChunkPos(Options.maxX + 15, Options.maxZ + 15);
 				int oxs, oys, ozs;
 
 				if (Options.offsetType == OffsetType.CENTER) {
@@ -124,7 +123,7 @@ public class ObjExporter {
 				}
 
 				int progress_count = 0;
-				float progress_max = (cxe - cxs + 1) * (cze - czs + 1);
+				float progress_max = (ce.x - cs.x + 1) * (ce.y - cs.y + 1);
 
 				ChunkDataBuffer chunk_buffer = new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY,
 						Options.maxY, Options.minZ, Options.maxZ);
@@ -147,8 +146,8 @@ public class ObjExporter {
 
 				Log.info("Processing chunks...");
 
-				for (int cx = cxs; cx <= cxe; cx++) {
-					for (int cz = czs; cz <= cze; cz++, progress_count++) {
+				for (int cx = cs.x; cx <= ce.x; cx++) {
+					for (int cz = cs.y; cz <= ce.y; cz++, progress_count++) {
 						if (stop != null && stop.stopRequested())
 							return;
 						if (progress != null)
@@ -159,7 +158,7 @@ public class ObjExporter {
 
 						for (int lx = cx - 1; lx <= cx + 1; lx++)
 							for (int lz = cz - 1; lz <= cz + 1; lz++) {
-								if (lx < cxs || lx > cxe || lz < czs || lz > cze || lx == cx || lz == cz)
+								if (lx < cs.x || lx > ce.x || lz < cs.y || lz > ce.y || lx == cx || lz == cz)
 									continue;
 
 								addChunkIfExists(chunk_buffer, lx, lz);

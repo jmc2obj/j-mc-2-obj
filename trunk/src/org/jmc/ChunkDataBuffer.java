@@ -79,10 +79,7 @@ public class ChunkDataBuffer {
 	{
 		if(y<0) return 0;
 		
-		Point chunk_p=new Point();
-		chunk_p.x=(int)Math.floor(x/16.0);
-		chunk_p.y=(int)Math.floor(z/16.0);
-		
+		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=chunks.get(chunk_p);
 		
 		if(blocks==null) return 0;
@@ -106,10 +103,7 @@ public class ChunkDataBuffer {
 	{
 		if(y<0) return 0;
 		
-		Point chunk_p=new Point();
-		chunk_p.x=(int)Math.floor(x/16.0);
-		chunk_p.y=(int)Math.floor(z/16.0);
-		
+		Point chunk_p=Chunk.getChunkPos(x, z);		
 		Blocks blocks=chunks.get(chunk_p);
 		
 		if(blocks==null) return 0;
@@ -131,10 +125,7 @@ public class ChunkDataBuffer {
 	
 	public byte getBlockBiome(int x, int z)
 	{
-		Point chunk_p=new Point();
-		chunk_p.x=(int)Math.floor(x/16.0);
-		chunk_p.y=(int)Math.floor(z/16.0);
-		
+		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=chunks.get(chunk_p);
 		
 		if(blocks==null) return (byte)255;
@@ -173,10 +164,9 @@ public class ChunkDataBuffer {
 
 	public TAG_Compound getTileEntity(int x, int y, int z)
 	{
-		int cx = (int)Math.floor(x/16.0);
-		int cz = (int)Math.floor(z/16.0);
+		Point chunk_p=Chunk.getChunkPos(x, z);
 		
-		for (TAG_Compound tag : getTileEntities(cx, cz))
+		for (TAG_Compound tag : getTileEntities(chunk_p.x, chunk_p.y))
 		{
 			int entx = Integer.MAX_VALUE;
 			int enty = Integer.MAX_VALUE;

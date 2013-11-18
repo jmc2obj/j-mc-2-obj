@@ -9,6 +9,7 @@ package org.jmc;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -104,6 +105,16 @@ public class Chunk {
 	public String toString()
 	{
 		return "Chunk:\n"+root.toString();
+	}
+
+	public static Point getChunkPos(int x, int z)
+	{
+		Point p = new Point();
+
+		p.x = (x<0) ? ((x-15)/16) : (x/16);
+		p.y = (z<0) ? ((z-15)/16) : (z/16);
+
+		return p;
 	}
 
 	/**
