@@ -372,7 +372,6 @@ public class OBJOutputFile extends OBJFileBase
 	 */
 	public void addChunkBuffer(ChunkDataBuffer chunk, int chunk_x, int chunk_z)
 	{
-		int x,y,z;
 		int xmin,xmax,ymin,ymax,zmin,zmax;
 		Rectangle xy,xz;
 		xy=chunk.getXYBoundaries();
@@ -394,11 +393,11 @@ public class OBJOutputFile extends OBJFileBase
 		if(zs<zmin) zs=zmin;
 		if(ze>zmax) ze=zmax;
 
-		for(z = zs; z < ze; z++)
+		for(int z = zs; z < ze; z++)
 		{
-			for(x = xs; x < xe; x++)
+			for(int x = xs; x < xe; x++)
 			{
-				for(y = ymin; y < ymax; y++)
+				for(int y = ymin; y < ymax; y++)
 				{
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);

@@ -19,6 +19,9 @@ public class ChunkDataBuffer {
 	Map<Point,Blocks> chunks;
 	
 	private boolean is_anvil;
+
+	private Point cached_chunkp;
+	private Blocks cached_chunkb;
 	
 	public ChunkDataBuffer(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
 	{
@@ -74,13 +77,24 @@ public class ChunkDataBuffer {
 	{
 		return xyBoundaries;
 	}
+
+	private Blocks getBlocks(Point p)
+	{
+		if ((cached_chunkp == null) || (cached_chunkp.x != p.x) || (cached_chunkp.y != p.y))
+		{
+			cached_chunkp = p;
+			cached_chunkb = chunks.get(p);
+		}
+
+		return cached_chunkb;
+	}
 	
 	public short getBlockID(int x, int y, int z)
 	{
 		if(y<0) return 0;
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);
-		Blocks blocks=chunks.get(chunk_p);
+		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return 0;
 		
@@ -104,7 +118,7 @@ public class ChunkDataBuffer {
 		if(y<0) return 0;
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);		
-		Blocks blocks=chunks.get(chunk_p);
+		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return 0;
 		
@@ -126,7 +140,7 @@ public class ChunkDataBuffer {
 	public byte getBlockBiome(int x, int z)
 	{
 		Point chunk_p=Chunk.getChunkPos(x, z);
-		Blocks blocks=chunks.get(chunk_p);
+		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return (byte)255;
 		
@@ -138,11 +152,8 @@ public class ChunkDataBuffer {
 	
 	public List<TAG_Compound> getEntities(int cx, int cz)
 	{
-		Point chunk_p=new Point();
-		chunk_p.x=cx;
-		chunk_p.y=cz;
-		
-		Blocks blocks=chunks.get(chunk_p);
+		Blocks blocks=getBlocks(new Point(cx, cz));
+
 		if(blocks==null)
 			return new EmptyList<TAG_Compound>();
 		
@@ -151,11 +162,8 @@ public class ChunkDataBuffer {
 	
 	public List<TAG_Compound> getTileEntities(int cx, int cz)
 	{
-		Point chunk_p=new Point();
-		chunk_p.x=cx;
-		chunk_p.y=cz;
-		
-		Blocks blocks=chunks.get(chunk_p);
+		Blocks blocks=getBlocks(new Point(cx, cz));
+
 		if(blocks==null)
 			return new EmptyList<TAG_Compound>();
 		
