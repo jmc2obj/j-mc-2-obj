@@ -540,7 +540,183 @@ Kd 1.0000 1.0000 1.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
 
+newmtl glass_black
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_blue
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_brown
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_cyan
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_dark_gray
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_green
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_light_blue
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_light_gray
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_lime
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_magenta
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_orange
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pink
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_purple
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_red
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_white
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_yellow
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl glass_pane_side
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_black
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_blue
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_brown
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_cyan
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_dark_gray
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_green
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_light_blue
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_light_gray
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_lime
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_magenta
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_orange
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_pink
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_purple
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_red
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_white
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl glass_pane_side_yellow
 Kd 1.0000 1.0000 1.0000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
@@ -602,6 +778,11 @@ Kd 0.2431 0.2431 0.2431
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
+
+newmtl ice_packed
+Kd 0.4902 0.6824 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
 
 newmtl ice
 Kd 0.4902 0.6824 1.0000
@@ -1243,7 +1424,7 @@ Kd 0.3412 0.3567 0.3567
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
-newmtl stained_clay_dark_grey
+newmtl stained_clay_dark_gray
 Kd 0.2275 0.1647 0.1412
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
@@ -1485,7 +1666,7 @@ Kd 0.1529 0.4588 0.5882
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
-newmtl wool_dark_grey
+newmtl wool_dark_gray
 Kd 0.2627 0.2627 0.2627
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
