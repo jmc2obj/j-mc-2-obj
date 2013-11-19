@@ -18,10 +18,10 @@ public class Pane extends BlockModel
 	/** Checks whether the pane should connect to another block */
 	private boolean checkConnect(short otherId)
 	{
-		// connects to itself and other solid blocks
+		// connects to other panes, glass, and any solid blocks
 		if (otherId == 0)
 			return false;
-		if (otherId == blockId)
+		if (otherId == 101 || otherId == 102 || otherId == 160 || otherId == 20 || otherId == 95)
 			return true;
 		return BlockTypes.get(otherId).getOcclusion() == BlockInfo.Occlusion.FULL;
 	}

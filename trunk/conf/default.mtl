@@ -539,11 +539,187 @@ Kd 1.0000 1.0000 1.0000
 map_Kd tex/glass.png
 map_d tex/glass_a.png
 
+newmtl glass_black
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_black.png
+map_d tex/glass_black_a.png
+
+newmtl glass_blue
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_blue.png
+map_d tex/glass_blue_a.png
+
+newmtl glass_brown
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_brown.png
+map_d tex/glass_brown_a.png
+
+newmtl glass_cyan
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_cyan.png
+map_d tex/glass_cyan_a.png
+
+newmtl glass_dark_gray
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_dark_gray.png
+map_d tex/glass_dark_gray_a.png
+
+newmtl glass_green
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_green.png
+map_d tex/glass_green_a.png
+
+newmtl glass_light_blue
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_light_blue.png
+map_d tex/glass_light_blue_a.png
+
+newmtl glass_light_gray
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_light_gray.png
+map_d tex/glass_light_gray_a.png
+
+newmtl glass_lime
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_lime.png
+map_d tex/glass_lime_a.png
+
+newmtl glass_magenta
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_magenta.png
+map_d tex/glass_magenta_a.png
+
+newmtl glass_orange
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_orange.png
+map_d tex/glass_orange_a.png
+
+newmtl glass_pink
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_pink.png
+map_d tex/glass_pink_a.png
+
+newmtl glass_purple
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_purple.png
+map_d tex/glass_purple_a.png
+
+newmtl glass_red
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_red.png
+map_d tex/glass_red_a.png
+
+newmtl glass_white
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_white.png
+map_d tex/glass_white_a.png
+
+newmtl glass_yellow
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_yellow.png
+map_d tex/glass_yellow_a.png
+
 newmtl glass_pane_side
 Kd 1.0000 1.0000 1.0000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/glass_pane_side.png
 map_d tex/glass_pane_side_a.png
+
+newmtl glass_pane_side_black
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_black.png
+map_d tex/glass_pane_side_black_a.png
+
+newmtl glass_pane_side_blue
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_blue.png
+map_d tex/glass_pane_side_blue_a.png
+
+newmtl glass_pane_side_brown
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_brown.png
+map_d tex/glass_pane_side_brown_a.png
+
+newmtl glass_pane_side_cyan
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_cyan.png
+map_d tex/glass_pane_side_cyan_a.png
+
+newmtl glass_pane_side_dark_gray
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_dark_gray.png
+map_d tex/glass_pane_side_dark_gray_a.png
+
+newmtl glass_pane_side_green
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_green.png
+map_d tex/glass_pane_side_green_a.png
+
+newmtl glass_pane_side_light_blue
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_light_blue.png
+map_d tex/glass_pane_side_light_blue_a.png
+
+newmtl glass_pane_side_light_gray
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_light_gray.png
+map_d tex/glass_pane_side_light_gray_a.png
+
+newmtl glass_pane_side_lime
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_lime.png
+map_d tex/glass_pane_side_lime_a.png
+
+newmtl glass_pane_side_magenta
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_magenta.png
+map_d tex/glass_pane_side_magenta_a.png
+
+newmtl glass_pane_side_orange
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_orange.png
+map_d tex/glass_pane_side_orange_a.png
+
+newmtl glass_pane_side_pink
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_pink.png
+map_d tex/glass_pane_side_pink_a.png
+
+newmtl glass_pane_side_purple
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_purple.png
+map_d tex/glass_pane_side_purple_a.png
+
+newmtl glass_pane_side_red
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_red.png
+map_d tex/glass_pane_side_red_a.png
+
+newmtl glass_pane_side_white
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_white.png
+map_d tex/glass_pane_side_white_a.png
+
+newmtl glass_pane_side_yellow
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_yellow.png
+map_d tex/glass_pane_side_yellow_a.png
 
 newmtl glowstone
 Kd 0.9450 0.8941 0.5960
@@ -607,6 +783,11 @@ Kd 0.4902 0.6824 1.0000
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/ice.png
 map_d tex/ice_a.png
+
+newmtl ice_packed
+Kd 0.4902 0.6824 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/ice_packed.png
 
 newmtl iron_bars
 Kd 0.7686 0.7686 0.7686
@@ -1242,10 +1423,10 @@ Kd 0.3412 0.3567 0.3567
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/stained_clay_cyan.png
 
-newmtl stained_clay_dark_grey
+newmtl stained_clay_dark_gray
 Kd 0.2275 0.1647 0.1412
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/stained_clay_dark_grey.png
+map_Kd tex/stained_clay_dark_gray.png
 
 newmtl stained_clay_green
 Kd 0.2980 0.3255 0.1647
@@ -1484,10 +1665,10 @@ Kd 0.1529 0.4588 0.5882
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/wool_cyan.png
 
-newmtl wool_dark_grey
+newmtl wool_dark_gray
 Kd 0.2627 0.2627 0.2627
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/wool_dark_grey.png
+map_Kd tex/wool_dark_gray.png
 
 newmtl wool_green
 Kd 0.2196 0.3020 0.0941
