@@ -259,11 +259,6 @@ public class ObjExporter {
 							uv.println(line);
 						} else if (line.startsWith("g ")) {
 							current_g = line;
-							if (Options.objectPerContiguousMass)
-							{
-								current_ff.writer.println(current_g);
-								current_ff.writer.println();
-							}
 						} else {
 							main.println(line);
 							if (line.startsWith("mtllib"))
@@ -313,7 +308,7 @@ public class ObjExporter {
 							progress.setProgress(0.5f + 0.5f * (float) count / (float) maxcount);
 
 						vertex.println();
-						if (Options.objectPerMaterial && !Options.objectPerChunk && !Options.objectPerContiguousMass)
+						if (Options.objectPerMaterial && !Options.objectPerChunk)
 							main.println("g " + ff.name);
 						main.println();
 

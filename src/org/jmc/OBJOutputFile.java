@@ -7,13 +7,10 @@
  ******************************************************************************/
 package org.jmc;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 
@@ -66,81 +63,12 @@ public class OBJOutputFile extends OBJFileBase
 	private int vertex_counter, tex_counter, norm_counter;
 	
 	private long obj_idx_count=-1;
-
-	static class Block
-	{
-		short id;
-		byte data;
-		int x, y, z;
-
-		Block() {}
-
-		Block(Block other)
-		{
-			id = other.id;
-			data = other.data;
-
-			x = other.x;
-			y = other.y;
-			z = other.z;
-		}
-
-		Block[] getSurroundings()
-		{
-			Block[] surroundings = new Block[6];
-
-			surroundings[0] = new Block(this);
-			surroundings[1] = new Block(this);
-			surroundings[2] = new Block(this);
-			surroundings[3] = new Block(this);
-			surroundings[4] = new Block(this);
-			surroundings[5] = new Block(this);
-
-			surroundings[0].x--;
-			surroundings[1].x++;
-			surroundings[2].y--;
-			surroundings[3].y++;
-			surroundings[4].z--;
-			surroundings[5].z++;
-
-			return surroundings;
-		}
-
-		public boolean equals(Object o)
-		{
-			if (!(o instanceof Block))
-				return false;
-
-			Block other = (Block)o;
-
-			return id == other.id && data == other.data &&
-				x == other.x && y == other.y && z == other.z;
-		}
-		public int hashCode()
-		{
-			return
-				((id & 0xF) << 28) |
-				((data & 0xF) << 24) |
-				((x & 0xFF) << 16) |
-				((y & 0xFF) << 8) |
-				((z & 0xFF) << 0);
-		}
-	}
-
-	//Map of chunk coordinates to list of every contiguous mass in that chunk
-	private Map<Point, ArrayList<Block>> contiguous_masses;
-
-	//Index that masses for the current chunk starts at
-	private int chunk_mass_index = 0;
-
-	//Map of masses in a chunk to neighboring masses in surrounding chunks.
-	//Currently it gets populated, but isn't being used yet.
-	private Map<Block, HashSet<Block>> neighbors;
-
+	
 	/**
 	 * Decides whether to print "usemtl" lines in OBJ file
 	 */
 	private boolean print_usemtl;
+
 
 	/**
 	 * Main constructor.
@@ -164,9 +92,6 @@ public class OBJOutputFile extends OBJFileBase
 		z_offset = 0;
 		file_scale = 1.0f;
 		print_usemtl=true;
-
-		contiguous_masses = new HashMap<Point, ArrayList<Block>>();
-		neighbors = new HashMap<Block, HashSet<Block>>();
 	}
 
 	/**
@@ -447,9 +372,7 @@ public class OBJOutputFile extends OBJFileBase
 	 */
 	public void addChunkBuffer(ChunkDataBuffer chunk, int chunk_x, int chunk_z)
 	{
-		Block block = new Block();
-		Point here = new Point(chunk_x, chunk_z);
-
+		int x,y,z;
 		int xmin,xmax,ymin,ymax,zmin,zmax;
 		Rectangle xy,xz;
 		xy=chunk.getXYBoundaries();
@@ -471,62 +394,24 @@ public class OBJOutputFile extends OBJFileBase
 		if(zs<zmin) zs=zmin;
 		if(ze>zmax) ze=zmax;
 
-		if(Options.objectPerContiguousMass)
+		for(z = zs; z < ze; z++)
 		{
-			calculateMasses(chunk, here, ymin, ymax);
-			calculateMasses(chunk, new Point(chunk_x-1, chunk_z), ymin, ymax);
-			calculateMasses(chunk, new Point(chunk_x, chunk_z-1), ymin, ymax);
-			calculateMasses(chunk, new Point(chunk_x+1, chunk_z), ymin, ymax);
-			calculateMasses(chunk, new Point(chunk_x, chunk_z+1), ymin, ymax);
-
-			linkMasses(chunk, here, new Point(chunk_x-1, chunk_z), ymin, ymax);
-			linkMasses(chunk, here, new Point(chunk_x, chunk_z-1), ymin, ymax);
-			linkMasses(chunk, here, new Point(chunk_x+1, chunk_z), ymin, ymax);
-			linkMasses(chunk, here, new Point(chunk_x, chunk_z+1), ymin, ymax);
-		}
-
-		ArrayList<Block> masses = contiguous_masses.get(here);
-
-		for(block.z = zs; block.z < ze; block.z++)
-		{
-			for(block.x = xs; block.x < xe; block.x++)
+			for(x = xs; x < xe; x++)
 			{
-				for(block.y = ymin; block.y < ymax; block.y++)
+				for(y = ymin; y < ymax; y++)
 				{
-					block.id=chunk.getBlockID(block.x, block.y, block.z);
-					block.data=chunk.getBlockData(block.x, block.y, block.z);
-					byte blockBiome=chunk.getBlockBiome(block.x, block.z);
+					short blockID=chunk.getBlockID(x, y, z);
+					byte blockData=chunk.getBlockData(x, y, z);
+					byte blockBiome=chunk.getBlockBiome(x, z);
 
-					if(block.id==0) continue;
+					if(blockID==0) continue;
 
 					if(Options.objectPerBlock) obj_idx_count++;
-
-					if(Options.objectPerContiguousMass)
-					{
-						int mass_index = 0;
-						for (int i = 0; i < masses.size(); i++)
-						{
-							Block mass = masses.get(i);
-							if ((block.id != mass.id) || (block.data != mass.data))
-								continue;
-
-							if (pathExists(chunk, ymin, ymax, block, mass))
-							{
-								mass_index = i;
-								break;
-							}
-						}
-
-						obj_idx_count = chunk_mass_index + mass_index;
-					}
-
-					BlockTypes.get(block.id).getModel().addModel(this, chunk, block.x, block.y, block.z, block.data, blockBiome);
+					
+					BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
 				}
 			}
 		}
-
-		if(Options.objectPerContiguousMass)
-			chunk_mass_index += masses.size();
 
 		if(Options.renderEntities)
 		{
@@ -544,105 +429,4 @@ public class OBJOutputFile extends OBJFileBase
 		}
 	}
 
-	private void calculateMasses(ChunkDataBuffer chunk, Point chunkp, int ymin, int ymax)
-	{
-		if (!chunk.hasChunk(chunkp.x, chunkp.y) || contiguous_masses.containsKey(chunkp))
-			return;
-
-		ArrayList<Block> masses = new ArrayList<Block>();
-		Block block = new Block();
-
-		for (block.z = chunkp.y*16; block.z < (chunkp.y*16)+16; block.z++)
-		{
-			for (block.x = chunkp.x*16; block.x < (chunkp.x*16)+16; block.x++)
-			{
-				for(block.y = ymin; block.y < ymax; block.y++)
-				{
-					block.id = chunk.getBlockID(block.x, block.y, block.z);
-					block.data = chunk.getBlockData(block.x, block.y, block.z);
-
-					if (block.id == 0)
-						continue;
-
-					int mass_index = -1;
-					for (int i = 0; i < masses.size(); i++)
-					{
-						Block mass = masses.get(i);
-						if ((block.id != mass.id) || (block.data != mass.data))
-							continue;
-
-						if (pathExists(chunk, ymin, ymax, block, mass))
-						{
-							mass_index = i;
-							break;
-						}
-					}
-
-					if (mass_index < 0)
-						masses.add(new Block(block));
-				}
-			}
-		}
-
-		contiguous_masses.put(chunkp, masses);
-	}
-	private void linkMasses(ChunkDataBuffer chunk, Point chunkp_here, Point chunkp_there, int ymin, int ymax)
-	{
-		if (!chunk.hasChunk(chunkp_there.x, chunkp_there.y) || !contiguous_masses.containsKey(chunkp_there))
-			return;
-
-		for (Block mass_here: contiguous_masses.get(chunkp_here))
-		{
-			HashSet<Block> masses_there = new HashSet<Block>();
-
-			for (Block mass_there: contiguous_masses.get(chunkp_there))
-				if (pathExists(chunk, ymin, ymax, mass_here, mass_there))
-					masses_there.add(mass_there);
-
-			neighbors.put(mass_here, masses_there);
-		}
-	}
-
-
-	private boolean pathExists(ChunkDataBuffer chunk, int ymin, int ymax, Block b1, Block b2)
-	{
-		Rectangle area = new Rectangle(Chunk.getChunkPos(b1.x, b1.z));
-		area.add(Chunk.getChunkPos(b2.x, b2.z));
-
-		area.x *= 16;
-		area.y *= 16;
-		area.width = (area.width+1)*16;
-		area.height = (area.height+1)*16;
-
-		return __pathExists(chunk, area, ymin, ymax, new HashSet<Block>(), new Block(b1), b2);
-	}
-	private boolean __pathExists(ChunkDataBuffer chunk, Rectangle area, int ymin, int ymax, HashSet<Block> checked, Block block, Block target)
-	{
-		if (block.equals(target))
-			return true;
-
-		if (checked.contains(block))
-			return false;
-
-		if (block.y < ymin || block.y >= ymax)
-			return false;
-		if (block.x < area.x || block.z < area.y)
-			return false;
-		if (block.x >= (area.x + area.width) || block.z >= (area.y + area.height))
-			return false;
-
-		block.id = chunk.getBlockID(block.x, block.y, block.z);
-		block.data = chunk.getBlockData(block.x, block.y, block.z);
-
-		if (block.id != target.id || block.data != target.data)
-			return false;
-
-		checked.add(block);
-
-		for (Block b: block.getSurroundings())
-			if (__pathExists(chunk, area, ymin, ymax, checked, b, target))
-				return true;
-
-		return false;
-	}
 }
