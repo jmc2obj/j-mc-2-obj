@@ -152,9 +152,15 @@ public class ObjExporter {
 						if (progress != null)
 							progress.setProgress(progress_count / progress_max);
 
+						if (!addChunkIfExists(chunk_buffer, cx, cz))
+							continue;
+
 						for (int lx = cx - 1; lx <= cx + 1; lx++)
 							for (int lz = cz - 1; lz <= cz + 1; lz++) {
 								if (lx < cs.x || lx > ce.x || lz < cs.y || lz > ce.y)
+									continue;
+
+								if (lx == cx && lz == cz)
 									continue;
 
 								addChunkIfExists(chunk_buffer, lx, lz);
