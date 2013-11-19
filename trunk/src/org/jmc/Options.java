@@ -108,11 +108,6 @@ public class Options
 	public static boolean objectPerMaterial = false;
 
 	/**
-	 * If true, will export a separate object for contiguous masses.
-	 */
-	public static boolean objectPerContiguousMass = false;
-
-	/**
 	 * If true, will export a separate object for each chunk.
 	 */
 	public static boolean objectPerChunk = false;
