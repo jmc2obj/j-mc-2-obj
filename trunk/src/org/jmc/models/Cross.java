@@ -16,20 +16,20 @@ public class Cross extends BlockModel
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
 		Transform move = new Transform();
-		move.translate(x, y, z);		
+		move.translate(x, y, z);
 		
 		Vertex[] vertices = new Vertex[4];
-		vertices[0] = new Vertex(+0.5f,-0.5f,-0.5f);				
+		vertices[0] = new Vertex(+0.5f,-0.5f,-0.5f);
 		vertices[1] = new Vertex(-0.5f,-0.5f,+0.5f);
-		vertices[2] = new Vertex(-0.5f,+0.5f,+0.5f); 				
-		vertices[3] = new Vertex(+0.5f,+0.5f,-0.5f);	
+		vertices[2] = new Vertex(-0.5f,+0.5f,+0.5f);
+		vertices[3] = new Vertex(+0.5f,+0.5f,-0.5f);
 		obj.addFace(vertices, null, move, materials.get(data,biome)[0]);
 		
-		vertices[0] = new Vertex(-0.5f,-0.5f,-0.5f);		
+		vertices[0] = new Vertex(-0.5f,-0.5f,-0.5f);
 		vertices[1] = new Vertex(+0.5f,-0.5f,+0.5f);
-		vertices[2] = new Vertex(+0.5f,+0.5f,+0.5f);	
+		vertices[2] = new Vertex(+0.5f,+0.5f,+0.5f);
 		vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
-		obj.addFace(vertices, null, move, materials.get(data,biome)[0]);						
+		obj.addFace(vertices, null, move, materials.get(data,biome)[0]);
 	}
 
 }
