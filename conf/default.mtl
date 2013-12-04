@@ -408,6 +408,90 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/door_wood_top.png
 map_d tex/door_wood_top_a.png
 
+newmtl double_plant_fern_bottom
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_fern_bottom.png
+map_d tex/double_plant_fern_bottom_a.png
+
+newmtl double_plant_fern_top
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_fern_top.png
+map_d tex/double_plant_fern_top_a.png
+
+newmtl double_plant_grass_bottom
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_grass_bottom.png
+map_d tex/double_plant_grass_bottom_a.png
+
+newmtl double_plant_grass_top
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_grass_top.png
+map_d tex/double_plant_grass_top_a.png
+
+newmtl double_plant_paeonia_bottom
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_paeonia_bottom.png
+map_d tex/double_plant_paeonia_bottom_a.png
+
+newmtl double_plant_paeonia_top
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_paeonia_top.png
+map_d tex/double_plant_paeonia_top_a.png
+
+newmtl double_plant_rose_bottom
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_rose_bottom.png
+map_d tex/double_plant_rose_bottom_a.png
+
+newmtl double_plant_rose_top
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_rose_top.png
+map_d tex/double_plant_rose_top_a.png
+
+newmtl double_plant_sunflower_back
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_back.png
+map_d tex/double_plant_sunflower_back_a.png
+
+newmtl double_plant_sunflower_bottom
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_bottom.png
+map_d tex/double_plant_sunflower_bottom_a.png
+
+newmtl double_plant_sunflower_front
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_front.png
+map_d tex/double_plant_sunflower_front_a.png
+
+newmtl double_plant_sunflower_top
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_top.png
+map_d tex/double_plant_sunflower_top_a.png
+
+newmtl double_plant_syringa_bottom
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_syringa_bottom.png
+map_d tex/double_plant_syringa_bottom_a.png
+
+newmtl double_plant_syringa_top
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_syringa_top.png
+map_d tex/double_plant_syringa_top_a.png
+
 newmtl dropper_front
 Kd 0.4235 0.4235 0.4235
 Ks 0.0000 0.0000 0.0000
@@ -496,11 +580,65 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/fire.png
 map_d tex/fire_a.png
 
+newmtl flower_allium
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_allium.png
+map_d tex/flower_allium_a.png
+
+newmtl flower_blue_orchid
+Kd 0.1843 0.8078 0.9922
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_blue_orchid.png
+map_d tex/flower_blue_orchid_a.png
+
+newmtl flower_houstonia
+Kd 0.9059 0.9059 0.9059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_houstonia.png
+map_d tex/flower_houstonia_a.png
+
+newmtl flower_oxeye_daisy
+Kd 0.9059 0.9059 0.9059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_oxeye_daisy.png
+map_d tex/flower_oxeye_daisy_a.png
+
+newmtl flower_paeonia
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_paeonia.png
+map_d tex/flower_paeonia_a.png
+
 newmtl flower_red
 Kd 0.7961 0.0235 0.0392
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/flower_red.png
 map_d tex/flower_red_a.png
+
+newmtl flower_tulip_orange
+Kd 0.8823 0.4784 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_orange.png
+map_d tex/flower_tulip_orange_a.png
+
+newmtl flower_tulip_pink
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_pink.png
+map_d tex/flower_tulip_pink_a.png
+
+newmtl flower_tulip_red
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_red.png
+map_d tex/flower_tulip_red_a.png
+
+newmtl flower_tulip_white
+Kd 0.9059 0.9059 0.9059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_white.png
+map_d tex/flower_tulip_white_a.png
 
 newmtl flower_yellow
 Kd 0.7569 0.7804 0.0078
