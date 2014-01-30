@@ -1912,3 +1912,28 @@ newmtl wasteland_painting
 Kd 0.5 0.5 0.5
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/wasteland_painting.png
+
+newmtl mob_pig
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_pig.png
+
+newmtl mob_cow
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_cow.png
+
+newmtl mob_chicken
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_chicken.png
+
+newmtl mob_sheep
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_sheep.png
+
+newmtl mob_squid
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_squid.png
