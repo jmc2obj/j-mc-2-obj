@@ -37,10 +37,10 @@ import org.w3c.dom.NodeList;
  * packs.
  */
 public class Texsplit {
-	private static final int FORMAT_1_6 = 3;		// 1.6 resource pack
-	private static final int FORMAT_1_5 = 2;		// 1.5 texture pack
-	private static final int FORMAT_PRE_1_5 = 1;	// pre-1.5 texture pack
-	private static final int FORMAT_INVALID = 0;	// unrecognized format
+	private static final int FORMAT_1_6 = 3; // 1.6 resource pack
+	private static final int FORMAT_1_5 = 2; // 1.5 texture pack
+	private static final int FORMAT_PRE_1_5 = 1; // pre-1.5 texture pack
+	private static final int FORMAT_INVALID = 0; // unrecognized format
 
 	/**
 	 * Holds a single texture
@@ -111,6 +111,7 @@ public class Texsplit {
 			buffer[4 * i] = buffer[4 * i + 3];
 			buffer[4 * i + 1] = buffer[4 * i + 3];
 			buffer[4 * i + 2] = buffer[4 * i + 3];
+			buffer[4 * i + 3] = 255;
 		}
 
 		raster.setPixels(0, 0, w, h, buffer);
@@ -198,10 +199,8 @@ public class Texsplit {
 					foundTerrainPng = true;
 			}
 
-			return	foundAssetsDir ? FORMAT_1_6 :
-					foundBlocksDir ? FORMAT_1_5 :
-					foundTerrainPng ? FORMAT_PRE_1_5 :
-					FORMAT_INVALID;
+			return foundAssetsDir ? FORMAT_1_6 : foundBlocksDir ? FORMAT_1_5 : foundTerrainPng ? FORMAT_PRE_1_5
+					: FORMAT_INVALID;
 		} finally {
 			if (zis != null)
 				zis.close();
@@ -234,23 +233,23 @@ public class Texsplit {
 
 		String confFilePath;
 		switch (detectTexturePackFormat(zipfile)) {
-			case FORMAT_1_6:
-				Log.info("Found resource pack (Minecraft 1.6 or later)");
-				confFilePath = "conf/texsplit_1.6.conf";
-				break;
-			case FORMAT_1_5:
-				Log.info("Found texture pack (Minecraft 1.5)");
-				confFilePath = "conf/texsplit_1.5.conf";
-				break;
-			case FORMAT_PRE_1_5:
-				Log.info("Found texture pack (Minecraft 1.4 or earlier)");
-				confFilePath = "conf/texsplit_old.conf";
-				break;
-			case FORMAT_INVALID:
-			default:
-				throw new Exception(zipfile.toString() + " does not appear to contain a Minecraft texture pack.");
+		case FORMAT_1_6:
+			Log.info("Found resource pack (Minecraft 1.6 or later)");
+			confFilePath = "conf/texsplit_1.6.conf";
+			break;
+		case FORMAT_1_5:
+			Log.info("Found texture pack (Minecraft 1.5)");
+			confFilePath = "conf/texsplit_1.5.conf";
+			break;
+		case FORMAT_PRE_1_5:
+			Log.info("Found texture pack (Minecraft 1.4 or earlier)");
+			confFilePath = "conf/texsplit_old.conf";
+			break;
+		case FORMAT_INVALID:
+		default:
+			throw new Exception(zipfile.toString() + " does not appear to contain a Minecraft texture pack.");
 		}
-		
+
 		File confFile = new File(Filesystem.getDatafilesDir(), confFilePath);
 		if (!confFile.canRead())
 			throw new Exception("Cannot open configuration file " + confFilePath);
