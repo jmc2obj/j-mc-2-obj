@@ -34,6 +34,8 @@ public class Slab extends BlockModel
 			uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 			ys = 0.0f;
 			ye = 0.5f;
+			
+			data = (byte)(data & 0x7);
 		}
 
 		uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };
