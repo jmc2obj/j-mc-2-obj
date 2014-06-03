@@ -370,7 +370,7 @@ public class Texsplit {
 
 		if (!destination.exists() || !destination.isDirectory()) {
 			if (destination.exists())
-				throw new RuntimeException("Cannot create texture directory! Filen is in the way!");
+				throw new RuntimeException("Cannot create texture directory! File is in the way!");
 			if (!destination.mkdir())
 				throw new RuntimeException("Cannot create texture directory!");
 		}
@@ -399,7 +399,6 @@ public class Texsplit {
 	}
 
 	/**
-	 * 
 	 * Reads a Minecraft texture pack and splits the individual block textures
 	 * into separate images then merges them into a single file containing all
 	 * the textures.
@@ -427,7 +426,7 @@ public class Texsplit {
 
 		if (!destination.exists() || !destination.isDirectory()) {
 			if (destination.exists())
-				throw new RuntimeException("Cannot create texture directory! Filen is in the way!");
+				throw new RuntimeException("Cannot create texture directory! File is in the way!");
 			if (!destination.mkdir())
 				throw new RuntimeException("Cannot create texture directory!");
 		}
