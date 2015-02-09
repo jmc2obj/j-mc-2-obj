@@ -97,7 +97,7 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 		main.add(pOptions);
 
 		options=new OBJExportOptions();
-		options.setVisible(false);
+		options.setVisible(true);
 		main.add(options);
 		
 		JPanel pTex=new JPanel();
@@ -108,7 +108,7 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 		main.add(pTex);
 		
 		texsplit=new TexsplitPanel(this);
-		texsplit.setVisible(false);
+		texsplit.setVisible(true);
 		main.add(texsplit);
 		
 		main.add(Box.createVerticalGlue());
