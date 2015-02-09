@@ -118,6 +118,12 @@ public class Options
 	public static boolean objectPerBlock = false;
 	
 	/**
+	 * If true, will only export a single block id.
+	 */
+	public static boolean singleBlock = false;
+	public static int blockid=0;
+	
+	/**
 	 * If true, will export a separate object for each block.
 	 */
 	public static boolean singleMaterial = false;

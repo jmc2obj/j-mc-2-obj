@@ -403,7 +403,11 @@ public class OBJOutputFile extends OBJFileBase
 					byte blockData=chunk.getBlockData(x, y, z);
 					byte blockBiome=chunk.getBlockBiome(x, z);
 
-					if(blockID==0) continue;
+					if(Options.singleBlock){
+						if(blockID!=Options.blockid) continue;						
+					}else{
+						if(blockID==0) continue;
+					}
 
 					if(Options.objectPerBlock) obj_idx_count++;
 					
