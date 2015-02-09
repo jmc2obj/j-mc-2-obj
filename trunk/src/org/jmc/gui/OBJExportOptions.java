@@ -147,8 +147,11 @@ public class OBJExportOptions extends JPanel
 		pSingleBlock.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbSingleBlock=new JCheckBox(Messages.getString("OBJExportOptions.SINGLEBLOCK"));
 		tfSingleBlockID=new JTextField("0");
+//		I've tried every way I know to change the width of the JTextField, but nothing is working, so this is just for looks
+		JLabel blankLabel = new JLabel("                                                                     ");
 		pSingleBlock.add(cbSingleBlock);
 		pSingleBlock.add(tfSingleBlockID);
+		pSingleBlock.add(blankLabel);
 		
 		JPanel pSingleMaterial=new JPanel();
 		pSingleMaterial.setLayout(new BoxLayout(pSingleMaterial, BoxLayout.LINE_AXIS));
@@ -262,6 +265,7 @@ public class OBJExportOptions extends JPanel
 		tfXOffset.getDocument().addDocumentListener(tf_listener);
 		tfZOffset.getDocument().addDocumentListener(tf_listener);
 		tfUVFile.getDocument().addDocumentListener(tf_listener);
+		tfSingleBlockID.getDocument().addDocumentListener(tf_listener);
 
 		AbstractAction offsetSaveAction=new AbstractAction() {			
 			@Override
@@ -279,10 +283,23 @@ public class OBJExportOptions extends JPanel
 				saveSettings();
 			}
 		};
+		
+		AbstractAction singelBlockAction=new AbstractAction() {			
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				if(cbSingleBlock.isSelected()){
+					tfSingleBlockID.setEnabled(true);
+				}else{
+					tfSingleBlockID.setEnabled(false);
+				}
+				saveSettings();
+			}
+		};		
 
 		rbNoOffset.addActionListener(offsetSaveAction);
 		rbCenterOffset.addActionListener(offsetSaveAction);
 		rbCustomOffset.addActionListener(offsetSaveAction);
+		cbSingleBlock.addActionListener(singelBlockAction);
 
 		AbstractAction genericSaveAction=new AbstractAction() {
 			@Override
@@ -380,6 +397,12 @@ public class OBJExportOptions extends JPanel
 		case 2:
 			rbMTLNever.setSelected(true);
 			break;
+		}
+		
+		if(cbSingleBlock.isSelected()){
+			tfSingleBlockID.setEnabled(true);
+		}else{
+			tfSingleBlockID.setEnabled(false);
 		}
 
 		cbRenderSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
