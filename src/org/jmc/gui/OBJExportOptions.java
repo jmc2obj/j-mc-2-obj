@@ -46,6 +46,7 @@ public class OBJExportOptions extends JPanel
 	private JCheckBox cbObjPerBlock;
 	private JCheckBox cbSingleBlock;
 	private JTextField tfSingleBlockID;
+	private JCheckBox cbConvertOres;
 	private JCheckBox cbSingleMaterial;
 	private JCheckBox cbRemoveDuplicates;
 	private JCheckBox cbUseUV;
@@ -148,10 +149,16 @@ public class OBJExportOptions extends JPanel
 		cbSingleBlock=new JCheckBox(Messages.getString("OBJExportOptions.SINGLEBLOCK"));
 		tfSingleBlockID=new JTextField("0");
 //		I've tried every way I know to change the width of the JTextField, but nothing is working, so this is just for looks
-		JLabel blankLabel = new JLabel("                                                                     ");
+		JLabel blankLabel = new JLabel("              ");
 		pSingleBlock.add(cbSingleBlock);
 		pSingleBlock.add(tfSingleBlockID);
 		pSingleBlock.add(blankLabel);
+		
+		JPanel pConvertOres=new JPanel();
+		pConvertOres.setLayout(new BoxLayout(pConvertOres, BoxLayout.LINE_AXIS));
+		pConvertOres.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbConvertOres=new JCheckBox(Messages.getString("OBJExportOptions.CONVERTORES"));
+		pConvertOres.add(cbConvertOres);
 		
 		JPanel pSingleMaterial=new JPanel();
 		pSingleMaterial.setLayout(new BoxLayout(pSingleMaterial, BoxLayout.LINE_AXIS));
@@ -322,6 +329,7 @@ public class OBJExportOptions extends JPanel
 		cbObjPerChunk.addActionListener(genericSaveAction);
 		cbObjPerBlock.addActionListener(genericSaveAction);
 		cbSingleBlock.addActionListener(genericSaveAction);
+		cbConvertOres.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
 		cbUseUV.addActionListener(genericSaveAction);
 		cbSingleMaterial.addActionListener(genericSaveAction);
@@ -336,6 +344,7 @@ public class OBJExportOptions extends JPanel
 		add(pObjPerChunk);
 		add(pObjPerBlock);
 		add(pSingleBlock);
+		add(pConvertOres);
 		add(pSingleMaterial);
 		add(pRemoveDuplicates);
 		add(pUseUV);
@@ -413,6 +422,7 @@ public class OBJExportOptions extends JPanel
 		cbObjPerChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		cbObjPerBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
 		cbSingleBlock.setSelected(prefs.getBoolean("SINGLE_BLOCK", false));
+		cbConvertOres.setSelected(prefs.getBoolean("CONVERT_ORES", false));
 		cbSingleMaterial.setSelected(prefs.getBoolean("SINGLE_MTL", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 		cbUseUV.setSelected(prefs.getBoolean("USE_UV_FILE", false));
@@ -480,6 +490,7 @@ public class OBJExportOptions extends JPanel
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
 		prefs.putBoolean("SINGLE_BLOCK", Options.singleBlock);
+		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
 		prefs.putBoolean("SINGLE_MTL", Options.singleMaterial);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
 		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
@@ -528,8 +539,21 @@ public class OBJExportOptions extends JPanel
 		
 		try{
 			String txt=tfSingleBlockID.getText();
-			if(!txt.isEmpty() && !txt.equals("-"))
-				Options.blockid = Integer.parseInt(txt);
+			if(!txt.isEmpty() && !txt.equals("-")){
+				txt = txt.replaceAll("[^0-9]+", " ");
+				String[] str = txt.trim().split(" ");
+				int[] ints = new int[str.length];
+				for(int i=0; i<str.length; i++)
+				{
+				    try{
+				        ints[i] = Integer.parseInt(str[i]);
+				    }
+				    catch(NumberFormatException nfe){
+				        //Not an integer, do some
+				    }
+				}
+				Options.blockid = ints; //Integer.parseInt(txt);
+			}
 		}catch (NumberFormatException e) {
 			Log.error("ID number format error!", e, false);
 		}
@@ -542,6 +566,7 @@ public class OBJExportOptions extends JPanel
 		Options.objectPerChunk = cbObjPerChunk.isSelected();
 		Options.objectPerBlock = cbObjPerBlock.isSelected();
 		Options.singleBlock = cbSingleBlock.isSelected();
+		Options.convertOres = cbConvertOres.isSelected();
 		Options.singleMaterial = cbSingleMaterial.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
 		Options.useUVFile=cbUseUV.isSelected();
