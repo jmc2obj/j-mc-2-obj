@@ -40,6 +40,7 @@ import org.jmc.util.Messages;
 @SuppressWarnings("serial")
 public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWheelListener, MouseInputListener {
 
+	//Might want to up these later to support larger monitors...
 	/**
 	 * Maximum width of the panel.
 	 */
@@ -436,8 +437,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		return ret;
 	}
 
-	private int zoom_level_pos=7;
-	private final float zoom_levels[]={0.125f, 0.25f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f}; 
+	private int zoom_level_pos=11;
+	private final float zoom_levels[]={0.015625f, 0.03125f, 0.0625f, 0.125f, 0.25f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 10.0f}; 
 
 	/**
 	 * Event fired when mouse is scrolled inside the preview. 

@@ -363,6 +363,15 @@ public class OBJOutputFile extends OBJFileBase
 
 		faces.add(face);
 	}
+	
+	
+	// a quick and dirty function outside of addChunkBuffer just to check block ids against the list stored in options.
+	public boolean CheckBlockID(int blockID){
+		for(int id : Options.blockid){
+			if(blockID == id) return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Adds all blocks from the given chunk buffer into the file.
@@ -402,9 +411,15 @@ public class OBJOutputFile extends OBJFileBase
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
 					byte blockBiome=chunk.getBlockBiome(x, z);
+					
+					if(Options.convertOres){
+						if(blockID == 14 || blockID == 15 || blockID == 16 || blockID == 21 || blockID == 56 || blockID == 73 || blockID == 74 || blockID == 129){
+							blockID = 1;
+						}
+					}
 
-					if(Options.singleBlock){
-						if(blockID!=Options.blockid) continue;						
+					if(Options.singleBlock){						
+						if(!CheckBlockID(blockID)) continue; // Had to reference an outside function cuz you can't use continue to without labeling the loops then, and thats a little messy
 					}else{
 						if(blockID==0) continue;
 					}
