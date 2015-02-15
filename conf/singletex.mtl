@@ -304,6 +304,11 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
 
+newmtl daylight_sensor_inv_top
+Kd 0.6157 0.5567 0.4706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl daylight_sensor_side
 Kd 0.2627 0.2157 0.1373
 Ks 0.0000 0.0000 0.0000
@@ -385,6 +390,42 @@ Kd 0.4235 0.4235 0.4235
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl door_acacia_lower
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_acacia_upper
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_birch_lower
+Kd 0.7686 0.7019 0.4784
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_birch_upper
+Kd 0.7686 0.7019 0.4784
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_dark_oak_lower
+Kd 0.2392 0.1523 0.0703
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_dark_oak_upper
+Kd 0.2392 0.1523 0.0703
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl door_iron_bottom
 Kd 0.6980 0.6980 0.6980
 Ks 0.0000 0.0000 0.0000
@@ -393,6 +434,30 @@ map_d tex/texture_a.png
 
 newmtl door_iron_top
 Kd 0.6980 0.6980 0.6980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_jungle_lower
+Kd 0.6157 0.4393 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_jungle_upper
+Kd 0.6157 0.4393 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_spruce_lower
+Kd 0.4196 0.3176 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
+newmtl door_spruce_upper
+Kd 0.4196 0.3176 0.1882
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
@@ -944,6 +1009,12 @@ Kd 0.5333 0.5137 0.4980
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl iron_trapdoor
+Kd 0.6980 0.6980 0.6980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+map_d tex/texture_a.png
+
 newmtl jukebox_side
 Kd 0.4196 0.2863 0.2157
 Ks 0.0000 0.0000 0.0000
@@ -1244,6 +1315,21 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
 
+newmtl prismarine_bricks
+Kd 0.4078 0.6510 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl prismarine_dark
+Kd 0.2431 0.3529 0.3020
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl prismarine_rough
+Kd 0.4078 0.6510 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl pumpkin_front
 Kd 0.7725 0.4745 0.0941
 Ks 0.0000 0.0000 0.0000
@@ -1370,6 +1456,31 @@ map_Kd tex/texture.png
 map_d tex/texture_a.png
 
 newmtl red_sand
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl red_sandstone_bottom
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl red_sandstone_carved
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl red_sandstone_normal
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl red_sandstone_smooth
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl red_sandstone_top
 Kd 0.6706 0.3477 0.1328
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
@@ -1516,6 +1627,11 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 map_d tex/texture_a.png
 
+newmtl sea_lantern
+Kd 0.8863 0.9216 0.8902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl sign
 Kd 0.6157 0.5020 0.3098
 Ks 0.0000 0.0000 0.0000
@@ -1538,7 +1654,12 @@ map_Kd tex/texture.png
 map_d tex/texture_a.png
 
 newmtl sponge
-Kd 0.7176 0.7176 0.2235
+Kd 0.7608 0.7608 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl sponge_wet
+Kd 0.5882 0.5882 0.2157
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
@@ -1627,6 +1748,16 @@ Kd 0.4902 0.4902 0.4902
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
+newmtl stone_andesite
+Kd 0.5255 0.5255 0.5255
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl stone_andesite_smooth
+Kd 0.5255 0.5255 0.5255
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
 newmtl stone_brick
 Kd 0.4902 0.4902 0.4902
 Ks 0.0000 0.0000 0.0000
@@ -1644,6 +1775,26 @@ map_Kd tex/texture.png
 
 newmtl stone_brick_mossy
 Kd 0.4202 0.4902 0.4202
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl stone_diorite
+Kd 0.7059 0.7059 0.7059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl stone_diorite_smooth
+Kd 0.7059 0.7059 0.7059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl stone_granite
+Kd 0.6000 0.4471 0.3882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/texture.png
+
+newmtl stone_granite_smooth
+Kd 0.6000 0.4471 0.3882
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/texture.png
 
