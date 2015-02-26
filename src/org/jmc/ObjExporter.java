@@ -42,6 +42,17 @@ public class ObjExporter {
 
 	/**
 	 * Do the export. Export settings are taken from the global Options.
+	 * <p>
+	 * The overall logic is as follows:
+	 * <ul>
+	 * <li>Add the geometry to the OBJ, one chunk at a time.
+	 * <li>The ChunkDataBuffer holds a collection of chunks in the range of 
+	 * x-1..x+1 and z-1..z+1 around the chunk that is being processed. This
+	 * is so that neighboring block information exists for blocks that are at
+	 * the edge of the chunk.
+	 * <li>By holding only 9 chunks at a time, we can export arbitrarily large
+	 * maps in constant memory.
+	 * </ul>
 	 * 
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
@@ -90,6 +101,7 @@ public class ObjExporter {
 
 				PrintWriter obj_writer = new PrintWriter(new FileWriter(objfile));
 
+				// Calculate the boundaries of the chunks selected by the user 
 				Point cs = Chunk.getChunkPos(Options.minX, Options.minZ);
 				Point ce = Chunk.getChunkPos(Options.maxX + 15, Options.maxZ + 15);
 				int oxs, oys, ozs;
@@ -145,6 +157,7 @@ public class ObjExporter {
 
 				Log.info("Processing chunks...");
 
+				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
 					for (int cz = cs.y; cz <= ce.y; cz++, progress_count++) {
 						if (stop != null && stop.stopRequested())
@@ -152,10 +165,12 @@ public class ObjExporter {
 						if (progress != null)
 							progress.setProgress(progress_count / progress_max);
 
+						// load chunk being processed to the buffer
 						if (!addChunkIfExists(chunk_buffer, cx, cz))
 							continue;
 
-						for (int lx = cx - 1; lx <= cx + 1; lx++)
+						// also load chunks from x-1 to x+1 and z-1 to z+1
+						for (int lx = cx - 1; lx <= cx + 1; lx++) {
 							for (int lz = cz - 1; lz <= cz + 1; lz++) {
 								if (lx < cs.x || lx > ce.x || lz < cs.y || lz > ce.y)
 									continue;
@@ -165,7 +180,9 @@ public class ObjExporter {
 
 								addChunkIfExists(chunk_buffer, lx, lz);
 							}
+						}
 
+						// export the chunk to the OBJ
 						obj.addChunkBuffer(chunk_buffer, cx, cz);
 						obj.appendTextures(obj_writer);
 						obj.appendNormals(obj_writer);
@@ -175,6 +192,7 @@ public class ObjExporter {
 						obj.appendFaces(obj_writer);
 						obj.clearData(Options.removeDuplicates);
 
+						// remove the chunks we won't need anymore from the buffer 
 						for (int lx = cx - 1; lx <= cx + 1; lx++)
 							chunk_buffer.removeChunk(lx, cz - 1);
 					}
