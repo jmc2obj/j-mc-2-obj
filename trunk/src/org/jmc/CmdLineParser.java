@@ -251,6 +251,7 @@ public class CmdLineParser
 			"                                    area at the origin; X,Z - apply the given\n" +
 			"                                    offset. Default is none.\n" +
 			"  -s --render-sides                 Render world sides and bottom.\n" +
+			"     --render-entities              Render entities.\n" +
 			"     --include-unknown              Include blocks with unknown block ids.\n" +
 			"     --ignore-biomes                Don't render biomes.\n" +
 			"     --object-per-chunk             Export a separate object for each chunk.\n" +
