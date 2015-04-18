@@ -101,8 +101,8 @@ public class MainPanel extends JPanel {
 			fillDimensionList();
 
 			try {
-				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(Filesystem.getMinecraftDir(),
-						"bin/minecraft.jar")));
+				ZipInputStream zis = new ZipInputStream(new FileInputStream(
+						new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
 
 				ZipEntry entry = null;
 				while ((entry = zis.getNextEntry()) != null) {
@@ -121,6 +121,7 @@ public class MainPanel extends JPanel {
 				}
 				zis.close();
 			} catch (Exception e) {
+				/* don't care enough to log this */
 			}
 		}
 	}

@@ -69,7 +69,7 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 		super(Messages.getString("OBJExportPanel.WIN_TITLE"));		
 
 		setSize(400,200);
-		setMinimumSize(new Dimension(400,0));
+		setMinimumSize(new Dimension(400,200));
 
 		JPanel main=new JPanel();
 		add(main);
@@ -97,7 +97,7 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 		main.add(pOptions);
 
 		options=new OBJExportOptions();
-		options.setVisible(true);
+		options.setVisible(false);
 		main.add(options);
 		
 		JPanel pTex=new JPanel();
@@ -108,7 +108,7 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 		main.add(pTex);
 		
 		texsplit=new TexsplitPanel(this);
-		texsplit.setVisible(true);
+		texsplit.setVisible(false);
 		main.add(texsplit);
 		
 		main.add(Box.createVerticalGlue());
@@ -169,7 +169,10 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 					if(Options.objOverwriteAction==OverwriteAction.NEVER)
 						write_obj=false;
 					else if(Options.objOverwriteAction==OverwriteAction.ASK && 
-							JOptionPane.showConfirmDialog(OBJExportWindow.this, Messages.getString("OBJExportPanel.WIN_TITLE"))!=JOptionPane.YES_OPTION)
+							JOptionPane.showConfirmDialog(OBJExportWindow.this, 
+									Messages.getString("OBJExportPanel.OBJ_ERR"), 
+									Messages.getString("OBJExportPanel.WIN_TITLE"),
+									JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION)
 						write_obj=false;
 					else
 						write_obj=true;
@@ -183,7 +186,10 @@ public class OBJExportWindow extends JFrame implements ProgressCallback
 					if(Options.mtlOverwriteAction==OverwriteAction.NEVER)
 						write_mtl=false;
 					else if(Options.mtlOverwriteAction==OverwriteAction.ASK &&
-							JOptionPane.showConfirmDialog(OBJExportWindow.this, Messages.getString("OBJExportPanel.WIN_TITLE"))!=JOptionPane.YES_OPTION)
+							JOptionPane.showConfirmDialog(OBJExportWindow.this, 
+									Messages.getString("OBJExportPanel.MTL_ERR"), 
+									Messages.getString("OBJExportPanel.WIN_TITLE"),
+									JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION)
 						write_mtl=false;
 					else
 						write_mtl=true;

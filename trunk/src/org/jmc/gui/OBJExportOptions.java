@@ -147,12 +147,9 @@ public class OBJExportOptions extends JPanel
 		pSingleBlock.setLayout(new BoxLayout(pSingleBlock, BoxLayout.LINE_AXIS));
 		pSingleBlock.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbSingleBlock=new JCheckBox(Messages.getString("OBJExportOptions.SINGLEBLOCK"));
-		tfSingleBlockID=new JTextField("0");
-//		I've tried every way I know to change the width of the JTextField, but nothing is working, so this is just for looks
-		JLabel blankLabel = new JLabel("              ");
+		tfSingleBlockID=new JTextField("");
 		pSingleBlock.add(cbSingleBlock);
 		pSingleBlock.add(tfSingleBlockID);
-		pSingleBlock.add(blankLabel);
 		
 		JPanel pConvertOres=new JPanel();
 		pConvertOres.setLayout(new BoxLayout(pConvertOres, BoxLayout.LINE_AXIS));
