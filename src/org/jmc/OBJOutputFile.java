@@ -19,6 +19,7 @@ import org.jmc.entities.Entity;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.util.Log;
 
 
 /**
@@ -68,6 +69,20 @@ public class OBJOutputFile extends OBJFileBase
 	 * Decides whether to print "usemtl" lines in OBJ file
 	 */
 	private boolean print_usemtl;
+
+
+	/**
+	 * Checks if the blockId is in the option list of blocks to render.
+	 * 
+	 * @param blockID Id do check
+	 * @return Whether the id is in the list {@code Options.blockid }
+	 */
+	private boolean checkBlockIdInOptions(int blockID){
+		for(int id : Options.blockid){
+			if(blockID == id) return true;
+		}
+		return false;
+	}
 
 
 	/**
@@ -365,14 +380,6 @@ public class OBJOutputFile extends OBJFileBase
 	}
 	
 	
-	// a quick and dirty function outside of addChunkBuffer just to check block ids against the list stored in options.
-	public boolean CheckBlockID(int blockID){
-		for(int id : Options.blockid){
-			if(blockID == id) return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Adds all blocks from the given chunk buffer into the file.
 	 * @param chunk
@@ -418,15 +425,19 @@ public class OBJOutputFile extends OBJFileBase
 						}
 					}
 
-					if(Options.singleBlock){						
-						if(!CheckBlockID(blockID)) continue; // Had to reference an outside function cuz you can't use continue to without labeling the loops then, and thats a little messy
-					}else{
-						if(blockID==0) continue;
-					}
+					if(blockID==0)
+						continue;
+					if(Options.singleBlock && !checkBlockIdInOptions(blockID))						
+						continue;
 
 					if(Options.objectPerBlock) obj_idx_count++;
 					
-					BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+					try {
+						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+					}
+					catch (Exception ex) {
+						Log.error("Error rendering block, skipping.", ex);
+					}
 				}
 			}
 		}
@@ -436,13 +447,23 @@ public class OBJOutputFile extends OBJFileBase
 			for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
 			{
 				Entity handler=EntityTypes.getEntity(entity);
-				if(handler!=null) handler.addEntity(this, entity);						
+				try {
+					if(handler!=null) handler.addEntity(this, entity);
+				}
+				catch (Exception ex) {
+					Log.error("Error rendering entity, skipping.", ex);
+				}
 			}
 	
 			for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
 			{
 				Entity handler=EntityTypes.getEntity(entity);
-				if(handler!=null) handler.addEntity(this, entity);						
+				try {
+					if(handler!=null) handler.addEntity(this, entity);
+				}
+				catch (Exception ex) {
+					Log.error("Error rendering tyle entity, skipping.", ex);
+				}
 			}
 		}
 	}
