@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
  * Utility class that can extract the individual textures from minecraft texture
  * packs.
  */
-public class Texsplit {
+public class TextureExporter {
 	private static final int FORMAT_1_6 = 3; // 1.6 resource pack
 	private static final int FORMAT_1_5 = 2; // 1.5 texture pack
 	private static final int FORMAT_PRE_1_5 = 1; // pre-1.5 texture pack
@@ -199,8 +199,10 @@ public class Texsplit {
 					foundTerrainPng = true;
 			}
 
-			return foundAssetsDir ? FORMAT_1_6 : foundBlocksDir ? FORMAT_1_5 : foundTerrainPng ? FORMAT_PRE_1_5
-					: FORMAT_INVALID;
+			return	foundAssetsDir ? FORMAT_1_6 : 
+					foundBlocksDir ? FORMAT_1_5 : 
+					foundTerrainPng ? FORMAT_PRE_1_5 :
+					FORMAT_INVALID;
 		} finally {
 			if (zis != null)
 				zis.close();
