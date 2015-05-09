@@ -116,7 +116,7 @@ public class OBJOutputFile extends OBJFileBase
 	 * @param y y offset
 	 * @param z z offset
 	 */
-	public void setOffset(int x, int y, int z)
+	public void setOffset(float x, float y, float z)
 	{
 		x_offset=x;
 		y_offset=y;

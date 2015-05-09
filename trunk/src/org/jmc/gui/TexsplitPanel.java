@@ -18,8 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
+import org.jmc.CloudsExporter;
 import org.jmc.Options;
-import org.jmc.Texsplit;
+import org.jmc.TextureExporter;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -36,6 +37,8 @@ public class TexsplitPanel extends JPanel
 	private JComboBox cScale;
 	private JCheckBox cbAlpha;
 	private JCheckBox cbMerge;
+	private JCheckBox cbExpClouds;
+	private JTextField tfCloudFile;
 
 	private OBJExportWindow parent;
 	
@@ -76,6 +79,14 @@ public class TexsplitPanel extends JPanel
 		cbMerge=new JCheckBox(Messages.getString("TexsplitDialog.EXP_SINGLE"), Options.textureMerge);
 		pMerge.add(cbMerge);
 
+		JPanel pClouds = new JPanel();
+		pClouds.setLayout(new BoxLayout(pClouds, BoxLayout.LINE_AXIS));
+		pClouds.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbExpClouds=new JCheckBox(Messages.getString("TexsplitDialog.EXP_CLOUDS"), Options.exportClouds);
+		tfCloudFile=new JTextField(Options.exportCloudsFile);
+		pClouds.add(cbExpClouds);
+		pClouds.add(tfCloudFile);
+
 		JPanel pQuest=new JPanel();
 		pQuest.setLayout(new BoxLayout(pQuest, BoxLayout.LINE_AXIS));
 		JLabel lQuest=new JLabel(Messages.getString("TexsplitDialog.TEX_LOC"));
@@ -98,6 +109,8 @@ public class TexsplitPanel extends JPanel
 				Options.texturePack=null;
 				Options.textureScale=Double.parseDouble(cScale.getSelectedItem().toString().replace("x",""));
 				Options.textureMerge=cbMerge.isSelected();
+				Options.exportClouds=cbExpClouds.isSelected();
+				Options.exportCloudsFile=tfCloudFile.getText();
 
 				doExport();
 			}
@@ -115,6 +128,8 @@ public class TexsplitPanel extends JPanel
 				Options.texturePack=jfc.getSelectedFile();
 				Options.textureScale=Double.parseDouble(cScale.getSelectedItem().toString().replace("x",""));
 				Options.textureMerge=cbMerge.isSelected();
+				Options.exportClouds=cbExpClouds.isSelected();
+				Options.exportCloudsFile=tfCloudFile.getText();
 
 				doExport();
 			}
@@ -130,11 +145,13 @@ public class TexsplitPanel extends JPanel
 		cScale.addActionListener(genericSaveAction);
 		cbAlpha.addActionListener(genericSaveAction);
 		cbMerge.addActionListener(genericSaveAction);
+		cbExpClouds.addActionListener(genericSaveAction);
 
 		add(pDest);
 		add(pScale);
 		add(pAlpha);
 		add(pMerge);
+		add(pClouds);
 		add(Box.createVerticalStrut(10));
 		add(pQuest);
 		add(pButtons);
@@ -154,15 +171,21 @@ public class TexsplitPanel extends JPanel
 				try {
 					if(Options.textureMerge)
 					{
-						Texsplit.mergeTextures(
+						TextureExporter.mergeTextures(
 								destination, Options.texturePack, Options.textureScale, alphas,
 								parent);
 					}
 					else
 					{
-						Texsplit.splitTextures(
+						TextureExporter.splitTextures(
 								destination, Options.texturePack, Options.textureScale, alphas,
 								parent);
+					}
+					
+					if (Options.exportClouds)
+					{
+						CloudsExporter.exportClouds(
+								destination, Options.texturePack, Options.exportCloudsFile);
 					}
 				}
 				catch (Exception e) {
@@ -178,6 +201,8 @@ public class TexsplitPanel extends JPanel
 		cScale.setSelectedItem(""+prefs.getDouble("TEXTURE_SCALE_ID", 1.0));		
 		cbAlpha.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
 		cbMerge.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
+		cbExpClouds.setSelected(prefs.getBoolean("EXPORT_CLOUDS", false));
+		tfCloudFile.setText(prefs.get("EXPORT_CLOUDS_FILE", "clouds.obj"));
 	}
 	
 	
@@ -188,6 +213,8 @@ public class TexsplitPanel extends JPanel
 		prefs.putDouble("TEXTURE_SCALE_ID", Options.textureScale);
 		prefs.putBoolean("TEXTURE_ALPHA", Options.textureAlpha);
 		prefs.putBoolean("TEXTURE_MERGE", Options.textureMerge);
+		prefs.putBoolean("EXPORT_CLOUDS", Options.exportClouds);
+		prefs.put("EXPORT_CLOUDS_FILE", Options.exportCloudsFile);
 	}
 	
 	private void updateSettings()
@@ -206,6 +233,8 @@ public class TexsplitPanel extends JPanel
 		
 		Options.textureAlpha=cbAlpha.isSelected();
 		Options.textureMerge=cbMerge.isSelected();
+		Options.exportClouds=cbExpClouds.isSelected();
+		Options.exportCloudsFile=tfCloudFile.getText();
 	}
 	
 }

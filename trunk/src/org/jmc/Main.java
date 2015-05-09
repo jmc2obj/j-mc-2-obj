@@ -106,7 +106,7 @@ public class Main
 		if (Options.exportTex) {
 			System.out.println("Exporting textures...");
 			try {
-				Texsplit.splitTextures(
+				TextureExporter.splitTextures(
 						new File(Options.outputDir, "tex"), 
 						Options.texturePack, Options.textureScale, true, new ConsoleProgress());
 			}

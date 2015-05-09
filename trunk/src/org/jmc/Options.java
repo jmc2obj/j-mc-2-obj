@@ -73,6 +73,16 @@ public class Options
 	public static boolean textureMerge = false;
 
 	/**
+	 * Export cloud texture to an OBJ file.
+	 */
+	public static boolean exportClouds = false;
+	
+	/**
+	 * Export cloud texture to an OBJ file.
+	 */
+	public static String exportCloudsFile = "clouds.obj";
+	
+	/**
 	 * Id of the world dimension to export.
 	 */
 	public static int dimension = 0;
