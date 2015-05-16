@@ -1636,6 +1636,12 @@ Kd 0.6157 0.5020 0.3098
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/sign.png
 
+newmtl slime
+Kd 0.4471 0.7922 0.3765
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/slime.png
+map_d tex/slime_a.png
+
 newmtl snow
 Kd 0.9412 0.9843 0.9843
 Ks 0.0000 0.0000 0.0000
