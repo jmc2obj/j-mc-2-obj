@@ -6,7 +6,7 @@ import org.jmc.geom.UV;
 
 
 /**
- * Model for wood logs.
+ * Model for wood logs (and, accidentally, also hay blocks).
  */
 public class WoodLog extends BlockModel
 {
