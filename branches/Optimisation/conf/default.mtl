@@ -1,0 +1,2096 @@
+newmtl unknown
+Kd 1.0000 0.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+
+newmtl anvil_side
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/anvil_side.png
+
+newmtl anvil_top_1
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/anvil_top_1.png
+map_d tex/anvil_top_1_a.png
+
+newmtl anvil_top_2
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/anvil_top_1.png
+map_d tex/anvil_top_1_a.png
+
+newmtl anvil_top_3
+Kd 0.2500 0.2500 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/anvil_top_1.png
+map_d tex/anvil_top_1_a.png
+
+newmtl beacon
+Kd 0.3922 0.8627 0.8392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/beacon.png
+
+newmtl beacon_beam
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/beacon_beam.png
+map_d tex/beacon_beam_a.png
+
+newmtl bed_foot_front
+Kd 0.5608 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bed_foot_front.png
+map_d tex/bed_foot_front_a.png
+
+newmtl bed_foot_side
+Kd 0.5608 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bed_foot_side.png
+map_d tex/bed_foot_side_a.png
+
+newmtl bed_foot_top
+Kd 0.5608 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bed_foot_top.png
+
+newmtl bed_head_front
+Kd 0.5608 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bed_head_front.png
+map_d tex/bed_head_front_a.png
+
+newmtl bed_head_side
+Kd 0.5608 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bed_head_side.png
+map_d tex/bed_head_side_a.png
+
+newmtl bed_head_top
+Kd 0.5608 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bed_head_top.png
+
+newmtl bedrock
+Kd 0.3294 0.3294 0.3294
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bedrock.png
+
+newmtl book
+Kd 0.4235 0.3451 0.2275
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/book.png
+
+newmtl bookshelf
+Kd 0.4235 0.3451 0.2275
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bookshelf.png
+
+newmtl brewing_stand
+Kd 0.7450 0.6823 0.2902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/brewing_stand.png
+map_d tex/brewing_stand_a.png
+
+newmtl brewing_stand_base
+Kd 0.4902 0.4902 0.4902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/brewing_stand_base.png
+
+newmtl brick
+Kd 0.6118 0.4314 0.3843
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/brick.png
+
+newmtl cactus_bottom
+Kd 0.0510 0.3922 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cactus_bottom.png
+map_d tex/cactus_bottom_a.png
+
+newmtl cactus_side
+Kd 0.0510 0.3922 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cactus_side.png
+map_d tex/cactus_side_a.png
+
+newmtl cactus_top
+Kd 0.0510 0.3922 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cactus_top.png
+map_d tex/cactus_top_a.png
+
+newmtl cake_bottom
+Kd 0.8980 0.8078 0.8118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cake_bottom.png
+map_d tex/cake_bottom_a.png
+
+newmtl cake_inside
+Kd 0.8980 0.8078 0.8118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cake_inside.png
+map_d tex/cake_inside_a.png
+
+newmtl cake_side
+Kd 0.8980 0.8078 0.8118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cake_side.png
+map_d tex/cake_side_a.png
+
+newmtl cake_top
+Kd 0.8980 0.8078 0.8118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cake_top.png
+map_d tex/cake_top_a.png
+
+newmtl carrot_crop_1
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carrot_crop_1.png
+map_d tex/carrot_crop_1_a.png
+
+newmtl carrot_crop_2
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carrot_crop_2.png
+map_d tex/carrot_crop_2_a.png
+
+newmtl carrot_crop_3
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carrot_crop_3.png
+map_d tex/carrot_crop_3_a.png
+
+newmtl carrot_crop_4
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carrot_crop_4.png
+map_d tex/carrot_crop_4_a.png
+
+newmtl cauldron_feet
+Kd 0.1765 0.1765 0.1765
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cauldron_feet.png
+map_d tex/cauldron_feet_a.png
+
+newmtl cauldron_inside
+Kd 0.2431 0.2431 0.2431
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cauldron_inside.png
+map_d tex/cauldron_inside_a.png
+
+newmtl cauldron_side
+Kd 0.2431 0.2431 0.2431
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cauldron_side.png
+map_d tex/cauldron_side_a.png
+
+newmtl cauldron_top
+Kd 0.2431 0.2431 0.2431
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cauldron_top.png
+map_d tex/cauldron_top_a.png
+
+newmtl chest
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chest.png
+
+newmtl chest_trapped
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chest_trapped.png
+
+newmtl clay
+Kd 0.6235 0.6471 0.6941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/clay.png
+
+newmtl coal_block
+Kd 0.0745 0.0745 0.0745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/coal_block.png
+
+newmtl coal_ore
+Kd 0.4510 0.4510 0.4510
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/coal_ore.png
+
+newmtl cobblestone
+Kd 0.4588 0.4588 0.4588
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cobblestone.png
+
+newmtl cobblestone_mossy
+Kd 0.3569 0.4235 0.3569
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cobblestone_mossy.png
+
+newmtl cobweb
+Kd 0.8549 0.8549 0.8549
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cobweb.png
+map_d tex/cobweb_a.png
+
+newmtl cocoa_plant_1
+Kd 0.5742 0.5937 0.2695
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cocoa_plant_1.png
+map_d tex/cocoa_plant_1_a.png
+
+newmtl cocoa_plant_2
+Kd 0.6758 0.5313 0.2734
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cocoa_plant_2.png
+map_d tex/cocoa_plant_2_a.png
+
+newmtl cocoa_plant_3
+Kd 0.6313 0.3554 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cocoa_plant_3.png
+map_d tex/cocoa_plant_3_a.png
+
+newmtl command_side
+Kd 0.7960 0.5700 0.4242
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/command_side.png
+
+newmtl crops_1
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_1.png
+map_d tex/crops_1_a.png
+
+newmtl crops_2
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_2.png
+map_d tex/crops_2_a.png
+
+newmtl crops_3
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_3.png
+map_d tex/crops_3_a.png
+
+newmtl crops_4
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_4.png
+map_d tex/crops_4_a.png
+
+newmtl crops_5
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_5.png
+map_d tex/crops_5_a.png
+
+newmtl crops_6
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_6.png
+map_d tex/crops_6_a.png
+
+newmtl crops_7
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_7.png
+map_d tex/crops_7_a.png
+
+newmtl crops_8
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/crops_8.png
+map_d tex/crops_8_a.png
+
+newmtl daylight_sensor_inv_top
+Kd 0.6157 0.5567 0.4706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/daylight_sensor_inv_top.png
+
+newmtl daylight_sensor_side
+Kd 0.2627 0.2157 0.1373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/daylight_sensor_side.png
+
+newmtl daylight_sensor_top
+Kd 0.6157 0.5567 0.4706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/daylight_sensor_top.png
+
+newmtl dead_shrub
+Kd 0.5882 0.4431 0.3451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dead_shrub.png
+map_d tex/dead_shrub_a.png
+
+newmtl diamond_ore
+Kd 0.5098 0.5490 0.5608
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/diamond_ore.png
+
+newmtl diamond_block
+Kd 0.3922 0.8627 0.8392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/diamond_block.png
+
+newmtl dirt
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt.png
+
+newmtl dirt_grass_side
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_grass_side.png
+
+newmtl dirt_grass_top
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_grass_top.png
+
+newmtl dirt_grass_top-desert
+Kd 0.8085 0.9912 0.6992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_grass_top-desert.png
+
+newmtl dirt_grass_top-forest
+Kd 0.4453 0.6953 0.2773
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_grass_top-forest.png
+
+newmtl dirt_mycelium_side
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_mycelium_side.png
+
+newmtl dirt_mycelium_top
+Kd 0.4392 0.3921 0.4156
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_mycelium_top.png
+
+newmtl dirt_podzol_side
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_podzol_side.png
+
+newmtl dirt_podzol_top
+Kd 0.3438 0.2353 0.1176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_podzol_top.png
+
+newmtl dirt_snow_side
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dirt_snow_side.png
+
+newmtl dispenser_front
+Kd 0.4235 0.4235 0.4235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dispenser_front.png
+
+newmtl door_acacia_lower
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_acacia_lower.png
+map_d tex/door_acacia_lower_a.png
+
+newmtl door_acacia_upper
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_acacia_upper.png
+map_d tex/door_acacia_upper_a.png
+
+newmtl door_birch_lower
+Kd 0.7686 0.7019 0.4784
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_birch_lower.png
+map_d tex/door_birch_lower_a.png
+
+newmtl door_birch_upper
+Kd 0.7686 0.7019 0.4784
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_birch_upper.png
+map_d tex/door_birch_upper_a.png
+
+newmtl door_dark_oak_lower
+Kd 0.2392 0.1523 0.0703
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_dark_oak_lower.png
+map_d tex/door_dark_oak_lower_a.png
+
+newmtl door_dark_oak_upper
+Kd 0.2392 0.1523 0.0703
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_dark_oak_upper.png
+map_d tex/door_dark_oak_upper_a.png
+
+newmtl door_iron_bottom
+Kd 0.6980 0.6980 0.6980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_iron_bottom.png
+map_d tex/door_iron_bottom_a.png
+
+newmtl door_iron_top
+Kd 0.6980 0.6980 0.6980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_iron_top.png
+map_d tex/door_iron_top_a.png
+
+newmtl door_jungle_lower
+Kd 0.6157 0.4393 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_jungle_lower.png
+map_d tex/door_jungle_lower_a.png
+
+newmtl door_jungle_upper
+Kd 0.6157 0.4393 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_jungle_upper.png
+map_d tex/door_jungle_upper_a.png
+
+newmtl door_spruce_lower
+Kd 0.4196 0.3176 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_spruce_lower.png
+map_d tex/door_spruce_lower_a.png
+
+newmtl door_spruce_upper
+Kd 0.4196 0.3176 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_spruce_upper.png
+map_d tex/door_spruce_upper_a.png
+
+newmtl door_wood_bottom
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_wood_bottom.png
+map_d tex/door_wood_bottom_a.png
+
+newmtl door_wood_top
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/door_wood_top.png
+map_d tex/door_wood_top_a.png
+
+newmtl double_plant_fern_bottom
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_fern_bottom.png
+map_d tex/double_plant_fern_bottom_a.png
+
+newmtl double_plant_fern_top
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_fern_top.png
+map_d tex/double_plant_fern_top_a.png
+
+newmtl double_plant_grass_bottom
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_grass_bottom.png
+map_d tex/double_plant_grass_bottom_a.png
+
+newmtl double_plant_grass_top
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_grass_top.png
+map_d tex/double_plant_grass_top_a.png
+
+newmtl double_plant_paeonia_bottom
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_paeonia_bottom.png
+map_d tex/double_plant_paeonia_bottom_a.png
+
+newmtl double_plant_paeonia_top
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_paeonia_top.png
+map_d tex/double_plant_paeonia_top_a.png
+
+newmtl double_plant_rose_bottom
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_rose_bottom.png
+map_d tex/double_plant_rose_bottom_a.png
+
+newmtl double_plant_rose_top
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_rose_top.png
+map_d tex/double_plant_rose_top_a.png
+
+newmtl double_plant_sunflower_back
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_back.png
+map_d tex/double_plant_sunflower_back_a.png
+
+newmtl double_plant_sunflower_bottom
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_bottom.png
+map_d tex/double_plant_sunflower_bottom_a.png
+
+newmtl double_plant_sunflower_front
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_front.png
+map_d tex/double_plant_sunflower_front_a.png
+
+newmtl double_plant_sunflower_top
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_sunflower_top.png
+map_d tex/double_plant_sunflower_top_a.png
+
+newmtl double_plant_syringa_bottom
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_syringa_bottom.png
+map_d tex/double_plant_syringa_bottom_a.png
+
+newmtl double_plant_syringa_top
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/double_plant_syringa_top.png
+map_d tex/double_plant_syringa_top_a.png
+
+newmtl dropper_front
+Kd 0.4235 0.4235 0.4235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dropper_front.png
+
+newmtl emerald_ore
+Kd 0.4000 0.5294 0.4832
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/emerald_ore.png
+
+newmtl emerald_block
+Kd 0.2461 0.8086 0.3906
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/emerald_block.png
+
+newmtl enchant_table_bottom
+Kd 0.0784 0.0706 0.1176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/enchant_table_bottom.png
+
+newmtl enchant_table_side
+Kd 0.0784 0.0706 0.1176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/enchant_table_side.png
+
+newmtl enchant_table_top
+Kd 0.5000 0.0313 0.0313
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/enchant_table_top.png
+
+newmtl enderchest
+Kd 0.1718 0.2421 0.2500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/enderchest.png
+
+newmtl enderdragon_egg
+Kd 0.1764 0.0039 0.2000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/enderdragon_egg.png
+
+newmtl endportal
+Kd 0.0000 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/endportal.png
+
+newmtl endportal_frame_side
+Kd 0.8632 0.8705 0.6470
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/endportal_frame_side.png
+map_d tex/endportal_frame_side_a.png
+
+newmtl endportal_frame_top
+Kd 0.8632 0.8705 0.6470
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/endportal_frame_top.png
+
+newmtl endstone
+Kd 0.8632 0.8705 0.6470
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/endstone.png
+
+newmtl eye_of_ender
+Kd 0.3137 0.5294 0.4588
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/eye_of_ender.png
+
+newmtl farmland_dry
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/farmland_dry.png
+
+newmtl farmland_wet
+Kd 0.5255 0.3765 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/farmland_wet.png
+
+newmtl fern
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/fern.png
+map_d tex/fern_a.png
+
+newmtl fire
+Kd 1.0000 0.6187 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/fire.png
+map_d tex/fire_a.png
+
+newmtl flower_allium
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_allium.png
+map_d tex/flower_allium_a.png
+
+newmtl flower_blue_orchid
+Kd 0.1843 0.8078 0.9922
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_blue_orchid.png
+map_d tex/flower_blue_orchid_a.png
+
+newmtl flower_houstonia
+Kd 0.9059 0.9059 0.9059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_houstonia.png
+map_d tex/flower_houstonia_a.png
+
+newmtl flower_oxeye_daisy
+Kd 0.9059 0.9059 0.9059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_oxeye_daisy.png
+map_d tex/flower_oxeye_daisy_a.png
+
+newmtl flower_paeonia
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_paeonia.png
+map_d tex/flower_paeonia_a.png
+
+newmtl flower_red
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_red.png
+map_d tex/flower_red_a.png
+
+newmtl flower_tulip_orange
+Kd 0.8823 0.4784 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_orange.png
+map_d tex/flower_tulip_orange_a.png
+
+newmtl flower_tulip_pink
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_pink.png
+map_d tex/flower_tulip_pink_a.png
+
+newmtl flower_tulip_red
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_red.png
+map_d tex/flower_tulip_red_a.png
+
+newmtl flower_tulip_white
+Kd 0.9059 0.9059 0.9059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_tulip_white.png
+map_d tex/flower_tulip_white_a.png
+
+newmtl flower_yellow
+Kd 0.7569 0.7804 0.0078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flower_yellow.png
+map_d tex/flower_yellow_a.png
+
+newmtl flowerpot
+Kd 0.4882 0.2718 0.2121
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/flowerpot.png
+map_d tex/flowerpot_a.png
+
+newmtl furnace_front
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/furnace_front.png
+
+newmtl furnace_lit_front
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/furnace_lit_front.png
+
+newmtl furnace_side
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/furnace_side.png
+
+newmtl furnace_top
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/furnace_top.png
+
+newmtl glass
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass.png
+map_d tex/glass_a.png
+
+newmtl glass_black
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_black.png
+map_d tex/glass_black_a.png
+
+newmtl glass_blue
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_blue.png
+map_d tex/glass_blue_a.png
+
+newmtl glass_brown
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_brown.png
+map_d tex/glass_brown_a.png
+
+newmtl glass_cyan
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_cyan.png
+map_d tex/glass_cyan_a.png
+
+newmtl glass_dark_gray
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_dark_gray.png
+map_d tex/glass_dark_gray_a.png
+
+newmtl glass_green
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_green.png
+map_d tex/glass_green_a.png
+
+newmtl glass_light_blue
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_light_blue.png
+map_d tex/glass_light_blue_a.png
+
+newmtl glass_light_gray
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_light_gray.png
+map_d tex/glass_light_gray_a.png
+
+newmtl glass_lime
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_lime.png
+map_d tex/glass_lime_a.png
+
+newmtl glass_magenta
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_magenta.png
+map_d tex/glass_magenta_a.png
+
+newmtl glass_orange
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_orange.png
+map_d tex/glass_orange_a.png
+
+newmtl glass_pink
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_pink.png
+map_d tex/glass_pink_a.png
+
+newmtl glass_purple
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_purple.png
+map_d tex/glass_purple_a.png
+
+newmtl glass_red
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_red.png
+map_d tex/glass_red_a.png
+
+newmtl glass_white
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_white.png
+map_d tex/glass_white_a.png
+
+newmtl glass_yellow
+Kd 1.0000 1.0000 1.0000
+map_Kd tex/glass_yellow.png
+map_d tex/glass_yellow_a.png
+
+newmtl glass_pane_side
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side.png
+map_d tex/glass_pane_side_a.png
+
+newmtl glass_pane_side_black
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_black.png
+map_d tex/glass_pane_side_black_a.png
+
+newmtl glass_pane_side_blue
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_blue.png
+map_d tex/glass_pane_side_blue_a.png
+
+newmtl glass_pane_side_brown
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_brown.png
+map_d tex/glass_pane_side_brown_a.png
+
+newmtl glass_pane_side_cyan
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_cyan.png
+map_d tex/glass_pane_side_cyan_a.png
+
+newmtl glass_pane_side_dark_gray
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_dark_gray.png
+map_d tex/glass_pane_side_dark_gray_a.png
+
+newmtl glass_pane_side_green
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_green.png
+map_d tex/glass_pane_side_green_a.png
+
+newmtl glass_pane_side_light_blue
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_light_blue.png
+map_d tex/glass_pane_side_light_blue_a.png
+
+newmtl glass_pane_side_light_gray
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_light_gray.png
+map_d tex/glass_pane_side_light_gray_a.png
+
+newmtl glass_pane_side_lime
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_lime.png
+map_d tex/glass_pane_side_lime_a.png
+
+newmtl glass_pane_side_magenta
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_magenta.png
+map_d tex/glass_pane_side_magenta_a.png
+
+newmtl glass_pane_side_orange
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_orange.png
+map_d tex/glass_pane_side_orange_a.png
+
+newmtl glass_pane_side_pink
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_pink.png
+map_d tex/glass_pane_side_pink_a.png
+
+newmtl glass_pane_side_purple
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_purple.png
+map_d tex/glass_pane_side_purple_a.png
+
+newmtl glass_pane_side_red
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_red.png
+map_d tex/glass_pane_side_red_a.png
+
+newmtl glass_pane_side_white
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_white.png
+map_d tex/glass_pane_side_white_a.png
+
+newmtl glass_pane_side_yellow
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glass_pane_side_yellow.png
+map_d tex/glass_pane_side_yellow_a.png
+
+newmtl glowstone
+Kd 0.9450 0.8941 0.5960
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/glowstone.png
+
+newmtl gold_block
+Kd 0.9804 0.9255 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/gold_block.png
+
+newmtl gold_ore
+Kd 0.5647 0.5490 0.4902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/gold_ore.png
+
+newmtl gravel
+Kd 0.5333 0.4980 0.4941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/gravel.png
+
+newmtl hardened_clay
+Kd 0.5961 0.3686 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hardened_clay.png
+
+newmtl hatch
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hatch.png
+map_d tex/hatch_a.png
+
+newmtl hay_block_side
+Kd 0.7255 0.6118 0.0745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hay_block_side.png
+
+newmtl hay_block_top
+Kd 0.7255 0.6118 0.0745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hay_block_top.png
+
+newmtl hopper_inside
+Kd 0.2431 0.2431 0.2431
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hopper_outside.png
+    
+newmtl hopper_outside
+Kd 0.2431 0.2431 0.2431
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hopper_outside.png
+
+newmtl hopper_top
+Kd 0.2431 0.2431 0.2431
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/hopper_top.png
+map_d tex/hopper_top_a.png
+
+newmtl ice
+Kd 0.4902 0.6824 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/ice.png
+map_d tex/ice_a.png
+
+newmtl ice_packed
+Kd 0.4902 0.6824 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/ice_packed.png
+
+newmtl iron_bars
+Kd 0.7686 0.7686 0.7686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/iron_bars.png
+map_d tex/iron_bars_a.png
+
+newmtl iron_block
+Kd 0.9020 0.9020 0.9020
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/iron_block.png
+
+newmtl iron_ore
+Kd 0.5333 0.5137 0.4980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/iron_ore.png
+
+newmtl iron_trapdoor
+Kd 0.6980 0.6980 0.6980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/iron_trapdoor.png
+map_d tex/iron_trapdoor_a.png
+
+newmtl jukebox_side
+Kd 0.4196 0.2863 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jukebox_side.png
+
+newmtl jukebox_top
+Kd 0.4196 0.2863 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jukebox_top.png
+
+newmtl ladder
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/ladder.png
+map_d tex/ladder_a.png
+
+newmtl lapis_lazuli_block
+Kd 0.1137 0.2784 0.6510
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lapis_lazuli_block.png
+
+newmtl lapis_lazuli_ore
+Kd 0.4000 0.4392 0.5294
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lapis_lazuli_ore.png
+
+newmtl largechest
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/largechest.png
+
+newmtl largechest_trapped
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/largechest_trapped.png
+
+newmtl lava
+Kd 0.9608 0.2588 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lava.png
+
+newmtl lava_flowing
+Kd 0.9608 0.2588 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lava_flowing.png
+
+newmtl leaves_acacia
+Kd 0.1098 0.2784 0.0196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/leaves_acacia.png
+map_d tex/leaves_acacia_a.png
+
+newmtl leaves_big_oak
+Kd 0.1098 0.2784 0.0196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/leaves_big_oak.png
+map_d tex/leaves_big_oak_a.png
+
+newmtl leaves_birch
+Kd 0.2549 0.3294 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/leaves_birch.png
+map_d tex/leaves_birch_a.png
+
+newmtl leaves_jungle
+Kd 0.1098 0.2784 0.0196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/leaves_jungle.png
+map_d tex/leaves_jungle_a.png
+
+newmtl leaves_oak
+Kd 0.1098 0.2784 0.0196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/leaves_oak.png
+map_d tex/leaves_oak_a.png
+
+newmtl leaves_spruce
+Kd 0.1647 0.2627 0.1647
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/leaves_spruce.png
+map_d tex/leaves_spruce_a.png
+
+newmtl lever
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lever.png
+
+newmtl lilypad
+Kd 0.3216 0.4510 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lilypad.png
+map_d tex/lilypad_a.png
+
+newmtl melon_side
+Kd 0.6157 0.7294 0.2980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/melon_side.png
+
+newmtl melon_stem_1
+Kd 0.1647 0.2627 0.1647
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/melon_stem_1.png
+map_d tex/melon_stem_1_a.png
+
+newmtl melon_stem_2
+Kd 0.1647 0.2627 0.1647
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/melon_stem_2.png
+map_d tex/melon_stem_2_a.png
+
+newmtl melon_top
+Kd 0.6157 0.7294 0.2980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/melon_top.png
+
+newmtl mob_char
+Kd 0.1529 0.1098 0.0470
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_char.png
+
+newmtl mob_creeper
+Kd 0.4274 0.7294 0.3882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_creeper.png
+
+newmtl mob_skeleton
+Kd 0.6078 0.6078 0.6078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_skeleton.png
+
+newmtl mob_skeleton_wither
+Kd 0.1725 0.1725 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_skeleton_wither.png
+
+newmtl mob_zombie
+Kd 0.2745 0.4275 0.2118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_zombie.png
+
+newmtl mushroom_brown
+Kd 0.5882 0.4431 0.3451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_brown.png
+map_d tex/mushroom_brown_a.png
+
+newmtl mushroom_brown_cap
+Kd 0.4000 0.3176 0.1961
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_brown_cap.png
+
+newmtl mushroom_inside
+Kd 0.9490 0.7960 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_inside.png
+
+newmtl mushroom_red
+Kd 0.7725 0.2353 0.2471
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_red.png
+map_d tex/mushroom_red_a.png
+
+newmtl mushroom_red_cap
+Kd 0.8867 0.2031 0.2031
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_red_cap.png
+
+newmtl mushroom_stem
+Kd 0.9375 0.8789 0.8438
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_stem.png
+
+newmtl nether_brick
+Kd 0.2196 0.1020 0.1216
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/nether_brick.png
+
+newmtl nether_quartz_ore
+Kd 0.5314 0.4078 0.4000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/nether_quartz_ore.png
+
+newmtl netherrack
+Kd 0.4314 0.2078 0.2000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/netherrack.png
+
+newmtl netherwart_1
+Kd 0.5059 0.0314 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/netherwart_1.png
+map_d tex/netherwart_1_a.png
+
+newmtl netherwart_2
+Kd 0.5059 0.0314 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/netherwart_2.png
+map_d tex/netherwart_2_a.png
+
+newmtl netherwart_3
+Kd 0.5059 0.0314 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/netherwart_3.png
+map_d tex/netherwart_3_a.png
+
+newmtl noteblock
+Kd 0.4196 0.2863 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/noteblock.png
+
+newmtl obsidian
+Kd 0.0784 0.0706 0.1176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/obsidian.png
+
+newmtl piston_arm_sticky
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/piston_arm_sticky.png
+
+newmtl piston_arm
+Kd 0.4823 0.5569 0.3255
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/piston_arm.png
+
+newmtl piston_bottom
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/piston_bottom.png
+
+newmtl piston_side
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/piston_side.png
+
+newmtl piston_top
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/piston_top.png
+
+newmtl plank_acacia
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plank_acacia.png
+
+newmtl plank_big_oak
+Kd 0.2392 0.1523 0.0703
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plank_big_oak.png
+
+newmtl plank_birch
+Kd 0.7686 0.7019 0.4784
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plank_birch.png
+
+newmtl plank_jungle
+Kd 0.6157 0.4393 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plank_jungle.png
+
+newmtl plank_oak
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plank_oak.png
+
+newmtl plank_spruce
+Kd 0.4196 0.3176 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plank_spruce.png
+
+newmtl portal
+Kd 0.2196 0.1137 0.3333
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/portal.png
+map_d tex/portal_a.png
+
+newmtl potato_crop_1
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/potato_crop_1.png
+map_d tex/potato_crop_1_a.png
+
+newmtl potato_crop_2
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/potato_crop_2.png
+map_d tex/potato_crop_2_a.png
+
+newmtl potato_crop_3
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/potato_crop_3.png
+map_d tex/potato_crop_3_a.png
+
+newmtl potato_crop_4
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/potato_crop_4.png
+map_d tex/potato_crop_4_a.png
+
+newmtl prismarine_bricks
+Kd 0.4078 0.6510 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/prismarine_bricks.png
+
+newmtl prismarine_dark
+Kd 0.2431 0.3529 0.3020
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/prismarine_dark.png
+
+newmtl prismarine_rough
+Kd 0.4078 0.6510 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/prismarine_rough.png
+
+newmtl pumpkin_front
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_front.png
+
+newmtl pumpkin_front_lit
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_front_lit.png
+
+newmtl pumpkin_side
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_side.png
+
+newmtl pumpkin_side_lit
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_side.png
+
+newmtl pumpkin_stem_1
+Kd 0.1647 0.2627 0.1647
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_stem_1.png
+map_d tex/pumpkin_stem_1_a.png
+
+newmtl pumpkin_stem_2
+Kd 0.1647 0.2627 0.1647
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_stem_2.png
+map_d tex/pumpkin_stem_2_a.png
+
+newmtl pumpkin_top
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_top.png
+
+newmtl pumpkin_top_lit
+Kd 0.7725 0.4745 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pumpkin_top.png
+
+newmtl quartz_bottom
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_bottom.png
+
+newmtl quartz_side
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_side.png
+
+newmtl quartz_side_chiseled
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_side_chiseled.png
+
+newmtl quartz_side_lines
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_side_lines.png
+
+newmtl quartz_top
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_top.png
+
+newmtl quartz_top_chiseled
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_top_chiseled.png
+
+newmtl quartz_top_lines
+Kd 0.9215 0.9137 0.8862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/quartz_top_lines.png
+
+newmtl rails
+Kd 0.4588 0.4000 0.2980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails.png
+map_d tex/rails_a.png
+
+newmtl rails_activator_off
+Kd 0.5294 0.4431 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_activator_off.png
+map_d tex/rails_activator_off_a.png
+
+newmtl rails_activator_on
+Kd 0.5843 0.4039 0.2745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_activator_on.png
+map_d tex/rails_activator_on_a.png
+
+newmtl rails_curved
+Kd 0.4588 0.4000 0.2980
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_curved.png
+map_d tex/rails_curved_a.png
+
+newmtl rails_detector_off
+Kd 0.4627 0.3843 0.3176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_detector_off.png
+map_d tex/rails_detector_off_a.png
+
+newmtl rails_detector_on
+Kd 0.4627 0.3843 0.3176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_detector_on.png
+map_d tex/rails_detector_on_a.png
+
+newmtl rails_powered_off
+Kd 0.5294 0.4431 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_powered_off.png
+map_d tex/rails_powered_off_a.png
+
+newmtl rails_powered_on
+Kd 0.5843 0.4039 0.2745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rails_powered_on.png
+map_d tex/rails_powered_on_a.png
+
+newmtl red_sand
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_sand.png
+
+newmtl red_sandstone_bottom
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_sandstone_bottom.png
+
+newmtl red_sandstone_carved
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_sandstone_carved.png
+
+newmtl red_sandstone_normal
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_sandstone_normal.png
+
+newmtl red_sandstone_smooth
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_sandstone_smooth.png
+
+newmtl red_sandstone_top
+Kd 0.6706 0.3477 0.1328
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_sandstone_top.png
+
+newmtl redstone_block
+Kd 0.7059 0.1137 0.0314
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_block.png
+
+newmtl redstone_comparator_off
+Kd 0.7961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_comparator_off.png
+
+newmtl redstone_comparator_on
+Kd 0.7961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_comparator_on.png
+
+newmtl redstone_dust_off
+Kd 0.3000 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_dust_off.png
+map_d tex/redstone_dust_off_a.png
+
+newmtl redstone_dust_on
+Kd 0.7961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_dust_on.png
+map_d tex/redstone_dust_on_a.png
+
+newmtl redstone_lamp_off
+Kd 0.3020 0.2118 0.0706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_lamp_off.png
+
+newmtl redstone_lamp_on
+Kd 0.9450 0.8941 0.5960
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_lamp_on.png
+
+newmtl redstone_ore
+Kd 0.5216 0.4196 0.4196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_ore.png
+
+newmtl redstone_repeater_off
+Kd 0.7961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_repeater_off.png
+
+newmtl redstone_repeater_on
+Kd 0.7961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_repeater_on.png
+
+newmtl redstone_torch_off
+Kd 0.2667 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_torch_off.png
+map_d tex/redstone_torch_off_a.png
+
+newmtl redstone_torch_on
+Kd 0.9961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_torch_on.png
+map_d tex/redstone_torch_on_a.png
+
+newmtl redstone_wire_off
+Kd 0.3000 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_wire_off.png
+map_d tex/redstone_wire_off_a.png
+
+newmtl redstone_wire_on
+Kd 0.7961 0.0000 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/redstone_wire_on.png
+map_d tex/redstone_wire_on_a.png
+
+newmtl sand
+Kd 0.8549 0.8235 0.6196
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sand.png
+
+newmtl sandstone_bottom
+Kd 0.8353 0.8039 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sandstone_bottom.png
+
+newmtl sandstone_side
+Kd 0.8353 0.8039 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sandstone_side.png
+
+newmtl sandstone_side_carved
+Kd 0.8353 0.8039 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sandstone_side_carved.png
+
+newmtl sandstone_side_smooth
+Kd 0.8353 0.8039 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sandstone_side_smooth.png
+
+newmtl sandstone_top
+Kd 0.8353 0.8039 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sandstone_top.png
+
+newmtl sapling_acacia
+Kd 0.4414 0.5312 0.1059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sapling_acacia.png
+map_d tex/sapling_acacia_a.png
+
+newmtl sapling_birch
+Kd 0.1882 0.2039 0.1176
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sapling_birch.png
+map_d tex/sapling_birch_a.png
+
+newmtl sapling_jungle
+Kd 0.4667 0.5882 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sapling_jungle.png
+map_d tex/sapling_jungle_a.png
+
+newmtl sapling_oak
+Kd 0.4667 0.5882 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sapling_oak.png
+map_d tex/sapling_oak_a.png
+
+newmtl sapling_roofed_oak
+Kd 0.4667 0.5882 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sapling_roofed_oak.png
+map_d tex/sapling_roofed_oak_a.png
+
+newmtl sapling_spruce
+Kd 0.4667 0.5882 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sapling_spruce.png
+map_d tex/sapling_spruce_a.png
+
+newmtl sea_lantern
+Kd 0.8863 0.9216 0.8902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sea_lantern.png
+
+newmtl sign
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sign.png
+
+newmtl slime
+Kd 0.4471 0.7922 0.3765
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/slime.png
+map_d tex/slime_a.png
+
+newmtl snow
+Kd 0.9412 0.9843 0.9843
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/snow.png
+
+newmtl soulsand
+Kd 0.3333 0.2549 0.2039
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/soulsand.png
+
+newmtl spawner
+Kd 0.1058 0.3294 0.4862
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/spawner.png
+map_d tex/spawner_a.png
+
+newmtl sponge
+Kd 0.7608 0.7608 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sponge.png
+
+newmtl sponge_wet
+Kd 0.5882 0.5882 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sponge_wet.png
+
+newmtl stained_clay_black
+Kd 0.1451 0.0902 0.0627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_black.png
+
+newmtl stained_clay_blue
+Kd 0.2941 0.2392 0.3608
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_blue.png
+
+newmtl stained_clay_brown
+Kd 0.3059 0.2000 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_brown.png
+
+newmtl stained_clay_cyan
+Kd 0.3412 0.3567 0.3567
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_cyan.png
+
+newmtl stained_clay_dark_gray
+Kd 0.2275 0.1647 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_dark_gray.png
+
+newmtl stained_clay_green
+Kd 0.2980 0.3255 0.1647
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_green.png
+
+newmtl stained_clay_light_blue
+Kd 0.4470 0.4235 0.5412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_light_blue.png
+
+newmtl stained_clay_light_gray
+Kd 0.5333 0.4196 0.3843
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_light_gray.png
+
+newmtl stained_clay_lime
+Kd 0.4118 0.4667 0.2118
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_lime.png
+
+newmtl stained_clay_magenta
+Kd 0.5921 0.3490 0.4274
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_magenta.png
+
+newmtl stained_clay_orange
+Kd 0.6392 0.3333 0.1490
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_orange.png
+
+newmtl stained_clay_pink
+Kd 0.6353 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_pink.png
+
+newmtl stained_clay_purple
+Kd 0.4627 0.2745 0.3373
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_purple.png
+
+newmtl stained_clay_red
+Kd 0.5608 0.2392 0.1843
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_red.png
+
+newmtl stained_clay_white
+Kd 0.8235 0.7020 0.6353
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_white.png
+
+newmtl stained_clay_yellow
+Kd 0.7333 0.5255 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stained_clay_yellow.png
+
+newmtl stone
+Kd 0.4902 0.4902 0.4902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone.png
+
+newmtl stone_andesite
+Kd 0.5255 0.5255 0.5255
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_andesite.png
+
+newmtl stone_andesite_smooth
+Kd 0.5255 0.5255 0.5255
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_andesite_smooth.png
+
+newmtl stone_brick
+Kd 0.4902 0.4902 0.4902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_brick.png
+
+newmtl stone_brick_circle
+Kd 0.4902 0.4902 0.4902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_brick_circle.png
+
+newmtl stone_brick_cracked
+Kd 0.4902 0.4902 0.4902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_brick_cracked.png
+
+newmtl stone_brick_mossy
+Kd 0.4202 0.4902 0.4202
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_brick_mossy.png
+
+newmtl stone_diorite
+Kd 0.7059 0.7059 0.7059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_diorite.png
+
+newmtl stone_diorite_smooth
+Kd 0.7059 0.7059 0.7059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_diorite_smooth.png
+
+newmtl stone_granite
+Kd 0.6000 0.4471 0.3882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_granite.png
+
+newmtl stone_granite_smooth
+Kd 0.6000 0.4471 0.3882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_granite_smooth.png
+
+newmtl stone_slab_side
+Kd 0.6549 0.6549 0.6549
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_slab_side.png
+
+newmtl stone_slab_top
+Kd 0.6549 0.6549 0.6549
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/stone_slab_top.png
+
+newmtl sugarcane
+Kd 0.5137 0.7686 0.2784
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sugarcane.png
+map_d tex/sugarcane_a.png
+
+newmtl tall_grass
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tall_grass.png
+map_d tex/tall_grass_a.png
+
+newmtl tnt_bottom
+Kd 0.6510 0.3333 0.2471
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tnt_bottom.png
+
+newmtl tnt_side
+Kd 0.6510 0.3333 0.2471
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tnt_side.png
+
+newmtl tnt_top
+Kd 0.6510 0.3333 0.2471
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tnt_top.png
+
+newmtl torch
+Kd 1.0000 0.8549 0.4000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/torch.png
+map_d tex/torch_a.png
+
+newmtl torch_flame
+Kd 1.0000 0.8438 0.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/torch_flame.png
+map_d tex/torch_flame_a.png
+
+newmtl tripwire
+Kd 0.9000 0.9000 0.9000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tripwire.png
+map_d tex/tripwire_a.png
+
+newmtl tripwire_hook
+Kd 0.7500 0.7500 0.7500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tripwire_hook.png
+map_d tex/tripwire_hook_a.png
+
+newmtl vines
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/vines.png
+map_d tex/vines_a.png
+
+newmtl water
+Kd 0.0000 0.6039 1.0000
+map_Kd tex/water.png
+map_d tex/water_a.png
+
+newmtl water_flowing
+Kd 0.0000 0.6039 1.0000
+map_Kd tex/water_flowing.png
+map_d tex/water_flowing_a.png
+
+newmtl log_acacia_side
+Kd 0.4196 0.3945 0.3529
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_acacia_side.png
+
+newmtl log_acacia_top
+Kd 0.6602 0.3569 0.1992
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_acacia_top.png
+
+newmtl log_big_oak_side
+Kd 0.2109 0.1686 0.0977
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_big_oak_side.png
+
+newmtl log_big_oak_top
+Kd 0.3359 0.2656 0.1765
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_big_oak_top.png
+
+newmtl log_birch_side
+Kd 0.8118 0.8078 0.7882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_birch_side.png
+
+newmtl log_birch_top
+Kd 0.7098 0.5725 0.3686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_birch_top.png
+
+newmtl log_jungle_side
+Kd 0.3451 0.2706 0.1059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_jungle_side.png
+
+newmtl log_jungle_top
+Kd 0.7098 0.5725 0.3686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_jungle_top.png
+
+newmtl log_oak_side
+Kd 0.4313 0.3490 0.2193
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_oak_side.png
+
+newmtl log_oak_top
+Kd 0.7098 0.5725 0.3686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_oak_top.png
+
+newmtl log_spruce_side
+Kd 0.1804 0.1137 0.0471
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_spruce_side.png
+
+newmtl log_spruce_top
+Kd 0.7098 0.5725 0.3686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/log_spruce_top.png
+
+newmtl wool_black
+Kd 0.1059 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_black.png
+
+newmtl wool_blue
+Kd 0.1529 0.2000 0.6039
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_blue.png
+
+newmtl wool_brown
+Kd 0.3373 0.2000 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_brown.png
+
+newmtl wool_cyan
+Kd 0.1529 0.4588 0.5882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_cyan.png
+
+newmtl wool_dark_gray
+Kd 0.2627 0.2627 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_dark_gray.png
+
+newmtl wool_green
+Kd 0.2196 0.3020 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_green.png
+
+newmtl wool_light_blue
+Kd 0.4078 0.5451 0.8314
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_light_blue.png
+
+newmtl wool_light_gray
+Kd 0.6196 0.6510 0.6510
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_light_gray.png
+
+newmtl wool_lime
+Kd 0.2314 0.7412 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_lime.png
+
+newmtl wool_magenta
+Kd 0.7490 0.2980 0.7882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_magenta.png
+
+newmtl wool_orange
+Kd 0.9176 0.5020 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_orange.png
+
+newmtl wool_pink
+Kd 0.8510 0.5176 0.6078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_pink.png
+
+newmtl wool_purple
+Kd 0.5059 0.2118 0.7686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_purple.png
+
+newmtl wool_red
+Kd 0.6431 0.1765 0.1608
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_red.png
+
+newmtl wool_white
+Kd 0.8706 0.8706 0.8706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_white.png
+
+newmtl wool_yellow
+Kd 0.7608 0.7098 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wool_yellow.png
+
+newmtl workbench_front
+Kd 0.4196 0.2784 0.1686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/workbench_front.png
+
+newmtl workbench_back
+Kd 0.4196 0.2784 0.1686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/workbench_back.png
+
+newmtl workbench_top
+Kd 0.4196 0.2784 0.1686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/workbench_top.png
+
+newmtl kebab_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/kebab_painting.png
+
+newmtl aztec_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/aztec_painting.png
+
+newmtl alban_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/alban_painting.png
+
+newmtl aztec2_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/aztec2_painting.png
+
+newmtl bomb_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/bomb_painting.png
+
+newmtl plant_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/plant_painting.png
+
+newmtl wasteland_painting
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/wasteland_painting.png
+
+newmtl mob_pig
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_pig.png
+
+newmtl mob_cow
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_cow.png
+
+newmtl mob_chicken
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_chicken.png
+
+newmtl mob_sheep
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_sheep.png
+
+newmtl mob_squid
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mob_squid.png
