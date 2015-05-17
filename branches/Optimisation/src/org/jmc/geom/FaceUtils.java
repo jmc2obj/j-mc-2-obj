@@ -10,10 +10,22 @@ package org.jmc.geom;
 public class FaceUtils {
 
 	public static class Face {
-
+		
+		public Face(){
+			
+		}
+		
+		public Face(Vertex[] vertices, UV[] uvs, int mtl_idx, String texture) {
+			this.vertices = vertices.clone();
+			this.uvs = uvs.clone();
+			this.mtl_idx = mtl_idx;
+			this.texture = texture;
+		}
+		
 		public Vertex[] vertices;
 		public UV[] uvs;
 		public int mtl_idx;
+		public String texture;
 
 	}
 
