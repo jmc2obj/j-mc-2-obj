@@ -31,6 +31,12 @@ public class UV
 		this.v = other.v;
 		this.recalculated=other.recalculated;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "("+u+","+v+")";
+	}
 
 	@Override
 	public boolean equals(Object obj)

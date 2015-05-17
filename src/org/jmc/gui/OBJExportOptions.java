@@ -49,6 +49,7 @@ public class OBJExportOptions extends JPanel
 	private JCheckBox cbConvertOres;
 	private JCheckBox cbSingleMaterial;
 	private JCheckBox cbRemoveDuplicates;
+	private JCheckBox cbOptimiseGeo;
 	private JCheckBox cbUseUV;
 	private JTextField tfUVFile;
 	private JRadioButton rbOBJAlways, rbOBJNever, rbOBJAsk;
@@ -168,6 +169,12 @@ public class OBJExportOptions extends JPanel
 		pRemoveDuplicates.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
 		cbRemoveDuplicates=new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
 		pRemoveDuplicates.add(cbRemoveDuplicates);
+
+		JPanel pOptimiseGeo=new JPanel();
+		pOptimiseGeo.setLayout(new BoxLayout(pOptimiseGeo, BoxLayout.LINE_AXIS));
+		pOptimiseGeo.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
+		cbOptimiseGeo=new JCheckBox(Messages.getString("OBJExportOptions.OPT_GEO"));
+		pOptimiseGeo.add(cbOptimiseGeo);
 
 		JPanel pUseUV=new JPanel();
 		pUseUV.setLayout(new BoxLayout(pUseUV, BoxLayout.LINE_AXIS));
@@ -328,6 +335,7 @@ public class OBJExportOptions extends JPanel
 		cbSingleBlock.addActionListener(genericSaveAction);
 		cbConvertOres.addActionListener(genericSaveAction);
 		cbRemoveDuplicates.addActionListener(genericSaveAction);
+		cbOptimiseGeo.addActionListener(genericSaveAction);
 		cbUseUV.addActionListener(genericSaveAction);
 		cbSingleMaterial.addActionListener(genericSaveAction);
 		
@@ -344,6 +352,7 @@ public class OBJExportOptions extends JPanel
 		add(pConvertOres);
 		add(pSingleMaterial);
 		add(pRemoveDuplicates);
+		add(pOptimiseGeo);
 		add(pUseUV);
 		add(pOBJOver);
 		add(pMTLOver);
@@ -422,6 +431,7 @@ public class OBJExportOptions extends JPanel
 		cbConvertOres.setSelected(prefs.getBoolean("CONVERT_ORES", false));
 		cbSingleMaterial.setSelected(prefs.getBoolean("SINGLE_MTL", false));
 		cbRemoveDuplicates.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
+		cbOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", false));
 		cbUseUV.setSelected(prefs.getBoolean("USE_UV_FILE", false));
 		tfUVFile.setText(prefs.get("UV_FILE", ""));
 
@@ -490,6 +500,7 @@ public class OBJExportOptions extends JPanel
 		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
 		prefs.putBoolean("SINGLE_MTL", Options.singleMaterial);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
+		prefs.putBoolean("OPTIMISE_GEO", Options.optimiseGeo);
 		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
 		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
 	}
@@ -566,6 +577,7 @@ public class OBJExportOptions extends JPanel
 		Options.convertOres = cbConvertOres.isSelected();
 		Options.singleMaterial = cbSingleMaterial.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
+		Options.optimiseGeo = cbOptimiseGeo.isSelected();
 		Options.useUVFile=cbUseUV.isSelected();
 		Options.UVFile=new File(tfUVFile.getText());
 	}
