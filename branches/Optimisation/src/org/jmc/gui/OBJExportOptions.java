@@ -500,7 +500,7 @@ public class OBJExportOptions extends JPanel
 		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
 		prefs.putBoolean("SINGLE_MTL", Options.singleMaterial);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
-		prefs.putBoolean("OPTIMISE_GEO", Options.optimiseGeo);
+		prefs.putBoolean("OPTIMISE_GEO", Options.optimiseGeometry);
 		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
 		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
 	}
@@ -577,7 +577,7 @@ public class OBJExportOptions extends JPanel
 		Options.convertOres = cbConvertOres.isSelected();
 		Options.singleMaterial = cbSingleMaterial.isSelected();
 		Options.removeDuplicates = cbRemoveDuplicates.isSelected();
-		Options.optimiseGeo = cbOptimiseGeo.isSelected();
+		Options.optimiseGeometry = cbOptimiseGeo.isSelected();
 		Options.useUVFile=cbUseUV.isSelected();
 		Options.UVFile=new File(tfUVFile.getText());
 	}

@@ -440,7 +440,7 @@ public class OBJOutputFile extends OBJFileBase
 					if(Options.objectPerBlock) obj_idx_count++;
 					
 					try {
-						if (Options.optimiseGeo){
+						if (Options.optimiseGeometry){
 							//mmdanggg2: If we're optimising, only affect simple cube models
 							BlockModel bm = BlockTypes.get(blockID).getModel();
 							if (bm instanceof Cube || bm instanceof DirtGrass){
@@ -462,7 +462,7 @@ public class OBJOutputFile extends OBJFileBase
 			}
 		}
 		
-		if (Options.optimiseGeo) {
+		if (Options.optimiseGeometry) {
 			for (ArrayList<FaceUtils.Face> faces : faceAxisArray.values()){
 				//X loop
 				faces = compileFaces(faces, 0);
@@ -474,7 +474,7 @@ public class OBJOutputFile extends OBJFileBase
 					//mmdanggg2: correct the UVs for the new faces
 					face.uvs[1].u = face.uvs[2].u = (float) Vertex.distance(face.vertices[0], face.vertices[1]);
 					face.uvs[3].v = face.uvs[2].v = (float) Vertex.distance(face.vertices[0], face.vertices[3]);
-					addFace(face.vertices, face.uvs, null, face.texture);
+					addFace(face.vertices, face.uvs, null, face.material);
 				}
 			}
 		}
@@ -540,7 +540,7 @@ public class OBJOutputFile extends OBJFileBase
 	 * @return Whether the join was successful
 	 */
 	private static boolean mergeFaces(FaceUtils.Face face1, FaceUtils.Face face2, int axis){
-		if (face1.texture == face2.texture) {
+		if (face1.material == face2.material) {
 			Vertex[] verts1 = face1.vertices;
 			Vertex[] verts2 = face2.vertices;
 			ArrayList<Vertex> matches = new ArrayList<Vertex>();
