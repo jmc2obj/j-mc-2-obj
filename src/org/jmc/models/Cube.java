@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
@@ -15,6 +16,13 @@ import org.jmc.geom.Vertex;
  */
 public class Cube extends BlockModel
 {
+	private static <K,V> V getOrDefault(Map<K,V> map, K key, V deflt) {
+		if (map.containsKey(key))
+			return map.get(key);
+		else
+			return deflt;
+	}
+	
 
 	@Override
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
@@ -46,7 +54,7 @@ public class Cube extends BlockModel
 			vertices[2] = new Vertex(xe, ye, zs);
 			vertices[3] = new Vertex(xs, ye, zs);
 			String key = "Y+ " + y;//mmdanggg2: use a key to separate planar faces into arrays
-			ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
+			ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
 			UV[] uv = new UV[] {new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1)};
 			Face face = new Face(vertices, uv, 0, mtlSides[0]);
 			faceList.add(face);
@@ -58,7 +66,7 @@ public class Cube extends BlockModel
 			vertices[2] = new Vertex(xs, ye, zs);
 			vertices[3] = new Vertex(xe, ye, zs);
 			String key = "Z+ " + z;
-			ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
+			ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
 			UV[] uv = new UV[] {new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1)};
 			Face face = new Face(vertices, uv, 0, mtlSides[1]);
 			faceList.add(face);
@@ -70,7 +78,7 @@ public class Cube extends BlockModel
 			vertices[2] = new Vertex(xe, ye, ze);
 			vertices[3] = new Vertex(xs, ye, ze);
 			String key = "Z- " + z;
-			ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
+			ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
 			UV[] uv = new UV[] {new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1)};
 			Face face = new Face(vertices, uv, 0, mtlSides[2]);
 			faceList.add(face);
@@ -82,7 +90,7 @@ public class Cube extends BlockModel
 			vertices[2] = new Vertex(xs, ye, ze);
 			vertices[3] = new Vertex(xs, ye, zs);
 			String key = "X+ " + x;
-			ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
+			ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
 			UV[] uv = new UV[] {new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1)};
 			Face face = new Face(vertices, uv, 0, mtlSides[3]);
 			faceList.add(face);
@@ -94,7 +102,7 @@ public class Cube extends BlockModel
 			vertices[2] = new Vertex(xe, ye, zs);
 			vertices[3] = new Vertex(xe, ye, ze);
 			String key = "X- " + x;
-			ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
+			ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
 			UV[] uv = new UV[] {new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1)};
 			Face face = new Face(vertices, uv, 0, mtlSides[4]);
 			faceList.add(face);
@@ -106,7 +114,7 @@ public class Cube extends BlockModel
 			vertices[2] = new Vertex(xs, ys, zs);
 			vertices[3] = new Vertex(xe, ys, zs);
 			String key = "Y- " + y;
-			ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
+			ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
 			UV[] uv = new UV[] {new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1)};
 			Face face = new Face(vertices, uv, 0, mtlSides[5]);
 			faceList.add(face);
