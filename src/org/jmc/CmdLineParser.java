@@ -170,6 +170,9 @@ public class CmdLineParser
 				else if (a.equals("--remove-dup")) {
 					Options.removeDuplicates = true;
 				}
+				else if (a.equals("--optimize-geometry")) {
+					Options.optimiseGeo = true;
+				}
 				else if (a.equals("--help")) {
 					printUsage();
 					System.exit(-1);
@@ -256,8 +259,12 @@ public class CmdLineParser
 			"     --ignore-biomes                Don't render biomes.\n" +
 			"     --object-per-chunk             Export a separate object for each chunk.\n" +
 			"     --object-per-mat               Export a separate object for each material.\n" +
+			"     --object-per-block             Export a separate object for each block.\n" +
+			"                                    WARNING: Will produce very large files.\n" +
 			"     --remove-dup                   Try harder to merge vertexes that have the\n" +
-			"                                    same coordinates (uses slightly more RAM).\n" +
+			"                                    same coordinates.\n" +
+			"     --optimize-geometry            Reduce size of exported files by joining\n" +
+			"                                    adjacent faces together when possible.\n" +
 			"     --help                         Display this help.\n";
 
 		System.out.println(usage);
