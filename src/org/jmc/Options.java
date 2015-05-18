@@ -149,7 +149,7 @@ public class Options
 	/**
 	 * If true, will try to merge planar faces and create optimised geometry.
 	 */
-	public static boolean optimiseGeo = false;
+	public static boolean optimiseGeometry = false;
 
 	/**
 	 * If true, includes blocks with unknown block ids in the output. 

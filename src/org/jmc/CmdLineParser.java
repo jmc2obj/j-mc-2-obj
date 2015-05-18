@@ -171,7 +171,7 @@ public class CmdLineParser
 					Options.removeDuplicates = true;
 				}
 				else if (a.equals("--optimize-geometry")) {
-					Options.optimiseGeo = true;
+					Options.optimiseGeometry = true;
 				}
 				else if (a.equals("--help")) {
 					printUsage();
