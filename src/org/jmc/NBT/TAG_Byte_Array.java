@@ -31,6 +31,12 @@ public class TAG_Byte_Array extends NBT_Tag {
 	public TAG_Byte_Array(String name) {
 		super(name);
 	}
+	
+	
+	public TAG_Byte_Array(String name, byte[] data) {
+		super(name);
+		this.data = data;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)

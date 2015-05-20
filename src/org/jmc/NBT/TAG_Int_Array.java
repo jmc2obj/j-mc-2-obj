@@ -32,6 +32,11 @@ public class TAG_Int_Array extends NBT_Tag {
 		super(name);
 	}
 	
+	public TAG_Int_Array(String name, int[] data) {
+		super(name);
+		this.data = data;
+	}
+	
 	/**
 	 * Id of tag. (see NBT_Tag)
 	 */

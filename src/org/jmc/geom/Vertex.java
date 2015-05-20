@@ -34,6 +34,18 @@ public class Vertex implements Comparable<Vertex>
 		this.z=v.z;
 	}
 	
+	/**
+	 * Returns the x/y/z from 0/1/2
+	 * @param i should be 1, 2 or 3
+	 * @return The axis co-ordinate
+	 */
+	public float getByInt(int i)
+	{
+		if (i == 0) return x;
+		if (i == 1) return y;
+		if (i == 2) return z;
+		return 0;
+	}
 	
 	public String toString()
 	{
@@ -92,5 +104,11 @@ public class Vertex implements Comparable<Vertex>
 		float y=a.y-b.y;
 		float z=a.z-b.z;
 		return new Vertex(x, y, z);
+	}
+	
+	public static double distance(Vertex a, Vertex b)
+	{
+		Vertex c = subtract(a, b);
+		return Math.sqrt(c.x * c.x + c.y * c.y + c.z * c.z);
 	}
 }

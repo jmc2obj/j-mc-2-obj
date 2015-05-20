@@ -1,15 +1,25 @@
 package org.jmc.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJOutputFile;
+import org.jmc.geom.FaceUtils.Face;
 
 
 /**
  * Model for grass blocks that change when covered by snow.
  */
-public class DirtGrass extends BlockModel
+public class DirtGrass extends Cube
 {
-
+	private boolean currSnow = false;
+	@Override
+	protected String[] getMtlSides(byte data, byte biome)
+	{
+		return getMtlSides(data, biome, currSnow);
+	}
+	
 	protected String[] getMtlSides(byte data, byte biome, boolean snow)
 	{
 		String[] abbrMtls = materials.get(data,biome);
@@ -29,15 +39,19 @@ public class DirtGrass extends BlockModel
 	@Override
 	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
 	{
-		boolean snow = chunks.getBlockID(x, y+1, z) == 78;
+		currSnow = chunks.getBlockID(x, y+1, z) == 78;
 		
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,
 				x + 0.5f, y + 0.5f, z + 0.5f, 
 				null, 
-				getMtlSides(data, biome, snow), 
+				getMtlSides(data, biome, currSnow), 
 				null, 
 				drawSides(chunks, x, y, z));
 	}
-
+	
+	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome, HashMap<String, ArrayList<Face>> faceAxisArray){
+		currSnow = chunks.getBlockID(x, y+1, z) == 78;
+		super.addModel(obj, chunks, x, y, z, data, biome, faceAxisArray);
+	}
 }

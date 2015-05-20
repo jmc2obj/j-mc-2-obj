@@ -127,11 +127,7 @@ public class Options
 	 */
 	public static boolean objectPerBlock = false;
 	
-	/**
-	 * If true, will only export a single block id.
-	 */
-	public static boolean singleBlock = false;
-	public static int[] blockid={0};
+	
 	
 	public static boolean convertOres = false;
 	
@@ -145,6 +141,11 @@ public class Options
 	 * If true, will try harder to merge vertices that have the same coordinates.
 	 */
 	public static boolean removeDuplicates = false;
+	
+	/**
+	 * If true, will try to merge planar faces and create optimised geometry.
+	 */
+	public static boolean optimiseGeometry = false;
 
 	/**
 	 * If true, includes blocks with unknown block ids in the output. 

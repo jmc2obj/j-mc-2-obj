@@ -31,6 +31,11 @@ public class TAG_Long extends NBT_Tag {
 	public TAG_Long(String name) {
 		super(name);
 	}
+	
+	public TAG_Long(String name, long value) {
+		super(name);
+		this.value = value;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)

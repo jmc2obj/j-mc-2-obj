@@ -9,6 +9,7 @@ package org.jmc;
 
 import java.awt.Rectangle;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,9 +17,14 @@ import java.util.Map;
 
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
+import org.jmc.geom.FaceUtils;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.gui.MainWindow;
+import org.jmc.models.BlockModel;
+import org.jmc.models.Cube;
+import org.jmc.models.DirtGrass;
 import org.jmc.util.Log;
 
 
@@ -69,20 +75,6 @@ public class OBJOutputFile extends OBJFileBase
 	 * Decides whether to print "usemtl" lines in OBJ file
 	 */
 	private boolean print_usemtl;
-
-
-	/**
-	 * Checks if the blockId is in the option list of blocks to render.
-	 * 
-	 * @param blockID Id do check
-	 * @return Whether the id is in the list {@code Options.blockid }
-	 */
-	private boolean checkBlockIdInOptions(int blockID){
-		for(int id : Options.blockid){
-			if(blockID == id) return true;
-		}
-		return false;
-	}
 
 
 	/**
@@ -408,6 +400,8 @@ public class OBJOutputFile extends OBJFileBase
 		if(xe>xmax) xe=xmax;
 		if(zs<zmin) zs=zmin;
 		if(ze>zmax) ze=zmax;
+		
+		HashMap<String, ArrayList<FaceUtils.Face>> faceAxisArray = new HashMap<String, ArrayList<FaceUtils.Face>>();
 
 		for(int z = zs; z < ze; z++)
 		{
@@ -418,22 +412,38 @@ public class OBJOutputFile extends OBJFileBase
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
 					byte blockBiome=chunk.getBlockBiome(x, z);
+					BlockInfo blockInfo = BlockTypes.get(blockID);
 					
 					if(Options.convertOres){
 						if(blockID == 14 || blockID == 15 || blockID == 16 || blockID == 21 || blockID == 56 || blockID == 73 || blockID == 74 || blockID == 129){
 							blockID = 1;
 						}
 					}
+					
+					if(!MainWindow.blocksWindow.getAllSelectedItems().contains(blockInfo)){
+						continue;
+					}
 
 					if(blockID==0)
 						continue;
-					if(Options.singleBlock && !checkBlockIdInOptions(blockID))						
-						continue;
-
+					
 					if(Options.objectPerBlock) obj_idx_count++;
 					
 					try {
-						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						if (Options.optimiseGeometry){
+							//mmdanggg2: If we're optimising, only affect simple cube models
+							BlockModel bm = BlockTypes.get(blockID).getModel();
+							if (bm instanceof Cube || bm instanceof DirtGrass){
+								Cube cubeMdl = (Cube) bm;
+								cubeMdl.addModel(this, chunk, x, y, z, blockData, blockBiome, faceAxisArray);
+							}
+							else {
+								bm.addModel(this, chunk, x, y, z, blockData, blockBiome);
+							}
+						}
+						else {
+							BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						}
 					}
 					catch (Exception ex) {
 						Log.error("Error rendering block, skipping.", ex);
@@ -441,7 +451,24 @@ public class OBJOutputFile extends OBJFileBase
 				}
 			}
 		}
-
+		
+		if (Options.optimiseGeometry) {
+			for (ArrayList<FaceUtils.Face> faces : faceAxisArray.values()){
+				//X loop
+				faces = compileFaces(faces, 0);
+				//Y loop
+				faces = compileFaces(faces, 1);
+				//Z loop
+				faces = compileFaces(faces, 2);
+				for (FaceUtils.Face face : faces) {
+					//mmdanggg2: correct the UVs for the new faces
+					face.uvs[1].u = face.uvs[2].u = (float) Vertex.distance(face.vertices[0], face.vertices[1]);
+					face.uvs[3].v = face.uvs[2].v = (float) Vertex.distance(face.vertices[0], face.vertices[3]);
+					addFace(face.vertices, face.uvs, null, face.material);
+				}
+			}
+		}
+		
 		if(Options.renderEntities)
 		{
 			for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
@@ -467,5 +494,87 @@ public class OBJOutputFile extends OBJFileBase
 			}
 		}
 	}
-
+	
+	/**
+	 * Attempts to join all faces in faces along axis
+	 * @param faces The faces to combine
+	 * @param axis The axis to combine across 
+	 * @return The combined faces
+	 */
+	private static ArrayList<FaceUtils.Face> compileFaces(ArrayList<FaceUtils.Face> faces, int axis) {
+		ArrayList<FaceUtils.Face> faces2 = new ArrayList<FaceUtils.Face>();
+		for (FaceUtils.Face face : faces){
+			if (!faces2.isEmpty()){
+				boolean merged = false;
+				for (FaceUtils.Face face2 : faces2) {
+					merged = mergeFaces(face, face2, axis);
+					if (merged) break;
+				}
+				if (!merged) {
+					faces2.add(face);
+				}
+			}
+			else {
+				//mmdanggg2: if first face, just add it
+				faces2.add(face);
+			}
+		}
+		return faces2;
+	}
+	
+	/**
+	 * Attempts to join 2 faces along axis and store the joined face in face2
+	 * @param face1 Input face 1
+	 * @param face2 Input face 2, joined face will replace face2
+	 * @param axis The axis to join across 0, 1 or 2
+	 * @return Whether the join was successful
+	 */
+	private static boolean mergeFaces(FaceUtils.Face face1, FaceUtils.Face face2, int axis){
+		if (face1.material == face2.material) {
+			Vertex[] verts1 = face1.vertices;
+			Vertex[] verts2 = face2.vertices;
+			ArrayList<Vertex> matches = new ArrayList<Vertex>();
+			//mmdanggg2: check for shared verts
+			for (Vertex vert1 : verts1){
+				for (Vertex vert2 : verts2){
+					if (vert1.equals(vert2)){
+						matches.add(vert1);
+					}
+				}
+			}
+			if (matches.size() == 2){
+				//mmdanggg2: if the face extends in the axis we are looking at
+				if (matches.get(0).getByInt(axis) != matches.get(1).getByInt(axis)){
+					ArrayList<Vertex> newVertList = new ArrayList<Vertex>();
+					for (int i = 0; i < 4; i++) {
+						//mmdanggg2: get the vertices that are not the shared ones.
+						if (!verts1[i].equals(matches.get(0)) && !verts1[i].equals(matches.get(1))) {
+							newVertList.add(verts1[i]);
+						}
+						if (!verts2[i].equals(matches.get(0)) && !verts2[i].equals(matches.get(1))) {
+							newVertList.add(verts2[i]);
+						}
+					}
+					if (newVertList.size() == 4) {
+						Vertex[] newVerts = newVertList.toArray(new Vertex[newVertList.size()]);
+						//mmdanggg2: replace the face2's verts with the new ones
+						face2.vertices = newVerts;
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			else{
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
 }
