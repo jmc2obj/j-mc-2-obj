@@ -31,6 +31,11 @@ public class TAG_Int extends NBT_Tag {
 	public TAG_Int(String name) {
 		super(name);
 	}
+	
+	public TAG_Int(String name, int value) {
+		super(name);
+		this.value = value;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)

@@ -380,5 +380,10 @@ public class BlockTypes
 
 		return bi != null ? bi : unknownBlock;
 	}
+	
+	public static HashMap<Short, BlockInfo> getAll()
+	{
+		return blockTable;
+	}
 
 }

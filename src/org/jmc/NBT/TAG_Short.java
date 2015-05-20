@@ -31,6 +31,11 @@ public class TAG_Short extends NBT_Tag {
 	public TAG_Short(String name) {
 		super(name);
 	}
+	
+	public TAG_Short(String name, short value) {
+		super(name);
+		this.value = value;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)

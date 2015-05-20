@@ -39,7 +39,11 @@ public class MainWindow extends JFrame
 	
 	public static FileNames file_names;
 	
-	public static OBJExportWindow export;
+	public static BlockListWindow blocksWindow;
+	
+	public static GUIConsoleLog consoleLog;
+	
+	public static ExportWindow export;
 	
 	
 	/**
@@ -52,7 +56,9 @@ public class MainWindow extends JFrame
 		settings = new Settings();
 		update = new UpdateWindow();
 		file_names = new FileNames();
-		export = new OBJExportWindow();
+		blocksWindow = new BlockListWindow();
+		consoleLog = new GUIConsoleLog();
+		export = new ExportWindow();
 		
 		main = this;
 		
@@ -71,6 +77,7 @@ public class MainWindow extends JFrame
 	public void loadingFinished()
 	{
 		panel.loadingFinished();
+		blocksWindow.initialize();
 	}
 	
 	public void highlightUpdateButton()
@@ -85,7 +92,7 @@ public class MainWindow extends JFrame
 	 */
 	public static void log(String msg)
 	{
-		if(main!=null) main.panel.log(msg);
+		consoleLog.log(msg);
 	}
 	
 	/**

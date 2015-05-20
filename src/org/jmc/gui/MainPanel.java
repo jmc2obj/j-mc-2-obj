@@ -34,15 +34,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.swing.text.BadLocationException;
 
 import org.jmc.ChunkLoaderThread;
 import org.jmc.LevelDat;
@@ -127,11 +123,9 @@ public class MainPanel extends JPanel {
 	}
 
 	// UI elements (not described separately)
-	private JButton bLoad, bGoto, bExport, bSettings, bUpdate, bAbout;
+	private JButton bLoad, bGoto, bExport, bSettings, bUpdate, bAbout, bConsole;
 	private JComboBox cbPath;
 	private JComboBox cbDimension;
-	private JTextArea taLog;
-	private JScrollPane spPane;
 	private JSlider sFloor, sCeil;
 
 	/**
@@ -160,30 +154,37 @@ public class MainPanel extends JPanel {
 	public MainPanel() {
 		setLayout(new BorderLayout());
 
+		//Top Toolbar
 		JPanel pToolbar = new JPanel();
 		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));
 
+		
 		JPanel pPath = new JPanel();
-		pPath.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+		pPath.setBorder(BorderFactory.createEmptyBorder(2, 2, 15, 2));
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
 		cbPath = new JComboBox();
-		// cbPath.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
 		cbPath.setEditable(true);
 		cbDimension = new JComboBox();
 		JButton bPath = new JButton("...");
 		pPath.add(bPath);
 		pPath.add(cbPath);
 		pPath.add(cbDimension);
+		
+		(new PopulateLoadListThread()).start();
 
-		JScrollPane spPath = new JScrollPane(pPath);
-		spPath.setBorder(BorderFactory.createEmptyBorder());
+		//I don't see a reason for a scrollpane here, but just in case it's needed later:
+		//JScrollPane spPath = new JScrollPane(pPath);
+		//spPath.setBorder(BorderFactory.createEmptyBorder());
 
+		
+		//Top Buttons panel
 		JPanel pButtons = new JPanel();
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 5));
 
 		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
 		bLoad.setEnabled(false);
+		//bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		bGoto = new JButton(Messages.getString("MainPanel.GOTO_BUTTON"));
 		bGoto.setEnabled(false);
 		bExport = new JButton(Messages.getString("MainPanel.EXPORT_BUTTON"));
@@ -192,8 +193,7 @@ public class MainPanel extends JPanel {
 		bUpdate = new JButton(Messages.getString("MainPanel.UPDATE_BUTTON"));
 		bAbout = new JButton(Messages.getString("MainPanel.ABOUT_BUTTON"));
 		bAbout.setForeground(Color.red);
-		Font f = bAbout.getFont();
-		bAbout.setFont(new Font(f.getFamily(), Font.BOLD, f.getSize()));
+		bAbout.setFont(new Font(bAbout.getFont().getFamily(), Font.BOLD, bAbout.getFont().getSize()));
 
 		pButtons.add(bLoad);
 		pButtons.add(bGoto);
@@ -201,8 +201,20 @@ public class MainPanel extends JPanel {
 		pButtons.add(bSettings);
 		pButtons.add(bUpdate);
 		pButtons.add(bAbout);
+		
+		bConsole = new JButton("Open Console");
+		pButtons.add(bConsole);
+		bConsole.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.consoleLog.setVisible(true);
+			}
+		});
+		
+		
 
-		pToolbar.add(spPath);
+		//pToolbar.add(spPath);
+		pToolbar.add(pPath);
 		pToolbar.add(pButtons);
 
 		preview = new PreviewPanel();
@@ -212,13 +224,14 @@ public class MainPanel extends JPanel {
 		preview_alts.setLayout(new BorderLayout());
 		JPanel alts = new JPanel();
 		alts.setLayout(new BoxLayout(alts, BoxLayout.PAGE_AXIS));
+		
 		sFloor = new JSlider();
 		sFloor.setOrientation(JSlider.VERTICAL);
 		sFloor.setToolTipText(Messages.getString("MainPanel.FLOOR_SLIDER"));
 		sFloor.setMinimum(0);
-		sFloor.setMaximum(256);// TODO: this should really be read from the
-								// file, IMO
+		sFloor.setMaximum(256);// TODO: this should really be read from the file, IMO
 		sFloor.setValue(0);
+		
 		sCeil = new JSlider();
 		sCeil.setOrientation(JSlider.VERTICAL);
 		sCeil.setToolTipText(Messages.getString("MainPanel.CEILING_SLIDER"));
@@ -226,30 +239,19 @@ public class MainPanel extends JPanel {
 		sCeil.setMaximum(256);
 		sCeil.setValue(256);
 
-		taLog = new JTextArea(5, 1);
-		taLog.setLineWrap(true);
-		taLog.setEditable(false);
-		taLog.setFont(new Font("Courier", 0, 14));
-
-		spPane = new JScrollPane(taLog);
 		memory_monitor = new MemoryMonitor();
-
-		(new PopulateLoadListThread()).start();
-
-		JSplitPane spMainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, preview_alts, spPane);
-		spMainSplit.setDividerLocation(400);
-		spMainSplit.setResizeWeight(1);
-
+		
 		alts.add(sCeil);
 		alts.add(sFloor);
-
+		
 		preview_alts.add(preview);
 		preview_alts.add(alts, BorderLayout.EAST);
 
 		add(pToolbar, BorderLayout.NORTH);
-		add(spMainSplit);
+		add(preview_alts);
 		add(memory_monitor, BorderLayout.SOUTH);
 
+		
 		ChangeListener slider_listener = new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -268,6 +270,7 @@ public class MainPanel extends JPanel {
 				}
 			}
 		};
+		
 		MouseInputAdapter slider_adapter = new MouseInputAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
@@ -326,7 +329,7 @@ public class MainPanel extends JPanel {
 					return;
 				}
 
-				log(levelDat.toString());
+				MainWindow.log(levelDat.toString());
 
 				int player_x = 0;
 				int player_z = 0;
@@ -479,20 +482,6 @@ public class MainPanel extends JPanel {
 		}
 	}
 
-	/**
-	 * Main log method. Adds the string to the log at the bottom of the window.
-	 * 
-	 * @param msg
-	 *            line to be added to the log
-	 */
-	public void log(String msg) {
-		taLog.append(msg + "\n");
-		try {
-			taLog.setCaretPosition(taLog.getLineEndOffset(taLog.getLineCount() - 1));
-		} catch (BadLocationException e) { /* don't care */
-		}
-	}
-
 	public void loadingFinished() {
 		bLoad.setEnabled(true);
 		bExport.setEnabled(true);
@@ -501,8 +490,7 @@ public class MainPanel extends JPanel {
 
 	public void highlightUpdateButton() {
 		bUpdate.setForeground(Color.green);
-		Font font = bUpdate.getFont();
-		bUpdate.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize()));
+		bUpdate.setFont(new Font(bUpdate.getFont().getFamily(), Font.BOLD, bUpdate.getFont().getSize()));
 	}
 
 	public void updateSelectionOptions() {
