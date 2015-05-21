@@ -7,17 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 
 @SuppressWarnings("serial")
 public class GUIConsoleLog extends JFrame{
 	
 	private JScrollPane spPane;
-	private JTextArea taLog;
+	private JTextPane taLog;
 
 	public GUIConsoleLog(){
 		setLayout(new BorderLayout());
@@ -31,17 +35,14 @@ public class GUIConsoleLog extends JFrame{
 		JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
 		mainPanel.setBackground(Color.BLACK);
 		
-		taLog = new JTextArea(5, 1);
-		taLog.setLineWrap(true);
+		taLog = new JTextPane();
 		taLog.setEditable(false);
-		taLog.setFont(new Font("Courier", 0, 14));
+		taLog.setFont(new Font("Lucida Console", 0, 14));
 		taLog.setBackground(Color.BLACK);
-		taLog.setForeground(Color.WHITE);
 
 		spPane = new JScrollPane(taLog);
 		
 		contentPane.add(spPane);
-		//add(mainPanel);
 		
 		final JCheckBox openOnStart = new JCheckBox("Open Console On Startup", MainWindow.settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true));
 		openOnStart.setForeground(Color.WHITE);
@@ -62,12 +63,13 @@ public class GUIConsoleLog extends JFrame{
 	 * @param msg
 	 *            line to be added to the log
 	 */
-	public void log(String msg) {
-		taLog.append(msg + "\n");
+	public void log(String msg, boolean isError) {		
 		try {
-			taLog.setCaretPosition(taLog.getLineEndOffset(taLog.getLineCount() - 1));
-		} catch (BadLocationException e) { /* don't care */
-		}
+			Style color = taLog.addStyle("color", null);
+			StyleConstants.setForeground(color, isError ? Color.RED : Color.WHITE);
+			taLog.getStyledDocument().insertString(taLog.getDocument().getLength(), msg + "\n", color);
+			taLog.setCaretPosition(taLog.getDocument().getLength());
+		} catch (BadLocationException e) { /* don't care */	}
 	}
 	
 }

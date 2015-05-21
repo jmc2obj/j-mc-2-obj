@@ -329,7 +329,7 @@ public class MainPanel extends JPanel {
 					return;
 				}
 
-				MainWindow.log(levelDat.toString());
+				Log.info(levelDat.toString());
 
 				int player_x = 0;
 				int player_z = 0;

@@ -111,6 +111,9 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 	 * Create the frame.
 	 */
 	public ExportWindow() {
+		
+		super("Export...");
+		
 		setBounds(100, 100, 500, 475);
 		
 		
@@ -392,6 +395,8 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		
 		loadSettings();
 		addActionListenersToAll();
+		
+		pack();
 		
 	}
 	
@@ -825,7 +830,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 	
 	private void saveSettings(){
 		
-		MainWindow.log("Saving Options");
+		Log.info("Saving Options");
 		
 		updateOptions();
 		

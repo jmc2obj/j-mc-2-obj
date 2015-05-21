@@ -36,7 +36,7 @@ public class Log
 	{
 		System.out.println(msg);
 		if (Options.uiMode == UIMode.GUI)
-			MainWindow.log(msg);
+			MainWindow.log(msg, false);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class Log
 		
 		if (Options.uiMode == UIMode.GUI )
 		{
-			MainWindow.log("ERROR: "+msg);	
+			MainWindow.log("ERROR: "+msg, true);	
 			if (ex != null)
 			{
 				if(popup == true)
@@ -65,7 +65,7 @@ public class Log
 				// write the full stack trace to the message area
 				final StringWriter sw = new StringWriter();
 			    ex.printStackTrace(new PrintWriter(sw));
-				MainWindow.log(sw.toString());
+				MainWindow.log(sw.toString(), true);
 			}
 			else
 			{

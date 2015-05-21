@@ -93,9 +93,11 @@ public class MainWindow extends JFrame
 	 * 
 	 * @param msg string to be logged
 	 */
-	public static void log(String msg)
+	public static void log(String msg, boolean isError)
 	{
-		consoleLog.log(msg);
+		if(isError)
+			consoleLog.setVisible(true);
+		consoleLog.log(msg, isError);
 	}
 	
 	/**
