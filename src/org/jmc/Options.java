@@ -182,6 +182,11 @@ public class Options
 	 * Only used in console mode.
 	 */
 	public static boolean exportObj = true;
+	
+	/**
+	 * If true, will export to the last location and name that was used.
+	 */
+	public static boolean useLastSaveLoc = true;
 
 	/**
 	 * Whether to export the .mtl file.
