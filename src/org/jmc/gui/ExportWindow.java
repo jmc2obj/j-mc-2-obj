@@ -374,6 +374,11 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		holderExportBtns = new JPanel();
 		holderExportPanel.add(holderExportBtns);
 		btnStartExport = new JButton("Start Export");
+		
+		if (Options.worldDir == null) {
+			btnStartExport.setEnabled(false);
+		}
+		
 		holderExportBtns.add(btnStartExport);
 		
 		btnForceStop = new JButton("Force Stop");
@@ -993,5 +998,10 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 	@Override
 	public void setProgress(float value) {
 		progressBar.setValue((int)(value*100f));		
+	}
+
+
+	public void mapLoaded() {
+		btnStartExport.setEnabled(true);
 	}
 }

@@ -356,6 +356,7 @@ public class MainPanel extends JPanel {
 				(new Thread(chunk_loader)).start();
 
 				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
+				MainWindow.export.mapLoaded();
 			}
 		});
 
@@ -393,11 +394,6 @@ public class MainPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (Options.worldDir == null) {
-					JOptionPane.showMessageDialog(MainWindow.main, Messages.getString("MainPanel.LOAD_ERR"));
-					return;
-				}
-
 				updateSelectionOptions();
 
 				Rectangle win_bounds = MainWindow.main.getBounds();

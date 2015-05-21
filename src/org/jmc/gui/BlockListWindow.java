@@ -59,7 +59,7 @@ public class BlockListWindow extends JFrame{
 		
 		setTitle("Block list for export");
 		setSize(525, 425);	
-		setResizable(false);
+		//setResizable(false);
 		
 		labelList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		labelList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
