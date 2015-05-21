@@ -3,7 +3,10 @@ package org.jmc.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,9 +21,15 @@ public class GUIConsoleLog extends JFrame{
 
 	public GUIConsoleLog(){
 		setLayout(new BorderLayout());
+		setBackground(Color.BLACK);
 		setSize(600, 300);
 		
+		JPanel contentPane = new JPanel();contentPane.setLayout(new BorderLayout());
+		contentPane.setBackground(Color.BLACK);
+		setContentPane(contentPane);
+		
 		JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+		mainPanel.setBackground(Color.BLACK);
 		
 		taLog = new JTextArea(5, 1);
 		taLog.setLineWrap(true);
@@ -31,8 +40,20 @@ public class GUIConsoleLog extends JFrame{
 
 		spPane = new JScrollPane(taLog);
 		
-		mainPanel.add(spPane);
-		add(mainPanel);
+		contentPane.add(spPane);
+		//add(mainPanel);
+		
+		final JCheckBox openOnStart = new JCheckBox("Open Console On Startup", MainWindow.settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true));
+		openOnStart.setForeground(Color.WHITE);
+		openOnStart.setBackground(Color.BLACK);
+		openOnStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.settings.getPreferences().putBoolean("OPEN_CONSOLE_ON_START", openOnStart.isSelected());
+			}
+		});
+		
+		contentPane.add(openOnStart, BorderLayout.SOUTH);
 	}
 	
 	/**
