@@ -58,6 +58,9 @@ public class MainWindow extends JFrame
 		file_names = new FileNames();
 		blocksWindow = new BlockListWindow();
 		consoleLog = new GUIConsoleLog();
+		if(settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true)){
+			consoleLog.setVisible(true);
+		}
 		export = new ExportWindow();
 		
 		main = this;
@@ -90,9 +93,11 @@ public class MainWindow extends JFrame
 	 * 
 	 * @param msg string to be logged
 	 */
-	public static void log(String msg)
+	public static void log(String msg, boolean isError)
 	{
-		consoleLog.log(msg);
+		if(isError)
+			consoleLog.setVisible(true);
+		consoleLog.log(msg, isError);
 	}
 	
 	/**

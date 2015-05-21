@@ -3,36 +3,58 @@ package org.jmc.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 
 @SuppressWarnings("serial")
 public class GUIConsoleLog extends JFrame{
 	
 	private JScrollPane spPane;
-	private JTextArea taLog;
+	private JTextPane taLog;
 
 	public GUIConsoleLog(){
 		setLayout(new BorderLayout());
+		setBackground(Color.BLACK);
 		setSize(600, 300);
 		
-		JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+		JPanel contentPane = new JPanel();contentPane.setLayout(new BorderLayout());
+		contentPane.setBackground(Color.BLACK);
+		setContentPane(contentPane);
 		
-		taLog = new JTextArea(5, 1);
-		taLog.setLineWrap(true);
+		JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+		mainPanel.setBackground(Color.BLACK);
+		
+		taLog = new JTextPane();
 		taLog.setEditable(false);
-		taLog.setFont(new Font("Courier", 0, 14));
+		taLog.setFont(new Font("Lucida Console", 0, 14));
 		taLog.setBackground(Color.BLACK);
-		taLog.setForeground(Color.WHITE);
 
 		spPane = new JScrollPane(taLog);
 		
-		mainPanel.add(spPane);
-		add(mainPanel);
+		contentPane.add(spPane);
+		
+		final JCheckBox openOnStart = new JCheckBox("Open Console On Startup", MainWindow.settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true));
+		openOnStart.setForeground(Color.WHITE);
+		openOnStart.setBackground(Color.BLACK);
+		openOnStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.settings.getPreferences().putBoolean("OPEN_CONSOLE_ON_START", openOnStart.isSelected());
+			}
+		});
+		
+		contentPane.add(openOnStart, BorderLayout.SOUTH);
 	}
 	
 	/**
@@ -41,12 +63,13 @@ public class GUIConsoleLog extends JFrame{
 	 * @param msg
 	 *            line to be added to the log
 	 */
-	public void log(String msg) {
-		taLog.append(msg + "\n");
+	public void log(String msg, boolean isError) {		
 		try {
-			taLog.setCaretPosition(taLog.getLineEndOffset(taLog.getLineCount() - 1));
-		} catch (BadLocationException e) { /* don't care */
-		}
+			Style color = taLog.addStyle("color", null);
+			StyleConstants.setForeground(color, isError ? Color.RED : Color.WHITE);
+			taLog.getStyledDocument().insertString(taLog.getDocument().getLength(), msg + "\n", color);
+			taLog.setCaretPosition(taLog.getDocument().getLength());
+		} catch (BadLocationException e) { /* don't care */	}
 	}
 	
 }
