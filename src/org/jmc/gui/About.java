@@ -34,6 +34,7 @@ public class About {
         developer_list.add("<td>Danijel Kor&#x017e;inek</td><td>programming</td>");             
         developer_list.add("<td>Pedro Lopes</td><td>programming</td>");
         developer_list.add("<td>Kenneth Zhou</td><td>programming</td>");
+        developer_list.add("<td>Moonlight63</td><td>programming</td>");
 
         Collections.shuffle(developer_list);
         
