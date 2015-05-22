@@ -220,6 +220,7 @@ public class BlockListWindow extends JFrame {
 
 		File confFile = new File(Filesystem.getDatafilesDir(),
 				"conf/blockselection.dat");
+		
 		Log.info("Saving BlockList: " + group);
 		Log.info(Filesystem.getDatafilesDir().toString());
 
