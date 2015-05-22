@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -81,6 +83,7 @@ public class BlockListWindow extends JFrame {
 		searchbar.setColumns(30);
 		searchbar.setToolTipText("Search Blocks");
 		searchbar.setMaximumSize(new Dimension(Integer.MAX_VALUE, searchbar.getPreferredSize().height));
+		searchbar.setText("(search)");
 		searchbar.addCaretListener(new CaretListener() {
 
 			@Override
@@ -89,6 +92,25 @@ public class BlockListWindow extends JFrame {
 				updateListings();
 			}
 		});
+		
+		searchbar.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(searchbar.getText().isEmpty()) {
+                	searchbar.setText("(search)");
+                }
+            }
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(searchbar.getText().equals("(search)")) {
+                	searchbar.setText("");
+                }
+            }
+
+			
+        });
 
 		mainPanel.removeAll();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
@@ -206,11 +228,14 @@ public class BlockListWindow extends JFrame {
 	public void updateListings() {
 		dlm.removeAllElements();
 		for (CheckListItem item : listItems) {
-			if (((BlockInfo) item.getItem()).getName().toLowerCase()
-					.contains(searchbar.getText().toLowerCase())) {
+			if(searchbar.getText().equals("(search)"))
 				dlm.addElement(item);
-				labelList.setModel(dlm);
-			}
+			else
+				if (((BlockInfo) item.getItem()).getName().toLowerCase()
+						.contains(searchbar.getText().toLowerCase())) {
+					dlm.addElement(item);
+					labelList.setModel(dlm);
+				}
 		}
 		revalidate();
 		repaint();
