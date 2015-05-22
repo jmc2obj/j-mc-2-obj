@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import org.jmc.Chunk;
 import org.jmc.ChunkLoaderThread;
 import org.jmc.Region;
+import org.jmc.util.Log;
 /**
  * Chunk loader that loads all the chunks for the chosen save.
  * @author danijel
@@ -76,7 +77,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 			{											
 				if(chunk==null)
 				{
-					MainWindow.log("Chunk couldn't be loaded.");
+					Log.error("Chunk couldn't be loaded.", null);
 					return;
 				}
 
