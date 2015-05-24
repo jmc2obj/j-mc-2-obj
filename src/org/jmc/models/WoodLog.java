@@ -19,6 +19,8 @@ public class WoodLog extends BlockModel
 			return new String[] { mat[1], mat[1], mat[1], mat[0], mat[0], mat[1] };
 		else if (dir == 2)
 			return new String[] { mat[1], mat[0], mat[0], mat[1], mat[1], mat[1] };
+		else if (dir >= 3)
+			return new String[] { mat[1], mat[1], mat[1], mat[1], mat[1], mat[1] };
 		else
 			return new String[] { mat[0], mat[1], mat[1], mat[1], mat[1], mat[0] };
 	}
@@ -43,6 +45,7 @@ public class WoodLog extends BlockModel
 		// 0 - upright
 		// 1 - lying east-west
 		// 2 - lying north-south
+		// 3 - Anything greater (aka: 3) will return an all bark block
 		int dir = (data & 15) >> 2;
 		
 		addBox(obj,

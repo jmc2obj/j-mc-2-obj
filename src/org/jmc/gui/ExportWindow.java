@@ -826,6 +826,8 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 			textFieldSingleTexUV.setEnabled(true); btnBrowseUV.setEnabled(true);
 		}
 		
+		updateOptions();
+		
 	}
 	
 	private void saveSettings(){

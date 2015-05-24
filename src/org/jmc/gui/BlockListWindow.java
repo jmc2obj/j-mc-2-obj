@@ -209,7 +209,8 @@ public class BlockListWindow extends JFrame {
 		});
 
 	}
-
+	
+	DefaultListModel<CheckListItem> dlm = new DefaultListModel<>();
 	public void initialize() {
 		HashMap<Short, BlockInfo> blocks = BlockTypes.getAll();
 		blockInfo.addAll(blocks.values());
@@ -218,12 +219,11 @@ public class BlockListWindow extends JFrame {
 			item.selected = true;
 			listItems.add(item);
 		}
+		
 		updateListings();
 		loadList("CurSelection");
 		Log.info("Inisalizing Blocks");
 	}
-
-	DefaultListModel<CheckListItem> dlm = new DefaultListModel<>();
 
 	public void updateListings() {
 		dlm.removeAllElements();
@@ -234,9 +234,9 @@ public class BlockListWindow extends JFrame {
 				if (((BlockInfo) item.getItem()).getName().toLowerCase()
 						.contains(searchbar.getText().toLowerCase())) {
 					dlm.addElement(item);
-					labelList.setModel(dlm);
 				}
 		}
+		labelList.setModel(dlm);
 		revalidate();
 		repaint();
 	}
@@ -340,11 +340,9 @@ public class BlockListWindow extends JFrame {
 
 	public Set<BlockInfo> getAllSelectedItems() {
 		Set<BlockInfo> tempArray = new LinkedHashSet<>();
-		for (int i = 0; i < labelList.getModel().getSize(); i++) {
-			if (((CheckListItem) labelList.getModel().getElementAt(i))
-					.isSelected()) {
-				tempArray.add((BlockInfo) labelList.getModel().getElementAt(i)
-						.getItem());
+		for (int i = 0; i < listItems.size(); i++) {
+			if (listItems.get(i).isSelected()) {
+				tempArray.add((BlockInfo) listItems.get(i).getItem());
 			}
 		}
 		return tempArray;
