@@ -9,23 +9,40 @@ package org.jmc.gui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.RenderingHints.Key;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ImageObserver;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.awt.image.renderable.RenderableImage;
+import java.text.AttributedCharacterIterator;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 import org.jmc.util.Messages;
@@ -53,7 +70,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Selection boundaries.
 	 */
-	private int selection_start_x=0, selection_start_z=0,selection_end_x=0, selection_end_z=0;
+	public int selection_start_x=0, selection_start_z=0,selection_end_x=0, selection_end_z=0;
 	private int screen_sx=-1, screen_sz=-1, screen_ex=-1, screen_ez=-1;
 	/**
 	 * Altitude ranges.
@@ -89,6 +106,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * Buffer of text lines drawn in the GUI.
 	 */
 	private Vector<String> gui_text;
+	
+	public boolean fastrendermode;
+	public boolean showchunks;
+	public boolean selectchunks;
 
 	/**
 	 * Small internal class describing an image of a single chunk this preview is comprised of.
@@ -234,8 +255,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		gui_text.add(Messages.getString("PreviewPanel.SELECTION")); 
 		gui_text.add("("+selection_start_x+","+selection_start_z+")");  //$NON-NLS-2$ //$NON-NLS-3$
 		gui_text.add("("+selection_end_x+","+selection_end_z+")");  //$NON-NLS-2$ //$NON-NLS-3$
-		gui_text.add(Messages.getString("PreviewPanel.FLOOR")+alt_floor); 
-		gui_text.add(Messages.getString("PreviewPanel.CEILING")+alt_ceil); 
+		
+		//Commented these out because this information is now in a JSpinner on MainPanel
+		//gui_text.add(Messages.getString("PreviewPanel.FLOOR")+alt_floor); 
+		//gui_text.add(Messages.getString("PreviewPanel.CEILING")+alt_ceil); 
 
 
 
@@ -262,8 +285,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	{
 		int win_w=getWidth();
 		int win_h=getHeight();
-
+		
 		synchronized (main_img) {
+			BufferedImage ckln=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D bg=base_img.createGraphics();	
 			if(!fast)
 				bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
@@ -289,6 +313,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 					if(x>win_w || y>win_h) continue;
 					if(x+w<0 || y+h<0) continue;
+					
+					if(showchunks){
+						ckln.createGraphics().drawLine(x, y, x+w, y);
+						ckln.createGraphics().drawLine(x+w, y, x+w, y+h);
+					}
 
 					bg.drawImage(chunk.image, x, y, w, h, null);
 					if(!fast)
@@ -315,14 +344,15 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 					}
 			}
 
-
-			Graphics2D mg=main_img.createGraphics();	
+			Graphics2D mg=main_img.createGraphics();
 			mg.drawImage(base_img,0,0,null);
 			if(!fast)
 			{
 				mg.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (0.6)));
 				mg.drawImage(height_img,0,0,null);
 			}
+			if(showchunks)
+				mg.drawImage(ckln, 0, 0, null);
 
 		}
 	}
@@ -393,6 +423,12 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		zoom_level=1;
 
 	}
+	
+	public void clearChunks(){
+		chunks.clear();
+		redraw(true);
+		repaint();
+	}
 
 	/**
 	 * Sets the offset.
@@ -462,7 +498,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		shift_x-=(x-x/ratio)/old_zoom_level;
 		shift_y-=(y-y/ratio)/old_zoom_level;			
 
-		redraw(false);
+		if(!fastrendermode)
+			redraw(false);
+		else
+			redraw(true);
 		repaint();
 
 	}
@@ -590,6 +629,18 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			selection_start_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_start_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
+			
+			if(selectchunks){
+			
+				if(selection_start_x % 16 != 0){
+					selection_start_x = Math.round(selection_start_x / 16) * 16;
+				}
+				
+				if(selection_start_z % 16 != 0){
+					selection_start_z = Math.round(selection_start_z / 16) * 16;
+				}
+			
+			}
 
 			return;
 
@@ -632,11 +683,37 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				selection_start_z=t;
 			}
 		}
+		
+		if(selectchunks){
+			if(selection_start_x % 16 != 0){
+				selection_start_x = Math.round(selection_start_x / 16) * 16;
+			}
+			
+			if(selection_start_z % 16 != 0){
+				selection_start_z = Math.round(selection_start_z / 16) * 16;
+			}
+			
+			if(selection_end_x % 16 != 0){
+				selection_end_x = Math.round(selection_end_x / 16) * 16;
+			}
+			
+			if(selection_end_z % 16 != 0){
+				selection_end_z = Math.round(selection_end_z / 16) * 16;
+			}
+		}
+		
+		MainPanel.modelPos1X.setValue(selection_start_x);
+		MainPanel.modelPos1Z.setValue(selection_start_z);
+		MainPanel.modelPos2X.setValue(selection_end_x);
+		MainPanel.modelPos2Z.setValue(selection_end_z);
 
 		selecting_area=false;
 		moving_map=false;
 		shaping_selection=false;
-		redraw(false);
+		if(!fastrendermode)
+			redraw(false);
+		else
+			redraw(true);
 		repaint();
 	}
 
@@ -686,6 +763,25 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 			selection_end_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_end_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
+			
+			if(selectchunks){
+				if(selection_start_x % 16 != 0){
+					selection_start_x = Math.round(selection_start_x / 16) * 16;
+				}
+				
+				if(selection_start_z % 16 != 0){
+					selection_start_z = Math.round(selection_start_z / 16) * 16;
+				}
+				
+				if(selection_end_x % 16 != 0){
+					selection_end_x = Math.round(selection_end_x / 16) * 16;
+				}
+				
+				if(selection_end_z % 16 != 0){
+					selection_end_z = Math.round(selection_end_z / 16) * 16;
+				}
+			}
+			
 			repaint();		
 
 			return;

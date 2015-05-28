@@ -85,7 +85,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		this.dimension=Options.dimension;
 
 		chunk_images=preview.getChunkImages();
-
+		
 		loaded_chunks=new HashSet<Integer>();
 		floor=0;
 		ceiling=Integer.MAX_VALUE;
@@ -179,8 +179,10 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 						int ix=chunk.getPosX();
 						int iy=chunk.getPosZ();
 
-						chunk.renderImages(floor,ceiling);
-						BufferedImage height_img=chunk.getHeightImage();
+						chunk.renderImages(floor,ceiling,preview.fastrendermode);
+						BufferedImage height_img=null;
+						if(!preview.fastrendermode)
+							height_img=chunk.getHeightImage();
 						BufferedImage img=chunk.getBlockImage();											
 
 						preview.addImage(img, height_img, ix*64, iy*64);
@@ -202,7 +204,10 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 					}
 				}			
 
-				preview.redraw(false);
+				if(!preview.fastrendermode)
+					preview.redraw(false);
+				else
+					preview.redraw(true);
 				preview.repaint();
 			}
 

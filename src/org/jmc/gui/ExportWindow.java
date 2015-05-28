@@ -145,7 +145,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		
 		holderMapScale = new JPanel();
 		pMapExportOffset.add(holderMapScale);
-		holderMapScale.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		holderMapScale.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		
 		JLabel lblMapScale = new JLabel("Map Scale");

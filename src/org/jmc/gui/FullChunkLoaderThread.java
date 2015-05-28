@@ -81,8 +81,10 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 					return;
 				}
 
-				chunk.renderImages(0,Integer.MAX_VALUE); //this ignores the GUI, but the class is unused anyway...
-				BufferedImage height_img=chunk.getHeightImage();
+				chunk.renderImages(0,Integer.MAX_VALUE,preview.fastrendermode); //this ignores the GUI, but the class is unused anyway...
+				BufferedImage height_img=null;
+				if(!preview.fastrendermode)
+					chunk.getHeightImage();
 				BufferedImage img=chunk.getBlockImage();										
 
 				int ix=chunk.getPosX();
@@ -102,7 +104,8 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 
 		}
 		
-		preview.redraw(false);
+		if(!preview.fastrendermode)
+			preview.redraw(false);
 		preview.repaint();
 		
 		running=false;

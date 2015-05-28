@@ -9,6 +9,8 @@ package org.jmc.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -28,6 +30,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -35,7 +38,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
@@ -124,9 +131,12 @@ public class MainPanel extends JPanel {
 
 	// UI elements (not described separately)
 	private JButton bLoad, bGoto, bExport, bSettings, bUpdate, bAbout, bConsole;
+	private JCheckBox chckbxFastRender;
 	private JComboBox cbPath;
 	private JComboBox cbDimension;
 	private JSlider sFloor, sCeil;
+	
+	public static SpinnerModel modelPos1X, modelPos1Z, modelPos2X, modelPos2Z;
 
 	/**
 	 * Main map preview panel.
@@ -160,7 +170,7 @@ public class MainPanel extends JPanel {
 
 		
 		JPanel pPath = new JPanel();
-		pPath.setBorder(BorderFactory.createEmptyBorder(2, 2, 15, 2));
+		pPath.setBorder(BorderFactory.createEmptyBorder(2, 2, 5, 2));
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
 		cbPath = new JComboBox();
 		cbPath.setEditable(true);
@@ -180,7 +190,7 @@ public class MainPanel extends JPanel {
 		//Top Buttons panel
 		JPanel pButtons = new JPanel();
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
-		pButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 5));
+		pButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
 		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
 		bLoad.setEnabled(false);
@@ -212,10 +222,185 @@ public class MainPanel extends JPanel {
 		});
 		
 		
+		
+		//START PREVIEW CONTROLS
+		JPanel pControls = new JPanel();
+		pControls.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		pControls.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+		
+		//Render Options Panel
+		JPanel holderPreviewOptions = new JPanel();
+		holderPreviewOptions.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		holderPreviewOptions.setBorder(BorderFactory.createTitledBorder(holderPreviewOptions.getBorder(), "Preview Options", TitledBorder.CENTER, TitledBorder.TOP));
+		
+		chckbxFastRender = new JCheckBox("Fast Render"); // TODO Localization
+		chckbxFastRender.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				preview.fastrendermode = chckbxFastRender.isSelected();
+				preview.clearChunks();
+				if (chunk_loader != null && chunk_loader.isRunning())
+					chunk_loader.stopRunning();
+
+				chunk_loader = new ViewChunkLoaderThread(preview);
+				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+				(new Thread(chunk_loader)).start();
+				
+			}
+		});
+		
+		final JCheckBox chckbxShowChunks = new JCheckBox("Show Chunks"); // TODO Localization
+		chckbxShowChunks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				preview.showchunks = chckbxShowChunks.isSelected();
+				preview.redraw(chckbxFastRender.isSelected());	
+				preview.repaint();
+			}
+		});
+		
+		final JCheckBox chckbxSelectChunks = new JCheckBox("Select Chunks"); // TODO Localization
+		chckbxSelectChunks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				preview.selectchunks = chckbxSelectChunks.isSelected();
+			}
+		});
+		
+		holderPreviewOptions.add(chckbxFastRender);
+		holderPreviewOptions.add(chckbxShowChunks);
+		holderPreviewOptions.add(chckbxSelectChunks);
+		
+		
+		//Floor and Ceiling Panel
+		JPanel holderFloorCeil = new JPanel();
+		holderFloorCeil.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		holderFloorCeil.setBorder(BorderFactory.createTitledBorder(holderFloorCeil.getBorder(), "Floor-Ceiling", TitledBorder.CENTER, TitledBorder.TOP));
+		
+		//Floor Panel
+		JPanel holderMinY = new JPanel();
+		holderMinY.setLayout(new BoxLayout(holderMinY, BoxLayout.LINE_AXIS));
+		holderMinY.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
+		
+		JLabel lblMinY = new JLabel(Messages.getString("PreviewPanel.FLOOR"));
+		final SpinnerModel minYModel = new SpinnerNumberModel(0, 0, 256, 1);
+		final JSpinner minYSpinner = new JSpinner(minYModel);
+		minYSpinner.setMaximumSize(new Dimension(75, minYSpinner.getPreferredSize().height));
+		minYSpinner.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				sFloor.setValue((int) minYSpinner.getModel().getValue());
+			}
+		});
+		
+		holderMinY.add(lblMinY);
+		holderMinY.add(minYSpinner);
+		
+		//Ceiling Panel
+		JPanel holderMaxY = new JPanel();
+		holderMaxY.setLayout(new BoxLayout(holderMaxY, BoxLayout.LINE_AXIS));
+		holderMaxY.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
+		
+		JLabel lblMaxY = new JLabel(Messages.getString("PreviewPanel.CEILING"));
+		final SpinnerModel maxYModel = new SpinnerNumberModel(256, 0, 256, 1);
+		final JSpinner maxYSpinner = new JSpinner(maxYModel);
+		maxYSpinner.setMaximumSize(new Dimension(75, maxYSpinner.getPreferredSize().height));
+		maxYSpinner.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				sCeil.setValue((int) maxYSpinner.getModel().getValue());
+			}
+		});
+		
+		holderMaxY.add(lblMaxY);
+		holderMaxY.add(maxYSpinner);
+		
+		holderFloorCeil.add(holderMinY);
+		holderFloorCeil.add(holderMaxY);
+		
+		
+		//Selection Pos 1 Panel
+		JPanel holderPos1 = new JPanel();
+		holderPos1.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		holderPos1.setBorder(BorderFactory.createTitledBorder(holderPos1.getBorder(), "Position 1", TitledBorder.CENTER, TitledBorder.TOP));
+		
+		JLabel lblPos1X = new JLabel("X: ");
+		modelPos1X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+		final JSpinner spinnerPos1X = new JSpinner(modelPos1X);
+		spinnerPos1X.setPreferredSize(new Dimension(75, spinnerPos1X.getPreferredSize().height));
+		spinnerPos1X.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preview.selection_start_x = (int) spinnerPos1X.getModel().getValue();
+				preview.repaint();
+			}
+		});
+		
+		
+		JLabel lblPos1Z = new JLabel("    Z: ");
+		modelPos1Z = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+		final JSpinner spinnerPos1Z = new JSpinner(modelPos1Z);
+		spinnerPos1Z.setPreferredSize(new Dimension(75, spinnerPos1Z.getPreferredSize().height));
+		spinnerPos1Z.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preview.selection_start_z = (int) spinnerPos1Z.getModel().getValue();
+				preview.repaint();
+			}
+		});
+		
+		holderPos1.add(lblPos1X);
+		holderPos1.add(spinnerPos1X);
+		holderPos1.add(lblPos1Z);
+		holderPos1.add(spinnerPos1Z);
+		
+		
+		//Selection Pos 2 Panel
+		JPanel holderPos2 = new JPanel();
+		holderPos2.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		holderPos2.setBorder(BorderFactory.createTitledBorder(holderPos2.getBorder(), "Position 2", TitledBorder.CENTER, TitledBorder.TOP));
+		
+		JLabel lblPos2X = new JLabel("X: ");
+		modelPos2X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+		final JSpinner spinnerPos2X = new JSpinner(modelPos2X);
+		spinnerPos2X.setPreferredSize(new Dimension(75, spinnerPos2X.getPreferredSize().height));
+		spinnerPos2X.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preview.selection_end_x = (int) spinnerPos2X.getModel().getValue();
+				preview.repaint();
+			}
+		});
+		
+		
+		JLabel lblPos2Z = new JLabel("    Z: ");
+		modelPos2Z = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+		final JSpinner spinnerPos2Z = new JSpinner(modelPos2Z);
+		spinnerPos2Z.setPreferredSize(new Dimension(75, spinnerPos2Z.getPreferredSize().height));
+		spinnerPos2Z.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preview.selection_end_z = (int) spinnerPos2Z.getModel().getValue();
+				preview.repaint();
+			}
+		});
+		
+		holderPos2.add(lblPos2X);
+		holderPos2.add(spinnerPos2X);
+		holderPos2.add(lblPos2Z);
+		holderPos2.add(spinnerPos2Z);
+		
+		pControls.add(holderPreviewOptions);
+		pControls.add(holderFloorCeil);
+		pControls.add(holderPos1);
+		pControls.add(holderPos2);
+		//END PREVIEW CONTROLS
+		
 
 		//pToolbar.add(spPath);
 		pToolbar.add(pPath);
 		pToolbar.add(pButtons);
+		pToolbar.add(pControls);
 
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110, 150, 100));
@@ -256,11 +441,17 @@ public class MainPanel extends JPanel {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (e.getSource().equals(sCeil)) {
-					if (sFloor.getValue() >= sCeil.getValue())
+					maxYModel.setValue(sCeil.getValue());
+					if (sFloor.getValue() >= sCeil.getValue()){
 						sFloor.setValue(sCeil.getValue() - 1);
+						minYModel.setValue(sCeil.getValue() - 1);
+					}
 				} else {
-					if (sCeil.getValue() <= sFloor.getValue())
+					minYModel.setValue(sFloor.getValue());
+					if (sCeil.getValue() <= sFloor.getValue()){
 						sCeil.setValue(sFloor.getValue() + 1);
+						maxYModel.setValue(sFloor.getValue() + 1);
+					}
 				}
 				if (Options.worldDir != null) {
 					if (!slider_pressed)
