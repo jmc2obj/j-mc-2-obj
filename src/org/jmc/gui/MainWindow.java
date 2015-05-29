@@ -37,8 +37,6 @@ public class MainWindow extends JFrame
 	
 	public static UpdateWindow update;
 	
-	public static FileNames file_names;
-	
 	public static BlockListWindow blocksWindow;
 	
 	public static GUIConsoleLog consoleLog;
@@ -55,7 +53,6 @@ public class MainWindow extends JFrame
 
 		settings = new Settings();
 		update = new UpdateWindow();
-		file_names = new FileNames();
 		blocksWindow = new BlockListWindow();
 		consoleLog = new GUIConsoleLog();
 		if(settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true)){

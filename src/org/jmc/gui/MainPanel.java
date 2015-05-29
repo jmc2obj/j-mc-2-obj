@@ -212,7 +212,7 @@ public class MainPanel extends JPanel {
 		pButtons.add(bUpdate);
 		pButtons.add(bAbout);
 		
-		bConsole = new JButton("Open Console");
+		bConsole = new JButton(Messages.getString("MainPanel.OPEN_CONSOLE"));
 		pButtons.add(bConsole);
 		bConsole.addActionListener(new ActionListener() {
 			@Override
@@ -231,9 +231,9 @@ public class MainPanel extends JPanel {
 		//Render Options Panel
 		JPanel holderPreviewOptions = new JPanel();
 		holderPreviewOptions.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderPreviewOptions.setBorder(BorderFactory.createTitledBorder(holderPreviewOptions.getBorder(), "Preview Options", TitledBorder.CENTER, TitledBorder.TOP));
+		holderPreviewOptions.setBorder(BorderFactory.createTitledBorder(holderPreviewOptions.getBorder(), Messages.getString("MainPanel.PREVIEW_OPTIONS"), TitledBorder.CENTER, TitledBorder.TOP));
 		
-		chckbxFastRender = new JCheckBox("Fast Render"); // TODO Localization
+		chckbxFastRender = new JCheckBox(Messages.getString("MainPanel.FAST_RENDER")); // TODO Localization
 		chckbxFastRender.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -249,7 +249,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 		
-		final JCheckBox chckbxShowChunks = new JCheckBox("Show Chunks"); // TODO Localization
+		final JCheckBox chckbxShowChunks = new JCheckBox(Messages.getString("MainPanel.SHOW_CHUNKS")); // TODO Localization
 		chckbxShowChunks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -259,7 +259,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 		
-		final JCheckBox chckbxSelectChunks = new JCheckBox("Select Chunks"); // TODO Localization
+		final JCheckBox chckbxSelectChunks = new JCheckBox(Messages.getString("MainPanel.SEL_CHUNKS")); // TODO Localization
 		chckbxSelectChunks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -275,7 +275,7 @@ public class MainPanel extends JPanel {
 		//Floor and Ceiling Panel
 		JPanel holderFloorCeil = new JPanel();
 		holderFloorCeil.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderFloorCeil.setBorder(BorderFactory.createTitledBorder(holderFloorCeil.getBorder(), "Floor-Ceiling", TitledBorder.CENTER, TitledBorder.TOP));
+		holderFloorCeil.setBorder(BorderFactory.createTitledBorder(holderFloorCeil.getBorder(), Messages.getString("MainPanel.ALT"), TitledBorder.CENTER, TitledBorder.TOP));
 		
 		//Floor Panel
 		JPanel holderMinY = new JPanel();
@@ -322,7 +322,7 @@ public class MainPanel extends JPanel {
 		//Selection Pos 1 Panel
 		JPanel holderPos1 = new JPanel();
 		holderPos1.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderPos1.setBorder(BorderFactory.createTitledBorder(holderPos1.getBorder(), "Position 1", TitledBorder.CENTER, TitledBorder.TOP));
+		holderPos1.setBorder(BorderFactory.createTitledBorder(holderPos1.getBorder(), Messages.getString("MainPanel.POSITION") + " 1", TitledBorder.CENTER, TitledBorder.TOP));
 		
 		JLabel lblPos1X = new JLabel("X: ");
 		modelPos1X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
@@ -358,7 +358,7 @@ public class MainPanel extends JPanel {
 		//Selection Pos 2 Panel
 		JPanel holderPos2 = new JPanel();
 		holderPos2.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderPos2.setBorder(BorderFactory.createTitledBorder(holderPos2.getBorder(), "Position 2", TitledBorder.CENTER, TitledBorder.TOP));
+		holderPos2.setBorder(BorderFactory.createTitledBorder(holderPos2.getBorder(), Messages.getString("MainPanel.POSITION") + " 2", TitledBorder.CENTER, TitledBorder.TOP));
 		
 		JLabel lblPos2X = new JLabel("X: ");
 		modelPos2X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
