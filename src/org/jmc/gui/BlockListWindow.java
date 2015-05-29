@@ -40,6 +40,7 @@ import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
+import org.jmc.util.Messages;
 
 public class BlockListWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -48,9 +49,9 @@ public class BlockListWindow extends JFrame {
 
 	private List<BlockInfo> blockInfo = new LinkedList<>();
 	private List<CheckListItem> listItems = new LinkedList<>();
-	private JButton selectAll = new JButton("Select All");
-	private JButton deselectAll = new JButton("Deselect All");
-	private JButton toggleselect = new JButton("Toggle All");
+	private JButton selectAll = new JButton(Messages.getString("BlockListWindow.SEL_ALL"));
+	private JButton deselectAll = new JButton(Messages.getString("BlockListWindow.DESEL_ALL"));
+	private JButton toggleselect = new JButton(Messages.getString("BlockListWindow.TOGGLE"));
 
 	private JTextField searchbar = new JTextField();
 
@@ -59,7 +60,7 @@ public class BlockListWindow extends JFrame {
 
 	public BlockListWindow() {
 
-		setTitle("Block list for export");
+		setTitle(Messages.getString("BlockListWindow.TITLE"));
 		setSize(525, 425);
 		// setResizable(false);
 
@@ -81,9 +82,8 @@ public class BlockListWindow extends JFrame {
 
 		searchbar.setEditable(true);
 		searchbar.setColumns(30);
-		searchbar.setToolTipText("Search Blocks");
 		searchbar.setMaximumSize(new Dimension(Integer.MAX_VALUE, searchbar.getPreferredSize().height));
-		searchbar.setText("(search)");
+		searchbar.setText(Messages.getString("BlockListWindow.SEARCH"));
 		searchbar.addCaretListener(new CaretListener() {
 
 			@Override
@@ -98,13 +98,13 @@ public class BlockListWindow extends JFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 if(searchbar.getText().isEmpty()) {
-                	searchbar.setText("(search)");
+                	searchbar.setText(Messages.getString("BlockListWindow.SEARCH"));
                 }
             }
 
             @Override
             public void focusGained(FocusEvent e) {
-                if(searchbar.getText().equals("(search)")) {
+                if(searchbar.getText().equals(Messages.getString("BlockListWindow.SEARCH"))) {
                 	searchbar.setText("");
                 }
             }
@@ -132,8 +132,8 @@ public class BlockListWindow extends JFrame {
 		for (int i = 1; i < 6; i++) {
 			final int presetnum = i;
 			JPanel tempPanel = new JPanel();
-			JButton loadButton = new JButton("Load Preset " + i);
-			JButton saveButton = new JButton("Save Preset " + i);
+			JButton loadButton = new JButton(Messages.getString("BlockListWindow.LOAD_PRESET") + i);
+			JButton saveButton = new JButton(Messages.getString("BlockListWindow.SAVE_PRESET") + i);
 
 			tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.Y_AXIS));
 
@@ -228,7 +228,7 @@ public class BlockListWindow extends JFrame {
 	public void updateListings() {
 		dlm.removeAllElements();
 		for (CheckListItem item : listItems) {
-			if(searchbar.getText().equals("(search)"))
+			if(searchbar.getText().equals(Messages.getString("BlockListWindow.SEARCH")))
 				dlm.addElement(item);
 			else
 				if (((BlockInfo) item.getItem()).getName().toLowerCase()
