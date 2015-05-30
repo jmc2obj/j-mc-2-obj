@@ -21,7 +21,6 @@ import org.jmc.geom.FaceUtils;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
-import org.jmc.gui.MainWindow;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.DirtGrass;
@@ -412,20 +411,18 @@ public class OBJOutputFile extends OBJFileBase
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
 					byte blockBiome=chunk.getBlockBiome(x, z);
-					BlockInfo blockInfo = BlockTypes.get(blockID);
 					
+					if(blockID==0)
+						continue;
+					
+					if(Options.excludeBlocks.contains(blockID))
+						continue;
+
 					if(Options.convertOres){
 						if(blockID == 14 || blockID == 15 || blockID == 16 || blockID == 21 || blockID == 56 || blockID == 73 || blockID == 74 || blockID == 129){
 							blockID = 1;
 						}
 					}
-					
-					if(!MainWindow.blocksWindow.getAllSelectedItems().contains(blockInfo)){
-						continue;
-					}
-
-					if(blockID==0)
-						continue;
 					
 					if(Options.objectPerBlock) obj_idx_count++;
 					

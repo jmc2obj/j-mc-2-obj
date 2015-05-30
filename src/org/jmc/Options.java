@@ -1,7 +1,9 @@
 package org.jmc;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 
 /**
@@ -127,8 +129,9 @@ public class Options
 	 */
 	public static boolean objectPerBlock = false;
 	
-	
-	
+	/**
+	 * If true, will convert ore blocks to stone.	
+	 */
 	public static boolean convertOres = false;
 	
 	/**
@@ -143,14 +146,9 @@ public class Options
 	public static boolean removeDuplicates = false;
 	
 	/**
-	 * If true, will try to merge planar faces and create optimised geometry.
+	 * If true, will try to merge planar faces and create optimized geometry.
 	 */
 	public static boolean optimiseGeometry = false;
-
-	/**
-	 * If true, includes blocks with unknown block ids in the output. 
-	 */
-	public static boolean renderUnknown = false;	
 
 	/**
 	 * If true, sides and bottom of the model are rendered as well.
@@ -166,6 +164,16 @@ public class Options
 	 * If true, biomes are taken into account during export.
 	 */
 	public static boolean renderBiomes = true;
+
+	/**
+	 * If true, includes blocks with unknown block ids in the output. 
+	 */
+	public static boolean renderUnknown = false;	
+
+	/**
+	 * List of block ids to exclude.
+	 */
+	public static Set<Short> excludeBlocks = new HashSet<Short>();
 
 	/**
 	 * If true, UV file is used to convert UVs during export.

@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +35,7 @@ import javax.swing.event.CaretListener;
 
 import org.jmc.BlockInfo;
 import org.jmc.BlockTypes;
+import org.jmc.Options;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
@@ -250,6 +251,7 @@ public class BlockListWindow extends JFrame {
 		Log.info(Filesystem.getDatafilesDir().toString());
 
 		try {
+			Options.excludeBlocks = getExcludedBlockIds();
 
 			TAG_Compound root;
 			if (!confFile.exists()) {
@@ -332,20 +334,23 @@ public class BlockListWindow extends JFrame {
 
 			}
 
+			Options.excludeBlocks = getExcludedBlockIds();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public Set<BlockInfo> getAllSelectedItems() {
-		Set<BlockInfo> tempArray = new LinkedHashSet<>();
+	private Set<Short> getExcludedBlockIds() {
+		Set<Short> result = new HashSet<Short>();
 		for (int i = 0; i < listItems.size(); i++) {
-			if (listItems.get(i).isSelected()) {
-				tempArray.add((BlockInfo) listItems.get(i).getItem());
+			if (!listItems.get(i).isSelected()) {
+				BlockInfo blkInfo = (BlockInfo)listItems.get(i).getItem();
+				result.add((short)blkInfo.getId());
 			}
 		}
-		return tempArray;
+		return result;
 	}
 
 	private void selectItem(Point point) {
