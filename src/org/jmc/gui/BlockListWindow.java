@@ -289,7 +289,7 @@ public class BlockListWindow extends JFrame {
 			root.save(new FileOutputStream(confFile));
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error("Error saving blocks selection", e);
 		}
 
 	}
@@ -337,7 +337,7 @@ public class BlockListWindow extends JFrame {
 			Options.excludeBlocks = getExcludedBlockIds();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error("Error log blocks selection", e);
 		}
 
 	}

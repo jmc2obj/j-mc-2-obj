@@ -20,6 +20,8 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.jmc.util.Log;
+
 /**
  * Region file class.
  * This file contains individual chunks. It can be either the old MCRegion format or
@@ -291,7 +293,7 @@ public class Region implements Iterable<Chunk> {
 			try {
 				ret=getChunk(pos);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error("Error getting chunk "+pos, e, false);
 			}
 			
 			pos++;
