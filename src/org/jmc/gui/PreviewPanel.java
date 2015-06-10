@@ -9,40 +9,23 @@ package org.jmc.gui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.RenderingHints.Key;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ImageObserver;
-import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.awt.image.renderable.RenderableImage;
-import java.text.AttributedCharacterIterator;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JPanel;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 import org.jmc.util.Messages;
@@ -75,6 +58,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Altitude ranges.
 	 */
+	@SuppressWarnings("unused")
 	private int alt_floor, alt_ceil;
 	/**
 	 * Offset of the map, as set by dragging the map around.
