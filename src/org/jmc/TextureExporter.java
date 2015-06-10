@@ -49,11 +49,13 @@ public class TextureExporter {
 		public BufferedImage image;
 		public String name;
 		public boolean repeating;
+		public boolean luma;
 
-		public Texture(String name, BufferedImage img, boolean repeating) {
+		public Texture(String name, BufferedImage img, boolean repeating, boolean luma) {
 			this.repeating = repeating;
 			this.name = name;
 			this.image = img;
+			this.luma = luma;
 		}
 	}
 
@@ -299,6 +301,11 @@ public class TextureExporter {
 				String repeating_str = Xml.getAttribute(texNode, "repeating");
 				if (repeating_str != null)
 					repeating = repeating_str.toLowerCase().equals("true");
+				
+				boolean luma = false;
+				String luma_str = Xml.getAttribute(texNode, "luma");
+				if (luma_str != null)
+					luma = luma_str.toLowerCase().equals("true");
 
 				if (texName == null)
 					continue;
@@ -335,7 +342,7 @@ public class TextureExporter {
 					}
 				}
 
-				ret.add(new Texture(texName, texture, repeating));
+				ret.add(new Texture(texName, texture, repeating, luma));
 
 			}
 
@@ -421,7 +428,7 @@ public class TextureExporter {
 	 * @throws Exception
 	 *             if there is an error.
 	 */
-	public static void mergeTextures(File destination, File texturePack, double scale, boolean alphas,
+	public static void mergeTextures(File destination, File texturePack, double scale, boolean alphas, boolean lumas,
 			ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
@@ -509,6 +516,9 @@ public class TextureExporter {
 
 		BufferedImage textureimage = new BufferedImage(wmax, hmax, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D gtex = textureimage.createGraphics();
+		
+		BufferedImage lumaimage = new BufferedImage(wmax, hmax, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D gtexluma = lumaimage.createGraphics();
 
 		float texnum = textures.size();
 		float count = 0;
@@ -523,10 +533,19 @@ public class TextureExporter {
 						int sy = rect.y + y * rect.height;
 						gtex.drawImage(texture.image, sx, sy, sx + rect.width, sy + rect.height, 0, 0, rect.width,
 								rect.height, null);
+						
+						if(lumas)
+							if(texture.luma)
+								gtexluma.drawImage(texture.image, sx, sy, sx + rect.width, sy + rect.height, 0, 0, rect.width,
+									rect.height, null);
 					}
 			} else {
 				gtex.drawImage(texture.image, rect.x, rect.y, rect.x + rect.width, rect.y + rect.height, 0, 0,
 						rect.width, rect.height, null);
+				if(lumas)
+					if(texture.luma)
+						gtexluma.drawImage(texture.image, rect.x, rect.y, rect.x + rect.width, rect.y + rect.height, 0, 0,
+							rect.width, rect.height, null);
 			}
 
 			if (progress != null)
@@ -534,7 +553,9 @@ public class TextureExporter {
 		}
 
 		ImageIO.write(textureimage, "png", new File(destination, "texture.png"));
-
+		if(lumas)
+			ImageIO.write(lumaimage, "png", new File(destination, "texture_luma.png"));
+		
 		if (alphas) {
 			try {
 				convertToAlpha(textureimage);

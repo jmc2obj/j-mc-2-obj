@@ -106,6 +106,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 	private JPanel holderOffset;
 	private JCheckBox chckbxUseLastSaveLoc;
 	private JPanel holderExportBtns;
+	private JCheckBox chckbxExportSeparateLight;
 
 	/**
 	 * Create the frame.
@@ -237,6 +238,10 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		chckbxCombineAllTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SINGLE"));
 		chckbxCombineAllTextures.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderTexExport.add(chckbxCombineAllTextures);
+		
+		chckbxExportSeparateLight = new JCheckBox(Messages.getString("ExportWindow.chckbxExportSeparateLight.text"));
+		chckbxExportSeparateLight.setAlignmentX(Component.CENTER_ALIGNMENT);
+		holderTexExport.add(chckbxExportSeparateLight);
 		
 		JLabel lblExportTexturesFrom = new JLabel(Messages.getString("TexsplitDialog.TEX_LOC"));
 		lblExportTexturesFrom.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -450,7 +455,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
 				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				ExportTextures(new File(jfc.getSelectedFile().toString().concat("/tex")), null, Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected());
+				ExportTextures(new File(jfc.getSelectedFile().toString().concat("/tex")), null, Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
 				
 			}
 		};
@@ -467,7 +472,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 				jfcDest.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				retval=jfcDest.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
 				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				ExportTextures(new File(jfcDest.getSelectedFile().toString().concat("/tex")), jfc.getSelectedFile(), Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected());
+				ExportTextures(new File(jfcDest.getSelectedFile().toString().concat("/tex")), jfc.getSelectedFile(), Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
 				
 			}
 		};
@@ -781,6 +786,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		
 		chckbxSeparateAlphaTexture.addActionListener(genericSaveAction);
 		chckbxCombineAllTextures.addActionListener(genericSaveAction);
+		chckbxExportSeparateLight.addActionListener(genericSaveAction);
 		
 		btnMinecraftDefault.addActionListener(exportTexFromMC);
 		btnCustomResourcePack.addActionListener(exportTexFromRP);
@@ -832,13 +838,23 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", true));
 		cboxTexScale.setSelectedItem(""+prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
 		chckbxSeparateAlphaTexture.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
+		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
 		chckbxCombineAllTextures.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
 		
 		if(!chckbxSingleTexture.isSelected()){
-			textFieldSingleTexUV.setEnabled(false); btnBrowseUV.setEnabled(false);
+			textFieldSingleTexUV.setEnabled(false);
+			btnBrowseUV.setEnabled(false);
 		}
 		else{
-			textFieldSingleTexUV.setEnabled(true); btnBrowseUV.setEnabled(true);
+			textFieldSingleTexUV.setEnabled(true);
+			btnBrowseUV.setEnabled(true);
+		}
+		
+		if(chckbxCombineAllTextures.isSelected()){
+			chckbxExportSeparateLight.setEnabled(true);
+		}
+		else{
+			chckbxExportSeparateLight.setEnabled(false);
 		}
 		
 		updateOptions();
@@ -895,10 +911,19 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		}
 		
 		if(!chckbxSingleTexture.isSelected()){
-			textFieldSingleTexUV.setEnabled(false); btnBrowseUV.setEnabled(false);
+			textFieldSingleTexUV.setEnabled(false);
+			btnBrowseUV.setEnabled(false);
 		}
 		else{
-			textFieldSingleTexUV.setEnabled(true); btnBrowseUV.setEnabled(true);
+			textFieldSingleTexUV.setEnabled(true);
+			btnBrowseUV.setEnabled(true);
+		}
+		
+		if(chckbxCombineAllTextures.isSelected()){
+			chckbxExportSeparateLight.setEnabled(true);
+		}
+		else{
+			chckbxExportSeparateLight.setEnabled(false);
 		}
 
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
@@ -918,6 +943,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		
 		prefs.putDouble("TEXTURE_SCALE_ID", Options.textureScale);
 		prefs.putBoolean("TEXTURE_ALPHA", Options.textureAlpha);
+		prefs.putBoolean("TEXTURE_LIGHT", Options.textureLight);
 		prefs.putBoolean("TEXTURE_MERGE", Options.textureMerge);
 		
 	}
@@ -979,17 +1005,18 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		}
 		
 		Options.textureAlpha=chckbxSeparateAlphaTexture.isSelected();
+		Options.textureLight=chckbxExportSeparateLight.isSelected();
 		Options.textureMerge=chckbxCombineAllTextures.isSelected();
 		
 	}
 	
-	private void ExportTextures(final File destination, final File texturepack, final double texScale, final boolean texMerge, final boolean alphas){
+	private void ExportTextures(final File destination, final File texturepack, final double texScale, final boolean texMerge, final boolean alphas, final boolean lumas){
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					if(texMerge){
-						TextureExporter.mergeTextures(destination, texturepack, texScale, alphas,	ExportWindow.this);
+						TextureExporter.mergeTextures(destination, texturepack, texScale, alphas, lumas,	ExportWindow.this);
 						ExportWindow.this.textFieldSingleTexUV.setText(new File(destination, "texture.uv").toString());
 					}
 					else{

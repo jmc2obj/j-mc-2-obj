@@ -68,6 +68,12 @@ public class Options
 	 * Export alpha channel as separate file(s).
 	 */
 	public static boolean textureAlpha = false;
+	
+	/**
+	 * Export a separate pass for blocks that should emit light. Useful for
+	 * renders using GI.
+	 */
+	public static boolean textureLight;
 
 	/**
 	 * Merge textures into one file.
@@ -229,5 +235,7 @@ public class Options
 	 * Name of .MTL file to export.
 	 */
 	public static String mtlFileName = "minecraft.mtl";
+
+	
 
 }
