@@ -7,10 +7,13 @@
  ******************************************************************************/
 package org.jmc;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageIO;
@@ -85,8 +88,7 @@ public class FilledMapDat {
 	
 	
 	/**
-	 * Gets the color Array
-	 * @return an color map
+	 * Exports an MapImage and Append the material
 	 * @throws IOException 
 	 */
 	public TAG_Byte_Array writePngTexture() throws IOException
@@ -108,17 +110,27 @@ public class FilledMapDat {
 			}
 		}
 		
-		File f = new File("map_"+map_id+"_item_frame.png");
-		if (!ImageIO.write(img, "PNG", f)) {
+		String materialName = "map_"+map_id+"_item_frame";
+		String mapFilename = "map_"+map_id+"_item_frame.png"; 
+				
+		File texFile = new File(Options.outputDir+"/tex", mapFilename);
+		if (!ImageIO.write(img, "PNG", texFile)) {
 		  throw new RuntimeException("Unexpected error writing image");
 		}
-		/*
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("myfile.txt", true)))) {
-		    out.println("the text");
+
+		File mtlfile = new File(Options.outputDir, Options.mtlFileName);
+		
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(mtlfile, true)))) {
+			out.println("");
+			out.println("");
+			out.println("newmtl "+materialName);
+		    out.println("Kd 0.2500 0.2500 0.2500");
+    		out.println("Ks 0.0000 0.0000 0.0000");
+			out.print("map_Kd tex/"+mapFilename);
 		} catch (IOException e) {
 		    throw new RuntimeException("Unexpected error apending material file");
 		}
-		*/
+		
 
 		return color_map;
 	}
