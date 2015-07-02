@@ -1,6 +1,8 @@
 package org.jmc.entities;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -15,6 +17,7 @@ import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
+import org.jmc.entities.models.EntityModel;
 import org.jmc.NBT.TAG_Short;
 import org.jmc.geom.Transform;
 import org.jmc.util.Log;
@@ -27,6 +30,10 @@ import org.jmc.util.Messages;
  */
 public class ItemFrame extends Entity
 {
+	
+	private Set<String> exportedMaps = new HashSet<String>();
+
+	
 	@Override
 	public void addEntity(OBJOutputFile obj, TAG_Compound entity)
 	{
@@ -65,13 +72,21 @@ public class ItemFrame extends Entity
 					return;
 				}
 				else {
-					Log.info("MAP:" + map_data);
-					
-					try {
-						map_data.writePngTexture();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						Log.error("Cant write map", e, true);
+					String mapName = "'map_" + map_id;
+					boolean alreadyExported = exportedMaps.contains(mapName);
+					// already exported material?
+					if (!alreadyExported) {
+						exportedMaps.add(mapName);
+						Log.info("export map: "+mapName);
+						try {
+							map_data.writePngTexture();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							Log.error("Cant write map", e, true);
+						}
+					}
+					else {
+						Log.info(" - Map already exported!");
 					}
 					
 						
