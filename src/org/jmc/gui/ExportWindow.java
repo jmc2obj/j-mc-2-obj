@@ -34,6 +34,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.jmc.CloudsExporter;
 import org.jmc.ObjExporter;
 import org.jmc.Options;
@@ -41,6 +46,7 @@ import org.jmc.Options.OffsetType;
 import org.jmc.ProgressCallback;
 import org.jmc.StopCallback;
 import org.jmc.TextureExporter;
+import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -451,12 +457,45 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				ExportTextures(new File(jfc.getSelectedFile().toString().concat("/tex")), null, Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
+				if(!Options.useSysBrowser){
 				
+					JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath());
+					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+					if(retval!=JFileChooser.APPROVE_OPTION) return;
+					ExportTextures(new File(jfc.getSelectedFile().toString().concat("/tex")), null, Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
+					
+				}
+				
+				else{
+					final Display display = new Display ();
+					final Shell shell = new Shell (display);
+					final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+					
+					String [] filterNames = new String [] {"Save to a textures folder (usually called tex)"};
+			        String [] filterExtensions = new String [] {"*"};
+			        dialog.setFilterNames (filterNames);
+			        dialog.setFilterExtensions (filterExtensions);
+			        dialog.setOverwrite(true);
+			        dialog.open();
+			        
+			        File selectedFile;
+			        
+			        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+			        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+			        	System.out.println(selectedFile);
+			        	ExportTextures(new File(dialog.getFilterPath(), "/" + dialog.getFileName()), null, Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
+					}
+			        
+					revalidate();
+					repaint();
+					
+					shell.close();
+					while (!shell.isDisposed ()) {
+					    if (!display.readAndDispatch ()) display.sleep ();
+					}
+					display.dispose ();
+				}
 			}
 		};
 		
@@ -464,51 +503,131 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfc.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
-				int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
-				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				JFileChooser jfcDest=new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfcDest.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				retval=jfcDest.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				ExportTextures(new File(jfcDest.getSelectedFile().toString().concat("/tex")), jfc.getSelectedFile(), Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
+				if(!Options.useSysBrowser){
 				
+					JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath());
+					jfc.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
+					int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
+					if(retval!=JFileChooser.APPROVE_OPTION) return;
+					JFileChooser jfcDest=new JFileChooser(MainWindow.settings.getLastExportPath());
+					jfcDest.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					retval=jfcDest.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+					if(retval!=JFileChooser.APPROVE_OPTION) return;
+					ExportTextures(new File(jfcDest.getSelectedFile().toString().concat("/tex")), jfc.getSelectedFile(), Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
+				
+				}
+				else{
+					
+					final Display display = new Display ();
+					final Shell shell = new Shell (display);
+					FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+					
+					String [] filterNames = new String [] {"Resource Pack (zip)"};
+			        String [] filterExtensions = new String [] {"*.zip", "*.ZIP"};
+			        dialog.setFilterNames (filterNames);
+			        dialog.setFilterExtensions (filterExtensions);
+			        //dialog.setOverwrite(true);
+			        dialog.open();
+			        
+			        File selectedFile;
+			        
+			        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+			        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+			        	
+			        	dialog = new FileDialog(shell, SWT.SAVE);
+						
+						filterNames = new String [] {"Save to a textures folder (usually called tex)"};
+				        filterExtensions = new String [] {"*"};
+				        dialog.setFilterNames (filterNames);
+				        dialog.setFilterExtensions (filterExtensions);
+				        dialog.setOverwrite(true);
+				        dialog.open();
+				        
+				        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+				        	ExportTextures(new File(dialog.getFilterPath(), "/" + dialog.getFileName()), selectedFile, Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x","")), chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(), chckbxExportSeparateLight.isSelected());
+				        }
+				        
+				    }
+			        
+					revalidate();
+					repaint();
+					
+					shell.close();
+					while (!shell.isDisposed ()) {
+					    if (!display.readAndDispatch ()) display.sleep ();
+					}
+					display.dispose ();
+					
+				}
 			}
 		};
 		
 		AbstractAction exportCloudsFromMC = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath()){
-					@Override
-					public void approveSelection(){
-				        File f = getSelectedFile();
-				        if(!f.toString().substring(f.toString().length()-4).contentEquals(".obj") || f.toString().length() < 4)
-				        	setSelectedFile(new File(f.toString() + ".obj")); f = getSelectedFile();
-				        
-				        if(f.exists()){
-				            int result = JOptionPane.showConfirmDialog(this, Messages.getString("OBJExportPanel.OBJ_ERR"), Messages.getString("OBJExportOptions.OVER_OBJ"),JOptionPane.YES_NO_CANCEL_OPTION);
-				            switch(result){
-				                case JOptionPane.YES_OPTION:
-				                    super.approveSelection();
-				                    return;
-				                case JOptionPane.NO_OPTION:
-				                    return;
-				                case JOptionPane.CLOSED_OPTION:
-				                    return;
-				                case JOptionPane.CANCEL_OPTION:
-				                    cancelSelection();
-				                    return;
-				            }
-				        }
-				        super.approveSelection();
-				    }  
-				};
-				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
-				int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(), null);
+				
+				if(!Options.useSysBrowser){
+					
+					JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath()){
+						@Override
+						public void approveSelection(){
+					        File f = getSelectedFile();
+					        if(!f.toString().substring(f.toString().length()-4).contentEquals(".obj") || f.toString().length() < 4)
+					        	setSelectedFile(new File(f.toString() + ".obj")); f = getSelectedFile();
+					        
+					        if(f.exists()){
+					            int result = JOptionPane.showConfirmDialog(this, Messages.getString("OBJExportPanel.OBJ_ERR"), Messages.getString("OBJExportOptions.OVER_OBJ"),JOptionPane.YES_NO_CANCEL_OPTION);
+					            switch(result){
+					                case JOptionPane.YES_OPTION:
+					                    super.approveSelection();
+					                    return;
+					                case JOptionPane.NO_OPTION:
+					                    return;
+					                case JOptionPane.CLOSED_OPTION:
+					                    return;
+					                case JOptionPane.CANCEL_OPTION:
+					                    cancelSelection();
+					                    return;
+					            }
+					        }
+					        super.approveSelection();
+					    }  
+					};
+					jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
+					int retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+					if(retval!=JFileChooser.APPROVE_OPTION) return;
+					ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(), null);
+				}
+				
+				else{
+					final Display display = new Display ();
+					final Shell shell = new Shell (display);
+					final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+					
+					String [] filterNames = new String [] {"OBJ File (.obj)"};
+			        String [] filterExtensions = new String [] {"*.obj"};
+			        dialog.setFilterNames (filterNames);
+			        dialog.setFilterExtensions (filterExtensions);
+			        dialog.setOverwrite(true);
+			        dialog.open();
+			        
+			        File selectedFile;
+			        
+			        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+			        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+			        	System.out.println(selectedFile);
+			        	ExportCloudsOBJ(new File(dialog.getFilterPath()), selectedFile, null);
+					}
+			        
+					revalidate();
+					repaint();
+					
+					shell.close();
+					while (!shell.isDisposed ()) {
+					    if (!display.readAndDispatch ()) display.sleep ();
+					}
+					display.dispose ();
+				}
 				
 			}
 		};
@@ -517,41 +636,86 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				JFileChooser jfcRP=new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfcRP.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
-				int retval=jfcRP.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
-				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				
-				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath()){
-					@Override
-				    public void approveSelection(){
-				        File f = getSelectedFile();
-				        if(!f.toString().substring(f.toString().length()-4).contentEquals(".obj") || f.toString().length() < 4)
-				        	setSelectedFile(new File(f.toString() + ".obj")); f = getSelectedFile();
+				if(!Options.useSysBrowser){
+					JFileChooser jfcRP=new JFileChooser(MainWindow.settings.getLastExportPath());
+					jfcRP.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
+					int retval=jfcRP.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
+					if(retval!=JFileChooser.APPROVE_OPTION) return;
+					
+					JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath()){
+						@Override
+					    public void approveSelection(){
+					        File f = getSelectedFile();
+					        if(!f.toString().substring(f.toString().length()-4).contentEquals(".obj") || f.toString().length() < 4)
+					        	setSelectedFile(new File(f.toString() + ".obj")); f = getSelectedFile();
+					        
+					        if(f.exists()){
+					            int result = JOptionPane.showConfirmDialog(this, Messages.getString("OBJExportPanel.OBJ_ERR"), Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
+					            switch(result){
+					                case JOptionPane.YES_OPTION:
+					                    super.approveSelection();
+					                    return;
+					                case JOptionPane.NO_OPTION:
+					                    return;
+					                case JOptionPane.CLOSED_OPTION:
+					                    return;
+					                case JOptionPane.CANCEL_OPTION:
+					                    cancelSelection();
+					                    return;
+					            }
+					        }
+					        super.approveSelection();
+					    }  
+					};
+					
+					jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
+					retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+					if(retval!=JFileChooser.APPROVE_OPTION) return;
+					ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(), jfcRP.getSelectedFile());
+				}
+				else{
+					
+					final Display display = new Display ();
+					final Shell shell = new Shell (display);
+					FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+					
+					String [] filterNames = new String [] {"Resource Pack (zip)"};
+			        String [] filterExtensions = new String [] {"*.zip", "*.ZIP"};
+			        dialog.setFilterNames (filterNames);
+			        dialog.setFilterExtensions (filterExtensions);
+			        //dialog.setOverwrite(true);
+			        dialog.open();
+			        
+			        File selectedFile;
+			        
+			        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+			        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+			        	
+			        	dialog = new FileDialog(shell, SWT.SAVE);
+						
+			        	filterNames = new String [] {"OBJ File (.obj)"};
+				        filterExtensions = new String [] {"*.obj"};
+				        dialog.setFilterNames (filterNames);
+				        dialog.setFilterExtensions (filterExtensions);
+				        dialog.setOverwrite(true);
+				        dialog.open();
 				        
-				        if(f.exists()){
-				            int result = JOptionPane.showConfirmDialog(this, Messages.getString("OBJExportPanel.OBJ_ERR"), Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
-				            switch(result){
-				                case JOptionPane.YES_OPTION:
-				                    super.approveSelection();
-				                    return;
-				                case JOptionPane.NO_OPTION:
-				                    return;
-				                case JOptionPane.CLOSED_OPTION:
-				                    return;
-				                case JOptionPane.CANCEL_OPTION:
-				                    cancelSelection();
-				                    return;
-				            }
+				        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+				        	ExportCloudsOBJ(new File(dialog.getFilterPath()), selectedFile, new File(dialog.getFilterPath(), dialog.getFileName()));
 				        }
-				        super.approveSelection();
-				    }  
-				};
-				
-				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
-				retval=jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-				if(retval!=JFileChooser.APPROVE_OPTION) return;
-				ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(), jfcRP.getSelectedFile());
+				        
+				    }
+			        
+					revalidate();
+					repaint();
+					
+					shell.close();
+					while (!shell.isDisposed ()) {
+					    if (!display.readAndDispatch ()) display.sleep ();
+					}
+					display.dispose ();
+					
+				}
 				
 			}
 		};
@@ -575,7 +739,7 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 		AbstractAction startExport = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e){
-				
+								
 				JFileChooser jfc=new JFileChooser(MainWindow.settings.getLastExportPath()){
 					@Override
 				    public void approveSelection(){
@@ -671,6 +835,8 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 					Options.objFileName = prefs.get("LAST_USED_NAME", "minceaft.obj");
 					Options.mtlFileName = prefs.get("LAST_USED_NAME", "minceaft.obj").replace(".obj", ".mtl");
 					
+					boolean fileExists = false;
+					
 					if(new File(Options.outputDir, Options.objFileName).exists()){
 			            int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("OBJExportPanel.OBJ_ERR"), Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
 			            switch(result2){
@@ -678,8 +844,8 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 			                	break;
 			                    //return;
 			                case JOptionPane.NO_OPTION:
-			                	jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-			                    return;
+			                	fileExists = true;
+			                    break;
 			                case JOptionPane.CLOSED_OPTION:
 			                    return;
 			                case JOptionPane.CANCEL_OPTION:
@@ -687,21 +853,85 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 			            }
 			        }
 					
-					if(new File(Options.outputDir, Options.mtlFileName).exists()){
+					
+					if(!fileExists && new File(Options.outputDir, Options.mtlFileName).exists()){
 			            int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("OBJExportPanel.MTL_ERR"), Messages.getString("OBJExportOptions.OVER_MTL"),JOptionPane.YES_NO_CANCEL_OPTION);
 			            switch(result2){
 			                case JOptionPane.YES_OPTION:
 			                	break;
 			                    //return;
 			                case JOptionPane.NO_OPTION:
-			                	jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-			                    return;
+			                	fileExists = true;
+			                    break;
 			                case JOptionPane.CLOSED_OPTION:
 			                    return;
 			                case JOptionPane.CANCEL_OPTION:
 			                    return;
 			            }
 			        }
+					
+					while(fileExists){
+					
+						if(!Options.useSysBrowser){
+							fileExists = false;
+							jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+						}
+						
+						else{
+							final Display display = new Display ();
+							final Shell shell = new Shell (display);
+							final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+							
+							String [] filterNames = new String [] {"OBJ File (.obj)"};
+					        String [] filterExtensions = new String [] {"*.obj"};
+					        dialog.setFilterNames (filterNames);
+					        dialog.setFilterExtensions (filterExtensions);
+					        dialog.setOverwrite(true);
+					        dialog.open();
+					        
+					        File selectedFile;
+					        
+					        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+					        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+					        	System.out.println(selectedFile);
+					        	File savePath = new File(dialog.getFilterPath());
+								Options.outputDir = savePath;
+								Options.objFileName = selectedFile.getName();
+								Options.mtlFileName = selectedFile.getName().replace(".obj", ".mtl");
+								
+								prefs.put("LAST_USED_NAME", Options.objFileName);
+								
+								MainWindow.settings.setLastExportPath(savePath.toString());
+								
+								fileExists = false;
+								
+							}
+							
+							shell.close();
+							while (!shell.isDisposed ()) {
+							    if (!display.readAndDispatch ()) display.sleep ();
+							}
+							display.dispose ();
+						}						
+						
+						if(!fileExists && new File(Options.outputDir, Options.mtlFileName).exists() && Options.useSysBrowser){
+				            int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("OBJExportPanel.MTL_ERR"), Messages.getString("OBJExportOptions.OVER_MTL"),JOptionPane.YES_NO_CANCEL_OPTION);
+				            switch(result2){
+				                case JOptionPane.YES_OPTION:
+				                	fileExists = false;
+				                	break;
+				                    //return;
+				                case JOptionPane.NO_OPTION:
+				                	fileExists = true;
+				                	continue;
+				                case JOptionPane.CLOSED_OPTION:
+				                    return;
+				                case JOptionPane.CANCEL_OPTION:
+				                    return;
+				            }
+				        }
+					
+					}
 					
 					MainWindow.updateSelectionOptions();
 					btnStartExport.setEnabled(false);
@@ -730,7 +960,105 @@ public class ExportWindow extends JFrame implements ProgressCallback{
 					
 				}
 				else{
-					jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+					if(!Options.useSysBrowser){
+						jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+						
+					}
+					
+					else{
+						
+						boolean loop = true;
+						
+						final Display display = new Display ();
+						final Shell shell = new Shell (display);
+						final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+						
+						while(loop){
+							
+							loop = false;
+							
+							String [] filterNames = new String [] {"OBJ File (.obj)"};
+					        String [] filterExtensions = new String [] {"*.obj"};
+					        dialog.setFilterNames (filterNames);
+					        dialog.setFilterExtensions (filterExtensions);
+					        dialog.setOverwrite(true);
+					        dialog.open();
+					        
+					        File selectedFile;
+					        
+					        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+					        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+					        	System.out.println(selectedFile);
+					        	File savePath = new File(dialog.getFilterPath());
+								Options.outputDir = savePath;
+								Options.objFileName = selectedFile.getName();
+								Options.mtlFileName = selectedFile.getName().replace(".obj", ".mtl");
+								
+								prefs.put("LAST_USED_NAME", Options.objFileName);
+								
+								MainWindow.settings.setLastExportPath(savePath.toString());
+								
+								if(!loop && new File(Options.outputDir, Options.mtlFileName).exists()){
+						            int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("OBJExportPanel.MTL_ERR"), Messages.getString("OBJExportOptions.OVER_MTL"),JOptionPane.YES_NO_CANCEL_OPTION);
+						            switch(result2){
+						                case JOptionPane.YES_OPTION:
+						                	loop = false;
+						                	break;
+						                    //return;
+						                case JOptionPane.NO_OPTION:
+						                	loop = true;
+						                	continue;
+						                case JOptionPane.CLOSED_OPTION:
+						                	shell.close();
+											while (!shell.isDisposed ()) {
+											    if (!display.readAndDispatch ()) display.sleep ();
+											}
+											display.dispose ();
+						                    return;
+						                case JOptionPane.CANCEL_OPTION:
+						                	shell.close();
+											while (!shell.isDisposed ()) {
+											    if (!display.readAndDispatch ()) display.sleep ();
+											}
+											display.dispose ();
+						                    return;
+						            }
+						        }
+					        }
+					    }
+						
+						shell.close();
+						while (!shell.isDisposed ()) {
+						    if (!display.readAndDispatch ()) display.sleep ();
+						}
+						display.dispose ();
+						
+						MainWindow.updateSelectionOptions();
+						btnStartExport.setEnabled(false);
+						btnForceStop.setEnabled(true);
+						
+						Thread t = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								stop=false;
+		
+								ObjExporter.export(ExportWindow.this,
+									new StopCallback() {
+										@Override
+										public boolean stopRequested() {
+											return stop;
+										}
+									}, 
+									true,
+									true);
+								
+								btnStartExport.setEnabled(true);
+								btnForceStop.setEnabled(false);
+							}
+						});
+						t.start();
+						
+					}
 				}
 			}
 			

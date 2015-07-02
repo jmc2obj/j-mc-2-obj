@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,6 +44,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 
 	JComboBox cbMove,cbSelect,cbLang;
 	JTextArea taRestart;
+	JCheckBox chckbxUseSystemBrowser;
 
 	@SuppressWarnings("serial")
 	public Settings()
@@ -96,6 +98,8 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbLang=new JComboBox(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
+		
+		chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USESYSBROWSER"));
 
 		JPanel pRestart=new JPanel();
 		pRestart.setMaximumSize(new Dimension(Short.MAX_VALUE,50));
@@ -180,6 +184,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		mp.add(pMove);
 		mp.add(pSelect);
 		mp.add(pLang);
+		mp.add(chckbxUseSystemBrowser);
 		mp.add(Box.createVerticalGlue());
 		mp.add(pRestart);
 		mp.add(pButtons);		
@@ -192,6 +197,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbMove.addActionListener(saveAction);
 		cbSelect.addActionListener(saveAction);
 		cbLang.addActionListener(saveAction);
+		chckbxUseSystemBrowser.addActionListener(saveAction);
 	}
 
 	public Preferences getPreferences()
@@ -262,6 +268,8 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1)); 
 		cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0)); 
 		cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0)); 
+		chckbxUseSystemBrowser.setSelected(prefs.getBoolean("USE_SYSTEM_BROWSER", true));
+		Options.useSysBrowser = prefs.getBoolean("USE_SYSTEM_BROWSER", true);
 	}
 
 	private void saveSettings()
@@ -269,14 +277,16 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		taRestart.setVisible(false);
 
 		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex()); 
-		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex()); 
-
+		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex());
+		prefs.putBoolean("USE_SYSTEM_BROWSER", chckbxUseSystemBrowser.isSelected());
+		Options.useSysBrowser = prefs.getBoolean("USE_SYSTEM_BROWSER", true);
 		int l=prefs.getInt("LANGUAGE", 0); 
 		if(cbLang.getSelectedIndex()!=l)
 		{
 			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex()); 
 			taRestart.setVisible(true);
 		}
+		
 	}
 
 	private void resetSettings()

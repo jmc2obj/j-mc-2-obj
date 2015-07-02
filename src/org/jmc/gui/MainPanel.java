@@ -47,6 +47,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.jmc.ChunkLoaderThread;
 import org.jmc.LevelDat;
 import org.jmc.Options;
@@ -204,7 +207,7 @@ public class MainPanel extends JPanel {
 		bAbout = new JButton(Messages.getString("MainPanel.ABOUT_BUTTON"));
 		bAbout.setForeground(Color.red);
 		bAbout.setFont(new Font(bAbout.getFont().getFamily(), Font.BOLD, bAbout.getFont().getSize()));
-
+		
 		pButtons.add(bLoad);
 		pButtons.add(bGoto);
 		pButtons.add(bExport);
@@ -486,12 +489,54 @@ public class MainPanel extends JPanel {
 		bPath.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastVisitedDir());
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				if (jfc.showDialog(MainPanel.this, Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER")) == JFileChooser.APPROVE_OPTION) {
-					String path = jfc.getSelectedFile().getAbsolutePath();
-					addPathToList(path);
-					MainWindow.settings.setLastVisitedDir(path);
+				if(!Options.useSysBrowser){
+					JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastVisitedDir());
+					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					if (jfc.showDialog(MainPanel.this, Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER")) == JFileChooser.APPROVE_OPTION) {
+						String path = jfc.getSelectedFile().getAbsolutePath();
+						addPathToList(path);
+						MainWindow.settings.setLastVisitedDir(path);
+					}
+				}
+				else{
+					final Display display = new Display ();
+					final Shell shell = new Shell (display);
+					
+					final org.eclipse.swt.widgets.FileDialog dialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.OPEN);
+					
+					//String [] filterNames = new String [] {"All Files (*)"};
+			        String [] filterExtensions = new String [] {"level.dat"};
+			        String filterPath = Filesystem.getMinecraftDir().getAbsolutePath();
+			        //dialog.setFilterNames (filterNames);
+			        dialog.setFilterExtensions (filterExtensions);
+			        dialog.setFilterPath (filterPath);
+			        dialog.open();
+			        
+			        File selectedFile;
+			        
+			        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
+			        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
+			        	String path = selectedFile.getParent().toString();
+			        	addPathToList(path);
+						MainWindow.settings.setLastVisitedDir(path);
+					}
+			        else{
+			        	shell.close();
+						while (!shell.isDisposed ()) {
+						    if (!display.readAndDispatch ()) display.sleep ();
+						}
+						display.dispose ();
+						return;
+			        }
+			        
+					revalidate();
+					repaint();
+					
+					shell.close();
+					while (!shell.isDisposed ()) {
+					    if (!display.readAndDispatch ()) display.sleep ();
+					}
+					display.dispose ();
 				}
 			}
 		});
