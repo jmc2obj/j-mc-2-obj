@@ -44,8 +44,16 @@ public class ItemFrame extends Entity
 		byte facing = ((TAG_Byte)entity.getElement("Facing")).value;
 		
 		TAG_Compound item = ((TAG_Compound)entity.getElement("Item"));
-
-		String item_id = ((TAG_String)item.getElement("id")).value;
+		
+		String item_id = "";
+		
+		try {
+			item_id = ((TAG_String)item.getElement("id")).value;	
+		}
+		catch (Exception e) {
+			Log.info("Item Id of frame not found - that seams ok - it may be empty!");
+		}
+		
 		
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
