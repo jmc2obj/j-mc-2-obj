@@ -41,6 +41,7 @@ public class ItemFrame extends Entity
 		int x=((TAG_Int)entity.getElement("TileX")).value;
 		int y=((TAG_Int)entity.getElement("TileY")).value;
 		int z=((TAG_Int)entity.getElement("TileZ")).value;
+		byte facing = ((TAG_Byte)entity.getElement("Facing")).value;
 		
 		TAG_Compound item = ((TAG_Compound)entity.getElement("Item"));
 
@@ -50,9 +51,25 @@ public class ItemFrame extends Entity
 		Transform translate = new Transform();
 		Transform rt;
 		
+		switch (facing)
+		{
+			case 0:
+				break;
+			case 1:
+				rotate.rotate(0, 90, 0);
+				break;
+			case 2:
+				rotate.rotate(0, 180, 0);
+				break;
+			case 3:
+				rotate.rotate(0, -90, 0);
+				break;
+		}
+		
 		translate.translate(x, y, z);		
 			
 		rt = translate.multiply(rotate);
+		
 		
 		BlockMaterial materials=new BlockMaterial();
 		
