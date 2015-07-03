@@ -21,8 +21,6 @@ import javax.imageio.ImageIO;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_List;
 import org.jmc.util.Log;
 
 import java.awt.Color;
