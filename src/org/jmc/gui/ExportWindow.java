@@ -35,7 +35,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -46,7 +45,6 @@ import org.jmc.Options.OffsetType;
 import org.jmc.ProgressCallback;
 import org.jmc.StopCallback;
 import org.jmc.TextureExporter;
-import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 

@@ -4,24 +4,17 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.jmc.BlockMaterial;
 import org.jmc.FilledMapDat;
 import org.jmc.OBJOutputFile;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Byte;
-import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
-import org.jmc.entities.models.EntityModel;
 import org.jmc.NBT.TAG_Short;
 import org.jmc.geom.Transform;
 import org.jmc.util.Log;
-import org.jmc.util.Messages;
 
 
 /**
@@ -51,7 +44,7 @@ public class ItemFrame extends Entity
 			item_id = ((TAG_String)item.getElement("id")).value;	
 		}
 		catch (Exception e) {
-			Log.info("Item Id of frame not found - that seams ok - it may be empty!");
+			// Log.info("Item Id of frame not found - that seams ok - it may be empty!");
 		}
 		
 		
@@ -86,14 +79,14 @@ public class ItemFrame extends Entity
 			case "minecraft:filled_map":
 				
 				short map_id = ((TAG_Short)item.getElement("Damage")).value;
-				Log.info("Found map with id: '" + map_id+ "'");
+				// Log.info("Found map with id: '" + map_id+ "'");
 				String [] matname={"map_" + map_id + "_item_frame"};
 				materials.put((byte) 0, matname );
 				
 				
 				FilledMapDat map_data = new FilledMapDat(Options.worldDir);
 				if (!map_data.open(String.valueOf(map_id))) {
-					Log.info("'map_" + map_id+ ".dat' not found");
+					// Log.info("'map_" + map_id+ ".dat' not found");
 					return;
 				}
 				else {
@@ -102,7 +95,7 @@ public class ItemFrame extends Entity
 					// already exported material?
 					if (!alreadyExported) {
 						exportedMaps.add(mapName);
-						Log.info("export map: "+mapName);
+						// Log.info("export map: "+mapName);
 						try {
 							map_data.writePngTexture();
 						} catch (IOException e) {
@@ -111,7 +104,7 @@ public class ItemFrame extends Entity
 						}
 					}
 					else {
-						Log.info(" - Map already exported!");
+						// Log.info(" - Map already exported!");
 					}
 					
 						
@@ -123,7 +116,7 @@ public class ItemFrame extends Entity
 				
 				break;
 			default:
-				Log.info("Unsupported FrameItem: '" + item_id + "'");
+				// Log.info("Unsupported FrameItem: '" + item_id + "'");
 				String [] matname1={"item_frame"};
 				materials.put((byte) 0, matname1 );
 				break;
