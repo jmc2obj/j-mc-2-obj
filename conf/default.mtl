@@ -31,6 +31,12 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_stand.png
 map_d tex/armor_stand_a.png
 
+newmtl armor_enchanted
+Kd 0.8590 0.1080 0.9330
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_iron_helmet.png
+map_d tex/armor_iron_helmet_a.png
+
 newmtl armor_golden_helmet
 Kd 1.0000 1.0000 1.0000
 Ks 0.0000 0.0000 0.0000
@@ -56,13 +62,13 @@ map_Kd tex/armor_iron_helmet.png
 map_d tex/armor_iron__helmet_a.png
 
 newmtl armor_leather_helmet
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060  
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_helmet.png
 map_d tex/armor_leather_helmet_a.png
 
 newmtl armor_leather_helmet_overlay
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_helmet_overlay.png
 map_d tex/armor_leather_helmet_overlay_a.png
@@ -92,13 +98,13 @@ map_Kd tex/armor_iron_chest.png
 map_d tex/armor_iron__chest_a.png
 
 newmtl armor_leather_chest
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_chest.png
 map_d tex/armor_leather_chest_a.png
 
 newmtl armor_leather_chest_overlay
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_chest_overlay.png
 map_d tex/armor_leather_chest_overlay_a.png
@@ -128,13 +134,13 @@ map_Kd tex/armor_iron_legs.png
 map_d tex/armor_iron__legs_a.png
 
 newmtl armor_leather_legs
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_legs.png
 map_d tex/armor_leather_legs_a.png
 
 newmtl armor_leather_legs_overlay
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_legs_overlay.png
 map_d tex/armor_leather_legs_overlay_a.png
@@ -164,13 +170,13 @@ map_Kd tex/armor_iron_feet.png
 map_d tex/armor_iron_feet_a.png
 
 newmtl armor_leather_feet
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_feet.png
 map_d tex/armor_leather_feet_a.png
 
 newmtl armor_leather_feet_overlay
-Kd 1.0000 1.0000 1.0000
+Kd 0.2230 0.0490 0.0060
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/armor_leather_feet_overlay.png
 map_d tex/armor_leather_feet_overlay_a.png
