@@ -44,11 +44,11 @@ public class ArmorStand extends Entity {
 	}
 	
 	
-	private Transform getRotate() {
+	private Transform getRotate(float offset) {
 		float yaw=((TAG_Float)rot.getElement(0)).value;				
 		float pitch=((TAG_Float)rot.getElement(1)).value;
 		Transform rotate = new Transform();
-		rotate.rotate2(yaw+90, pitch ,0);	
+		rotate.rotate2(yaw+offset, pitch ,0);	
 		return rotate;
 	}
 
@@ -59,7 +59,7 @@ public class ArmorStand extends Entity {
 		pos = (TAG_List) entity.getElement("Pos");
 		rot = (TAG_List) entity.getElement("Rotation");
 		
-		model.addEntity(obj, getTranslate().multiply(getRotate()));	
+		model.addEntity(obj, getTranslate().multiply(getRotate((float) 90)));	
 		
 		// equipment
 		// Log.info("ArmorStand found: "+entity.getElement("Equipment"));
@@ -85,10 +85,6 @@ public class ArmorStand extends Entity {
 			}
 			
 
-			
-			//   <file name="assets/minecraft/textures/entity/armorstand/wood.png" source="texturepack"><tex name="armor_stand"/></file>
-			 // <file name="assets/minecraft/textures/models/armor/gold_layer_1.png" source="texturepack"><tex name="armor_gold"/></file>
-
 			String mcMaterial = item_id.substring(item_id.indexOf(":")+1, item_id.indexOf("_"));
 			
 			// Log.info("----------------------------------------------");
@@ -103,12 +99,14 @@ public class ArmorStand extends Entity {
 					"helmet"
 			};
 
+			// internal: offset x, y, z, rotate, initialscale
+			// blender:  offset ?, z, -y, rotate, initialscale
 			double posCorrection[][] = {
-					{0, 0, 0}, // item
-					{0.04, 0.23, 0}, // feet
-					{0, 0.57, 0}, // legs
-					{0, 1.12, 0}, // chest
-					{0, 1.78, 0} // helmet
+					{0, 0, 0, 180, 1}, // item
+					{0, 0.194, -0.03, 0, 1}, // feet
+					{0, 0.778, 0.01, 0, 1}, // legs
+					{0, 1.14, 0.002, 180, 1}, // chest
+					{0, 1.71, 0, 180, 1} // helmet
 			};
 			
 			// base material
@@ -119,7 +117,8 @@ public class ArmorStand extends Entity {
 						posCorrection[i][0], 
 						posCorrection[i][1],
 						posCorrection[i][2],
-						1);
+						1 * posCorrection[i][4],
+						posCorrection[i][3]);
 			}
 			
 			// leather overlay
@@ -131,7 +130,8 @@ public class ArmorStand extends Entity {
 							posCorrection[i][0], 
 							posCorrection[i][1],
 							posCorrection[i][2],
-							1.01);
+							1.04 * posCorrection[i][4],
+							posCorrection[i][3]);
 				}
 			}
 			
@@ -144,15 +144,16 @@ public class ArmorStand extends Entity {
 							posCorrection[i][0], 
 							posCorrection[i][1],
 							posCorrection[i][2],
-							1.02);
+							1.08 * posCorrection[i][4],
+							posCorrection[i][3]);
 				}
 			}
-		
+			 
 		}
 		
 	}
 
-	public void addArmor(String objFileName, String material, OBJOutputFile obj, double x, double y, double z, double scale) {
+	public void addArmor(String objFileName, String material, OBJOutputFile obj, double x, double y, double z, double scale, double rotation) {
 		
 		OBJInputFile objFile = new OBJInputFile();
 		File objMeshFile = new File(objFileName);
@@ -169,7 +170,8 @@ public class ArmorStand extends Entity {
 		OBJGroup myObjGroup = objFile.getDefaultObject();
 		objFile.overwriteMaterial(myObjGroup, material);
 		// Log.info("myObjGroup: "+myObjGroup);
-		Transform translate = getTranslate((float)x, (float)y, (float)z, (float)scale);
+		Transform translate = getTranslate((float)x, (float)y, (float)z, (float)scale).multiply(getRotate((float) rotation));
+		
 		objFile.addObjectToOutput(myObjGroup, translate, obj);
 	}
 	
