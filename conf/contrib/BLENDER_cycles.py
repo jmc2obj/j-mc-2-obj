@@ -1,3 +1,39 @@
+# Blender 2.75 Cycles Material Script 
+#
+# Instruction
+# -----------------------------------------------------------------------
+# 
+# - Export with jmc2obj OBJ File and Textures (Alpha into seperate files!) into one folder
+#   Now you've got the following Folder Structure
+# 
+#   YourFolderName
+#   |- tex (Folder)
+#      |- a lot of png files
+#   |- minecraft.obj
+#   |- minecraft.mtl
+
+# - Open Blender
+# - Create new File
+# - Save File into "YourFolderName" (important!)
+# - Close Blender
+# - Open Blender 
+# - Open your File
+# - Import minecraft.obj
+# - Switch to "Scripting"
+# - Open this script
+# - Press "Run Script"
+#
+# The script will set up cycles and all materials
+#
+# Save Blender File
+# Begin your Work  :)
+#
+# Happy Rendering
+#
+# Ben
+#
+#
+
 import bpy
 import mathutils
 
