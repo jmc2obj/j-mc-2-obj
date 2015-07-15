@@ -35,6 +35,7 @@ public class About {
         developer_list.add("<td>Pedro Lopes</td><td>programming</td>");
         developer_list.add("<td>Kenneth Zhou</td><td>programming</td>");
         developer_list.add("<td>Moonlight63</td><td>programming</td>");
+        developer_list.add("<td>Ben Egner</td><td>programming</td>");
 
         Collections.shuffle(developer_list);
         
@@ -65,7 +66,7 @@ public class About {
         msg+="</table></p>";
         msg+="<p>"+Messages.getString("About.ALSO")+"<p>";
         msg+="<div style='text-align:center;'>"+Messages.getString("About.URL")+"<br>" +
-        		"http://code.google.com/p/j-mc-2-obj/<br>" +
+        		"https://github.com/jmc2obj/j-mc-2-obj<br>" +
         		"<a href=\"http://www.jmc2obj.net/\">http://www.jmc2obj.net/</a></div>";
         msg+="</div><p><br></html>";
         about_msg=msg;
