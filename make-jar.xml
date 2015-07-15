@@ -1,43 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<!--
-
-This script generates a runnable JAR file in the JAR subdirectory.
-It also uses "svnversion" program to retrieve the SVN revision of the project and stores it in the manifest.
-
-This script requires SVN installed to run properly!
-
-Make sure to run it on a cleanly commited copy of the program or the version can contain letters appended to it.
-Example: "100M" means revision 100 that was locally modified.  
-
--->
-
 <project default="create_run_jar" name="Create Runnable Jar for Project jMc2Obj">
 
-	<target name="create_run_jar">
+	<target name="compile">
+		<javac srcdir="src" destdir="bin" />
+	</target>
+
+	<target name="create_run_jar" depends="compile">
 
 		<tstamp />
 
-		<!--<exec executable="svnversion" outputproperty="svnrev">
-		</exec>-->
-		<echo message="WARNING: svnversion disabled! Change the ant script manually!" />
-		<property name="svnrev" value="322">
-		</property>
+		<loadproperties>
+			<file file="version.prop" />
+		</loadproperties>
+
+		<echo>version = ${version}</echo>
+
+		<propertyfile file="version.prop">
+			<entry key="version" default="0" type="int" operation="+" value="1" />
+		</propertyfile>
 
 		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/data/version.xml" />
 		<echo message="&lt;version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
-		<echo message="    &lt;revision&gt;${svnrev}&lt;/revision&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
+		<echo message="    &lt;revision&gt;${version}&lt;/revision&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 		<echo message="&lt;/version&gt;&#10;" append="true" file="${basedir}/data/version.xml" />
 
 		<copy file="${basedir}/data/version.xml" tofile="${basedir}/bin/data/version.xml" overwrite="true" />
 
 
-		<jar destfile="${basedir}/JAR/jMc2Obj-dev_r${svnrev}.jar" filesetmanifest="mergewithoutmain">
+		<jar destfile="${basedir}/JAR/jMc2Obj-dev_g${version}.jar" filesetmanifest="mergewithoutmain">
 			<manifest>
 				<attribute name="Main-Class" value="org.jmc.Main" />
 				<attribute name="Class-Path" value="." />
-				<attribute name="Implementation-Version" value="${svnrev}" />
+				<attribute name="Implementation-Version" value="g${version}" />
 				<attribute name="Built-Date" value="${DSTAMP} ${TSTAMP}" />
 			</manifest>
 			<fileset dir="${basedir}/bin" />
@@ -46,38 +42,8 @@ Example: "100M" means revision 100 that was locally modified.
 		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/JAR/update.xml" />
 		<echo message="&lt;update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
-		<echo message="    &lt;url&gt;http://jmc2obj.net/jMc2Obj-dev_r${svnrev}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
+		<echo message="    &lt;url&gt;http://jmc2obj.net/jMc2Obj-dev_g${version}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 		<echo message="&lt;/update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
-
-	</target>
-
-	<target name="uploadtoftp">
-
-		<!--<exec executable="svnversion" outputproperty="svnrev">
-		</exec>-->
-		<echo message="WARNING: svnversion disabled! Change the ant script manually!" />
-		<property name="svnrev" value="322">
-		</property>
-
-		<exec executable="svnversion" outputproperty="svnrev">
-		</exec>
-
-		<xmlproperty file="passwd.xml" />
-
-		<fail unless="ftp.server" message="Missing passwd.xml file! " />
-
-		<ftp server="${ftp.server}" port="21" remotedir="/jmc2obj" userid="${ftp.user}" password="${ftp.password}" passive="yes" binary="yes">
-			<fileset dir="${basedir}/JAR/">
-				<include name="jMc2Obj-dev_r${svnrev}.jar" />
-			</fileset>
-		</ftp>
-
-		<ftp server="${ftp.server}" port="21" remotedir="/jmc2obj" userid="${ftp.user}" password="${ftp.password}" passive="yes" binary="yes">
-			<fileset dir="${basedir}/JAR/">
-				<include name="update.xml" />
-			</fileset>
-		</ftp>
-
 
 	</target>
 
