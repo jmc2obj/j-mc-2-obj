@@ -47,9 +47,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.jmc.ChunkLoaderThread;
 import org.jmc.LevelDat;
 import org.jmc.Options;
@@ -65,7 +62,7 @@ import org.jmc.util.Messages;
  * @author max, danijel
  * 
  */
-@SuppressWarnings({"serial","rawtypes","unchecked"})
+@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 public class MainPanel extends JPanel {
 	/**
 	 * A small thread to speed up window startup. It is used to find saves in
@@ -107,8 +104,8 @@ public class MainPanel extends JPanel {
 			fillDimensionList();
 
 			try {
-				ZipInputStream zis = new ZipInputStream(new FileInputStream(
-						new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
+				ZipInputStream zis = new ZipInputStream(
+						new FileInputStream(new File(Filesystem.getMinecraftDir(), "bin/minecraft.jar")));
 
 				ZipEntry entry = null;
 				while ((entry = zis.getNextEntry()) != null) {
@@ -138,7 +135,7 @@ public class MainPanel extends JPanel {
 	private JComboBox cbPath;
 	private JComboBox cbDimension;
 	private JSlider sFloor, sCeil;
-	
+
 	public static SpinnerModel modelPos1X, modelPos1Z, modelPos2X, modelPos2Z;
 
 	/**
@@ -157,7 +154,6 @@ public class MainPanel extends JPanel {
 	 * Necessary for restarting the thread when loading a new map.
 	 */
 	private ChunkLoaderThread chunk_loader = null;
-	
 
 	private boolean slider_pressed = false;
 
@@ -167,11 +163,10 @@ public class MainPanel extends JPanel {
 	public MainPanel() {
 		setLayout(new BorderLayout());
 
-		//Top Toolbar
+		// Top Toolbar
 		JPanel pToolbar = new JPanel();
 		pToolbar.setLayout(new BoxLayout(pToolbar, BoxLayout.PAGE_AXIS));
 
-		
 		JPanel pPath = new JPanel();
 		pPath.setBorder(BorderFactory.createEmptyBorder(2, 2, 5, 2));
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
@@ -182,22 +177,22 @@ public class MainPanel extends JPanel {
 		pPath.add(bPath);
 		pPath.add(cbPath);
 		pPath.add(cbDimension);
-		
+
 		(new PopulateLoadListThread()).start();
 
-		//I don't see a reason for a scrollpane here, but just in case it's needed later:
-		//JScrollPane spPath = new JScrollPane(pPath);
-		//spPath.setBorder(BorderFactory.createEmptyBorder());
+		// I don't see a reason for a scrollpane here, but just in case it's
+		// needed later:
+		// JScrollPane spPath = new JScrollPane(pPath);
+		// spPath.setBorder(BorderFactory.createEmptyBorder());
 
-		
-		//Top Buttons panel
+		// Top Buttons panel
 		JPanel pButtons = new JPanel();
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
 		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
 		bLoad.setEnabled(false);
-		//bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		// bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		bGoto = new JButton(Messages.getString("MainPanel.GOTO_BUTTON"));
 		bGoto.setEnabled(false);
 		bExport = new JButton(Messages.getString("MainPanel.EXPORT_BUTTON"));
@@ -207,14 +202,14 @@ public class MainPanel extends JPanel {
 		bAbout = new JButton(Messages.getString("MainPanel.ABOUT_BUTTON"));
 		bAbout.setForeground(Color.red);
 		bAbout.setFont(new Font(bAbout.getFont().getFamily(), Font.BOLD, bAbout.getFont().getSize()));
-		
+
 		pButtons.add(bLoad);
 		pButtons.add(bGoto);
 		pButtons.add(bExport);
 		pButtons.add(bSettings);
 		pButtons.add(bUpdate);
 		pButtons.add(bAbout);
-		
+
 		bConsole = new JButton(Messages.getString("MainPanel.OPEN_CONSOLE"));
 		pButtons.add(bConsole);
 		bConsole.addActionListener(new ActionListener() {
@@ -223,20 +218,20 @@ public class MainPanel extends JPanel {
 				MainWindow.consoleLog.setVisible(true);
 			}
 		});
-		
-		
-		
-		//START PREVIEW CONTROLS
+
+		// START PREVIEW CONTROLS
 		JPanel pControls = new JPanel();
 		pControls.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		pControls.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
-		
-		//Render Options Panel
+
+		// Render Options Panel
 		JPanel holderPreviewOptions = new JPanel();
 		holderPreviewOptions.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderPreviewOptions.setBorder(BorderFactory.createTitledBorder(holderPreviewOptions.getBorder(), Messages.getString("MainPanel.PREVIEW_OPTIONS"), TitledBorder.CENTER, TitledBorder.TOP));
-		
-		chckbxFastRender = new JCheckBox(Messages.getString("MainPanel.FAST_RENDER")); // TODO Localization
+		holderPreviewOptions.setBorder(BorderFactory.createTitledBorder(holderPreviewOptions.getBorder(),
+				Messages.getString("MainPanel.PREVIEW_OPTIONS"), TitledBorder.CENTER, TitledBorder.TOP));
+
+		chckbxFastRender = new JCheckBox(Messages.getString("MainPanel.FAST_RENDER")); // TODO
+																						// Localization
 		chckbxFastRender.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -248,43 +243,45 @@ public class MainPanel extends JPanel {
 				chunk_loader = new ViewChunkLoaderThread(preview);
 				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
 				(new Thread(chunk_loader)).start();
-				
+
 			}
 		});
-		
-		final JCheckBox chckbxShowChunks = new JCheckBox(Messages.getString("MainPanel.SHOW_CHUNKS")); // TODO Localization
+
+		final JCheckBox chckbxShowChunks = new JCheckBox(Messages.getString("MainPanel.SHOW_CHUNKS")); // TODO
+																										// Localization
 		chckbxShowChunks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				preview.showchunks = chckbxShowChunks.isSelected();
-				preview.redraw(chckbxFastRender.isSelected());	
+				preview.redraw(chckbxFastRender.isSelected());
 				preview.repaint();
 			}
 		});
-		
-		final JCheckBox chckbxSelectChunks = new JCheckBox(Messages.getString("MainPanel.SEL_CHUNKS")); // TODO Localization
+
+		final JCheckBox chckbxSelectChunks = new JCheckBox(Messages.getString("MainPanel.SEL_CHUNKS")); // TODO
+																										// Localization
 		chckbxSelectChunks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				preview.selectchunks = chckbxSelectChunks.isSelected();
 			}
 		});
-		
+
 		holderPreviewOptions.add(chckbxFastRender);
 		holderPreviewOptions.add(chckbxShowChunks);
 		holderPreviewOptions.add(chckbxSelectChunks);
-		
-		
-		//Floor and Ceiling Panel
+
+		// Floor and Ceiling Panel
 		JPanel holderFloorCeil = new JPanel();
 		holderFloorCeil.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderFloorCeil.setBorder(BorderFactory.createTitledBorder(holderFloorCeil.getBorder(), Messages.getString("MainPanel.ALT"), TitledBorder.CENTER, TitledBorder.TOP));
-		
-		//Floor Panel
+		holderFloorCeil.setBorder(BorderFactory.createTitledBorder(holderFloorCeil.getBorder(),
+				Messages.getString("MainPanel.ALT"), TitledBorder.CENTER, TitledBorder.TOP));
+
+		// Floor Panel
 		JPanel holderMinY = new JPanel();
 		holderMinY.setLayout(new BoxLayout(holderMinY, BoxLayout.LINE_AXIS));
 		holderMinY.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		
+
 		JLabel lblMinY = new JLabel(Messages.getString("PreviewPanel.FLOOR"));
 		final SpinnerModel minYModel = new SpinnerNumberModel(0, 0, 256, 1);
 		final JSpinner minYSpinner = new JSpinner(minYModel);
@@ -295,15 +292,15 @@ public class MainPanel extends JPanel {
 				sFloor.setValue((int) minYSpinner.getModel().getValue());
 			}
 		});
-		
+
 		holderMinY.add(lblMinY);
 		holderMinY.add(minYSpinner);
-		
-		//Ceiling Panel
+
+		// Ceiling Panel
 		JPanel holderMaxY = new JPanel();
 		holderMaxY.setLayout(new BoxLayout(holderMaxY, BoxLayout.LINE_AXIS));
 		holderMaxY.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-		
+
 		JLabel lblMaxY = new JLabel(Messages.getString("PreviewPanel.CEILING"));
 		final SpinnerModel maxYModel = new SpinnerNumberModel(256, 0, 256, 1);
 		final JSpinner maxYSpinner = new JSpinner(maxYModel);
@@ -314,19 +311,19 @@ public class MainPanel extends JPanel {
 				sCeil.setValue((int) maxYSpinner.getModel().getValue());
 			}
 		});
-		
+
 		holderMaxY.add(lblMaxY);
 		holderMaxY.add(maxYSpinner);
-		
+
 		holderFloorCeil.add(holderMinY);
 		holderFloorCeil.add(holderMaxY);
-		
-		
-		//Selection Pos 1 Panel
+
+		// Selection Pos 1 Panel
 		JPanel holderPos1 = new JPanel();
 		holderPos1.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderPos1.setBorder(BorderFactory.createTitledBorder(holderPos1.getBorder(), Messages.getString("MainPanel.POSITION") + " 1", TitledBorder.CENTER, TitledBorder.TOP));
-		
+		holderPos1.setBorder(BorderFactory.createTitledBorder(holderPos1.getBorder(),
+				Messages.getString("MainPanel.POSITION") + " 1", TitledBorder.CENTER, TitledBorder.TOP));
+
 		JLabel lblPos1X = new JLabel("X: ");
 		modelPos1X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos1X = new JSpinner(modelPos1X);
@@ -338,8 +335,7 @@ public class MainPanel extends JPanel {
 				preview.repaint();
 			}
 		});
-		
-		
+
 		JLabel lblPos1Z = new JLabel("    Z: ");
 		modelPos1Z = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos1Z = new JSpinner(modelPos1Z);
@@ -351,18 +347,18 @@ public class MainPanel extends JPanel {
 				preview.repaint();
 			}
 		});
-		
+
 		holderPos1.add(lblPos1X);
 		holderPos1.add(spinnerPos1X);
 		holderPos1.add(lblPos1Z);
 		holderPos1.add(spinnerPos1Z);
-		
-		
-		//Selection Pos 2 Panel
+
+		// Selection Pos 2 Panel
 		JPanel holderPos2 = new JPanel();
 		holderPos2.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		holderPos2.setBorder(BorderFactory.createTitledBorder(holderPos2.getBorder(), Messages.getString("MainPanel.POSITION") + " 2", TitledBorder.CENTER, TitledBorder.TOP));
-		
+		holderPos2.setBorder(BorderFactory.createTitledBorder(holderPos2.getBorder(),
+				Messages.getString("MainPanel.POSITION") + " 2", TitledBorder.CENTER, TitledBorder.TOP));
+
 		JLabel lblPos2X = new JLabel("X: ");
 		modelPos2X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos2X = new JSpinner(modelPos2X);
@@ -374,8 +370,7 @@ public class MainPanel extends JPanel {
 				preview.repaint();
 			}
 		});
-		
-		
+
 		JLabel lblPos2Z = new JLabel("    Z: ");
 		modelPos2Z = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos2Z = new JSpinner(modelPos2Z);
@@ -387,20 +382,19 @@ public class MainPanel extends JPanel {
 				preview.repaint();
 			}
 		});
-		
+
 		holderPos2.add(lblPos2X);
 		holderPos2.add(spinnerPos2X);
 		holderPos2.add(lblPos2Z);
 		holderPos2.add(spinnerPos2Z);
-		
+
 		pControls.add(holderPreviewOptions);
 		pControls.add(holderFloorCeil);
 		pControls.add(holderPos1);
 		pControls.add(holderPos2);
-		//END PREVIEW CONTROLS
-		
+		// END PREVIEW CONTROLS
 
-		//pToolbar.add(spPath);
+		// pToolbar.add(spPath);
 		pToolbar.add(pPath);
 		pToolbar.add(pButtons);
 		pToolbar.add(pControls);
@@ -412,14 +406,15 @@ public class MainPanel extends JPanel {
 		preview_alts.setLayout(new BorderLayout());
 		JPanel alts = new JPanel();
 		alts.setLayout(new BoxLayout(alts, BoxLayout.PAGE_AXIS));
-		
+
 		sFloor = new JSlider();
 		sFloor.setOrientation(JSlider.VERTICAL);
 		sFloor.setToolTipText(Messages.getString("MainPanel.FLOOR_SLIDER"));
 		sFloor.setMinimum(0);
-		sFloor.setMaximum(256);// TODO: this should really be read from the file, IMO
+		sFloor.setMaximum(256);// TODO: this should really be read from the
+								// file, IMO
 		sFloor.setValue(0);
-		
+
 		sCeil = new JSlider();
 		sCeil.setOrientation(JSlider.VERTICAL);
 		sCeil.setToolTipText(Messages.getString("MainPanel.CEILING_SLIDER"));
@@ -428,10 +423,10 @@ public class MainPanel extends JPanel {
 		sCeil.setValue(256);
 
 		memory_monitor = new MemoryMonitor();
-		
+
 		alts.add(sCeil);
 		alts.add(sFloor);
-		
+
 		preview_alts.add(preview);
 		preview_alts.add(alts, BorderLayout.EAST);
 
@@ -439,19 +434,18 @@ public class MainPanel extends JPanel {
 		add(preview_alts);
 		add(memory_monitor, BorderLayout.SOUTH);
 
-		
 		ChangeListener slider_listener = new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (e.getSource().equals(sCeil)) {
 					maxYModel.setValue(sCeil.getValue());
-					if (sFloor.getValue() >= sCeil.getValue()){
+					if (sFloor.getValue() >= sCeil.getValue()) {
 						sFloor.setValue(sCeil.getValue() - 1);
 						minYModel.setValue(sCeil.getValue() - 1);
 					}
 				} else {
 					minYModel.setValue(sFloor.getValue());
-					if (sCeil.getValue() <= sFloor.getValue()){
+					if (sCeil.getValue() <= sFloor.getValue()) {
 						sCeil.setValue(sFloor.getValue() + 1);
 						maxYModel.setValue(sFloor.getValue() + 1);
 					}
@@ -464,7 +458,7 @@ public class MainPanel extends JPanel {
 				}
 			}
 		};
-		
+
 		MouseInputAdapter slider_adapter = new MouseInputAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
@@ -489,55 +483,16 @@ public class MainPanel extends JPanel {
 		bPath.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(!Options.useSysBrowser){
-					JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastVisitedDir());
-					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					if (jfc.showDialog(MainPanel.this, Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER")) == JFileChooser.APPROVE_OPTION) {
-						String path = jfc.getSelectedFile().getAbsolutePath();
-						addPathToList(path);
-						MainWindow.settings.setLastVisitedDir(path);
-					}
+
+				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastVisitedDir());
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				if (jfc.showDialog(MainPanel.this,
+						Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER")) == JFileChooser.APPROVE_OPTION) {
+					String path = jfc.getSelectedFile().getAbsolutePath();
+					addPathToList(path);
+					MainWindow.settings.setLastVisitedDir(path);
 				}
-				else{
-					final Display display = new Display ();
-					final Shell shell = new Shell (display);
-					
-					final org.eclipse.swt.widgets.FileDialog dialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.OPEN);
-					
-					//String [] filterNames = new String [] {"All Files (*)"};
-			        String [] filterExtensions = new String [] {"level.dat"};
-			        String filterPath = Filesystem.getMinecraftDir().getAbsolutePath();
-			        //dialog.setFilterNames (filterNames);
-			        dialog.setFilterExtensions (filterExtensions);
-			        dialog.setFilterPath (filterPath);
-			        dialog.open();
-			        
-			        File selectedFile;
-			        
-			        if(dialog.getFilterPath() != null && dialog.getFilterPath().trim().length() > 0){
-			        	selectedFile = new File(dialog.getFilterPath(), dialog.getFileName());
-			        	String path = selectedFile.getParent().toString();
-			        	addPathToList(path);
-						MainWindow.settings.setLastVisitedDir(path);
-					}
-			        else{
-			        	shell.close();
-						while (!shell.isDisposed ()) {
-						    if (!display.readAndDispatch ()) display.sleep ();
-						}
-						display.dispose ();
-						return;
-			        }
-			        
-					revalidate();
-					repaint();
-					
-					shell.close();
-					while (!shell.isDisposed ()) {
-					    if (!display.readAndDispatch ()) display.sleep ();
-					}
-					display.dispose ();
-				}
+
 			}
 		});
 

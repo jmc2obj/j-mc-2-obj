@@ -44,10 +44,6 @@ public class Options
 	 */
 	public static UIMode uiMode = UIMode.GUI; 
 	
-	/**
-	 * Use system browser
-	 */
-	public static boolean useSysBrowser;
 
 	/**
 	 * Output directory.
