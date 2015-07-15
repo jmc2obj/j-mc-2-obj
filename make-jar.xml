@@ -2,9 +2,16 @@
 
 <project default="create_run_jar" name="Create Runnable Jar for Project jMc2Obj">
 
-	<target name="compile">
-		<javac srcdir="src" destdir="bin" />
-	</target>
+    <target name="compile">
+            <javac srcdir="src" destdir="bin" />
+            <copy todir="bin">
+                    <fileset dir="resources" />
+            </copy>
+            <copy todir="bin/org/jmc/gui">
+                    <file file="src/org/jmc/gui/logo.png" />
+            </copy>
+            <copydir src="conf" dest="bin/conf" />
+    </target>
 
 	<target name="create_run_jar" depends="compile">
 
