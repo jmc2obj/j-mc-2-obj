@@ -505,8 +505,10 @@ public class MainPanel extends JPanel {
 
 		bLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Options.worldDir = new File(cbPath.getSelectedItem().toString());
-				if (!Options.worldDir.exists() || !Options.worldDir.isDirectory()) {
+				Object obj = cbPath.getSelectedItem();
+				if (obj != null)
+					Options.worldDir = new File(obj.toString());
+				if (obj == null || !Options.worldDir.exists() || !Options.worldDir.isDirectory()) {
 					JOptionPane.showMessageDialog(null, Messages.getString("MainPanel.ENTER_CORRECT_DIR"));
 					Options.worldDir = null;
 					return;
@@ -681,7 +683,10 @@ public class MainPanel extends JPanel {
 	}
 
 	public void updateSelectionOptions() {
-		Options.dimension = (Integer) cbDimension.getSelectedItem();
+		Integer dim = (Integer) cbDimension.getSelectedItem();
+		if (dim == null)
+			return;
+		Options.dimension = dim;
 
 		Rectangle rect = preview.getSelectionBounds();
 		if (rect.width == 0 || rect.height == 0) {
