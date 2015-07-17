@@ -83,7 +83,7 @@ public class OBJInputFile extends OBJFileBase
 				if (overwriteName != null) {
 					objObjName = overwriteName;
 				}
-				Log.info("loadFile "+objfile+" :" +objObjName);
+				// Log.info("loadFile "+objfile+" :" +objObjName);
 				objects.put(objObjName, group);
 				if (default_object==null) default_object=group;
 				continue;
