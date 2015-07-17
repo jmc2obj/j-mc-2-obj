@@ -133,6 +133,7 @@ public class BlockTypes
 			}
 			model.setBlockId(id);
 			model.setMaterials(materials);
+			model.setConfigNodes(blockNode);
 
 			if(modelName.equals("Mesh"))
 			{
