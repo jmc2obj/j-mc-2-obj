@@ -3,14 +3,16 @@
 <project default="create_run_jar" name="Create Runnable Jar for Project jMc2Obj">
 
     <target name="compile">
-            <javac srcdir="src" destdir="bin" />
+            <javac srcdir="src" destdir="bin" target="1.7" source="1.7" includeantruntime="false"/>
             <copy todir="bin">
                     <fileset dir="resources" />
             </copy>
             <copy todir="bin/org/jmc/gui">
                     <file file="src/org/jmc/gui/logo.png" />
             </copy>
-            <copydir src="conf" dest="bin/conf" />
+            <copy todir="bin/conf">
+                    <fileset dir="conf" includes="**" />
+            </copy>
     </target>
 
 	<target name="create_run_jar" depends="compile">
@@ -49,7 +51,7 @@
 		<echo message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;" append="false" file="${basedir}/JAR/update.xml" />
 		<echo message="&lt;update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 		<echo message="    &lt;date&gt;${DSTAMP} ${TSTAMP}&lt;/date&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
-		<echo message="    &lt;url&gt;http://jmc2obj.net/jMc2Obj-dev_g${version}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
+		<echo message="    &lt;url&gt;http://jmc2obj.net/downloads/jMc2Obj-dev_g${version}.jar&lt;/url&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 		<echo message="&lt;/update&gt;&#10;" append="true" file="${basedir}/JAR/update.xml" />
 
 	</target>
