@@ -58,7 +58,9 @@ def doIt():
     world.light_settings.distance = 2
 
     # light path
-    scene.cycles.max_bounces = 12
+    scene.cycles.transparent_max_bounces = 12
+    scene.cycles.transparent_mix_bounces = 12
+    scene.cycles.max_bounces = 12    
     scene.cycles.min_bounces = 12
 
     scene.cycles.diffuse_bounces = 4
@@ -71,6 +73,9 @@ def doIt():
     
     # samples
     scene.cycles.samples = 500
+    
+    # random seed for animations
+    scene.cycles.use_animated_seed = True;
     
     # clear environment
     world.use_nodes = True
@@ -118,341 +123,353 @@ def doIt():
                     texImageAlpha = image
                     texAlphaImageFound = True
                 
-            if texImageFound == True:
-                # remove all default nodes
-                nodes.clear()
-                nTexAlpha = None
-                nTex = None
-                nOutput = nodes.new('ShaderNodeOutputMaterial')
-                nOutput.location = (900.0, 0.0)
-                
-                mainShader = {
-                    "sea_lantern": makeMcMainTranslucent,
-                    "default": makeMcMainDiffuseTranslucent, 
-                    "tall_grass": makeMcMainTranslucent, 
-                    "torch_flame": makeMcMainTranslucent,
-                    "double_plant_grass_bottom": makeMcMainTranslucent,
-                    "double_plant_grass_top": makeMcMainTranslucent,
-                    "double_plant_rose_bottom": makeMcMainTranslucent,
-                    "double_plant_rose_top": makeMcMainTranslucent,
-                    "double_plant_sunflower_bottom": makeMcMainTranslucent,
-                    "double_plant_sunflower_front": makeMcMainTranslucent,
-                    "double_plant_sunflower_top": makeMcMainTranslucent,
-                    "flower_houstonia": makeMcMainTranslucent,
-                    "flower_oxeyey_daisy": makeMcMainTranslucent,
-                    "flower_red": makeMcMainTranslucent,
-                    "flower_yellow": makeMcMainTranslucent,
-                    
-                    "pumpkin_front_lit": makeMcMainTranslucent,
-                    "pumpkin_side_lit": makeMcMainTranslucent,
-                    "pumpkin_top_lit": makeMcMainTranslucent,
-                    
-                    "glass": makeMcMainTranslucent,
-                    "glass_orange": makeMcMainTranslucent,
-                    "glass_pane_side_orange": makeMcMainTranslucent,
-                    "glass_pane_side_white": makeMcMainTranslucent,
-                    "glass_white": makeMcMainTranslucent,
-                    "water": makeMcMainTranslucent,
-                    
-                    "armor_leather_feet_overlay": makeMcMainInvisible,
-                    
-                    "armor_golden_helmet": makeMcMainGlossy,
-                    "armor_golden_chest": makeMcMainGlossy,
-                    "armor_golden_feet": makeMcMainGlossy,
-                    "armor_golden_legs": makeMcMainGlossy,
-                    
-                    "armor_iron_helmet": makeMcMainGlossy,
-                    "armor_iron_chest": makeMcMainGlossy,
-                    "armor_iron_feet": makeMcMainGlossy,
-                    "armor_iron_legs": makeMcMainGlossy,
-                }
-        
-                try:
-                    nMainData = mainShader[bobj.name](nodes, links)
-                except KeyError:
-                    nMainData = mainShader['default'](nodes, links)
-                    
-                    
-                nMainData["node"].location = (400.0, 0.0)
-                
-                nTex = nodes.new(type='ShaderNodeTexImage')
-                nTex.location = (0, 0.0)
-                nTex.image = texImage
-                nTex.interpolation = 'Closest'
-                
-                links.new(nTex.outputs['Color'], nMainData["input"])
-                if (nMainData["input2"]):
-                    links.new(nTex.outputs['Color'], nMainData["input2"])
-                
-                if texAlphaImageFound == True:
-                    nTexAlpha = nodes.new(type='ShaderNodeTexImage')
-                    nTexAlpha.location = (200.0, 300.0)
-                    nTexAlpha.image = texImageAlpha
-                    nTexAlpha.interpolation = 'Closest'
-                    
-                    nTrans = nodes.new(type='ShaderNodeBsdfTransparent')
-                    nTrans.location = (300.0, 100.0)
-                    
-                    nMix = nodes.new(type='ShaderNodeMixShader');
-                    nMix.location = (700.0, 0.0)
-                    
-                    links.new(nMix.outputs['Shader'], nOutput.inputs['Surface'])
-                    links.new(nMainData["output"], nMix.inputs[2])
-                    links.new(nTrans.outputs['BSDF'], nMix.inputs[1])
-                    links.new(nTexAlpha.outputs['Color'], nMix.inputs[0])
-                    
-                    lastMixOut = nMix.outputs['Shader']
-                else:
-                    links.new(nMainData["output"], nOutput.inputs['Surface'])
-                    lastMixOut = nMainData["output"]
-
-                # emission demo (torches, sea_lantern, etc)
-                if (
-                    (bobj.name == 'sea_lantern') or 
-                    (bobj.name == 'torch_flame') or 
-                    ((bobj.name.startswith( 'pumpkin_') and bobj.name.endswith( '_lit')))
-                ):
-                    mat.cycles.sample_as_light = True
-                    
-                    nOutput.location = (1300.0, 0.0)
-                    
-                    nEmMix = nodes.new(type='ShaderNodeMixShader');
-                    nEmMix.location = (900.0, 100.0)                  
-                    
-                    nEmMix2 = nodes.new(type='ShaderNodeMixShader');
-                    nEmMix2.location = (1100.0, 100.0)      
-                    
-                    nEmit = nodes.new(type='ShaderNodeEmission');
-                    nEmit.location = (700, 150.0)       
-                    if bobj.name == 'sea_lantern':
-                        nEmit.inputs[0].default_value = (1, 1, 1, 1)                
-                        nEmit.inputs["Strength"].default_value = 5
-                        
-                    if bobj.name == 'torch_flame':
-                        nEmit.inputs[0].default_value = (1, 0.25, 0, 1)
-                        nEmit.inputs["Strength"].default_value = 30
-                    if (bobj.name.startswith( 'pumpkin_')):
-                        nEmit.inputs[0].default_value = (1, 0.46, 0, 1)
-                        nEmit.inputs["Strength"].default_value = 7
-                        
-                    
-                    nLp = nodes.new(type='ShaderNodeLightPath');
-                    nLp.location = (700.0, 400.0)     
-                    
-                    
-                    
-                    links.new(lastMixOut, nEmMix.inputs[2])
-                    links.new(lastMixOut, nEmMix2.inputs[1])
-                    links.new(nEmMix.outputs['Shader'], nEmMix2.inputs[2])
-                    links.new(nEmMix2.outputs['Shader'], nOutput.inputs['Surface'])
-                    links.new(nEmit.outputs['Emission'], nEmMix.inputs[1])
-                    links.new(nLp.outputs['Is Camera Ray'], nEmMix.inputs[0])
-                    # links.new(nLp.outputs['Is Reflection Ray'], nEmMix2.inputs[0])
-
-                    # in case of alpha is present at emission...
-                    if (nTexAlpha):
-                        nTexAlpha.location = (00, 300.0)       
-                        nEmit.location = (250, 350.0)       
-                        nEmMixD = nodes.new(type='ShaderNodeMixShader');
-                        nEmMixD.location = (500.0, 300.0)     
-
-                        links.new(nEmMixD.outputs['Shader'], nEmMix.inputs[1])
-                        links.new(nTexAlpha.outputs['Color'], nEmMixD.inputs[0])
-                        links.new(nEmit.outputs['Emission'], nEmMixD.inputs[2])
-                        links.new(nTrans.outputs['BSDF'], nEmMixD.inputs[1])
-                    else: 
-                        nDiff = nodes.new('ShaderNodeBsdfDiffuse')   
-                        nDiff.location = (400.0, -150.0)     
-                        
-                        nMatMix = nodes.new(type='ShaderNodeMixShader');
-                        nMatMix.location = (650.0, -100.0)     
-
-                        
-                        if (bobj.name == 'sea_lantern'):
-                            nMatMix.inputs[0].default_value = 0.07  
-                        if (bobj.name.startswith( 'pumpkin_')):
-                            nMatMix.inputs[0].default_value = 0.1  
-                        
-                        
-                        
-                        links.new(nTex.outputs['Color'], nDiff.inputs[0])
-                        
-                        links.new(nEmit.outputs['Emission'], nMatMix.inputs[2])
-                        links.new(nMainData["output"], nMatMix.inputs[1])
-                        
-                        links.new(nMatMix.outputs['Shader'], nEmMix.inputs[2])
-                        links.new(nMatMix.outputs['Shader'], nEmMix2.inputs[1])
-                        
-                # glass special    
-                if (
-                    (bobj.name.startswith( 'glass_')) or 
-                    (bobj.name == 'glass') 
-                ):   
-
-                    nOutput.location = (1900.0, 00.0)                    
-                    nTex.location = (0.0, 0.0)   
-                    nTexAlpha.location = (0.0, 300.0) 
-                    
-                    
-                    nMainData['node'].location = (400.0, -100.0)                    
-                    nTrans.location = (1400.0, 300.0)     
-                    nMix.location = (1600.0, 200.0)   
-                    
-                    nGeometry = nodes.new(type='ShaderNodeNewGeometry');
-                    nGeometry.location = (1400.0, 550.0) 
-                    
-                    links.new(nGeometry.outputs['Backfacing'], nMix.inputs[0])
-                    links.new(nTrans.outputs['BSDF'], nMix.inputs[2])
-                    
-                    
-                    nTexMix = nodes.new(type='ShaderNodeMixShader');
-                    nTexMix.location = (1000.0, 200.0)        
-                    
-                    links.new(nTexMix.outputs['Shader'], nMix.inputs[1])
-                    
-                    nBright = nodes.new(type='ShaderNodeBrightContrast');
-                    nBright.inputs['Bright'].default_value = 2
-                    nBright.inputs['Contrast'].default_value = 7
-                    nBright.location = (400.0, 300.0)    
-                    
-                    links.new(nTexAlpha.outputs['Color'], nBright.inputs[0])
-                    
-                    nGlass = nodes.new(type='ShaderNodeBsdfGlass');
-                    nGlass.location = (400.0, 100.0)     
-                    nGlass.inputs['IOR'].default_value = 1.45
-                    
-                    nGlossy = nodes.new(type='ShaderNodeBsdfGlossy');
-                    nGlossy.location = (400.0, -250.0)     
-                    nGlossy.inputs[1].default_value = 0.133
-                    
-                    links.new(nTex.outputs['Color'], nGlass.inputs[0])
-                    links.new(nTex.outputs['Color'], nGlossy.inputs[0])
-                    
-                    nAdd = nodes.new(type='ShaderNodeAddShader');
-                    nAdd.location = (700.0, -200.0)        
-                    
-                    links.new(nMainData['output'], nAdd.inputs[0])
-                    links.new(nGlossy.outputs['BSDF'], nAdd.inputs[1])
-
-                    links.new(nBright.outputs['Color'], nTexMix.inputs[0])
-                    links.new(nAdd.outputs['Shader'], nTexMix.inputs[2])
-                    links.new(nGlass.outputs['BSDF'], nTexMix.inputs[1])
-
-
-                    #nMix4 = nodes.new(type='ShaderNodeMixShader');
-                    #nMix4.location = (1300.0, 200.0)        
-
-                    #nMix5 = nodes.new(type='ShaderNodeMixShader');
-                    #nMix5.location = (1600.0, 200.0)        
-
-                   
-                    
-                     
-                                 
-                    #nGeometry = nodes.new(type='ShaderNodeNewGeometry');
-                    #nGeometry.location = (1100.0, 500.0)   
-                    
-                    #nLp = nodes.new(type='ShaderNodeLightPath');
-                    #nLp.location = (1400.0, 500.0)     
-                    
-                    
-                    
-                    #links.new(nMix1.outputs['Shader'], nMix2.inputs[1])
-                    #links.new(nMix2.outputs['Shader'], nMix.inputs[1])
-                    #links.new(nMix.outputs['Shader'], nMix4.inputs[1])
-                    #links.new(nMix4.outputs['Shader'], nMix5.inputs[1])
-                    #links.new(nMix5.outputs['Shader'], nOutput.inputs['Surface'])
-                    
-                    #links.new(nTrans.outputs['BSDF'], nMix1.inputs[1])
-                    #links.new(nTrans.outputs['BSDF'], nMix2.inputs[2])
-                    #links.new(nTrans.outputs['BSDF'], nMix4.inputs[2])
-                    #links.new(nTrans.outputs['BSDF'], nMix5.inputs[2])
-                    
-                    #links.new(nGeometry.outputs['Backfacing'], nMix4.inputs[0])
-                    #links.new(nLp.outputs['Is Reflection Ray'], nMix5.inputs[0])
-                    #links.new(nGlass.outputs['BSDF'], nMix1.inputs[2])
-                    
-                    #links.new(nTex.outputs['Color'], nBright.inputs['Color'])
-                    #links.new(nBright.outputs['Color'], nMainData["input"])
-                    #links.new(nGlass.outputs['BSDF'], nAdd.inputs[0])
-                    #links.new(lastMixOut, nAdd.inputs[1])
-                    #links.new(nTexAlpha.outputs['Color'], nGlass.inputs['Color'])
-                    #links.new(nAdd.outputs['Shader'], nOutput.inputs['Surface'])
-
-                
-                if ((bobj.name.startswith( 'armor_')) and 
-                    (bobj.name != 'armor_stand') and
-                    (bobj.name != 'armor_enchanted')
-                ):
-                    if (bobj.name.startswith('armor_leather')):
-                        nTex.location = (-200.0, -200.0)     
-                        nMixRGB = nodes.new(type='ShaderNodeMixRGB');
-                        nMixRGB.location = (000.0, 0.0)     
-                        nMixRGB.blend_type = 'VALUE'
-
-                        nRGB = nodes.new(type='ShaderNodeRGB');
-                        nRGB.location = (-200.0, 0.0);   
-                        nRGB.outputs[0].default_value = (diffuse_color.r, diffuse_color.g, diffuse_color.b, 1);
-                        links.new(nTex.outputs['Color'], nMixRGB.inputs[2])
-                        links.new(nRGB.outputs['Color'], nMixRGB.inputs[1])
-                        links.new(nMixRGB.outputs['Color'], nMainData["input"])
-
-                   
-                    
-                 
-
-                # water
-                if (bobj.name == 'water'):
-                    nOutput.location = (1100.0, 0.0)     
-                    
-                    nMix.inputs[0].default_value = 0.25
-                    
-                    nGloss = nodes.new(type='ShaderNodeBsdfGlossy');
-                    nGloss.location = (700.0, 200.0)     
-                    nGloss.inputs[1].default_value = 0.005
-                    #nGloss.inputs['IOR'].default_value = 1.33
-                    
-                    nMixGloss = nodes.new(type='ShaderNodeMixShader');
-                    nMixGloss.location = (900.0, 0.0)
-                    nMixGloss.inputs[0].default_value = 0.85
-                    
-                    links.new(lastMixOut, nMixGloss.inputs[2])
-                    links.new(nMixGloss.outputs['Shader'], nOutput.inputs['Surface'])
-                    links.new(nGloss.outputs['BSDF'], nMixGloss.inputs[1])
-                   
-                   
-                    nWave = nodes.new(type='ShaderNodeTexWave');
-                    nWave.location = (400.0, -200.0)     
-                    nWave.wave_type = 'RINGS'
-                    nWave.inputs[1].default_value = 25
-                    nWave.inputs[2].default_value = 10
-                    nWave.inputs[3].default_value = 2.5
-                    
-                    
-                    nNoise = nodes.new(type='ShaderNodeTexNoise');
-                    nNoise.location = (400.0, -450.0)     
-                    nNoise.inputs[1].default_value = 100
-                    nNoise.inputs[2].default_value = 1
-                    
-                    nMixRGB = nodes.new(type='ShaderNodeMixRGB');
-                    nMixRGB.blend_type = 'MULTIPLY'
-                    nMixRGB.inputs[0].default_value = 0.4
-                    nMixRGB.location = (700.0, -300.0)     
-
-                    
-                    links.new(nWave.outputs['Color'], nMixRGB.inputs[1])
-                    links.new(nNoise.outputs['Color'], nMixRGB.inputs[2])
-                    links.new(nMixRGB.outputs['Color'], nOutput.inputs['Displacement'])
-                    
-                    nodes.remove(nTexAlpha)
-
-                    
+            # specials
+            if (bobj.name == 'armor_enchanted'):
+                armor_enchanted(nodes, links);
             else:
-                
-                if (bobj.name == 'armor_enchanted'):
-                    armor_enchanted(nodes, links)
-                else:
+                if texImageFound == False:
                     print ('TexImage for '+bobj.name+' not found!')
+                else:
+                    # remove all default nodes
+                    nodes.clear()
+                    nTexAlpha = None
+                    nTex = None
+                    nOutput = nodes.new('ShaderNodeOutputMaterial')
+                    nOutput.location = (900.0, 0.0)
+                    
+                    mainShader = {
+                        "sea_lantern": makeMcMainTranslucent,
+                        "default": makeMcMainDiffuseTranslucent, 
+                        "tall_grass": makeMcMainTranslucent, 
+                        "torch_flame": makeMcMainTranslucent,
+                        "double_plant_grass_bottom": makeMcMainTranslucent,
+                        "double_plant_grass_top": makeMcMainTranslucent,
+                        "double_plant_rose_bottom": makeMcMainTranslucent,
+                        "double_plant_rose_top": makeMcMainTranslucent,
+                        "double_plant_sunflower_bottom": makeMcMainTranslucent,
+                        "double_plant_sunflower_front": makeMcMainTranslucent,
+                        "double_plant_sunflower_top": makeMcMainTranslucent,
+                        "flower_houstonia": makeMcMainTranslucent,
+                        "flower_oxeyey_daisy": makeMcMainTranslucent,
+                        "flower_red": makeMcMainTranslucent,
+                        "flower_yellow": makeMcMainTranslucent,
+                        
+                        "pumpkin_front_lit": makeMcMainTranslucent,
+                        "pumpkin_side_lit": makeMcMainTranslucent,
+                        "pumpkin_top_lit": makeMcMainTranslucent,
+                        
+                        "glass": makeMcMainTranslucent,
+                        "glass_orange": makeMcMainTranslucent,
+                        "glass_pane_side_orange": makeMcMainTranslucent,
+                        "glass_pane_side_white": makeMcMainTranslucent,
+                        "glass_white": makeMcMainTranslucent,
+                        "water": makeMcMainTranslucent,
+                        
+                        "armor_leather_feet_overlay": makeMcMainInvisible,
+                        
+                        "armor_golden_helmet": makeMcMainGlossy,
+                        "armor_golden_chest": makeMcMainGlossy,
+                        "armor_golden_feet": makeMcMainGlossy,
+                        "armor_golden_legs": makeMcMainGlossy,
+                        
+                        "armor_iron_helmet": makeMcMainGlossy,
+                        "armor_iron_chest": makeMcMainGlossy,
+                        "armor_iron_feet": makeMcMainGlossy,
+                        "armor_iron_legs": makeMcMainGlossy,
+                        
+                        "wool_yellow": makeMcMainDiffuse,
+                        "wool_orange": makeMcMainDiffuse
+                    }
+            
+                    try:
+                        nMainData = mainShader[bobj.name](nodes, links)
+                    except KeyError:
+                        nMainData = mainShader['default'](nodes, links)
+                        
+                        
+                    nMainData["node"].location = (400.0, 0.0)
+                    
+                    nTex = nodes.new(type='ShaderNodeTexImage')
+                    nTex.location = (0, 0.0)
+                    nTex.image = texImage
+                    nTex.interpolation = 'Closest'
+                    
+                    links.new(nTex.outputs['Color'], nMainData["input"])
+                    if (nMainData["input2"]):
+                        links.new(nTex.outputs['Color'], nMainData["input2"])
+                    
+                    if texAlphaImageFound == True:
+                        nTexAlpha = nodes.new(type='ShaderNodeTexImage')
+                        nTexAlpha.location = (200.0, 300.0)
+                        nTexAlpha.image = texImageAlpha
+                        nTexAlpha.interpolation = 'Closest'
+                        
+                        nTrans = nodes.new(type='ShaderNodeBsdfTransparent')
+                        nTrans.location = (300.0, 100.0)
+                        
+                        nMix = nodes.new(type='ShaderNodeMixShader');
+                        nMix.location = (700.0, 0.0)
+                        
+                        links.new(nMix.outputs['Shader'], nOutput.inputs['Surface'])
+                        links.new(nMainData["output"], nMix.inputs[2])
+                        links.new(nTrans.outputs['BSDF'], nMix.inputs[1])
+                        links.new(nTexAlpha.outputs['Color'], nMix.inputs[0])
+                        
+                        lastMixOut = nMix.outputs['Shader']
+                    else:
+                        links.new(nMainData["output"], nOutput.inputs['Surface'])
+                        lastMixOut = nMainData["output"]
+
+                    # emission demo (torches, sea_lantern, etc)
+                    if (
+                        (bobj.name == 'sea_lantern') or 
+                        (bobj.name == 'torch_flame') or 
+                        (bobj.name == 'fire') or 
+                        ((bobj.name.startswith( 'pumpkin_') and bobj.name.endswith( '_lit')))
+                    ):
+                        mat.cycles.sample_as_light = True
+                        
+                        nOutput.location = (1300.0, 0.0)
+                        
+                        nEmMix = nodes.new(type='ShaderNodeMixShader');
+                        nEmMix.location = (900.0, 100.0)                  
+                        
+                        nEmMix2 = nodes.new(type='ShaderNodeMixShader');
+                        nEmMix2.location = (1100.0, 100.0)      
+                        
+                        nEmit = nodes.new(type='ShaderNodeEmission');
+                        nEmit.location = (700, 150.0)       
+                        if bobj.name == 'sea_lantern':
+                            nEmit.inputs[0].default_value = (1, 1, 1, 1)                
+                            nEmit.inputs["Strength"].default_value = 5
+                            
+                        if bobj.name == 'torch_flame':
+                            nEmit.inputs[0].default_value = (1, 0.25, 0, 1)
+                            nEmit.inputs["Strength"].default_value = 30
+                        if bobj.name == 'fire':                    
+                            nEmit.inputs[0].default_value = (1, 0.11, 0, 1)
+                            nEmit.inputs["Strength"].default_value = 50
+                        if (bobj.name.startswith( 'pumpkin_')):
+                            nEmit.inputs[0].default_value = (1, 0.46, 0, 1)
+                            nEmit.inputs["Strength"].default_value = 7
+                           
+                            
+                        
+                        nLp = nodes.new(type='ShaderNodeLightPath');
+                        nLp.location = (700.0, 400.0)     
+                        
+                        
+                        
+                        links.new(lastMixOut, nEmMix.inputs[2])
+                        links.new(lastMixOut, nEmMix2.inputs[1])
+                        links.new(nEmMix.outputs['Shader'], nEmMix2.inputs[2])
+                        links.new(nEmMix2.outputs['Shader'], nOutput.inputs['Surface'])
+                        links.new(nEmit.outputs['Emission'], nEmMix.inputs[1])
+                        links.new(nLp.outputs['Is Camera Ray'], nEmMix.inputs[0])
+                        # links.new(nLp.outputs['Is Reflection Ray'], nEmMix2.inputs[0])
+
+                        # in case of alpha is present at emission...
+                        if (nTexAlpha):
+                            nTexAlpha.location = (00, 300.0)       
+                            nEmit.location = (250, 350.0)       
+                            nEmMixD = nodes.new(type='ShaderNodeMixShader');
+                            nEmMixD.location = (500.0, 300.0)     
+
+                            links.new(nEmMixD.outputs['Shader'], nEmMix.inputs[1])
+                            links.new(nTexAlpha.outputs['Color'], nEmMixD.inputs[0])
+                            links.new(nEmit.outputs['Emission'], nEmMixD.inputs[2])
+                            links.new(nTrans.outputs['BSDF'], nEmMixD.inputs[1])
+                        else: 
+                            nDiff = nodes.new('ShaderNodeBsdfDiffuse')   
+                            nDiff.location = (400.0, -150.0)     
+                            
+                            nMatMix = nodes.new(type='ShaderNodeMixShader');
+                            nMatMix.location = (650.0, -100.0)     
+
+                            
+                            if (bobj.name == 'sea_lantern'):
+                                nMatMix.inputs[0].default_value = 0.07  
+                            if (bobj.name.startswith( 'pumpkin_')):
+                                nMatMix.inputs[0].default_value = 0.005  
+                            
+                            
+                            
+                            links.new(nTex.outputs['Color'], nDiff.inputs[0])
+                            
+                            links.new(nEmit.outputs['Emission'], nMatMix.inputs[2])
+                            links.new(nMainData["output"], nMatMix.inputs[1])
+                            
+                            links.new(nMatMix.outputs['Shader'], nEmMix.inputs[2])
+                            links.new(nMatMix.outputs['Shader'], nEmMix2.inputs[1])
+                            
+                    # glass special    
+                    if (
+                        (bobj.name.startswith( 'glass_')) or 
+                        (bobj.name == 'glass') 
+                    ):   
+
+                        nOutput.location = (1900.0, 00.0)                    
+                        nTex.location = (0.0, 0.0)   
+                        nTexAlpha.location = (0.0, 300.0) 
+                        
+                        
+                        nMainData['node'].location = (400.0, -100.0)                    
+                        nTrans.location = (1400.0, 300.0)     
+                        nMix.location = (1600.0, 200.0)   
+                        
+                     
+                        
+                        #nTexMix = nodes.new(type='ShaderNodeMixShader');
+                        #nTexMix.location = (1000.0, 200.0)        
+                        
+                        #links.new(nTexMix.outputs['Shader'], nMix.inputs[1])
+                        
+                        nBright = nodes.new(type='ShaderNodeBrightContrast');
+                        nBright.inputs['Bright'].default_value = 2
+                        nBright.inputs['Contrast'].default_value = 7
+                        nBright.location = (400.0, 300.0)    
+                        
+                        links.new(nTexAlpha.outputs['Color'], nBright.inputs[0])
+                        
+                        nGlass = nodes.new(type='ShaderNodeBsdfGlass');
+                        nGlass.location = (400.0, 100.0)     
+                        nGlass.inputs['IOR'].default_value = 1.45
+                        
+                        #nGeometry = nodes.new(type='ShaderNodeNewGeometry');
+                        #nGeometry.location = (1400.0, 550.0) 
+                        
+                        
+                        #links.new(nGeometry.outputs['Backfacing'], nMix.inputs[0])
+                        #links.new(nTrans.outputs['BSDF'], nMix.inputs[2])
+                        
+                        
+                        
+                        nGlossy = nodes.new(type='ShaderNodeBsdfGlossy');
+                        nGlossy.location = (400.0, -250.0)     
+                        nGlossy.inputs[1].default_value = 0.133
+                        
+                        # links.new(nTex.outputs['Color'], nGlass.inputs[0])
+                        # links.new(nTex.outputs['Color'], nGlossy.inputs[0])
+                        
+                        nAdd = nodes.new(type='ShaderNodeAddShader');
+                        nAdd.location = (700.0, -200.0)        
+                        
+                        links.new(nMainData['output'], nAdd.inputs[0])
+                        links.new(nGlossy.outputs['BSDF'], nAdd.inputs[1])
+
+                        links.new(nBright.outputs['Color'], nMix.inputs[0])
+                        links.new(nAdd.outputs['Shader'], nMix.inputs[2])
+                        links.new(nGlass.outputs['BSDF'], nMix.inputs[1])
+
+
+                        #nMix4 = nodes.new(type='ShaderNodeMixShader');
+                        #nMix4.location = (1300.0, 200.0)        
+
+                        #nMix5 = nodes.new(type='ShaderNodeMixShader');
+                        #nMix5.location = (1600.0, 200.0)        
+
+                       
+                        
+                         
+                                     
+                        #nGeometry = nodes.new(type='ShaderNodeNewGeometry');
+                        #nGeometry.location = (1100.0, 500.0)   
+                        
+                        #nLp = nodes.new(type='ShaderNodeLightPath');
+                        #nLp.location = (1400.0, 500.0)     
+                        
+                        
+                        
+                        #links.new(nMix1.outputs['Shader'], nMix2.inputs[1])
+                        #links.new(nMix2.outputs['Shader'], nMix.inputs[1])
+                        #links.new(nMix.outputs['Shader'], nMix4.inputs[1])
+                        #links.new(nMix4.outputs['Shader'], nMix5.inputs[1])
+                        #links.new(nMix5.outputs['Shader'], nOutput.inputs['Surface'])
+                        
+                        #links.new(nTrans.outputs['BSDF'], nMix1.inputs[1])
+                        #links.new(nTrans.outputs['BSDF'], nMix2.inputs[2])
+                        #links.new(nTrans.outputs['BSDF'], nMix4.inputs[2])
+                        #links.new(nTrans.outputs['BSDF'], nMix5.inputs[2])
+                        
+                        #links.new(nGeometry.outputs['Backfacing'], nMix4.inputs[0])
+                        #links.new(nLp.outputs['Is Reflection Ray'], nMix5.inputs[0])
+                        #links.new(nGlass.outputs['BSDF'], nMix1.inputs[2])
+                        
+                        #links.new(nTex.outputs['Color'], nBright.inputs['Color'])
+                        #links.new(nBright.outputs['Color'], nMainData["input"])
+                        #links.new(nGlass.outputs['BSDF'], nAdd.inputs[0])
+                        #links.new(lastMixOut, nAdd.inputs[1])
+                        #links.new(nTexAlpha.outputs['Color'], nGlass.inputs['Color'])
+                        #links.new(nAdd.outputs['Shader'], nOutput.inputs['Surface'])
+
+                    
+                    if ((bobj.name.startswith( 'armor_')) and 
+                        (bobj.name != 'armor_stand') and
+                        (bobj.name != 'armor_enchanted')
+                    ):
+                        if (bobj.name.startswith('armor_leather')):
+                            nTex.location = (-200.0, -200.0)     
+                            nMixRGB = nodes.new(type='ShaderNodeMixRGB');
+                            nMixRGB.location = (000.0, 0.0)     
+                            nMixRGB.blend_type = 'VALUE'
+
+                            nRGB = nodes.new(type='ShaderNodeRGB');
+                            nRGB.location = (-200.0, 0.0);   
+                            nRGB.outputs[0].default_value = (diffuse_color.r, diffuse_color.g, diffuse_color.b, 1);
+                            links.new(nTex.outputs['Color'], nMixRGB.inputs[2])
+                            links.new(nRGB.outputs['Color'], nMixRGB.inputs[1])
+                            links.new(nMixRGB.outputs['Color'], nMainData["input"])
+
+                       
+                        
+                     
+
+                    # water
+                    if (bobj.name == 'water'):
+                        nOutput.location = (1100.0, 0.0)     
+                        
+                        nMix.inputs[0].default_value = 0.25
+                        
+                        nGloss = nodes.new(type='ShaderNodeBsdfGlossy');
+                        nGloss.location = (700.0, 200.0)     
+                        nGloss.inputs[1].default_value = 0.005
+                        #nGloss.inputs['IOR'].default_value = 1.33
+                        
+                        nMixGloss = nodes.new(type='ShaderNodeMixShader');
+                        nMixGloss.location = (900.0, 0.0)
+                        nMixGloss.inputs[0].default_value = 0.85
+                        
+                        links.new(lastMixOut, nMixGloss.inputs[2])
+                        links.new(nMixGloss.outputs['Shader'], nOutput.inputs['Surface'])
+                        links.new(nGloss.outputs['BSDF'], nMixGloss.inputs[1])
+                       
+                       
+                        nWave = nodes.new(type='ShaderNodeTexWave');
+                        nWave.location = (400.0, -200.0)     
+                        nWave.wave_type = 'RINGS'
+                        nWave.inputs[1].default_value = 25
+                        nWave.inputs[2].default_value = 10
+                        nWave.inputs[3].default_value = 2.5
+                        
+                        
+                        nNoise = nodes.new(type='ShaderNodeTexNoise');
+                        nNoise.location = (400.0, -450.0)     
+                        nNoise.inputs[1].default_value = 100
+                        nNoise.inputs[2].default_value = 1
+                        
+                        nMixRGB = nodes.new(type='ShaderNodeMixRGB');
+                        nMixRGB.blend_type = 'MULTIPLY'
+                        nMixRGB.inputs[0].default_value = 0.4
+                        nMixRGB.location = (700.0, -300.0)     
+
+                        
+                        links.new(nWave.outputs['Color'], nMixRGB.inputs[1])
+                        links.new(nNoise.outputs['Color'], nMixRGB.inputs[2])
+                        links.new(nMixRGB.outputs['Color'], nOutput.inputs['Displacement'])
+                        
+                        nodes.remove(nTexAlpha)
+
+                    
                     
 
 def makeMcMainDiffuse(nodes, links):
