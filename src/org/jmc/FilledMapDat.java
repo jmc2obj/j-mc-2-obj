@@ -102,9 +102,9 @@ public class FilledMapDat {
 
 		for(int x=0; x<image_width; x++) {
 			for(int y=0; y<image_height; y++) {
-				int index = ((image_height-y-1)*image_height)+(image_width-1-x);
+				int index = (y*image_height)+(x);
 				byte colorIdx = color_map.data[index];
-				img.setRGB(y, x, getColorByByte(colorIdx).getRGB());
+				img.setRGB(x, y, getColorByByte(colorIdx).getRGB());
 			}
 		}
 		

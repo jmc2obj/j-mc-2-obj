@@ -51,24 +51,34 @@ public class ItemFrame extends Entity
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform rt;
-		
+
+		int frameRotation = ((TAG_Byte)entity.getElement("ItemRotation")).value;
+		frameRotation = frameRotation * 90; // doku says: 45 degrees - but thats wrong (at least for "filled_map")
+		if (frameRotation > 180) {
+			frameRotation = 0 - 180 + (frameRotation - 180);
+		}
+
+		int baseRotation = 0;
+
 		switch (facing)
 		{
 			case 0:
+				baseRotation = 0;
 				break;
 			case 1:
-				rotate.rotate(0, 90, 0);
+				baseRotation = 90;
 				break;
 			case 2:
-				rotate.rotate(0, 180, 0);
+				baseRotation = 180;
 				break;
 			case 3:
-				rotate.rotate(0, -90, 0);
+				baseRotation = -90;
 				break;
 		}
-		
-		translate.translate(x, y, z);		
-			
+
+		rotate.rotate(0, baseRotation, frameRotation);
+
+		translate.translate(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		
@@ -99,7 +109,6 @@ public class ItemFrame extends Entity
 						try {
 							map_data.writePngTexture();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							Log.error("Cant write map", e, true);
 						}
 					}
