@@ -39,8 +39,8 @@ public class Version
 					Document doc = Xml.loadDocument(stream);
 					XPath xpath = XPathFactory.newInstance().newXPath();            
 
-					revstr=(String) xpath.evaluate("/version/revision", doc, XPathConstants.STRING);
-					String datestr=(String) xpath.evaluate("/version/date", doc, XPathConstants.STRING);						
+					revstr=(String) xpath.evaluate("version/revision", doc, XPathConstants.STRING);
+					String datestr=(String) xpath.evaluate("version/date", doc, XPathConstants.STRING);
 
 					if(datestr==null) datestr="";
 
@@ -48,15 +48,16 @@ public class Version
 				}
 				else
 				{
-					Log.error("Cannot load program version!", null, false);
 					dateval=new Date(0);
 					revstr="r0";
 				}
 
-			}catch (Exception e) {
-				Log.error("Cannot load program version",e,false);					
+			} catch (Exception e) {
+
+				Log.error("Cannot load program version 2", e, false);
 				dateval=new Date(0);
 				revstr="r0";
+
 			}
 		}
 	}
