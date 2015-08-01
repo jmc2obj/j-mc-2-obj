@@ -23,6 +23,7 @@ public class Banner extends BlockModel {
      * */
     ArrayList<BannerPattern> PatternList = new ArrayList<BannerPattern>();
 
+    private Set<String> exportedMaterials = new HashSet<String>();
     /**
      * Class for Banner Pattern Layer
      */
@@ -56,8 +57,8 @@ public class Banner extends BlockModel {
      * Creates a uniq string for combination of patterns
      * @return
      */
-    private String createPatternHash() {
-        String hashSource = "";
+    private String createPatternHash(int baseColorIndex) {
+        String hashSource = "" + baseColorIndex + "";
         int count = 0;
         for (BannerPattern bp : PatternList) {
             if (count++ != 0) {
@@ -81,31 +82,68 @@ public class Banner extends BlockModel {
         double rotation = 0;
 
         // obj correction
+        byte rotationData = data;
+        rotationData |= rotationData << 2;
+
 
         // scale the models down
-        double offsetScale = -0.4;
+        double offsetScale = -0.5;
 
         double offsetX = 0;
         double offsetY = 0;
         double offsetZ = 0;
 
+
+        int facing = 0;
         switch(bannerType) {
             case "wall":
-                rotation = (360 / 4 * (data + 3));
-                offsetX = -0.5;
-                offsetY = -1.63;
+                facing = rotationData & 3;
+                offsetY = -1.51;
+                switch (facing)
+                {
+                    case 0:
+                        rotation = 180;
+                        offsetX = 0.52;
+                        offsetZ = 0;
+                        break;
+                    case 1:
+                        rotation = -90;
+                        offsetX = -1;
+                        offsetZ = -0.48;
+                        break;
+                    case 2:
+                        rotation = 0;
+                        offsetX = 0.486;
+                        offsetZ = 1.0;
+                        break;
+                    case 3:
+                        rotation = 90;
+                        offsetX = 0;
+                        offsetZ = -0.52;
+                        break;
+                }
                 break;
             case "standing":
-                // TODO: this is wired... should be fixed!
-                rotation = (360 / 16 * (data + 4));
-                offsetX = -0.14;
+
+                // don't know if its correct - but it seams to work
+                facing = (Math.abs(data)/2);
+
+                rotation = 90 + facing * 45;
+
                 offsetY = -0.48;
-                break;
+
+                if (rotation > 180) {
+                    rotation = 0 - 180 + (rotation - 180);
+                }
         };
 
         // get banner layer information
         TAG_Compound tag = chunks.getTileEntity(x, y, z);
+        int baseColorIndex = 0;
         if (tag != null) {
+            baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
+            Color baseColor = getColorById(baseColorIndex);
+
             TAG_List patternList = (TAG_List) tag.getElement("Patterns");
             if (patternList != null) {
                 for (NBT_Tag pattern : patternList.elements) {
@@ -119,14 +157,19 @@ public class Banner extends BlockModel {
         }
 
         // use material hash (to generate unique material name and images)
-        String bannerMaterial = "banner_" + createPatternHash();
+        String bannerMaterial = "banner_" + bannerType + "_" + createPatternHash(baseColorIndex);
 
         // add the Banner
         addBanner("conf/models/banner_"+bannerType+".obj", bannerMaterial, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
 
         try {
-            generateBannerImage(bannerMaterial);
-            exportBannerMaterial(bannerMaterial);
+            boolean alreadyExported = exportedMaterials.contains(bannerMaterial);
+            // already exported material?
+            if (!alreadyExported) {
+                exportedMaterials.add(bannerMaterial);
+                generateBannerImage(bannerMaterial, baseColorIndex);
+                exportBannerMaterial(bannerMaterial, baseColorIndex);
+            }
         }
         catch (IOException e) {
             Log.error("Cant write Banner Texture...", e, true);
@@ -142,7 +185,7 @@ public class Banner extends BlockModel {
      * @throws IOException
      */
     // TODO: user needs to export the textures first! - someone's might got a better idea for this!
-    private void generateBannerImage(String materialImageName) throws IOException {
+    private void generateBannerImage(String materialImageName, int baseColorIndex) throws IOException {
 
         // get the base material texture
         BufferedImage backgroundImage = null;
@@ -154,6 +197,9 @@ public class Banner extends BlockModel {
         }
 
         if (backgroundImage != null) {
+
+            // todo - do something with the basecolor here...
+            // Log.info(" - Base Color: " + baseColorIndex);
 
             int imageWidth = backgroundImage.getWidth();
             int imageHeight = backgroundImage.getHeight();
@@ -257,19 +303,35 @@ public class Banner extends BlockModel {
         return mappedColor;
     }
 
+    /**
+     * Returns a formatet float string of a color int value
+     * @param colorValue
+     * @return
+     */
+    private String intChannel2Float(int colorValue) {
+
+        double fColor = (double)colorValue/(double)255;
+        String floatColor = String.format("%.4f", fColor);
+
+        return floatColor;
+    }
 
     /**
      * Append the current texture to material file
      * @param materialName
      */
-    private void exportBannerMaterial(String materialName) {
+    private void exportBannerMaterial(String materialName, int baseColorIndex) {
+
+
         File mtlfile = new File(Options.outputDir, Options.mtlFileName);
+
+        Color baseColor = getColorById(baseColorIndex);
 
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(mtlfile, true)))) {
             out.println("");
             out.println("");
             out.println("newmtl " + materialName);
-            out.println("Kd 0.2500 0.2500 0.2500");
+            out.println("Kd " + intChannel2Float(baseColor.getRed()) + " " + intChannel2Float(baseColor.getGreen()) + " " + intChannel2Float(baseColor.getBlue()));
             out.println("Ks 0.0000 0.0000 0.0000");
             out.println("map_Kd tex/" + materialName + ".png");
             out.print("map_Kd tex/banner_base_a.png");
