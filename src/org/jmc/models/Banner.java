@@ -142,9 +142,15 @@ public class Banner extends BlockModel {
         int baseColorIndex = 0;
         if (tag != null) {
             baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
-            Color baseColor = getColorById(baseColorIndex);
+
+            // base Color
+            BannerPattern bpBase = new BannerPattern();
+            bpBase.setColor(baseColorIndex);
+            bpBase.setPattern("base");
+            PatternList.add(bpBase);
 
             TAG_List patternList = (TAG_List) tag.getElement("Patterns");
+
             if (patternList != null) {
                 for (NBT_Tag pattern : patternList.elements) {
                     TAG_Compound c_pattern = (TAG_Compound) pattern;
@@ -167,7 +173,7 @@ public class Banner extends BlockModel {
             // already exported material?
             if (!alreadyExported) {
                 exportedMaterials.add(bannerMaterial);
-                generateBannerImage(bannerMaterial, baseColorIndex);
+                generateBannerImage(bannerMaterial);
                 exportBannerMaterial(bannerMaterial, baseColorIndex);
             }
         }
@@ -185,7 +191,7 @@ public class Banner extends BlockModel {
      * @throws IOException
      */
     // TODO: user needs to export the textures first! - someone's might got a better idea for this!
-    private void generateBannerImage(String materialImageName, int baseColorIndex) throws IOException {
+    private void generateBannerImage(String materialImageName) throws IOException {
 
         // get the base material texture
         BufferedImage backgroundImage = null;
