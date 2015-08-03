@@ -137,9 +137,10 @@ public class Banner extends BlockModel {
                 }
         };
 
+        PatternList.clear();
         // get banner layer information
         TAG_Compound tag = chunks.getTileEntity(x, y, z);
-        int baseColorIndex = 0;
+        int baseColorIndex = -1;
         if (tag != null) {
             baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
 
@@ -163,7 +164,12 @@ public class Banner extends BlockModel {
         }
 
         // use material hash (to generate unique material name and images)
-        String bannerMaterial = "banner_" + bannerType + "_" + createPatternHash(baseColorIndex);
+        String bannerMaterial = "banner_" + bannerType + "_";
+        if (baseColorIndex > -1) {
+            bannerMaterial+= createPatternHash(baseColorIndex);
+        }
+
+
 
         // add the Banner
         addBanner("conf/models/banner_"+bannerType+".obj", bannerMaterial, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
