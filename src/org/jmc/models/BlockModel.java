@@ -12,6 +12,13 @@ import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.util.Log;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 /**
  * Base class for the block model handlers. These handlers are responsible for
@@ -19,6 +26,7 @@ import org.jmc.geom.Vertex;
  */
 public abstract class BlockModel {
 	protected short blockId = -1;
+	protected Node configNode = null;
 	protected BlockMaterial materials = null;
 
 	/**
@@ -35,6 +43,31 @@ public abstract class BlockModel {
 	public void setMaterials(BlockMaterial val) {
 		this.materials = val;
 	}
+
+	/**
+	 * Nodes of config file of this block
+	 */
+	public void setConfigNodes(Node blockNode) { this.configNode = blockNode; }
+
+	/**
+	 * returns a config Value
+	 * @param tagName
+	 * @param index
+	 * @return String
+	 */
+	public String getConfigNodeValue(String tagName, int index) {
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		String configValue = "";
+		try {
+			NodeList configNode = (NodeList) xpath.evaluate(tagName, this.configNode, XPathConstants.NODESET);
+			Node currentItem = configNode.item(index);
+			configValue = currentItem.getTextContent();
+		} catch (Exception e) {
+			Log.error("Cant read config Node", e, true);
+		}
+		return configValue;
+	}
+
 
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
@@ -95,7 +128,7 @@ public abstract class BlockModel {
 		if (neighborId == -1)
 			return Options.renderSides;
 
-		if (neighborId == 0)
+		if (neighborId == 0 || Options.excludeBlocks.contains(neighborId))
 			return true;
 
 		if (Options.objectPerMaterial && (neighborId != blockId))

@@ -50,7 +50,7 @@ public class OBJInputFile extends OBJFileBase
 	 * @param objfile
 	 * @throws IOException 
 	 */
-	public void loadFile(File objfile) throws IOException
+	public void loadFile(File objfile, String overwriteName) throws IOException
 	{
 		objects=new HashMap<String, OBJGroup>();
 		default_object=null;
@@ -79,7 +79,12 @@ public class OBJInputFile extends OBJFileBase
 			if(line.startsWith("o ") || line.startsWith("g "))
 			{
 				group=new OBJGroup();
-				objects.put(line.substring(2).trim(), group);
+				String objObjName = line.substring(2).trim();
+				if (overwriteName != null) {
+					objObjName = overwriteName;
+				}
+				// Log.info("loadFile "+objfile+" :" +objObjName);
+				objects.put(objObjName, group);
 				if (default_object==null) default_object=group;
 				continue;
 			}
@@ -237,7 +242,13 @@ public class OBJInputFile extends OBJFileBase
 		}
 		in.close();
 	}
-
+	
+	public void loadFile(File objfile) throws IOException
+	{
+		loadFile(objfile, null);
+		return;
+	}
+	
 	
 	public OBJGroup getDefaultObject()
 	{
@@ -252,6 +263,14 @@ public class OBJInputFile extends OBJFileBase
 		}
 
 		return objects.get(objname);
+	}
+	
+	
+	public void overwriteMaterial(OBJGroup group, String material) {
+		for(Face f:group.faces)
+		{
+			f.mtl = material;
+		}
 	}
 
 	public void addObjectToOutput(OBJGroup group, Transform trans, OBJOutputFile out)
@@ -273,6 +292,7 @@ public class OBJInputFile extends OBJFileBase
 					norm[i] = new Vertex(normals.get(f.normals[i]-1));
 			}
 
+			// Log.info("out OBJ file material: "+f.mtl+" / "+v+" / "+norm+" / "+uv+" / "+trans);
 			out.addFace(v, norm, uv, trans, f.mtl);
 		}
 	}

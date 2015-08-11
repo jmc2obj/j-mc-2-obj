@@ -37,9 +37,11 @@ public class MainWindow extends JFrame
 	
 	public static UpdateWindow update;
 	
-	public static FileNames file_names;
+	public static BlockListWindow blocksWindow;
 	
-	public static OBJExportWindow export;
+	public static GUIConsoleLog consoleLog;
+	
+	public static ExportWindow export;
 	
 	
 	/**
@@ -51,12 +53,16 @@ public class MainWindow extends JFrame
 
 		settings = new Settings();
 		update = new UpdateWindow();
-		file_names = new FileNames();
-		export = new OBJExportWindow();
+		blocksWindow = new BlockListWindow();
+		consoleLog = new GUIConsoleLog();
+		if(settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true)){
+			consoleLog.setVisible(true);
+		}
+		export = new ExportWindow();
 		
 		main = this;
 		
-		setSize(800,600);
+		setSize(1000,800);
 		setMinimumSize(new Dimension(400,400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("jMC2Obj");
@@ -71,6 +77,7 @@ public class MainWindow extends JFrame
 	public void loadingFinished()
 	{
 		panel.loadingFinished();
+		blocksWindow.initialize();
 	}
 	
 	public void highlightUpdateButton()
@@ -83,9 +90,11 @@ public class MainWindow extends JFrame
 	 * 
 	 * @param msg string to be logged
 	 */
-	public static void log(String msg)
+	public static void log(String msg, boolean isError)
 	{
-		if(main!=null) main.panel.log(msg);
+		if(isError)
+			consoleLog.setVisible(true);
+		consoleLog.log(msg, isError);
 	}
 	
 	/**

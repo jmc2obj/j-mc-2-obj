@@ -30,9 +30,15 @@ public class TAG_Compound extends NBT_Tag {
 	 * Main constructor.
 	 * @param name name of tag
 	 */
-	TAG_Compound(String name) {
+	public TAG_Compound(String name) {
 		super(name);
 		elements=new LinkedList<NBT_Tag>();
+	}
+	
+	public TAG_Compound(String name, List<NBT_Tag> tags) {
+		super(name);
+		elements=new LinkedList<NBT_Tag>();
+		elements.addAll(tags);
 	}
 
 	/**

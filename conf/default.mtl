@@ -25,6 +25,162 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/anvil_top_1.png
 map_d tex/anvil_top_1_a.png
 
+newmtl armor_stand
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_stand.png
+map_d tex/armor_stand_a.png
+
+newmtl armor_enchanted
+Kd 0.8590 0.1080 0.9330
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_iron_helmet.png
+map_d tex/armor_iron_helmet_a.png
+
+newmtl armor_golden_helmet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_golden_helmet.png
+map_d tex/armor_golden_helmet_a.png
+
+newmtl armor_chainmail_helmet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_chainmail_helmet.png
+map_d tex/armor_chainmail_helmet_a.png
+
+newmtl armor_diamond_helmet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_diamond_helmet.png
+map_d tex/armor_diamond_helmet_a.png
+
+newmtl armor_iron_helmet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_iron_helmet.png
+map_d tex/armor_iron_helmet_a.png
+
+newmtl armor_leather_helmet
+Kd 0.2230 0.0490 0.0060  
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_helmet.png
+map_d tex/armor_leather_helmet_a.png
+
+newmtl armor_leather_helmet_overlay
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_helmet_overlay.png
+map_d tex/armor_leather_helmet_overlay_a.png
+
+newmtl armor_golden_chest
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_golden_chest.png
+map_d tex/armor_golden_chest_a.png
+
+newmtl armor_chainmail_chest
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_chainmail_chest.png
+map_d tex/armor_chainmail_chest_a.png
+
+newmtl armor_diamond_chest
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_diamond_chest.png
+map_d tex/armor_diamond_chest_a.png
+
+newmtl armor_iron_chest
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_iron_chest.png
+map_d tex/armor_iron_chest_a.png
+
+newmtl armor_leather_chest
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_chest.png
+map_d tex/armor_leather_chest_a.png
+
+newmtl armor_leather_chest_overlay
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_chest_overlay.png
+map_d tex/armor_leather_chest_overlay_a.png
+
+newmtl armor_golden_legs
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_golden_legs.png
+map_d tex/armor_golden_legs_a.png
+
+newmtl armor_chainmail_legs
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_chainmail_legs.png
+map_d tex/armor_chainmail_legs_a.png
+
+newmtl armor_diamond_legs
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_diamond_legs.png
+map_d tex/armor_diamond_legs_a.png
+
+newmtl armor_iron_legs
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_iron_legs.png
+map_d tex/armor_iron_legs_a.png
+
+newmtl armor_leather_legs
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_legs.png
+map_d tex/armor_leather_legs_a.png
+
+newmtl armor_leather_legs_overlay
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_legs_overlay.png
+map_d tex/armor_leather_legs_overlay_a.png
+
+newmtl armor_golden_feet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_golden_feet.png
+map_d tex/armor_golden_feet_a.png
+
+newmtl armor_chainmail_feet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_chainmail_feet.png
+map_d tex/armor_chainmail_feet_a.png
+
+newmtl armor_diamond_feet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_diamond_feet.png
+map_d tex/armor_diamond_feet_a.png
+
+newmtl armor_iron_feet
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_iron_feet.png
+map_d tex/armor_iron_feet_a.png
+
+newmtl armor_leather_feet
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_feet.png
+map_d tex/armor_leather_feet_a.png
+
+newmtl armor_leather_feet_overlay
+Kd 0.2230 0.0490 0.0060
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/armor_leather_feet_overlay.png
+map_d tex/armor_leather_feet_overlay_a.png
+
 newmtl beacon
 Kd 0.3922 0.8627 0.8392
 Ks 0.0000 0.0000 0.0000
@@ -2019,6 +2175,86 @@ newmtl wool_yellow
 Kd 0.7608 0.7098 0.1098
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/wool_yellow.png
+
+newmtl carpet_black
+Kd 0.1059 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_black.png
+
+newmtl carpet_blue
+Kd 0.1529 0.2000 0.6039
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_blue.png
+
+newmtl carpet_brown
+Kd 0.3373 0.2000 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_brown.png
+
+newmtl carpet_cyan
+Kd 0.1529 0.4588 0.5882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_cyan.png
+
+newmtl carpet_dark_gray
+Kd 0.2627 0.2627 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_dark_gray.png
+
+newmtl carpet_green
+Kd 0.2196 0.3020 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_green.png
+
+newmtl carpet_light_blue
+Kd 0.4078 0.5451 0.8314
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_light_blue.png
+
+newmtl carpet_light_gray
+Kd 0.6196 0.6510 0.6510
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_light_gray.png
+
+newmtl carpet_lime
+Kd 0.2314 0.7412 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_lime.png
+
+newmtl carpet_magenta
+Kd 0.7490 0.2980 0.7882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_magenta.png
+
+newmtl carpet_orange
+Kd 0.9176 0.5020 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_orange.png
+
+newmtl carpet_pink
+Kd 0.8510 0.5176 0.6078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_pink.png
+
+newmtl carpet_purple
+Kd 0.5059 0.2118 0.7686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_purple.png
+
+newmtl carpet_red
+Kd 0.6431 0.1765 0.1608
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_red.png
+
+newmtl carpet_white
+Kd 0.8706 0.8706 0.8706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_white.png
+
+newmtl carpet_yellow
+Kd 0.7608 0.7098 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/carpet_yellow.png
 
 newmtl workbench_front
 Kd 0.4196 0.2784 0.1686

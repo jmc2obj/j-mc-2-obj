@@ -31,6 +31,11 @@ public class TAG_Double extends NBT_Tag {
 	public TAG_Double(String name) {
 		super(name);
 	}
+	
+	public TAG_Double(String name, double value) {
+		super(name);
+		this.value = value;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)

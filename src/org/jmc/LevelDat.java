@@ -10,13 +10,13 @@ package org.jmc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
+import org.jmc.util.Log;
 
 /**
  * Class used for loading the level.dat file from the world save.
@@ -65,11 +65,8 @@ public class LevelDat {
 			
 		} catch (FileNotFoundException e) {
 			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error("Error reading level.dat", e, false);
 			return false;
 		}			
 	

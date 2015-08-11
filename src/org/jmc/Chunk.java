@@ -280,18 +280,21 @@ public class Chunk {
 	 * @param floor floor boundary
 	 * @param ceiling ceiling boundary
 	 */
-	public void renderImages(int floor, int ceiling)
+	public void renderImages(int floor, int ceiling, boolean fastmode)
 	{
 		int width = 4 * 16;
 		int height = 4 * 16;
 		block_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		height_image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+		if(!fastmode)
+			height_image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 
 		Graphics2D gb = block_image.createGraphics();
 		gb.setColor(Color.white);
 		gb.fillRect(0, 0, width, height);
 
-		Graphics2D gh = height_image.createGraphics();
+		Graphics2D gh = null;
+		if(!fastmode)
+			gh = height_image.createGraphics();
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
@@ -320,7 +323,9 @@ public class Chunk {
 		short ids[]=new short[16*16];
 		byte data[]=new byte[16*16];
 		byte biome[]=new byte[16*16];
-		int himage[]=new int[16*16];
+		int himage[]=null;
+		if(!fastmode)
+			himage=new int[16*16];
 
 		int x,y,z;
 		for(z = 0; z < 16; z++)
@@ -349,7 +354,8 @@ public class Chunk {
 						ids[z*16+x]=blockID;
 						data[z*16+x]=blockData;
 						biome[z*16+x]=blockBiome;
-						himage[z*16+x]=y;
+						if(!fastmode)
+							himage[z*16+x]=y;
 					}
 				}
 			}
@@ -375,14 +381,16 @@ public class Chunk {
 			}
 		}
 
-		int h;
-		for(z = 0; z < 16; z++)
-		{
-			for(x = 0; x < 16; x++)
-			{				
-				h=himage[z*16+x]%256;
-				gh.setColor(new Color(h,h,h));
-				gh.fillRect(x*4, z*4, 4, 4);				
+		if(!fastmode){
+			int h;
+			for(z = 0; z < 16; z++)
+			{
+				for(x = 0; x < 16; x++)
+				{				
+					h=himage[z*16+x]%256;
+					gh.setColor(new Color(h,h,h));
+					gh.fillRect(x*4, z*4, 4, 4);				
+				}
 			}
 		}
 	}

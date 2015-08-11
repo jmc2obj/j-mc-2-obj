@@ -30,6 +30,13 @@ public class TAG_List extends NBT_Tag {
 	public TAG_List(String name) {
 		super(name);
 	}
+	
+	//TODO Verification that all tags are of same type
+	public TAG_List(String name, NBT_Tag[] tags) {
+		super(name);
+		this.type = tags[0].ID();
+		this.elements = tags;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)

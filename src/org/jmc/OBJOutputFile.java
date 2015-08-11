@@ -77,20 +77,6 @@ public class OBJOutputFile extends OBJFileBase
 
 
 	/**
-	 * Checks if the blockId is in the option list of blocks to render.
-	 * 
-	 * @param blockID Id do check
-	 * @return Whether the id is in the list {@code Options.blockid }
-	 */
-	private boolean checkBlockIdInOptions(int blockID){
-		for(int id : Options.blockid){
-			if(blockID == id) return true;
-		}
-		return false;
-	}
-
-
-	/**
 	 * Main constructor.
 	 * @param ident identifier of the OBJ
 	 * @param mtl reference to the MTL
@@ -426,17 +412,18 @@ public class OBJOutputFile extends OBJFileBase
 					byte blockData=chunk.getBlockData(x, y, z);
 					byte blockBiome=chunk.getBlockBiome(x, z);
 					
+					if(blockID==0)
+						continue;
+					
+					if(Options.excludeBlocks.contains(blockID))
+						continue;
+
 					if(Options.convertOres){
 						if(blockID == 14 || blockID == 15 || blockID == 16 || blockID == 21 || blockID == 56 || blockID == 73 || blockID == 74 || blockID == 129){
 							blockID = 1;
 						}
 					}
-
-					if(blockID==0)
-						continue;
-					if(Options.singleBlock && !checkBlockIdInOptions(blockID))						
-						continue;
-
+					
 					if(Options.objectPerBlock) obj_idx_count++;
 					
 					try {

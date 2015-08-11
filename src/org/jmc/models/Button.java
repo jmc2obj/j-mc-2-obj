@@ -35,6 +35,9 @@ public class Button extends BlockModel
 			case 4:
 				rotate.rotate(0, 180, 0);
 				break;
+			case 5: // button on the ground
+				rotate.rotate(-90, 0, 90);
+				break;
 		}
 		translate.translate(x, y, z);		
 			

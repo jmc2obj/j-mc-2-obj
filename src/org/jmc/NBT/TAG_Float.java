@@ -31,6 +31,11 @@ public class TAG_Float extends NBT_Tag {
 	public TAG_Float(String name) {
 		super(name);
 	}
+	
+	public TAG_Float(String name, float value) {
+		super(name);
+		this.value = value;
+	}
 
 	/**
 	 * Id of tag. (see NBT_Tag)
