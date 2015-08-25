@@ -29,9 +29,9 @@ public class OBJInputFile extends OBJFileBase
 	{
 		public OBJGroup()
 		{
-			faces=new LinkedList<Face>();
+			faces=new LinkedList<OBJFace>();
 		}
-		public List<Face> faces;
+		public List<OBJFace> faces;
 	}
 
 	
@@ -162,7 +162,7 @@ public class OBJInputFile extends OBJFileBase
 					continue;
 				}
 				
-				Face f=new Face(vs.length);
+				OBJFace f=new OBJFace(vs.length);
 				boolean has_uv=false;
 				boolean has_norm=false;
 
@@ -267,7 +267,7 @@ public class OBJInputFile extends OBJFileBase
 	
 	
 	public void overwriteMaterial(OBJGroup group, String material) {
-		for(Face f:group.faces)
+		for(OBJFace f:group.faces)
 		{
 			f.mtl = material;
 		}
@@ -275,7 +275,7 @@ public class OBJInputFile extends OBJFileBase
 
 	public void addObjectToOutput(OBJGroup group, Transform trans, OBJOutputFile out)
 	{
-		for(Face f:group.faces)
+		for(OBJFace f:group.faces)
 		{
 			int n = f.vertices.length;
 
@@ -293,7 +293,7 @@ public class OBJInputFile extends OBJFileBase
 			}
 
 			// Log.info("out OBJ file material: "+f.mtl+" / "+v+" / "+norm+" / "+uv+" / "+trans);
-			out.addFace(v, norm, uv, trans, f.mtl);
+			out.addOBJFace(v, norm, uv, trans, f.mtl);
 		}
 	}
 }

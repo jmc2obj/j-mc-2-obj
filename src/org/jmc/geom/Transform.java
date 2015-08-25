@@ -52,6 +52,7 @@ public class Transform {
 	public Face multiply(Face face) {
 		Face ret = new Face();
 		ret.mtl_idx = face.mtl_idx;
+		ret.material = face.material;
 		ret.uvs=face.uvs;
 		ret.vertices = new Vertex[face.vertices.length];
 		for (int i = 0; i < ret.vertices.length; i++)

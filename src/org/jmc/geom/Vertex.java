@@ -36,7 +36,7 @@ public class Vertex implements Comparable<Vertex>
 	
 	/**
 	 * Returns the x/y/z from 0/1/2
-	 * @param i should be 1, 2 or 3
+	 * @param i should be 0, 1 or 2
 	 * @return The axis co-ordinate
 	 */
 	public float getByInt(int i)

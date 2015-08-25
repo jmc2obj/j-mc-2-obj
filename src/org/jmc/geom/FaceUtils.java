@@ -1,5 +1,9 @@
 package org.jmc.geom;
 
+import java.util.Arrays;
+
+import org.jmc.util.Log;
+
 /**
  * Class describing some standard faces used in models, to simplify their
  * implementation.
@@ -25,7 +29,64 @@ public class FaceUtils {
 		public UV[] uvs;
 		public int mtl_idx;
 		public String material;
+		
+		/**
+		 * @return 0 if x, 1 if y, 2 if z, 3 if none.
+		 */
+		public int isPlanar(){
+			if (vertices[0].x == vertices[1].x && vertices[0].x == vertices[2].x && vertices[0].x == vertices[3].x){
+				return 0;
+			}
+			else if (vertices[0].y == vertices[1].y && vertices[0].y == vertices[2].y && vertices[0].y == vertices[3].y){
+				return 1;
+			}
+			else if (vertices[0].z == vertices[1].z && vertices[0].z == vertices[2].z && vertices[0].z == vertices[3].z){
+				return 2;
+			}
+			else {
+				return 3;
+			}
+		}
 
+		public boolean isAnticlockwise() {
+			int a;
+			int b;
+			switch(isPlanar()){
+			case 0: a = 1; b = 2; break;
+			case 1: a = 0; b = 2; break;
+			case 2: a = 0; b = 1; break;
+			default: Log.debug("isPlanar returned an unknown value!"); a = b = 0; break;
+			}
+			if (vertices[1].getByInt(a) > vertices[0].getByInt(a)){//increasing a
+		        if (vertices[2].getByInt(b) > vertices[1].getByInt(b)){//increasing b: anticlockwise
+	                return true;
+		        }
+			}
+			if (vertices[1].getByInt(a) < vertices[0].getByInt(a)){//decreasing a
+		        if (vertices[2].getByInt(b) < vertices[1].getByInt(b)){//decreasing b: anticlockwise
+	                return true;
+		        }
+			}
+			if (vertices[1].getByInt(b) > vertices[0].getByInt(b)){//increasing b
+		        if (vertices[2].getByInt(a) < vertices[1].getByInt(a)){//decreasing a: anticlockwise
+	                return true;
+		        }
+			}
+			if (vertices[1].getByInt(b) < vertices[0].getByInt(b)){//decreasing b
+		        if (vertices[2].getByInt(a) > vertices[1].getByInt(a)){//increasing a: anticlockwise
+	                return true;
+		        }
+			}
+            return false;
+		}
+		
+		@Deprecated
+		public void flip(){}
+
+		@Override
+		public String toString() {
+			return "Mat:'" + material + "' Verts:" + Arrays.toString(vertices) + " UVs:" + Arrays.toString(uvs);
+		}
 	}
 
 	// Outer vertices:
