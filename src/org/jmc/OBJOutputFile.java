@@ -501,7 +501,9 @@ public class OBJOutputFile extends OBJFileBase
 				//Z loop
 				faceList = mergeAxisFaces(faceList, 2);
 				for (Face face : faceList) {
-					addOBJFace(face);
+					if (!face.remove){
+						addOBJFace(face);
+					}
 				}
 			}
 			faces = new ArrayList<Face>();//Clear out faces list because they have all been added so far 
@@ -573,12 +575,16 @@ public class OBJOutputFile extends OBJFileBase
 	 * @return Whether the join was successful
 	 */
 	private static boolean mergeFaces(Face face1, Face face2, int axis){
-		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
+		if (face1.remove || face2.remove){
 			return false;
 		}
+		boolean isFacingEqual = true;
+		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
+			isFacingEqual = false;
+		}
 		//Material blacklist for blocks that shouldn't be merged
-		List<String> blacklist = Arrays.asList("rails_curved", "door_iron_top", "door_iron_bottom");
-		if (face1.material == face2.material && !blacklist.contains(face1.material)) {
+		//List<String> blacklist = Arrays.asList("rails_curved", "door_iron_top", "door_iron_bottom");
+		if (face1.material == face2.material/* && !blacklist.contains(face1.material)*/) {
 			Vertex[] verts1 = face1.vertices;
 			Vertex[] verts2 = face2.vertices;
 			ArrayList<Vertex> matches = new ArrayList<Vertex>();
@@ -590,7 +596,7 @@ public class OBJOutputFile extends OBJFileBase
 					}
 				}
 			}
-			if (matches.size() == 2){
+			if (matches.size() == 2 && isFacingEqual){
 				//mmdanggg2: if the face extends in the axis we are looking at
 				int extendingIn;
 				float xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
@@ -681,6 +687,10 @@ public class OBJOutputFile extends OBJFileBase
 						return true;
 					}
 				}
+			} else if(matches.size() == 4 && !isFacingEqual){
+				face1.remove = true;
+				face2.remove = true;
+				return false;
 			}
 		}
 		return false;

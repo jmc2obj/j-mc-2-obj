@@ -29,6 +29,7 @@ public class FaceUtils {
 		public UV[] uvs;
 		public int mtl_idx;
 		public String material;
+		public boolean remove = false;
 		
 		/**
 		 * @return 0 if x, 1 if y, 2 if z, 3 if none.
