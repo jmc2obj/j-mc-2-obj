@@ -10,7 +10,6 @@ package org.jmc;
 import java.awt.Rectangle;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -568,109 +567,113 @@ public class OBJOutputFile extends OBJFileBase
 		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
 			isFacingEqual = false;
 		}
-		if (face1.material == face2.material) {
-			Vertex[] verts1 = face1.vertices;
-			Vertex[] verts2 = face2.vertices;
-			ArrayList<Vertex> matches = new ArrayList<Vertex>();
-			//mmdanggg2: check for shared verts
-			for (Vertex vert1 : verts1){
-				for (Vertex vert2 : verts2){
-					if (vert1.similar(vert2)){
-						matches.add(vert1);
-					}
+		if (face1.material != face2.material) {
+			return false;
+		}
+		Vertex[] verts1 = face1.vertices;
+		Vertex[] verts2 = face2.vertices;
+		ArrayList<Vertex> matches = new ArrayList<Vertex>();
+		ArrayList<Integer> verts1MatchIndex = new ArrayList<Integer>();
+		ArrayList<Integer> verts2MatchIndex = new ArrayList<Integer>();
+		//mmdanggg2: check for shared verts
+		for (int i = 0; i < 4; i++){
+			Vertex vert1 = verts1[i];
+			for (int j = 0; j < 4; j++){
+				Vertex vert2 = verts2[j];
+				if (vert1.similar(vert2)){
+					matches.add(vert1);
+					//Get the indexes of the matching verts in each face array
+					verts1MatchIndex.add(i);
+					verts2MatchIndex.add(j);
 				}
 			}
-			if (matches.size() == 2 && isFacingEqual){
-				//mmdanggg2: if the face extends in the axis we are looking at
-				int extendingIn;
-				float xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
-				float xMin2, xMax2, yMin2, yMax2, zMin2, zMax2;
-				xMin1 = xMax1 = verts1[0].x;
-				yMin1 = yMax1 = verts1[0].y;
-				zMin1 = zMax1 = verts1[0].z;
-				xMin2 = xMax2 = verts2[0].x;
-				yMin2 = yMax2 = verts2[0].y;
-				zMin2 = zMax2 = verts2[0].z;
-				for (Vertex v : verts1){
-					if (v.x > xMax1) xMax1 = v.x;
-					if (v.x < xMin1) xMin1 = v.x;
-					if (v.y > yMax1) yMax1 = v.y;
-					if (v.y < yMin1) yMin1 = v.y;
-					if (v.z > zMax1) zMax1 = v.z;
-					if (v.z < zMin1) zMin1 = v.z;
-				}
-				for (Vertex v : verts2){
-					if (v.x > xMax2) xMax2 = v.x;
-					if (v.x < xMin2) xMin2 = v.x;
-					if (v.y > yMax2) yMax2 = v.y;
-					if (v.y < yMin2) yMin2 = v.y;
-					if (v.z > zMax2) zMax2 = v.z;
-					if (v.z < zMin2) zMin2 = v.z;
-				}
-				if (xMax1 > xMax2 || xMin1 < xMin2) extendingIn = 0;
-				else if (yMax1 > yMax2 || yMin1 < yMin2) extendingIn = 1;
-				else if (zMax1 > zMax2 || zMin1 < zMin2) extendingIn = 2;
-				else extendingIn = 3;
-				if (extendingIn == axis){
-					if (face1.isUVAnticlockwise() != face2.isUVAnticlockwise()){
-						return false;
-					}
-					//Get the indexes of the matching verts in each face array
-					ArrayList<Integer> verts1MatchIndex = new ArrayList<Integer>();
-					ArrayList<Integer> verts2MatchIndex = new ArrayList<Integer>();
-					verts1MatchIndex.add(Arrays.asList(verts1).indexOf(matches.get(0)));
-					verts1MatchIndex.add(Arrays.asList(verts1).indexOf(matches.get(1)));
-					verts2MatchIndex.add(Arrays.asList(verts2).indexOf(matches.get(0)));
-					verts2MatchIndex.add(Arrays.asList(verts2).indexOf(matches.get(1)));
-					//Check the matching point UV vectors
-					UV uv1 = face1.uvs[verts1MatchIndex.get(0)];
-					UV uv2 = face2.uvs[verts2MatchIndex.get(0)];
-					UV uvVec1 = UV.subtract(face1.uvs[verts1MatchIndex.get(1)], uv1);
-					UV uvVec2 = UV.subtract(face2.uvs[verts2MatchIndex.get(1)], uv2);
-					if (uvVec1.similar(uvVec2)){
-						//Check the matching point UV Starting points
-						if (FaceUtils.similar(uv1.u%1.0f, uv2.u%1.0f) && FaceUtils.similar(uv1.v%1.0f, uv2.v%1.0f)){
-							//Extend the faces
-							Vertex[] newVerts = verts2.clone();
-							UV[] newUVs = face2.uvs.clone();
-							int changeCount = 0;
-							//Replace the common verts in face 2 with the uncommon from face 1
-							for (int i = 0; i < 2; i++){//For the 2 matches, get their indexes
-								int v1Index = verts1MatchIndex.get(i);
-								int v2Index = verts2MatchIndex.get(i);
-								for (int j = 0; j < 4; j++){//for the 4 verts in face1
-									Vertex v = verts1[j];
-									boolean[] axisEqual = new boolean[3];
-									for (int ax = 0; ax < 3; ax++){//for each axis
-										//if pos is equal in the ax axis
-										axisEqual[ax] = verts2[v2Index].getByInt(ax) == v.getByInt(ax);
-									}
-									//flip the t/f of the axis we're merging in because it would not be equal
-									axisEqual[axis] = !axisEqual[axis];
-									if (axisEqual[0] && axisEqual[1] && axisEqual[2]){
-										newVerts[v2Index] = v;
-										UV uvA = face1.uvs[v1Index];
-										UV uvB = face1.uvs[j];
-										//add the uv difference to the end of the old uv
-										newUVs[v2Index] = UV.add(newUVs[v2Index], UV.subtract(uvB, uvA));
-										changeCount++;
-										break;
-									}
-								}
-							}
-							if (changeCount == 2){
-								//Replace face 2 with new verts and UVs
-								face2.vertices = newVerts;
-								face2.uvs = newUVs;
-								return true;
-							}
+		}
+		if (matches.size() == 4 && !isFacingEqual){
+			face1.remove = true;
+			face2.remove = true;
+			return false;
+		}
+		if (matches.size() == 2 && isFacingEqual){
+			//mmdanggg2: if the face extends in the axis we are looking at
+			int extendingIn;
+			float xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
+			float xMin2, xMax2, yMin2, yMax2, zMin2, zMax2;
+			xMin1 = xMax1 = verts1[0].x;
+			yMin1 = yMax1 = verts1[0].y;
+			zMin1 = zMax1 = verts1[0].z;
+			xMin2 = xMax2 = verts2[0].x;
+			yMin2 = yMax2 = verts2[0].y;
+			zMin2 = zMax2 = verts2[0].z;
+			for (Vertex v : verts1){
+				if (v.x > xMax1) xMax1 = v.x;
+				if (v.x < xMin1) xMin1 = v.x;
+				if (v.y > yMax1) yMax1 = v.y;
+				if (v.y < yMin1) yMin1 = v.y;
+				if (v.z > zMax1) zMax1 = v.z;
+				if (v.z < zMin1) zMin1 = v.z;
+			}
+			for (Vertex v : verts2){
+				if (v.x > xMax2) xMax2 = v.x;
+				if (v.x < xMin2) xMin2 = v.x;
+				if (v.y > yMax2) yMax2 = v.y;
+				if (v.y < yMin2) yMin2 = v.y;
+				if (v.z > zMax2) zMax2 = v.z;
+				if (v.z < zMin2) zMin2 = v.z;
+			}
+			if (xMax1 > xMax2 || xMin1 < xMin2) extendingIn = 0;
+			else if (yMax1 > yMax2 || yMin1 < yMin2) extendingIn = 1;
+			else if (zMax1 > zMax2 || zMin1 < zMin2) extendingIn = 2;
+			else extendingIn = 3;
+			if (extendingIn != axis){
+				return false;
+			}
+			if (face1.isUVAnticlockwise() != face2.isUVAnticlockwise()){
+				return false;
+			}
+			//Check the matching point UV vectors
+			UV uv1 = face1.uvs[verts1MatchIndex.get(0)];
+			UV uv2 = face2.uvs[verts2MatchIndex.get(0)];
+			UV uvVec1 = UV.subtract(face1.uvs[verts1MatchIndex.get(1)], uv1);
+			UV uvVec2 = UV.subtract(face2.uvs[verts2MatchIndex.get(1)], uv2);
+			if (!uvVec1.similar(uvVec2)){
+				return false;
+			}
+			//Check the matching point UV Starting points
+			if (FaceUtils.similar(uv1.u%1.0f, uv2.u%1.0f) && FaceUtils.similar(uv1.v%1.0f, uv2.v%1.0f)){
+				//Extend the faces
+				Vertex[] newVerts = verts2.clone();
+				UV[] newUVs = face2.uvs.clone();
+				int changeCount = 0;
+				//Replace the common verts in face 2 with the uncommon from face 1
+				for (int i = 0; i < 2; i++){//For the 2 matches, get their indexes
+					int v1Index = verts1MatchIndex.get(i);
+					int v2Index = verts2MatchIndex.get(i);
+					for (int j = 0; j < 4; j++){//for the 4 verts in face1
+						Vertex v = verts1[j];
+						boolean[] axisEqual = new boolean[3];
+						for (int ax = 0; ax < 3; ax++){//for each axis
+							//if pos is equal in the ax axis
+							axisEqual[ax] = verts2[v2Index].getByInt(ax) == v.getByInt(ax);
+						}
+						//flip the t/f of the axis we're merging in because it would not be equal
+						axisEqual[axis] = !axisEqual[axis];
+						if (axisEqual[0] && axisEqual[1] && axisEqual[2]){
+							newVerts[v2Index] = v;
+							UV uvA = face1.uvs[v1Index];
+							UV uvB = face1.uvs[j];
+							//add the uv difference to the end of the old uv
+							newUVs[v2Index] = UV.add(newUVs[v2Index], UV.subtract(uvB, uvA));
+							changeCount++;
+							break;
 						}
 					}
 				}
-			} else if(matches.size() == 4 && !isFacingEqual){
-				face1.remove = true;
-				face2.remove = true;
-				return false;
+				if (changeCount == 2){
+					//Replace face 2 with new verts and UVs
+					face2.vertices = newVerts;
+					face2.uvs = newUVs;
+					return true;
+				}
 			}
 		}
 		return false;
