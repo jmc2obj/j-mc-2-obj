@@ -90,6 +90,17 @@ public class Vertex implements Comparable<Vertex>
 		return 0;
 	}
 	
+	public boolean similar(Vertex v)
+	{
+		if (this == v)
+			return true;
+		if (v == null)
+			return false;
+		return FaceUtils.similar(this.x, v.x) &&
+				FaceUtils.similar(this.y, v.y) &&
+				FaceUtils.similar(this.z, v.z);
+	}
+	
 	public static Vertex midpoint(Vertex v1, Vertex v2)
 	{
 		float x=(v1.x+v2.x)/2.0f;

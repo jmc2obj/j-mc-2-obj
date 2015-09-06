@@ -156,6 +156,8 @@ public class ObjExporter {
 				}
 
 				Log.info("Processing chunks...");
+				
+				OBJOutputFile.timeOptimising = 0;
 
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
@@ -199,6 +201,9 @@ public class ObjExporter {
 
 					chunk_buffer.removeAllChunks();
 				}
+				
+				if (Options.optimiseGeometry)
+					Log.info("Time spent optimising: " + ((float)OBJOutputFile.timeOptimising/1000000000d) + " Seconds");
 
 				obj_writer.close();
 
@@ -206,8 +211,9 @@ public class ObjExporter {
 					progress.setProgress(1);
 				Log.info("Saved model to " + objfile.getAbsolutePath());
 
-				if (!Options.objectPerBlock) {
-
+				if (!Options.objectPerBlock && !Options.objectPerChunk) {
+					//mmdanggg2: in maya the obj importer does not recognise the same obj group appearing twice
+					//		so if we want to export per chunk, the current sorting will not work in maya.
 					Log.info("Sorting OBJ file...");
 
 					if (!tmpdir.mkdir()) {

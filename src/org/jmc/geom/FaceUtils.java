@@ -80,9 +80,30 @@ public class FaceUtils {
 			}
             return false;
 		}
-		
-		@Deprecated
-		public void flip(){}
+
+		public boolean isUVAnticlockwise() {
+			if (uvs[1].u > uvs[0].u){//increasing u
+		        if (uvs[2].v > uvs[1].v){//increasing v: anticlockwise
+	                return true;
+		        }
+			}
+			if (uvs[1].u < uvs[0].u){//decreasing u
+		        if (uvs[2].v < uvs[1].v){//decreasing v: anticlockwise
+	                return true;
+		        }
+			}
+			if (uvs[1].v > uvs[0].v){//increasing v
+		        if (uvs[2].u < uvs[1].u){//decreasing u: anticlockwise
+	                return true;
+		        }
+			}
+			if (uvs[1].v < uvs[0].v){//decreasing v
+		        if (uvs[2].u > uvs[1].u){//increasing u: anticlockwise
+	                return true;
+		        }
+			}
+            return false;
+		}
 
 		@Override
 		public String toString() {
@@ -247,7 +268,7 @@ public class FaceUtils {
 
 	private final static float e = 0.001f;
 
-	private static boolean similar(float a, float b) {
+	public static boolean similar(float a, float b) {
 		if (Math.abs(a - b) < e)
 			return true;
 		else

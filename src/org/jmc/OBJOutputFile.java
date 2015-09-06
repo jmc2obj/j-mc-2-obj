@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
 import org.jmc.geom.FaceUtils.Face;
+import org.jmc.geom.FaceUtils;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -75,7 +75,8 @@ public class OBJOutputFile extends OBJFileBase
 	private boolean print_usemtl;
 	
 	private ArrayList<Face> faces;
-
+	
+	public static long timeOptimising;
 
 	/**
 	 * Main constructor.
@@ -454,43 +455,26 @@ public class OBJOutputFile extends OBJFileBase
 		}
 		
 		if (Options.optimiseGeometry) {
+			long startTime = System.nanoTime();
 			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
 			for (Face f : faces){
 				int planar = f.isPlanar();
 				if (planar == 3){
 					addOBJFace(f);
+					continue;
 				}
-				Vertex v0 = f.vertices[0];
-				Vertex v1 = f.vertices[1];
-				Vertex v2 = f.vertices[2];
-				Vertex v3 = f.vertices[3];
-				double e1Dist = Vertex.distance(v0, v1);
-				double e2Dist = Vertex.distance(v1, v2);
-				double e3Dist = Vertex.distance(v2, v3);
-				double e4Dist = Vertex.distance(v3, v0);
-				double uv1Dist = UV.distance(f.uvs[0], f.uvs[1]);
-				double uv2Dist = UV.distance(f.uvs[1], f.uvs[2]);
-				double uv3Dist = UV.distance(f.uvs[2], f.uvs[3]);
-				double uv4Dist = UV.distance(f.uvs[3], f.uvs[0]);
-				//It is only safe to merge faces where the distance of the UV's is equal to vertex distance
-				if ((e1Dist == uv1Dist && e2Dist == uv2Dist && e3Dist == uv3Dist && e4Dist == uv4Dist)) {
-					String key = "";
-					switch(planar){
+				String key = "";
+				switch(planar){
 					case 0: key += "X "; break;
 					case 1: key += "Y "; break;
 					case 2: key += "Z "; break;
 					default: Log.debug("isPlanar returned an unknown value!"); break;
-					}
-					//Sort faces into planar groups so merging can be efficient
-					key += Float.toString(v0.getByInt(planar));
-					ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
-					faceList.add(f);
-					faceAxisArray.put(key, faceList);
 				}
-				else {
-					//f.material = "sponge";
-					addOBJFace(f);
-				}
+				//Sort faces into planar groups so merging can be efficient
+				key += Float.toString(f.vertices[0].getByInt(planar));
+				ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
+				faceList.add(f);
+				faceAxisArray.put(key, faceList);
 			}
 			for (ArrayList<Face> faceList : faceAxisArray.values()){
 				//Merge faces per axis
@@ -506,7 +490,9 @@ public class OBJOutputFile extends OBJFileBase
 					}
 				}
 			}
-			faces = new ArrayList<Face>();//Clear out faces list because they have all been added so far 
+			faces = new ArrayList<Face>();//Clear out faces list because they have all been added so far
+			long endTime = System.nanoTime();
+			timeOptimising += (endTime - startTime);
 		}
 		
 		if(Options.renderEntities)
@@ -582,16 +568,14 @@ public class OBJOutputFile extends OBJFileBase
 		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
 			isFacingEqual = false;
 		}
-		//Material blacklist for blocks that shouldn't be merged
-		//List<String> blacklist = Arrays.asList("rails_curved", "door_iron_top", "door_iron_bottom");
-		if (face1.material == face2.material/* && !blacklist.contains(face1.material)*/) {
+		if (face1.material == face2.material) {
 			Vertex[] verts1 = face1.vertices;
 			Vertex[] verts2 = face2.vertices;
 			ArrayList<Vertex> matches = new ArrayList<Vertex>();
 			//mmdanggg2: check for shared verts
 			for (Vertex vert1 : verts1){
 				for (Vertex vert2 : verts2){
-					if (vert1.equals(vert2)){
+					if (vert1.similar(vert2)){
 						matches.add(vert1);
 					}
 				}
@@ -628,63 +612,59 @@ public class OBJOutputFile extends OBJFileBase
 				else if (zMax1 > zMax2 || zMin1 < zMin2) extendingIn = 2;
 				else extendingIn = 3;
 				if (extendingIn == axis){
+					if (face1.isUVAnticlockwise() != face2.isUVAnticlockwise()){
+						return false;
+					}
+					//Get the indexes of the matching verts in each face array
 					ArrayList<Integer> verts1MatchIndex = new ArrayList<Integer>();
 					ArrayList<Integer> verts2MatchIndex = new ArrayList<Integer>();
 					verts1MatchIndex.add(Arrays.asList(verts1).indexOf(matches.get(0)));
 					verts1MatchIndex.add(Arrays.asList(verts1).indexOf(matches.get(1)));
 					verts2MatchIndex.add(Arrays.asList(verts2).indexOf(matches.get(0)));
 					verts2MatchIndex.add(Arrays.asList(verts2).indexOf(matches.get(1)));
-					for (int i : verts1MatchIndex){
-						if (verts2MatchIndex.contains(i)){
-							return false;//Don't merge faces that are rotated differently
+					//Check the matching point UV vectors
+					UV uv1 = face1.uvs[verts1MatchIndex.get(0)];
+					UV uv2 = face2.uvs[verts2MatchIndex.get(0)];
+					UV uvVec1 = UV.subtract(face1.uvs[verts1MatchIndex.get(1)], uv1);
+					UV uvVec2 = UV.subtract(face2.uvs[verts2MatchIndex.get(1)], uv2);
+					if (uvVec1.similar(uvVec2)){
+						//Check the matching point UV Starting points
+						if (FaceUtils.similar(uv1.u%1.0f, uv2.u%1.0f) && FaceUtils.similar(uv1.v%1.0f, uv2.v%1.0f)){
+							//Extend the faces
+							Vertex[] newVerts = verts2.clone();
+							UV[] newUVs = face2.uvs.clone();
+							int changeCount = 0;
+							//Replace the common verts in face 2 with the uncommon from face 1
+							for (int i = 0; i < 2; i++){//For the 2 matches, get their indexes
+								int v1Index = verts1MatchIndex.get(i);
+								int v2Index = verts2MatchIndex.get(i);
+								for (int j = 0; j < 4; j++){//for the 4 verts in face1
+									Vertex v = verts1[j];
+									boolean[] axisEqual = new boolean[3];
+									for (int ax = 0; ax < 3; ax++){//for each axis
+										//if pos is equal in the ax axis
+										axisEqual[ax] = verts2[v2Index].getByInt(ax) == v.getByInt(ax);
+									}
+									//flip the t/f of the axis we're merging in because it would not be equal
+									axisEqual[axis] = !axisEqual[axis];
+									if (axisEqual[0] && axisEqual[1] && axisEqual[2]){
+										newVerts[v2Index] = v;
+										UV uvA = face1.uvs[v1Index];
+										UV uvB = face1.uvs[j];
+										//add the uv difference to the end of the old uv
+										newUVs[v2Index] = UV.add(newUVs[v2Index], UV.subtract(uvB, uvA));
+										changeCount++;
+										break;
+									}
+								}
+							}
+							if (changeCount == 2){
+								//Replace face 2 with new verts and UVs
+								face2.vertices = newVerts;
+								face2.uvs = newUVs;
+								return true;
+							}
 						}
-					}
-					ArrayList<Vertex> newVertList = new ArrayList<Vertex>();
-					for (int i = 0; i<4; i++) {
-						//mmdanggg2: get the vertices that are not the shared ones.
-						if (!verts1[i].equals(matches.get(0)) && !verts1[i].equals(matches.get(1))) {
-							newVertList.add(verts1[i]);
-						}
-						if (!verts2[i].equals(matches.get(0)) && !verts2[i].equals(matches.get(1))) {
-							newVertList.add(verts2[i]);
-						}
-					}
-					if (newVertList.size() == 4) {
-						Vertex[] newVerts = newVertList.toArray(new Vertex[newVertList.size()]);
-						Face baseFace = face2;
-						if (!verts1MatchIndex.contains(0) ){
-							baseFace = face1;
-						}
-						//Correct the UV's
-						UV[] newUVs = new UV[4];
-						newUVs[0] = new UV(baseFace.uvs[0]);
-						newUVs[1] = new UV(baseFace.uvs[1]);
-						newUVs[2] = new UV(baseFace.uvs[2]);
-						newUVs[3] = new UV(baseFace.uvs[3]);
-						if (face1.uvs[0].u != face1.uvs[1].u){
-							double diff = Math.abs(Math.abs(baseFace.uvs[0].u - baseFace.uvs[1].u) - Vertex.distance(newVerts[0], newVerts[1]));
-							newUVs[1].u += diff;
-							newUVs[2].u += diff;
-						}
-						else if (face1.uvs[0].v != face1.uvs[1].v){
-							double diff = Math.abs(Math.abs(baseFace.uvs[0].v - baseFace.uvs[1].v) - Vertex.distance(newVerts[0], newVerts[1]));
-							newUVs[1].v += diff;
-							newUVs[2].v += diff;
-						}
-						if (face1.uvs[0].u != face1.uvs[3].u){
-							double diff = Math.abs(Math.abs(baseFace.uvs[0].u - baseFace.uvs[3].u) - Vertex.distance(newVerts[0], newVerts[3]));
-							newUVs[2].u += diff;
-							newUVs[3].u += diff;
-						}
-						else if (face1.uvs[0].v != face1.uvs[3].v){
-							double diff = Math.abs(Math.abs(baseFace.uvs[0].v - baseFace.uvs[3].v) - Vertex.distance(newVerts[0], newVerts[3]));
-							newUVs[2].v += diff;
-							newUVs[3].v += diff;
-						}
-						//mmdanggg2: replace the face2's verts with the new ones
-						face2.vertices = newVerts;
-						face2.uvs = newUVs;
-						return true;
 					}
 				}
 			} else if(matches.size() == 4 && !isFacingEqual){
