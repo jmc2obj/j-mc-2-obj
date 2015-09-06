@@ -16,7 +16,7 @@ public abstract class OBJFileBase
 	 * Describes a face in the OBJ file.
 	 * Faces can be sorted by material.
 	 */
-	protected static class Face implements Comparable<Face>
+	protected static class OBJFace implements Comparable<OBJFace>
 	{
 		public int[] vertices;
 		public int[] normals;
@@ -24,7 +24,7 @@ public abstract class OBJFileBase
 		public String mtl;
 		public Long obj_idx;
 		
-		public Face(int sides)
+		public OBJFace(int sides)
 		{
 			obj_idx=Long.valueOf(-1);
 			vertices=new int[sides];
@@ -33,7 +33,7 @@ public abstract class OBJFileBase
 		}
 		
 		@Override
-		public int compareTo(Face o) {
+		public int compareTo(OBJFace o) {
 			if(this.obj_idx!=o.obj_idx)
 				return this.obj_idx.compareTo(o.obj_idx);
 			return this.mtl.compareTo(o.mtl);
@@ -56,7 +56,7 @@ public abstract class OBJFileBase
 	/**
 	 * List of faces
 	 */
-	protected List<Face> faces;
+	protected List<OBJFace> objFaces;
 
 	
 	protected OBJFileBase()
@@ -64,7 +64,7 @@ public abstract class OBJFileBase
 		vertices = new ArrayList<Vertex>();
 		texCoords = new ArrayList<UV>();
 		normals = new ArrayList<Vertex>();
-		faces = new ArrayList<Face>();
+		objFaces = new ArrayList<OBJFace>();
 	}
 
 	

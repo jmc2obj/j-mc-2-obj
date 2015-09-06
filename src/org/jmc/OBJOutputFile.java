@@ -17,13 +17,11 @@ import java.util.Map;
 
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
+import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
-import org.jmc.models.BlockModel;
-import org.jmc.models.Cube;
-import org.jmc.models.DirtGrass;
 import org.jmc.util.Log;
 
 
@@ -74,7 +72,10 @@ public class OBJOutputFile extends OBJFileBase
 	 * Decides whether to print "usemtl" lines in OBJ file
 	 */
 	private boolean print_usemtl;
-
+	
+	private ArrayList<Face> faces;
+	
+	public static long timeOptimising;
 
 	/**
 	 * Main constructor.
@@ -98,6 +99,8 @@ public class OBJOutputFile extends OBJFileBase
 		z_offset = 0;
 		file_scale = 1.0f;
 		print_usemtl=true;
+
+		faces = new ArrayList<Face>();
 	}
 
 	/**
@@ -148,7 +151,7 @@ public class OBJOutputFile extends OBJFileBase
 		vertices.clear();
 		texCoords.clear();
 		normals.clear();
-		faces.clear();
+		objFaces.clear();
 	}
 
 	/**
@@ -221,10 +224,10 @@ public class OBJOutputFile extends OBJFileBase
 	 */
 	public void appendFaces(PrintWriter out)
 	{		
-		Collections.sort(faces);
+		Collections.sort(objFaces);
 		String last_mtl=null;	
 		Long last_obj_idx=Long.valueOf(-1);
-		for(Face f:faces)
+		for(OBJFace f:objFaces)
 		{
 			if(!f.mtl.equals(last_mtl) && print_usemtl)
 			{
@@ -279,10 +282,22 @@ public class OBJOutputFile extends OBJFileBase
 					new UV(0,1) 
 			};
 		}
-
-		addFace(verts, null, uv, trans, mtl);
+		if (Options.optimiseGeometry){
+			Face face = new Face();
+			face.uvs = uv.clone();
+			face.material = mtl;
+			face.vertices = verts.clone();
+			if (trans != null){
+				face = trans.multiply(face);
+			}
+			faces.add(face);
+		}
+		else{
+			addOBJFace(verts, null, uv, trans, mtl);
+		}
 	}
-
+	
+	
 	/**
 	 * Add a face with the given vertices to the OBJ file.
 	 * 
@@ -292,9 +307,9 @@ public class OBJOutputFile extends OBJFileBase
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
 	 */
-	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	public void addOBJFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
 	{
-		Face face = new Face(verts.length);
+		OBJFace face = new OBJFace(verts.length);
 		face.obj_idx=Long.valueOf(obj_idx_count);
 		face.mtl = mtl;
 		if (norms == null) face.normals = null;
@@ -306,7 +321,7 @@ public class OBJOutputFile extends OBJFileBase
 		{
 			uv=UVRecalculate.recalculate(uv, mtl);
 		}
-
+	
 		for (int i = 0; i < verts.length; i++)
 		{
 			// add vertices
@@ -315,7 +330,7 @@ public class OBJOutputFile extends OBJFileBase
 				vert = trans.multiply(verts[i]);
 			else
 				vert = verts[i];
-
+	
 			if (vertexMap.containsKey(vert))				
 			{
 				face.vertices[i] = vertexMap.get(vert);
@@ -327,7 +342,7 @@ public class OBJOutputFile extends OBJFileBase
 				face.vertices[i] = vertex_counter;
 				vertex_counter++;
 			}
-
+	
 			// add normals
 			if (norms != null)
 			{
@@ -336,7 +351,7 @@ public class OBJOutputFile extends OBJFileBase
 					norm = trans.applyToNormal(norms[i]);
 				else
 					norm = norms[i];
-
+	
 				if (normalsMap.containsKey(norm))				
 				{
 					face.normals[i] = normalsMap.get(norm);
@@ -349,7 +364,7 @@ public class OBJOutputFile extends OBJFileBase
 					norm_counter++;
 				}
 			}
-
+	
 			// add texture coords
 			if (uv != null)
 			{
@@ -366,11 +381,14 @@ public class OBJOutputFile extends OBJFileBase
 				}
 			}
 		}
-
-		faces.add(face);
+	
+		objFaces.add(face);
 	}
 	
-	
+	public void addOBJFace(Face face){
+		addOBJFace(face.vertices, null, face.uvs, null, face.material);
+	}
+
 	/**
 	 * Adds all blocks from the given chunk buffer into the file.
 	 * @param chunk
@@ -379,6 +397,7 @@ public class OBJOutputFile extends OBJFileBase
 	 */
 	public void addChunkBuffer(ChunkDataBuffer chunk, int chunk_x, int chunk_z)
 	{
+		faces = new ArrayList<Face>();
 		int xmin,xmax,ymin,ymax,zmin,zmax;
 		Rectangle xy,xz;
 		xy=chunk.getXYBoundaries();
@@ -399,8 +418,6 @@ public class OBJOutputFile extends OBJFileBase
 		if(xe>xmax) xe=xmax;
 		if(zs<zmin) zs=zmin;
 		if(ze>zmax) ze=zmax;
-		
-		HashMap<String, ArrayList<FaceUtils.Face>> faceAxisArray = new HashMap<String, ArrayList<FaceUtils.Face>>();
 
 		for(int z = zs; z < ze; z++)
 		{
@@ -427,20 +444,7 @@ public class OBJOutputFile extends OBJFileBase
 					if(Options.objectPerBlock) obj_idx_count++;
 					
 					try {
-						if (Options.optimiseGeometry){
-							//mmdanggg2: If we're optimising, only affect simple cube models
-							BlockModel bm = BlockTypes.get(blockID).getModel();
-							if (bm instanceof Cube || bm instanceof DirtGrass){
-								Cube cubeMdl = (Cube) bm;
-								cubeMdl.addModel(this, chunk, x, y, z, blockData, blockBiome, faceAxisArray);
-							}
-							else {
-								bm.addModel(this, chunk, x, y, z, blockData, blockBiome);
-							}
-						}
-						else {
-							BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
-						}
+						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
 					}
 					catch (Exception ex) {
 						Log.error("Error rendering block, skipping.", ex);
@@ -450,20 +454,44 @@ public class OBJOutputFile extends OBJFileBase
 		}
 		
 		if (Options.optimiseGeometry) {
-			for (ArrayList<FaceUtils.Face> faces : faceAxisArray.values()){
+			long startTime = System.nanoTime();
+			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
+			for (Face f : faces){
+				int planar = f.isPlanar();
+				if (planar == 3){
+					addOBJFace(f);
+					continue;
+				}
+				String key = "";
+				switch(planar){
+					case 0: key += "X "; break;
+					case 1: key += "Y "; break;
+					case 2: key += "Z "; break;
+					default: Log.debug("isPlanar returned an unknown value!"); break;
+				}
+				//Sort faces into planar groups so merging can be efficient
+				key += Float.toString(f.vertices[0].getByInt(planar));
+				ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
+				faceList.add(f);
+				faceAxisArray.put(key, faceList);
+			}
+			for (ArrayList<Face> faceList : faceAxisArray.values()){
+				//Merge faces per axis
 				//X loop
-				faces = compileFaces(faces, 0);
+				faceList = mergeAxisFaces(faceList, 0);
 				//Y loop
-				faces = compileFaces(faces, 1);
+				faceList = mergeAxisFaces(faceList, 1);
 				//Z loop
-				faces = compileFaces(faces, 2);
-				for (FaceUtils.Face face : faces) {
-					//mmdanggg2: correct the UVs for the new faces
-					face.uvs[1].u = face.uvs[2].u = (float) Vertex.distance(face.vertices[0], face.vertices[1]);
-					face.uvs[3].v = face.uvs[2].v = (float) Vertex.distance(face.vertices[0], face.vertices[3]);
-					addFace(face.vertices, face.uvs, null, face.material);
+				faceList = mergeAxisFaces(faceList, 2);
+				for (Face face : faceList) {
+					if (!face.remove){
+						addOBJFace(face);
+					}
 				}
 			}
+			faces = new ArrayList<Face>();//Clear out faces list because they have all been added so far
+			long endTime = System.nanoTime();
+			timeOptimising += (endTime - startTime);
 		}
 		
 		if(Options.renderEntities)
@@ -490,33 +518,38 @@ public class OBJOutputFile extends OBJFileBase
 				}
 			}
 		}
+		
+		for (Face face : faces){
+			addOBJFace(face); //Add any left over faces from not optimising and entities.
+		}
+		faces = new ArrayList<Face>();
 	}
 	
 	/**
 	 * Attempts to join all faces in faces along axis
-	 * @param faces The faces to combine
+	 * @param faceList The faces to combine
 	 * @param axis The axis to combine across 
 	 * @return The combined faces
 	 */
-	private static ArrayList<FaceUtils.Face> compileFaces(ArrayList<FaceUtils.Face> faces, int axis) {
-		ArrayList<FaceUtils.Face> faces2 = new ArrayList<FaceUtils.Face>();
-		for (FaceUtils.Face face : faces){
-			if (!faces2.isEmpty()){
+	private static ArrayList<Face> mergeAxisFaces(ArrayList<Face> faceList, int axis) {
+		ArrayList<Face> faceList2 = new ArrayList<Face>();
+		for (Face face : faceList){
+			if (!faceList2.isEmpty()){
 				boolean merged = false;
-				for (FaceUtils.Face face2 : faces2) {
+				for (Face face2 : faceList2) {
 					merged = mergeFaces(face, face2, axis);
 					if (merged) break;
 				}
 				if (!merged) {
-					faces2.add(face);
+					faceList2.add(face);
 				}
 			}
 			else {
 				//mmdanggg2: if first face, just add it
-				faces2.add(face);
+				faceList2.add(face);
 			}
 		}
-		return faces2;
+		return faceList2;
 	}
 	
 	/**
@@ -526,52 +559,130 @@ public class OBJOutputFile extends OBJFileBase
 	 * @param axis The axis to join across 0, 1 or 2
 	 * @return Whether the join was successful
 	 */
-	private static boolean mergeFaces(FaceUtils.Face face1, FaceUtils.Face face2, int axis){
-		if (face1.material == face2.material) {
-			Vertex[] verts1 = face1.vertices;
-			Vertex[] verts2 = face2.vertices;
-			ArrayList<Vertex> matches = new ArrayList<Vertex>();
-			//mmdanggg2: check for shared verts
-			for (Vertex vert1 : verts1){
-				for (Vertex vert2 : verts2){
-					if (vert1.equals(vert2)){
-						matches.add(vert1);
-					}
-				}
-			}
-			if (matches.size() == 2){
-				//mmdanggg2: if the face extends in the axis we are looking at
-				if (matches.get(0).getByInt(axis) != matches.get(1).getByInt(axis)){
-					ArrayList<Vertex> newVertList = new ArrayList<Vertex>();
-					for (int i = 0; i < 4; i++) {
-						//mmdanggg2: get the vertices that are not the shared ones.
-						if (!verts1[i].equals(matches.get(0)) && !verts1[i].equals(matches.get(1))) {
-							newVertList.add(verts1[i]);
-						}
-						if (!verts2[i].equals(matches.get(0)) && !verts2[i].equals(matches.get(1))) {
-							newVertList.add(verts2[i]);
-						}
-					}
-					if (newVertList.size() == 4) {
-						Vertex[] newVerts = newVertList.toArray(new Vertex[newVertList.size()]);
-						//mmdanggg2: replace the face2's verts with the new ones
-						face2.vertices = newVerts;
-						return true;
-					}
-					else {
-						return false;
-					}
-				}
-				else {
-					return false;
-				}
-			}
-			else{
-				return false;
-			}
-		}
-		else {
+	private static boolean mergeFaces(Face face1, Face face2, int axis){
+		if (face1.remove || face2.remove){
 			return false;
 		}
+		boolean isFacingEqual = true;
+		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
+			isFacingEqual = false;
+		}
+		if (face1.material != face2.material) {
+			return false;
+		}
+		Vertex[] verts1 = face1.vertices;
+		Vertex[] verts2 = face2.vertices;
+		ArrayList<Vertex> matches = new ArrayList<Vertex>();
+		ArrayList<Integer> verts1MatchIndex = new ArrayList<Integer>();
+		ArrayList<Integer> verts2MatchIndex = new ArrayList<Integer>();
+		//mmdanggg2: check for shared verts
+		for (int i = 0; i < 4; i++){
+			Vertex vert1 = verts1[i];
+			for (int j = 0; j < 4; j++){
+				Vertex vert2 = verts2[j];
+				if (vert1.similar(vert2)){
+					matches.add(vert1);
+					//Get the indexes of the matching verts in each face array
+					verts1MatchIndex.add(i);
+					verts2MatchIndex.add(j);
+				}
+			}
+		}
+		if (matches.size() == 4 && !isFacingEqual){
+			face1.remove = true;
+			face2.remove = true;
+			return false;
+		}
+		if (matches.size() == 2 && isFacingEqual){
+			//mmdanggg2: if the face extends in the axis we are looking at
+			int extendingIn;
+			float xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
+			float xMin2, xMax2, yMin2, yMax2, zMin2, zMax2;
+			xMin1 = xMax1 = verts1[0].x;
+			yMin1 = yMax1 = verts1[0].y;
+			zMin1 = zMax1 = verts1[0].z;
+			xMin2 = xMax2 = verts2[0].x;
+			yMin2 = yMax2 = verts2[0].y;
+			zMin2 = zMax2 = verts2[0].z;
+			for (Vertex v : verts1){
+				if (v.x > xMax1) xMax1 = v.x;
+				if (v.x < xMin1) xMin1 = v.x;
+				if (v.y > yMax1) yMax1 = v.y;
+				if (v.y < yMin1) yMin1 = v.y;
+				if (v.z > zMax1) zMax1 = v.z;
+				if (v.z < zMin1) zMin1 = v.z;
+			}
+			for (Vertex v : verts2){
+				if (v.x > xMax2) xMax2 = v.x;
+				if (v.x < xMin2) xMin2 = v.x;
+				if (v.y > yMax2) yMax2 = v.y;
+				if (v.y < yMin2) yMin2 = v.y;
+				if (v.z > zMax2) zMax2 = v.z;
+				if (v.z < zMin2) zMin2 = v.z;
+			}
+			if (xMax1 > xMax2 || xMin1 < xMin2) extendingIn = 0;
+			else if (yMax1 > yMax2 || yMin1 < yMin2) extendingIn = 1;
+			else if (zMax1 > zMax2 || zMin1 < zMin2) extendingIn = 2;
+			else extendingIn = 3;
+			if (extendingIn != axis){
+				return false;
+			}
+			if (face1.isUVAnticlockwise() != face2.isUVAnticlockwise()){
+				return false;
+			}
+			//Check the matching point UV vectors
+			UV uv1 = face1.uvs[verts1MatchIndex.get(0)];
+			UV uv2 = face2.uvs[verts2MatchIndex.get(0)];
+			UV uvVec1 = UV.subtract(face1.uvs[verts1MatchIndex.get(1)], uv1);
+			UV uvVec2 = UV.subtract(face2.uvs[verts2MatchIndex.get(1)], uv2);
+			if (!uvVec1.similar(uvVec2)){
+				return false;
+			}
+			//Check the matching point UV Starting points
+			if (FaceUtils.similar(uv1.u%1.0f, uv2.u%1.0f) && FaceUtils.similar(uv1.v%1.0f, uv2.v%1.0f)){
+				//Extend the faces
+				Vertex[] newVerts = verts2.clone();
+				UV[] newUVs = face2.uvs.clone();
+				int changeCount = 0;
+				//Replace the common verts in face 2 with the uncommon from face 1
+				for (int i = 0; i < 2; i++){//For the 2 matches, get their indexes
+					int v1Index = verts1MatchIndex.get(i);
+					int v2Index = verts2MatchIndex.get(i);
+					for (int j = 0; j < 4; j++){//for the 4 verts in face1
+						Vertex v = verts1[j];
+						boolean[] axisEqual = new boolean[3];
+						for (int ax = 0; ax < 3; ax++){//for each axis
+							//if pos is equal in the ax axis
+							axisEqual[ax] = verts2[v2Index].getByInt(ax) == v.getByInt(ax);
+						}
+						//flip the t/f of the axis we're merging in because it would not be equal
+						axisEqual[axis] = !axisEqual[axis];
+						if (axisEqual[0] && axisEqual[1] && axisEqual[2]){
+							newVerts[v2Index] = v;
+							UV uvA = face1.uvs[v1Index];
+							UV uvB = face1.uvs[j];
+							//add the uv difference to the end of the old uv
+							newUVs[v2Index] = UV.add(newUVs[v2Index], UV.subtract(uvB, uvA));
+							changeCount++;
+							break;
+						}
+					}
+				}
+				if (changeCount == 2){
+					//Replace face 2 with new verts and UVs
+					face2.vertices = newVerts;
+					face2.uvs = newUVs;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static <K,V> V getOrDefault(Map<K,V> map, K key, V deflt) {
+		if (map.containsKey(key))
+			return map.get(key);
+		else
+			return deflt;
 	}
 }

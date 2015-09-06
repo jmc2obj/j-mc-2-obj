@@ -61,11 +61,38 @@ public class UV
 		return result;
 	}
 	
+	public boolean similar(UV other)
+	{
+		if (this == other)
+			return true;
+		if (other == null)
+			return false;
+		return FaceUtils.similar(this.u, other.u) &&
+				FaceUtils.similar(this.v, other.v);
+	}
+	
 	public static UV midpoint(UV uv1, UV uv2)
 	{
 		float u = (uv1.u+uv2.u)/2.0f;
 		float v = (uv1.v+uv2.v)/2.0f;
 		return new UV(u,v);
 	}
-
+	
+	public static UV subtract(UV uv1, UV uv2) {
+		float u = uv1.u - uv2.u;
+		float v = uv1.v - uv2.v;
+		return new UV(u, v);
+	}
+	
+	public static UV add(UV uv1, UV uv2) {
+		float u = uv1.u + uv2.u;
+		float v = uv1.v + uv2.v;
+		return new UV(u, v);
+	}
+	
+	public static double distance(UV a, UV b)
+	{
+		UV c = subtract(a, b);
+		return Math.sqrt(c.u * c.u + c.v * c.v);
+	}
 }

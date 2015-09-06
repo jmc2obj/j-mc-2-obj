@@ -36,7 +36,7 @@ public class Vertex implements Comparable<Vertex>
 	
 	/**
 	 * Returns the x/y/z from 0/1/2
-	 * @param i should be 1, 2 or 3
+	 * @param i should be 0, 1 or 2
 	 * @return The axis co-ordinate
 	 */
 	public float getByInt(int i)
@@ -88,6 +88,17 @@ public class Vertex implements Comparable<Vertex>
 		if(this.z>o.z) return 1;
 		if(this.z<o.z) return -1;
 		return 0;
+	}
+	
+	public boolean similar(Vertex v)
+	{
+		if (this == v)
+			return true;
+		if (v == null)
+			return false;
+		return FaceUtils.similar(this.x, v.x) &&
+				FaceUtils.similar(this.y, v.y) &&
+				FaceUtils.similar(this.z, v.z);
 	}
 	
 	public static Vertex midpoint(Vertex v1, Vertex v2)
