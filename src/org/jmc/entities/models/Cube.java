@@ -1,10 +1,10 @@
 package org.jmc.entities.models;
 
 import org.jmc.BlockMaterial;
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
 
 public class Cube extends EntityModel
 {
@@ -84,7 +84,7 @@ public class Cube extends EntityModel
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(OBJOutputFile obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, String[] mtlSides, UV[][] uvSides)
+	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, String[] mtlSides, UV[][] uvSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
@@ -134,7 +134,7 @@ public class Cube extends EntityModel
 
 
 	@Override
-	public void addEntity(OBJOutputFile obj, Transform transform) {
+	public void addEntity(ChunkProcessor obj, Transform transform) {
 		
 		addBox(obj,
 				 - 0.5f,  - 0.5f,  - 0.5f,

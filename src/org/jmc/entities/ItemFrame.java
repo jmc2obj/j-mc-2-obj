@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.jmc.BlockMaterial;
 import org.jmc.FilledMapDat;
-import org.jmc.OBJOutputFile;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
@@ -14,6 +13,7 @@ import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_String;
 import org.jmc.NBT.TAG_Short;
 import org.jmc.geom.Transform;
+import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Log;
 
 
@@ -28,7 +28,7 @@ public class ItemFrame extends Entity
 
 	
 	@Override
-	public void addEntity(OBJOutputFile obj, TAG_Compound entity)
+	public void addEntity(ChunkProcessor obj, TAG_Compound entity)
 	{
 		
 		int x=((TAG_Int)entity.getElement("TileX")).value;

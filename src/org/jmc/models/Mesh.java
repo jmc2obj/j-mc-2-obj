@@ -7,12 +7,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jmc.ChunkDataBuffer;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 
 public class Mesh extends BlockModel
@@ -39,7 +39,7 @@ public class Mesh extends BlockModel
 			fallthrough=false;
 		}
 
-		public boolean matches(ChunkDataBuffer chunks, int x, int y, int z, byte block_data)
+		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, byte block_data)
 		{			
 			if(offset==null || offset==new Vertex(0,0,0))
 			{
@@ -124,7 +124,7 @@ public class Mesh extends BlockModel
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
 	{
 		if(data<0) data=(byte) (16+data);
 
@@ -134,7 +134,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}
 
-	private void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z , byte data, byte biome, Transform trans)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , byte data, byte biome, Transform trans)
 	{
 		boolean match=mesh_data.matches(chunks, x, y, z, data);
 

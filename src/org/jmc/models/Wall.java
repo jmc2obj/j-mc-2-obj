@@ -2,9 +2,9 @@ package org.jmc.models;
 
 import java.util.HashSet;
 
-import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.UV;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 
 
 /**
@@ -27,7 +27,7 @@ public class Wall extends BlockModel
 			connectable.add(ids[i]);
 	}
 	
-	private boolean checkConnect(ChunkDataBuffer chunks, byte data, int x, int y, int z)
+	private boolean checkConnect(ThreadChunkDeligate chunks, byte data, int x, int y, int z)
 	{
 		int otherId = chunks.getBlockID(x, y, z);
 		if (connectable.contains(otherId))
@@ -39,7 +39,7 @@ public class Wall extends BlockModel
 	
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
 	{
 		String[] mtls = getMtlSides(data, biome);
 		UV[] uvTop, uvSide;

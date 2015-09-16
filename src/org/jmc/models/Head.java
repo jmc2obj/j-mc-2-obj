@@ -1,12 +1,12 @@
 package org.jmc.models;
 
-import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJOutputFile;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 
 
 /**
@@ -16,7 +16,7 @@ public class Head extends BlockModel
 {
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
 	{
 		byte pos = data;
 		byte skullType = 3;

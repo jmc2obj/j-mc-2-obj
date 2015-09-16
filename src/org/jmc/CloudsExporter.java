@@ -11,6 +11,7 @@ import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 
@@ -43,7 +44,7 @@ public class CloudsExporter {
 		return a > 127;
 	}
 	
-	private static void renderClouds(BufferedImage image, OBJOutputFile obj) {
+	private static void renderClouds(BufferedImage image, ChunkProcessor obj) {
 		int image_w = image.getWidth();
 		int image_h = image.getHeight();
 
@@ -170,7 +171,7 @@ public class CloudsExporter {
 			
 			writer = new PrintWriter(new FileWriter(new File(destination, outputFileName)));
 
-			OBJOutputFile obj = new OBJOutputFile("clouds");
+			ChunkProcessor obj = new ChunkProcessor("clouds");
 			obj.setPrintUseMTL(false);
 
 			renderClouds(image, obj);

@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jmc.Options.OffsetType;
+import org.jmc.threading.ReaderRunnable;
+import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.threading.ThreadInputQueue;
+import org.jmc.threading.ThreadOutputQueue;
+import org.jmc.threading.WriterRunnable;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
@@ -20,10 +25,7 @@ import org.jmc.util.Messages;
  * .MTL file)
  */
 public class ObjExporter {
-	private static boolean addChunkIfExists(ChunkDataBuffer chunk_buffer, int x, int z) {
-		if (chunk_buffer.hasChunk(x, z))
-			return true;
-
+	private static boolean chunkExists(int x, int z) {
 		try {
 			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);
 			if (region == null)
@@ -32,8 +34,7 @@ public class ObjExporter {
 			Chunk chunk = region.getChunk(x, z);
 			if (chunk == null)
 				return false;
-
-			chunk_buffer.addChunk(chunk);
+			
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -138,72 +139,61 @@ public class ObjExporter {
 
 				ChunkDataBuffer chunk_buffer = new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY,
 						Options.maxY, Options.minZ, Options.maxZ);
+				
+				ThreadInputQueue inputQueue = new ThreadInputQueue();
+				ThreadOutputQueue outputQueue = new ThreadOutputQueue();
 
-				OBJOutputFile obj = new OBJOutputFile("minecraft");
-				obj.setOffset(oxs, oys, ozs);
-				obj.setScale(Options.scale);
+				WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer);
+				writeRunner.setOffset(oxs, oys, ozs);
+				writeRunner.setScale(Options.scale);
 
-				obj.appendMtl(obj_writer, mtlfile.getName());
-				if (!Options.objectPerMaterial && !Options.objectPerBlock && !Options.objectPerChunk)
-					obj.appendObjectname(obj_writer);
+				obj_writer.println("mtllib " + mtlfile.getName());
+				obj_writer.println();
+				if (!Options.objectPerMaterial && !Options.objectPerBlock && !Options.objectPerChunk){
+					obj_writer.println("g minecraft");
+					obj_writer.println();
+				}
 
 				if (Options.singleMaterial) {
 					obj_writer.println("usemtl minecraft_material");
 					obj_writer.println();
 
 					if (Options.objectPerBlock)
-						obj.setPrintUseMTL(false);
+						writeRunner.setPrintUseMTL(false);
 				}
 
 				Log.info("Processing chunks...");
 				
-				OBJOutputFile.timeOptimising = 0;
+				Thread[] threads = new Thread[Options.exportThreads];
+				for (int i = 0; i < Options.exportThreads; i++){
+					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
+					threads[i].setName("ReadThread-" + i);
+					threads[i].start();
+				}
+
+				Thread writeThread = new Thread(writeRunner);
+				writeThread.setName("WriteThread");
+				writeThread.start();
 
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
 					for (int cz = cs.y; cz <= ce.y; cz++, progress_count++) {
-						if (stop != null && stop.stopRequested())
-							return;
-						if (progress != null)
-							progress.setProgress(progress_count / progress_max);
-
-						// load chunk being processed to the buffer
-						if (!addChunkIfExists(chunk_buffer, cx, cz))
-							continue;
-
-						// also load chunks from x-1 to x+1 and z-1 to z+1
-						for (int lx = cx - 1; lx <= cx + 1; lx++) {
-							for (int lz = cz - 1; lz <= cz + 1; lz++) {
-								if (lx < cs.x || lx > ce.x || lz < cs.y || lz > ce.y)
-									continue;
-
-								if (lx == cx && lz == cz)
-									continue;
-
-								addChunkIfExists(chunk_buffer, lx, lz);
-							}
+						if (chunkExists(cx, cz)){
+							inputQueue.add(cx, cz);
 						}
-
-						// export the chunk to the OBJ
-						obj.addChunkBuffer(chunk_buffer, cx, cz);
-						obj.appendTextures(obj_writer);
-						obj.appendNormals(obj_writer);
-						obj.appendVertices(obj_writer);
-						if (Options.objectPerChunk && !Options.objectPerBlock)
-							obj_writer.println("g chunk_" + cx + "_" + cz);
-						obj.appendFaces(obj_writer);
-						obj.clearData(Options.removeDuplicates);
-
-						// remove the chunks we won't need anymore from the buffer 
-						for (int lx = cx - 1; lx <= cx + 1; lx++)
-							chunk_buffer.removeChunk(lx, cz - 1);
+						//TODO Update progress counter
 					}
-
-					chunk_buffer.removeAllChunks();
 				}
 				
-				if (Options.optimiseGeometry)
-					Log.info("Time spent optimising: " + ((float)OBJOutputFile.timeOptimising/1000000000d) + " Seconds");
+				inputQueue.finish();
+				
+				for (Thread thread : threads){
+					thread.join();
+				}
+				outputQueue.finish();
+				writeThread.join();
+				
+				chunk_buffer.removeAllChunks();
 
 				obj_writer.close();
 

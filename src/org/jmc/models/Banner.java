@@ -5,13 +5,13 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
-import org.jmc.ChunkDataBuffer;
 import org.jmc.NBT.*;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.OBJOutputFile;
 import org.jmc.Options;
 import org.jmc.geom.Transform;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 
 import javax.imageio.ImageIO;
@@ -70,7 +70,7 @@ public class Banner extends BlockModel {
     }
 
     @Override
-    public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome) {
+    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome) {
 
         Log.info("Banner ***************************");
 
@@ -364,7 +364,7 @@ public class Banner extends BlockModel {
      * @param scale
      * @param rotation
      */
-    public void addBanner(String objFileName, String material, OBJOutputFile obj, double x, double y, double z, double scale, double rotation) {
+    public void addBanner(String objFileName, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
 
         OBJInputFile objFile = new OBJInputFile();
         File objMeshFile = new File(objFileName);

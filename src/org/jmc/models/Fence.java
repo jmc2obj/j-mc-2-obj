@@ -2,9 +2,9 @@ package org.jmc.models;
 
 import java.util.HashSet;
 
-import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.UV;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 
 
 /**
@@ -30,7 +30,7 @@ public class Fence extends BlockModel
 	
 	
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
 	{
 		String[] mtls = getMtlSides(data, biome);
 		UV[] uvTop, uvSide;

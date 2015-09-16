@@ -4,13 +4,13 @@ import java.awt.Rectangle;
 
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
-import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJOutputFile;
 import org.jmc.Options;
 import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 
 
 /**
@@ -134,7 +134,7 @@ public abstract class EntityModel
 	 * @param z Block z coordinate
 	 * @return Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
 	 */
-	protected boolean[] drawSides(ChunkDataBuffer chunks, int x, int y, int z)
+	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z)
 	{
 		int xmin,xmax,ymin,ymax,zmin,zmax;
 		Rectangle xy,xz;
@@ -176,7 +176,7 @@ public abstract class EntityModel
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(OBJOutputFile obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides)
+	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
@@ -237,6 +237,6 @@ public abstract class EntityModel
 	 * @param obj OBJFile to add the model to.
 	 * @param transform transform applied to the given model
 	 */
-	public abstract void addEntity(OBJOutputFile obj, Transform transform);
+	public abstract void addEntity(ChunkProcessor obj, Transform transform);
 	
 }

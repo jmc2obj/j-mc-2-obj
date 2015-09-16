@@ -3,11 +3,11 @@ package org.jmc.models;
 import java.util.Vector;
 
 import org.jmc.BlockTypes;
-import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.Half;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 
@@ -179,7 +179,7 @@ public class Stairs extends BlockModel {
 	}
 
 	@Override
-	public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome) {
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome) {
 
 		String[] mtls = getMtlSides(data, biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
@@ -239,7 +239,7 @@ public class Stairs extends BlockModel {
 	 * @return -1 for no change in shape, 0 for small block left, 1 small block
 	 *         right, 2 big block left, 3 big block right
 	 */
-	private int getStairModification(ChunkDataBuffer chunks, int x, int y, int z, byte data) {
+	private int getStairModification(ThreadChunkDeligate chunks, int x, int y, int z, byte data) {
 		int dir = data & 3; // 0-east; 1-west; 2-south; 3-north
 		int up = data & 4; // 0-regular ; 1-upside down
 		int ndir = -1;

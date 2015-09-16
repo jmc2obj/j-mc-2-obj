@@ -18,18 +18,13 @@ public class FaceUtils {
 		public Face() {
 		}
 		
-		public Face(Vertex[] vertices, UV[] uvs, int mtl_idx, String material) {
-			this.vertices = vertices.clone();
-			this.uvs = uvs.clone();
-			this.mtl_idx = mtl_idx;
-			this.material = material;
-		}
-		
 		public Vertex[] vertices;
 		public UV[] uvs;
+		public Vertex[] norms;
 		public int mtl_idx;
 		public String material;
 		public boolean remove = false;
+		public int chunk_idx = -1;
 		
 		/**
 		 * @return 0 if x, 1 if y, 2 if z, 3 if none.
@@ -108,6 +103,34 @@ public class FaceUtils {
 		@Override
 		public String toString() {
 			return "Mat:'" + material + "' Verts:" + Arrays.toString(vertices) + " UVs:" + Arrays.toString(uvs);
+		}
+	}
+
+	/**
+	 * Describes a face in the OBJ file.
+	 * Faces can be sorted by material.
+	 */
+	public static class OBJFace implements Comparable<OBJFace>
+	{
+		public int[] vertices;
+		public int[] normals;
+		public int[] uv;
+		public String mtl;
+		public Long obj_idx;
+		
+		public OBJFace(int sides)
+		{
+			obj_idx=Long.valueOf(-1);
+			vertices=new int[sides];
+			normals=new int[sides];
+			uv=new int[sides];
+		}
+		
+		@Override
+		public int compareTo(OBJFace o) {
+			if(this.obj_idx!=o.obj_idx)
+				return this.obj_idx.compareTo(o.obj_idx);
+			return this.mtl.compareTo(o.mtl);
 		}
 	}
 
