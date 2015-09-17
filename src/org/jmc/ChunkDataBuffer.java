@@ -46,7 +46,6 @@ public class ChunkDataBuffer {
 	public synchronized void removeChunk(int x, int z)
 	{
 		Point p=new Point(x, z);
-		chunks.remove(p);
 		Integer currUsers = chunkUsers.get(p);
 		if (currUsers != null && currUsers > 0) {
 			currUsers--;
@@ -54,6 +53,9 @@ public class ChunkDataBuffer {
 			currUsers = 0;
 		}
 		chunkUsers.put(p, currUsers);
+		if (currUsers == 0) {
+			chunks.remove(p);
+		}
 	}
 	
 	public synchronized void removeAllChunks()
