@@ -240,7 +240,7 @@ public class Options
 	/**
 	 * How many threads to use when exporting.
 	 */
-	public static int exportThreads = 16;
+	public static int exportThreads = 8;
 
 	
 

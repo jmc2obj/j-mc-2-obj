@@ -12,6 +12,8 @@ import java.util.Map;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.OBJFace;
 import org.jmc.Options;
+import org.jmc.ProgressCallback;
+import org.jmc.StopCallback;
 import org.jmc.UVRecalculate;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -71,11 +73,18 @@ public class WriterRunnable implements Runnable {
 	
 	private PrintWriter obj_writer;
 	
-	public WriterRunnable(ThreadOutputQueue queue, PrintWriter writer) {
+	private ProgressCallback progress;
+	private StopCallback stop;
+	private int chunksToDo;
+	
+	public WriterRunnable(ThreadOutputQueue queue, PrintWriter writer, ProgressCallback progress, StopCallback stop, int chunksToDo) {
 		super();
 		
 		outputQueue = queue;
 		obj_writer = writer;
+		this.progress = progress;
+		this.stop = stop;
+		this.chunksToDo = chunksToDo;
 		
 		x_offset = 0;
 		y_offset = 0;
@@ -100,9 +109,10 @@ public class WriterRunnable implements Runnable {
 	@Override
 	public void run() {
 		ChunkOutput chunkOut;
+		int chunksDone = 0;
 		while (true) {
-			//TODO if (stop != null && stop.stopRequested())
-			//	return;
+			if (stop != null && stop.stopRequested())
+				break;
 			//Check for chunks in queue
 			try {
 				chunkOut = outputQueue.getNext();
@@ -128,6 +138,12 @@ public class WriterRunnable implements Runnable {
 				obj_writer.println("g chunk_" + chunkCoord.x + "_" + chunkCoord.y);
 			appendFaces(obj_writer);
 			clearData();
+			
+			chunksDone++;
+			if (progress != null) {
+				float progValue = (float)chunksDone / (float)chunksToDo;
+				progress.setProgress(progValue);
+			}
 		}
 	}
 

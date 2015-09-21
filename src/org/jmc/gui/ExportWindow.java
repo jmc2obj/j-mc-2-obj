@@ -24,12 +24,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -107,6 +111,10 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 	private JCheckBox chckbxUseLastSaveLoc;
 	private JPanel holderExportBtns;
 	private JCheckBox chckbxExportSeparateLight;
+	
+	private JSpinner spinnerThreads;
+	private JPanel holderThreads;
+
 
 	/**
 	 * Create the frame.
@@ -134,6 +142,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		holderTop.add(holderLeft);
 		holderLeft.setLayout(new BoxLayout(holderLeft, BoxLayout.Y_AXIS));
 
+		//##########################################################################################################
+		//ExportOffset
+		//##########################################################################################################
 		JPanel pMapExportOffset = new JPanel();
 		holderLeft.add(pMapExportOffset);
 		pMapExportOffset.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
@@ -206,6 +217,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 			txtZ.setEnabled(false);
 		}
 
+		//##########################################################################################################
+		//TextureExporting
+		//##########################################################################################################
 		JPanel pTextureOptions = new JPanel();
 		holderLeft.add(pTextureOptions);
 		pTextureOptions.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
@@ -255,6 +269,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		btnCustomResourcePack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderTexExport.add(btnCustomResourcePack);
 
+		//##########################################################################################################
+		//CloudsExport
+		//##########################################################################################################
 		JPanel pCloudExport = new JPanel();
 		pTextureOptions.add(pCloudExport);
 		pCloudExport.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -279,6 +296,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		btnFromResourcePack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderCloudExports.add(btnFromResourcePack);
 
+		//##########################################################################################################
+		//ExportOptions
+		//##########################################################################################################
 		JPanel pExportOptions = new JPanel();
 		holderTop.add(pExportOptions);
 		pExportOptions.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
@@ -309,6 +329,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		chckbxSeparateChunk = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_CHUNK"));
 		pExportOptions.add(chckbxSeparateChunk);
 
+		//##########################################################################################################
+		//SeperateBlocks
+		//##########################################################################################################
 		holderSepBlock = new JPanel();
 		holderSepBlock.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderSepBlock);
@@ -323,12 +346,21 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		lblSepBlockWarn.setToolTipText(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK_WARNING"));
 		lblSepBlockWarn.setForeground(Color.RED);
 
+		//##########################################################################################################
+		//OptGeo
+		//##########################################################################################################
 		chckbxGeoOpt = new JCheckBox(Messages.getString("OBJExportOptions.OPTIMIZE_MESH"));
 		pExportOptions.add(chckbxGeoOpt);
 
+		//##########################################################################################################
+		//MergeVerts
+		//##########################################################################################################
 		chckbxMergeVerticies = new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
 		pExportOptions.add(chckbxMergeVerticies);
 
+		//##########################################################################################################
+		//SingleMat
+		//##########################################################################################################
 		holderOneMat = new JPanel();
 		holderOneMat.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderOneMat);
@@ -343,6 +375,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		lblOneMatHelp.setForeground(Color.RED);
 		lblOneMatHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
 
+		//##########################################################################################################
+		//SingleTexFile
+		//##########################################################################################################
 		holderSingleTex = new JPanel();
 		holderSingleTex.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderSingleTex);
@@ -357,6 +392,36 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		lblSingleTexHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblSingleTexHelp.setForeground(Color.RED);
 
+		//##########################################################################################################
+		//ExportThreads
+		//##########################################################################################################
+		holderThreads = new JPanel();
+		holderThreads.setAlignmentX(Component.LEFT_ALIGNMENT);
+		pExportOptions.add(holderThreads);
+		holderThreads.setLayout(new FlowLayout(FlowLayout.LEFT));
+		
+		SpinnerNumberModel threadSpinnerModel = new SpinnerNumberModel(8, 1, 64, 1);
+		spinnerThreads = new JSpinner(threadSpinnerModel);
+		holderThreads.add(spinnerThreads);
+		
+		JLabel lblThreadsText = new JLabel(Messages.getString("OBJExportOptions.EXPORT_THREADS"));
+		holderThreads.add(lblThreadsText);
+
+		JLabel lblThreadsHelp = new JLabel("???");
+		holderThreads.add(lblThreadsHelp);
+		lblThreadsHelp.setToolTipText(Messages.getString("OBJExportOptions.EXPORT_THREADS_HELP"));
+		lblThreadsHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblThreadsHelp.setForeground(Color.RED);
+
+		JLabel lblThreadsWarn = new JLabel("!!!");
+		holderThreads.add(lblThreadsWarn);
+		lblThreadsWarn.setToolTipText(Messages.getString("OBJExportOptions.EXPORT_THREADS_WARN"));
+		lblThreadsWarn.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblThreadsWarn.setForeground(Color.RED);
+
+		//##########################################################################################################
+		//UV Map
+		//##########################################################################################################
 		holderUV = new JPanel();
 		holderUV.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderUV);
@@ -371,6 +436,9 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		btnBrowseUV = new JButton(Messages.getString("OBJExportPanel.BROWSE"));
 		holderUV.add(btnBrowseUV);
 
+		//##########################################################################################################
+		//Export
+		//##########################################################################################################
 		holderExportPanel = new JPanel();
 		holderExportPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderExportPanel);
@@ -428,6 +496,13 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		AbstractAction genericSaveAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				saveSettings();
+			}
+		};
+
+		ChangeListener genericSaveChange = new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
 				saveSettings();
 			}
 		};
@@ -804,6 +879,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		chckbxSingleTexture.addActionListener(genericSaveAction);
 		textFieldSingleTexUV.getDocument().addDocumentListener(tf_listener);
 		btnBrowseUV.addActionListener(uvSelect);
+		
+		spinnerThreads.addChangeListener(genericSaveChange);
 
 		chckbxUseLastSaveLoc.addActionListener(genericSaveAction);
 		btnStartExport.addActionListener(startExport);
@@ -871,6 +948,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		chckbxSeparateAlphaTexture.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
 		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
 		chckbxCombineAllTextures.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
+		
+		spinnerThreads.setValue(prefs.getInt("EXPORT_THREADS", 8));
 
 		if (!chckbxSingleTexture.isSelected()) {
 			textFieldSingleTexUV.setEnabled(false);
@@ -969,7 +1048,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		prefs.putBoolean("TEXTURE_ALPHA", Options.textureAlpha);
 		prefs.putBoolean("TEXTURE_LIGHT", Options.textureLight);
 		prefs.putBoolean("TEXTURE_MERGE", Options.textureMerge);
-
+		
+		prefs.putInt("EXPORT_THREADS", Options.exportThreads);
 	}
 
 	private void updateOptions() {
@@ -1030,7 +1110,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		Options.textureAlpha = chckbxSeparateAlphaTexture.isSelected();
 		Options.textureLight = chckbxExportSeparateLight.isSelected();
 		Options.textureMerge = chckbxCombineAllTextures.isSelected();
-
+		
+		Options.exportThreads = (Integer)spinnerThreads.getValue();
 	}
 
 	private void ExportTextures(final File destination, final File texturepack, final double texScale,

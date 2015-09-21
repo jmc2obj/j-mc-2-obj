@@ -72,7 +72,7 @@ public class Banner extends BlockModel {
     @Override
     public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome) {
 
-        Log.info("Banner ***************************");
+        //Log.info("Banner ***************************");
 
 
         // get banner type from block config

@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.jmc.Options.OffsetType;
 import org.jmc.threading.ReaderRunnable;
-import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.threading.ThreadOutputQueue;
 import org.jmc.threading.WriterRunnable;
@@ -133,9 +132,8 @@ public class ObjExporter {
 						return;
 					}
 				}
-
-				int progress_count = 0;
-				float progress_max = (ce.x - cs.x + 1) * (ce.y - cs.y + 1);
+				
+				int chunksToDo = (ce.x - cs.x + 1) * (ce.y - cs.y + 1);
 
 				ChunkDataBuffer chunk_buffer = new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY,
 						Options.maxY, Options.minZ, Options.maxZ);
@@ -143,7 +141,7 @@ public class ObjExporter {
 				ThreadInputQueue inputQueue = new ThreadInputQueue();
 				ThreadOutputQueue outputQueue = new ThreadOutputQueue();
 
-				WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer);
+				WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, stop, chunksToDo);
 				writeRunner.setOffset(oxs, oys, ozs);
 				writeRunner.setScale(Options.scale);
 
@@ -166,7 +164,7 @@ public class ObjExporter {
 				
 				Thread[] threads = new Thread[Options.exportThreads];
 				for (int i = 0; i < Options.exportThreads; i++){
-					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
+					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue, stop));
 					threads[i].setName("ReadThread-" + i);
 					threads[i].start();
 				}
@@ -174,28 +172,43 @@ public class ObjExporter {
 				Thread writeThread = new Thread(writeRunner);
 				writeThread.setName("WriteThread");
 				writeThread.start();
+				
+				long timer = System.nanoTime();
+				long timer2 = System.nanoTime();
 
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
-					for (int cz = cs.y; cz <= ce.y; cz++, progress_count++) {
+					for (int cz = cs.y; cz <= ce.y; cz++) {
 						if (chunkExists(cx, cz)){
 							inputQueue.add(cx, cz);
 						}
-						//TODO Update progress counter
 					}
 				}
 				
+				Log.info("Adding to queue:" + (System.nanoTime() - timer)/1000000000d);
+				
 				inputQueue.finish();
+				
+				timer = System.nanoTime();
 				
 				for (Thread thread : threads){
 					thread.join();
 				}
+				Log.info("Reading Chunks:" + (System.nanoTime() - timer)/1000000000d);
+				timer = System.nanoTime();
+				
 				outputQueue.finish();
 				writeThread.join();
+				
+				Log.info("Writing File:" + (System.nanoTime() - timer)/1000000000d);
+				Log.info("Total:" + (System.nanoTime() - timer2)/1000000000d);
 				
 				chunk_buffer.removeAllChunks();
 
 				obj_writer.close();
+				
+				if (stop != null && stop.stopRequested())
+					return;
 
 				if (progress != null)
 					progress.setProgress(1);

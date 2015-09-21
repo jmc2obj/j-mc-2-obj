@@ -7,6 +7,7 @@ import org.jmc.Chunk;
 import org.jmc.ChunkDataBuffer;
 import org.jmc.Options;
 import org.jmc.Region;
+import org.jmc.StopCallback;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
 
@@ -17,8 +18,9 @@ public class ReaderRunnable implements Runnable {
 	private Point chunkEnd;
 	private ThreadInputQueue inputQueue;
 	private ThreadOutputQueue outputQueue;
+	private StopCallback stop;
 	
-	public ReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadOutputQueue outQueue) {
+	public ReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadOutputQueue outQueue, StopCallback stop) {
 		super();
 		this.chunkBuffer = chunk_buffer;
 		this.chunkDeligate = new ThreadChunkDeligate(chunk_buffer);
@@ -26,14 +28,15 @@ public class ReaderRunnable implements Runnable {
 		this.chunkEnd = chunkEnd;
 		this.inputQueue = inQueue;
 		this.outputQueue = outQueue;
+		this.stop = stop;
 	}
 
 	@Override
 	public void run() {
 		Point chunkCoord;
 		while (true) {
-			//TODO if (stop != null && stop.stopRequested())
-			//	return;
+			if (stop != null && stop.stopRequested())
+				break;
 			try {
 				chunkCoord = inputQueue.getNext();
 			} catch (InterruptedException e) {
