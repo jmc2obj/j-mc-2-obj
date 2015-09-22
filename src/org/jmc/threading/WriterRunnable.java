@@ -2,11 +2,12 @@ package org.jmc.threading;
 
 import java.awt.Point;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.jmc.geom.FaceUtils.Face;
@@ -187,7 +188,10 @@ public class WriterRunnable implements Runnable {
 	{		
 		for (UV uv : exportTexCoords)
 		{
-			out.format((Locale)null, "vt %.4f %.4f", uv.u, uv.v);
+			BigDecimal uRound = new BigDecimal(uv.u).setScale(4, RoundingMode.HALF_UP);
+			BigDecimal vRound = new BigDecimal(uv.v).setScale(4, RoundingMode.HALF_UP);
+			out.print("vt " + uRound.toPlainString() + " " + vRound.toPlainString());
+			//out.format((Locale)null, "vt %.4f %.4f", uv.u, uv.v);
 			out.println();
 		}
 	}
@@ -200,7 +204,11 @@ public class WriterRunnable implements Runnable {
 	{
 		for (Vertex norm : exportNormals)
 		{
-			out.format((Locale)null, "vn %.3f %.3f %.3f", norm.x, norm.y, norm.z);
+			BigDecimal xRound = new BigDecimal(norm.x).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal yRound = new BigDecimal(norm.y).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal zRound = new BigDecimal(norm.z).setScale(3, RoundingMode.HALF_UP);
+			out.print("vn " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
+			//out.format((Locale)null, "vn %.3f %.3f %.3f", norm.x, norm.y, norm.z);
 			out.println();
 		}
 	}
@@ -213,10 +221,17 @@ public class WriterRunnable implements Runnable {
 	{
 		for (Vertex vertex : exportVertices)
 		{
-			out.format((Locale)null, "v %.3f %.3f %.3f",
+			float x = (vertex.x + x_offset) * file_scale;
+			float y = (vertex.y + y_offset) * file_scale;
+			float z = (vertex.z + z_offset) * file_scale;
+			BigDecimal xRound = new BigDecimal(x).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal yRound = new BigDecimal(y).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal zRound = new BigDecimal(z).setScale(3, RoundingMode.HALF_UP);
+			out.print("v " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
+			/*out.format((Locale)null, "v %.3f %.3f %.3f",
 					(vertex.x+x_offset)*file_scale,
 					(vertex.y+y_offset)*file_scale,
-					(vertex.z+z_offset)*file_scale);
+					(vertex.z+z_offset)*file_scale);*/
 			out.println();
 		}
 	}
@@ -249,14 +264,19 @@ public class WriterRunnable implements Runnable {
 			out.print("f");
 			for (int i = 0; i < f.vertices.length; i++)
 			{
+				
 				if (f.normals != null && f.uv != null)
-					out.format((Locale)null, " %d/%d/%d", f.vertices[i], f.uv[i], f.normals[i]);
+					out.print(" " + f.vertices[i] + "/" + f.uv[i] + "/" + f.normals[i]);
+					//out.format((Locale)null, " %d/%d/%d", f.vertices[i], f.uv[i], f.normals[i]);
 				else if (f.normals == null && f.uv != null)
-					out.format((Locale)null, " %d/%d", f.vertices[i], f.uv[i]);
+					out.print(" " + f.vertices[i] + "/" + f.uv[i]);
+					//out.format((Locale)null, " %d/%d", f.vertices[i], f.uv[i]);
 				else if (f.normals != null && f.uv == null)
-					out.format((Locale)null, " %d//%d", f.vertices[i], f.normals[i]);
+					out.print(" " + f.vertices[i] + "//" + f.normals[i]);
+					//out.format((Locale)null, " %d//%d", f.vertices[i], f.normals[i]);
 				else
-					out.format((Locale)null, " %d", f.vertices[i]);
+					out.print(" " + f.vertices[i]);
+					//out.format((Locale)null, " %d", f.vertices[i]);
 			}
 			out.println();
 		}
