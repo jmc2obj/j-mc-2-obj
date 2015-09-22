@@ -166,6 +166,7 @@ public class ObjExporter {
 				for (int i = 0; i < Options.exportThreads; i++){
 					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue, stop));
 					threads[i].setName("ReadThread-" + i);
+					threads[i].setPriority(Thread.NORM_PRIORITY - 1);
 					threads[i].start();
 				}
 
