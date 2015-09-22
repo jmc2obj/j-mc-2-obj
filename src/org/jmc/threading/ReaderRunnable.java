@@ -74,6 +74,8 @@ public class ReaderRunnable implements Runnable {
 				addChunkIfExists(chunkBuffer, lx, lz);
 			}
 		}
+		
+		chunkDeligate.setCurrentChunk(new Point(chunkX, chunkZ));
 
 		// export the chunk to the OBJ
 		ChunkProcessor proc = new ChunkProcessor();

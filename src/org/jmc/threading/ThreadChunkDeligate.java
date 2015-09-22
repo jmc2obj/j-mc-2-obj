@@ -2,7 +2,10 @@ package org.jmc.threading;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.jmc.Chunk;
 import org.jmc.Chunk.Blocks;
 import org.jmc.ChunkDataBuffer;
@@ -20,12 +23,14 @@ public class ThreadChunkDeligate {
 	private boolean isAnvil;
 	private Rectangle xzBoundaries;
 	private Rectangle xyBoundaries;
+	private Map<Point,Blocks> auxChunks;
 	
 	public ThreadChunkDeligate(ChunkDataBuffer chunkBuffer) {
 		super();
 		this.chunkBuffer = chunkBuffer;
 		xzBoundaries = chunkBuffer.getXZBoundaries();
 		xyBoundaries = chunkBuffer.getXYBoundaries();
+		auxChunks = new HashMap<Point, Blocks>();
 	}
 	
 	public Rectangle getXZBoundaries()
@@ -40,11 +45,19 @@ public class ThreadChunkDeligate {
 
 	private Blocks getBlocks(Point p)
 	{
-		if ((cached_chunkp == null) || (cached_chunkp.x != p.x) || (cached_chunkp.y != p.y))
-		{
+		if (cached_chunkp == null) {
 			cached_chunkp = p;
 			cached_chunkb = chunkBuffer.getBlocks(p);
-			isAnvil = chunkBuffer.isAnvil();
+		}
+		if ((cached_chunkp.x != p.x) || (cached_chunkp.y != p.y))
+		{
+			if (auxChunks.containsKey(p)){
+				return auxChunks.get(p);
+			} else {
+				Blocks blks = chunkBuffer.getBlocks(p);
+				auxChunks.put(p, blks);
+				return blks;
+			}
 		}
 
 		return cached_chunkb;
@@ -151,5 +164,12 @@ public class ThreadChunkDeligate {
 		}
 		
 		return null;
+	}
+	
+	public void setCurrentChunk(Point p) {
+		auxChunks.clear();
+		cached_chunkp = p;
+		cached_chunkb = chunkBuffer.getBlocks(p);
+		isAnvil = chunkBuffer.isAnvil();
 	}
 }
