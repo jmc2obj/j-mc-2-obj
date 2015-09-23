@@ -14,10 +14,6 @@ import org.jmc.util.Log;
 public class FaceUtils {
 
 	public static class Face {
-		
-		public Face() {
-		}
-		
 		public Vertex[] vertices;
 		public UV[] uvs;
 		public Vertex[] norms;
@@ -26,6 +22,16 @@ public class FaceUtils {
 		public boolean remove = false;
 		public int chunk_idx = -1;
 		
+		public Face() {
+		}
+		
+		public Face(Vertex[] vert, UV[] uv, Vertex[] norm, String mat) {
+			vertices = vert;
+			uvs = uv;
+			norms = norm;
+			material = mat;
+		}
+
 		/**
 		 * @return 0 if x, 1 if y, 2 if z, 3 if none.
 		 */

@@ -135,7 +135,7 @@ public class WriterRunnable implements Runnable {
 			appendTextures(obj_writer);
 			appendNormals(obj_writer);
 			appendVertices(obj_writer);
-			if (Options.objectPerChunk && !Options.objectPerBlock)
+			if (Options.objectPerChunk && !Options.objectPerBlock && chunkCoord != null)
 				obj_writer.println("g chunk_" + chunkCoord.x + "_" + chunkCoord.y);
 			appendFaces(obj_writer);
 			clearData();
