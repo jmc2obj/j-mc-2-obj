@@ -189,17 +189,11 @@ public class Filesystem {
 	 *             If the operation fails during the data copy phase.
 	 */
 	public static void copyFile(File origPath, File destPath) throws IOException {
-		FileChannel in = null;
-		FileChannel out = null;
-		try {
-			in = new FileInputStream(origPath).getChannel();
-			out = new FileOutputStream(destPath).getChannel();
+		try (FileInputStream ins = new FileInputStream(origPath);
+				FileOutputStream outs = new FileOutputStream(destPath)) {
+			FileChannel in = ins.getChannel();
+			FileChannel out = outs.getChannel();
 			in.transferTo(0, in.size(), out);
-		} finally {
-			if (in != null)
-				in.close();
-			if (out != null)
-				out.close();
 		}
 	}
 
