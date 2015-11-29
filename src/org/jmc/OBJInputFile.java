@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.jmc.geom.FaceUtils.OBJFace;
+import org.jmc.threading.ChunkProcessor;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -22,9 +25,22 @@ import org.jmc.util.Log;
  * @author danijel
  *
  */
-public class OBJInputFile extends OBJFileBase
+public class OBJInputFile
 {
-
+	
+	/**
+	 * List of vertices in the file.
+	 */
+	private List<Vertex> vertices;
+	/**
+	 * List of texture coordinates in the file
+	 */
+	private List<UV> texCoords;
+	/**
+	 * List of normals
+	 */
+	private List<Vertex> normals;
+	
 	public static class OBJGroup
 	{
 		public OBJGroup()
@@ -33,17 +49,16 @@ public class OBJInputFile extends OBJFileBase
 		}
 		public List<OBJFace> faces;
 	}
-
 	
 	Map<String,OBJGroup> objects;
 	OBJGroup default_object;
-
 	
 	public OBJInputFile() 
 	{
-		super();
+		vertices = new ArrayList<Vertex>();
+		texCoords = new ArrayList<UV>();
+		normals = new ArrayList<Vertex>();
 	}
-
 	
 	/**
 	 * Loads a file into the buffer.
@@ -273,7 +288,7 @@ public class OBJInputFile extends OBJFileBase
 		}
 	}
 
-	public void addObjectToOutput(OBJGroup group, Transform trans, OBJOutputFile out)
+	public void addObjectToOutput(OBJGroup group, Transform trans, ChunkProcessor out)
 	{
 		for(OBJFace f:group.faces)
 		{
@@ -293,7 +308,7 @@ public class OBJInputFile extends OBJFileBase
 			}
 
 			// Log.info("out OBJ file material: "+f.mtl+" / "+v+" / "+norm+" / "+uv+" / "+trans);
-			out.addOBJFace(v, norm, uv, trans, f.mtl);
+			out.addFace(v, norm, uv, trans, f.mtl);
 		}
 	}
 }

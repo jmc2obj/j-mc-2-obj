@@ -236,6 +236,11 @@ public class Options
 	 * Name of .MTL file to export.
 	 */
 	public static String mtlFileName = "minecraft.mtl";
+	
+	/**
+	 * How many threads to use when exporting.
+	 */
+	public static int exportThreads = 8;
 
 	
 

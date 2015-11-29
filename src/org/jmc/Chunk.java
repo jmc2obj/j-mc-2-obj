@@ -122,7 +122,7 @@ public class Chunk {
 	 * @author danijel
 	 *
 	 */
-	class Blocks
+	public class Blocks
 	{
 		/**
 		 * Main constructor.

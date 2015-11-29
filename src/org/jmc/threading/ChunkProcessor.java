@@ -5,16 +5,16 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  ******************************************************************************/
-package org.jmc;
+package org.jmc.threading;
 
 import java.awt.Rectangle;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
+import org.jmc.BlockTypes;
+import org.jmc.EntityTypes;
+import org.jmc.Options;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
 import org.jmc.geom.FaceUtils.Face;
@@ -26,249 +26,33 @@ import org.jmc.util.Log;
 
 
 /**
- * OBJ file class.
- * This file contains the geometry of the whole world we are trying to export.
- * It also contains the links to the materials saved in the MTL file.
- * @author danijel
- *
+ * ChunkProcessor reads through the given chunk and outputs faces
  */
-public class OBJOutputFile extends OBJFileBase
+public class ChunkProcessor
 {
-	/**
-	 * Identifier of the file.
-	 * Since many OBJ class objects are created by different chunks,
-	 * this helps differentiate them and assign them a name. It's
-	 * usually just the coordinates of the chunk.
-	 */
-	private String identifier;
-
-	/**
-	 * Map of vertices to their respective IDs used in the faces of the mesh.
-	 */
-	private Map<Vertex, Integer> vertexMap;
-
-	/**
-	 * Map of texture coordinates to their respective indexes in the OBJ file.
-	 */
-	private Map<UV, Integer> texCoordMap;
-
-	/**
-	 * Map of normals to their respective indexes in the OBJ file.
-	 */
-	private Map<Vertex, Integer> normalsMap;
-
-	/**
-	 * Offsets of the file. Used to position the chunk in its right location.
-	 */
-	private float x_offset, y_offset, z_offset;
-
-	private float file_scale;
-
-	private int vertex_counter, tex_counter, norm_counter;
+	private int chunk_idx_count=-1;
 	
-	private long obj_idx_count=-1;
+	private ArrayList<Face> optimisedFaces = new ArrayList<Face>();
+	private ArrayList<Face> faces = new ArrayList<Face>();
+
+	/**
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
+	 */
+	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
+		addFace(verts, null, uv, trans, mtl);
+	}
 	
 	/**
-	 * Decides whether to print "usemtl" lines in OBJ file
-	 */
-	private boolean print_usemtl;
-	
-	private ArrayList<Face> faces;
-	
-	public static long timeOptimising;
-
-	/**
-	 * Main constructor.
-	 * @param ident identifier of the OBJ
-	 * @param mtl reference to the MTL
-	 */
-	public OBJOutputFile(String ident)
-	{
-		super();
-
-		identifier = ident;
-		vertexMap = new HashMap<Vertex, Integer>();
-		vertex_counter = 1;
-		texCoordMap = new HashMap<UV, Integer>();
-		tex_counter = 1;
-		normalsMap = new HashMap<Vertex, Integer>();
-		norm_counter = 1;
-
-		x_offset = 0;
-		y_offset = 0;
-		z_offset = 0;
-		file_scale = 1.0f;
-		print_usemtl=true;
-
-		faces = new ArrayList<Face>();
-	}
-
-	/**
-	 * Offset all the vertices by these amounts.
-	 * Used to position the chunk in its right location.
-	 * @param x x offset
-	 * @param y y offset
-	 * @param z z offset
-	 */
-	public void setOffset(float x, float y, float z)
-	{
-		x_offset=x;
-		y_offset=y;
-		z_offset=z;
-	}
-
-	/**
-	 * Scales the map by a float value.
-	 * @param scale
-	 */
-	public void setScale(float scale)
-	{
-		file_scale=scale;
-	}
-
-	/**
-	 * Sets the print usemtl switch.
-	 * @param val
-	 */
-	public void setPrintUseMTL(boolean val)
-	{
-		print_usemtl=val;
-	}
-
-	public void clearData(boolean remove_duplicates)
-	{
-		if(remove_duplicates)
-		{
-			//keep edge vertices
-			for(Vertex v:vertices)
-				if((v.x-0.5)%16!=0 && (v.z-0.5)%16!=0 && (v.x+0.5)%16!=0 && (v.z+0.5)%16!=0)
-					vertexMap.remove(v);
-		}
-		else
-		{
-			vertexMap.clear();
-		}
-		vertices.clear();
-		texCoords.clear();
-		normals.clear();
-		objFaces.clear();
-	}
-
-	/**
-	 * Appends a header linking to the MTL file.
-	 * @param out
-	 * @param mtlFile
-	 */
-	public void appendMtl(PrintWriter out, String mtlFile)
-	{
-		out.println("mtllib "+mtlFile);
-		out.println();
-	}
-
-	/**
-	 * Appends an object name line to the file.
-	 * @param out
-	 */
-	public void appendObjectname(PrintWriter out)
-	{
-		out.println("g "+identifier);
-		out.println();
-	}
-
-	/**
-	 * Write texture coordinates. These will be shared by all chunks.
-	 * @param out writer of the OBJ file
-	 */
-	public void appendTextures(PrintWriter out)
-	{		
-		for (UV uv : texCoords)
-		{
-			out.format((Locale)null, "vt %.4f %.4f", uv.u, uv.v);
-			out.println();
-		}
-	}
-
-	/**
-	 * Write normals. These will be shared by all chunks.
-	 * @param out writer of the OBJ file
-	 */
-	public void appendNormals(PrintWriter out)
-	{
-		for (Vertex norm : normals)
-		{
-			out.format((Locale)null, "vn %.3f %.3f %.3f", norm.x, norm.y, norm.z);
-			out.println();
-		}
-	}
-
-	/**
-	 * Appends vertices to the file.
-	 * @param out
-	 */
-	public void appendVertices(PrintWriter out)
-	{
-		for (Vertex vertex : vertices)
-		{
-			out.format((Locale)null, "v %.3f %.3f %.3f",
-					(vertex.x+x_offset)*file_scale,
-					(vertex.y+y_offset)*file_scale,
-					(vertex.z+z_offset)*file_scale);
-			out.println();
-		}
-	}
-
-	/**
-	 * This method prints faces from the current buffer to an OBJ format.
-	 * 
-	 * @param out file to append the data
-	 */
-	public void appendFaces(PrintWriter out)
-	{		
-		Collections.sort(objFaces);
-		String last_mtl=null;	
-		Long last_obj_idx=Long.valueOf(-1);
-		for(OBJFace f:objFaces)
-		{
-			if(!f.mtl.equals(last_mtl) && print_usemtl)
-			{
-				out.println();
-				out.println("usemtl "+f.mtl);
-				last_mtl=f.mtl;
-			}
-			
-			if(!f.obj_idx.equals(last_obj_idx))
-			{
-				out.println("g o"+f.obj_idx);
-				last_obj_idx=f.obj_idx;
-			}
-
-			out.print("f");
-			for (int i = 0; i < f.vertices.length; i++)
-			{
-				if (f.normals != null && f.uv != null)
-					out.format((Locale)null, " %d/%d/%d", f.vertices[i], f.uv[i], f.normals[i]);
-				else if (f.normals == null && f.uv != null)
-					out.format((Locale)null, " %d/%d", f.vertices[i], f.uv[i]);
-				else if (f.normals != null && f.uv == null)
-					out.format((Locale)null, " %d//%d", f.vertices[i], f.normals[i]);
-				else
-					out.format((Locale)null, " %d", f.vertices[i]);
-			}
-			out.println();
-		}
-	}
-
-
-	/**
-	 * Add a face with the given vertices to the OBJ file.
+	 * Add a face with the given vertices to the chunk output.
 	 * 
 	 * @param verts vertices of the face
+	 * @param norms normals of the face
 	 * @param uv texture coordinates for the vertices. If null, the default coordinates will be used
 	 * (only accepted if face is a quad!).
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
 	 */
-	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl)
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
 	{
 		if (uv == null)
 		{
@@ -282,122 +66,33 @@ public class OBJOutputFile extends OBJFileBase
 					new UV(0,1) 
 			};
 		}
-		if (Options.optimiseGeometry){
-			Face face = new Face();
-			face.uvs = uv.clone();
-			face.material = mtl;
-			face.vertices = verts.clone();
-			if (trans != null){
-				face = trans.multiply(face);
-			}
+		Face face = new Face();
+		face.uvs = uv.clone();
+		face.material = mtl;
+		face.vertices = verts.clone();
+		if (norms != null) {
+			face.norms = norms.clone();
+		}
+		if (trans != null){
+			face = trans.multiply(face);
+		}
+		face.chunk_idx = chunk_idx_count;
+		if (Options.optimiseGeometry) {
+			optimisedFaces.add(face);
+		} else {
 			faces.add(face);
 		}
-		else{
-			addOBJFace(verts, null, uv, trans, mtl);
-		}
-	}
-	
-	
-	/**
-	 * Add a face with the given vertices to the OBJ file.
-	 * 
-	 * @param verts vertices of the face
-	 * @param norms normals for the vertices. If null, no normals will be written to file.
-	 * @param uv texture coordinates for the vertices. If null, no uv coords will be written to file.
-	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
-	 * @param mtl Name of the material for the face
-	 */
-	public void addOBJFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
-	{
-		OBJFace face = new OBJFace(verts.length);
-		face.obj_idx=Long.valueOf(obj_idx_count);
-		face.mtl = mtl;
-		if (norms == null) face.normals = null;
-		if (uv == null) 
-		{
-			face.uv = null;
-		}
-		else if(Options.useUVFile)
-		{
-			uv=UVRecalculate.recalculate(uv, mtl);
-		}
-	
-		for (int i = 0; i < verts.length; i++)
-		{
-			// add vertices
-			Vertex vert;
-			if (trans != null)
-				vert = trans.multiply(verts[i]);
-			else
-				vert = verts[i];
-	
-			if (vertexMap.containsKey(vert))				
-			{
-				face.vertices[i] = vertexMap.get(vert);
-			}
-			else 
-			{
-				vertices.add(vert);
-				vertexMap.put(vert, vertex_counter);
-				face.vertices[i] = vertex_counter;
-				vertex_counter++;
-			}
-	
-			// add normals
-			if (norms != null)
-			{
-				Vertex norm;
-				if (trans != null)
-					norm = trans.applyToNormal(norms[i]);
-				else
-					norm = norms[i];
-	
-				if (normalsMap.containsKey(norm))				
-				{
-					face.normals[i] = normalsMap.get(norm);
-				}
-				else
-				{
-					normals.add(norm);
-					normalsMap.put(norm, norm_counter);
-					face.normals[i] = norm_counter;
-					norm_counter++;
-				}
-			}
-	
-			// add texture coords
-			if (uv != null)
-			{
-				if (texCoordMap.containsKey(uv[i]))				
-				{
-					face.uv[i] = texCoordMap.get(uv[i]);
-				}
-				else
-				{
-					texCoords.add(uv[i]);
-					texCoordMap.put(uv[i], tex_counter);
-					face.uv[i] = tex_counter;
-					tex_counter++;
-				}
-			}
-		}
-	
-		objFaces.add(face);
-	}
-	
-	public void addOBJFace(Face face){
-		addOBJFace(face.vertices, null, face.uvs, null, face.material);
 	}
 
 	/**
-	 * Adds all blocks from the given chunk buffer into the file.
+	 * Returns all blocks from the given chunk buffer into the output.
 	 * @param chunk
 	 * @param chunk_x
 	 * @param chunk_z
 	 */
-	public void addChunkBuffer(ChunkDataBuffer chunk, int chunk_x, int chunk_z)
+	public ArrayList<Face> process(ThreadChunkDeligate chunk, int chunk_x, int chunk_z)
 	{
-		faces = new ArrayList<Face>();
+		optimisedFaces = new ArrayList<Face>();
 		int xmin,xmax,ymin,ymax,zmin,zmax;
 		Rectangle xy,xz;
 		xy=chunk.getXYBoundaries();
@@ -441,7 +136,7 @@ public class OBJOutputFile extends OBJFileBase
 						}
 					}
 					
-					if(Options.objectPerBlock) obj_idx_count++;
+					if(Options.objectPerBlock) chunk_idx_count++;
 					
 					try {
 						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
@@ -454,12 +149,11 @@ public class OBJOutputFile extends OBJFileBase
 		}
 		
 		if (Options.optimiseGeometry) {
-			long startTime = System.nanoTime();
 			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
-			for (Face f : faces){
+			for (Face f : optimisedFaces){
 				int planar = f.isPlanar();
 				if (planar == 3){
-					addOBJFace(f);
+					faces.add(f);
 					continue;
 				}
 				String key = "";
@@ -485,13 +179,11 @@ public class OBJOutputFile extends OBJFileBase
 				faceList = mergeAxisFaces(faceList, 2);
 				for (Face face : faceList) {
 					if (!face.remove){
-						addOBJFace(face);
+						faces.add(face);
 					}
 				}
 			}
-			faces = new ArrayList<Face>();//Clear out faces list because they have all been added so far
-			long endTime = System.nanoTime();
-			timeOptimising += (endTime - startTime);
+			optimisedFaces = new ArrayList<Face>();//Clear out faces list because they have all been added so far
 		}
 		
 		if(Options.renderEntities)
@@ -519,10 +211,10 @@ public class OBJOutputFile extends OBJFileBase
 			}
 		}
 		
-		for (Face face : faces){
-			addOBJFace(face); //Add any left over faces from not optimising and entities.
+		for (Face face : optimisedFaces){
+			faces.add(face); //Add any left over faces from not optimising and entities.
 		}
-		faces = new ArrayList<Face>();
+		return faces;
 	}
 	
 	/**
@@ -553,7 +245,7 @@ public class OBJOutputFile extends OBJFileBase
 	}
 	
 	/**
-	 * Attempts to join 2 faces along axis and store the joined face in face2
+	 * Attempts to join two faces along axis and store the joined face in face2
 	 * @param face1 Input face 1
 	 * @param face2 Input face 2, joined face will replace face2
 	 * @param axis The axis to join across 0, 1 or 2

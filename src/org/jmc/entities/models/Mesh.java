@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
+import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Log;
 
 //TODO: this class is a copy of org.jmc.models.Mesh class
@@ -94,7 +94,7 @@ public class Mesh extends EntityModel
 	}
 
 	@Override
-	public void addEntity(OBJOutputFile obj, Transform transform) 
+	public void addEntity(ChunkProcessor obj, Transform transform) 
 	{
 		if(objects.size()==0) return;
 		MeshObject object=objects.get(0);

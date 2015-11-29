@@ -1,17 +1,17 @@
 package org.jmc.entities;
 
-import org.jmc.OBJOutputFile;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 import org.jmc.geom.Transform;
+import org.jmc.threading.ChunkProcessor;
 
 public class Slime extends Entity {
 
 	@Override
-	public void addEntity(OBJOutputFile obj, TAG_Compound entity) {
+	public void addEntity(ChunkProcessor obj, TAG_Compound entity) {
 		
 		TAG_List pos = (TAG_List) entity.getElement("Pos");
 		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f;				

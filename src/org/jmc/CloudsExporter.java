@@ -5,12 +5,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
+import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ThreadOutputQueue;
+import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
+import org.jmc.threading.WriterRunnable;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 
@@ -43,12 +48,11 @@ public class CloudsExporter {
 		return a > 127;
 	}
 	
-	private static void renderClouds(BufferedImage image, OBJOutputFile obj) {
+	private static void renderClouds(BufferedImage image, ThreadOutputQueue queue) {
 		int image_w = image.getWidth();
 		int image_h = image.getHeight();
-
-		obj.setOffset(-image_w/2, 128f/12f, -image_h/2);
-		obj.setScale(12.0f);
+		
+		ArrayList<Face> faces = new ArrayList<Face>();
 		
 		for (int z = 0; z < image_h; z++) {
 			for (int x = 0; x < image_w; x++) {
@@ -60,14 +64,14 @@ public class CloudsExporter {
 					verts[1] = new Vertex(x, 0, z+1);
 					verts[2] = new Vertex(x, 0, z);
 					verts[3] = new Vertex(x+1, 0, z);
-					obj.addFace(verts, null, null, "cloud");
+					faces.add(new Face(verts.clone(), null, null, "cloud"));
 					
 					// top
 					verts[0] = new Vertex(x, 0.3333f, z+1);
 					verts[1] = new Vertex(x+1, 0.3333f, z+1);
 					verts[2] = new Vertex(x+1, 0.3333f, z);
 					verts[3] = new Vertex(x, 0.3333f, z);
-					obj.addFace(verts, null, null, "cloud");
+					faces.add(new Face(verts.clone(), null, null, "cloud"));
 					
 					// left (W)
 					if (!isCloud(image, x-1, z)) {
@@ -75,7 +79,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x, 0, z+1);
 						verts[2] = new Vertex(x, 0.3333f, z+1);
 						verts[3] = new Vertex(x, 0.3333f, z);
-						obj.addFace(verts, null, null, "cloud");
+						faces.add(new Face(verts.clone(), null, null, "cloud"));
 					}
 
 					// right (E)
@@ -84,7 +88,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x+1, 0, z);
 						verts[2] = new Vertex(x+1, 0.3333f, z);
 						verts[3] = new Vertex(x+1, 0.3333f, z+1);
-						obj.addFace(verts, null, null, "cloud");
+						faces.add(new Face(verts.clone(), null, null, "cloud"));
 					}
 					
 					// front (N)
@@ -93,7 +97,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x, 0, z);
 						verts[2] = new Vertex(x, 0.3333f, z);
 						verts[3] = new Vertex(x+1, 0.3333f, z);
-						obj.addFace(verts, null, null, "cloud");
+						faces.add(new Face(verts.clone(), null, null, "cloud"));
 					}
 
 					// back (S)
@@ -102,11 +106,13 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x+1, 0, z+1);
 						verts[2] = new Vertex(x+1, 0.3333f, z+1);
 						verts[3] = new Vertex(x, 0.3333f, z+1);
-						obj.addFace(verts, null, null, "cloud");
+						faces.add(new Face(verts.clone(), null, null, "cloud"));
 					}
 				}
 			}
 		}
+
+		queue.add(new ChunkOutput(null, faces));
 	}
 	
 
@@ -169,17 +175,23 @@ public class CloudsExporter {
 			Log.info("Exporting clouds to " + outputFileName);
 			
 			writer = new PrintWriter(new FileWriter(new File(destination, outputFileName)));
-
-			OBJOutputFile obj = new OBJOutputFile("clouds");
-			obj.setPrintUseMTL(false);
-
-			renderClouds(image, obj);
-
-			obj.appendObjectname(writer);
-			obj.appendNormals(writer);
-			obj.appendVertices(writer);
-			obj.appendFaces(writer);
-
+			
+			ThreadOutputQueue outputQueue = new ThreadOutputQueue();
+			WriterRunnable writeRunner = new WriterRunnable(outputQueue, writer, null, null, 1);
+			writeRunner.setPrintUseMTL(false);
+			writeRunner.setOffset(-image.getWidth()/2, 128f/12f, -image.getHeight()/2);
+			writeRunner.setScale(12.0f);
+			
+			writer.println("g clouds");
+			writer.println();
+			
+			Thread writeThread = new Thread(writeRunner);
+			writeThread.start();
+			
+			renderClouds(image, outputQueue);
+			outputQueue.finish();
+			writeThread.join();
+			
 			Log.info("Done.");
 		}
 		finally {

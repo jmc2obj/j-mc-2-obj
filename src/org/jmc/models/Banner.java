@@ -5,13 +5,13 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
-import org.jmc.ChunkDataBuffer;
 import org.jmc.NBT.*;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.OBJOutputFile;
 import org.jmc.Options;
 import org.jmc.geom.Transform;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 
 import javax.imageio.ImageIO;
@@ -60,19 +60,21 @@ public class Banner extends BlockModel {
     private String createPatternHash(int baseColorIndex) {
         String hashSource = "" + baseColorIndex + "";
         int count = 0;
-        for (BannerPattern bp : PatternList) {
-            if (count++ != 0) {
-                hashSource += "-";
-            }
-            hashSource += bp.toString();
+        synchronized (PatternList) {
+	        for (BannerPattern bp : PatternList) {
+	            if (count++ != 0) {
+	                hashSource += "-";
+	            }
+	            hashSource += bp.toString();
+	        }
         }
         return hashSource;
     }
 
     @Override
-    public void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome) {
+    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome) {
 
-        Log.info("Banner ***************************");
+        //Log.info("Banner ***************************");
 
 
         // get banner type from block config
@@ -137,30 +139,32 @@ public class Banner extends BlockModel {
                 }
         };
 
-        PatternList.clear();
-        // get banner layer information
-        TAG_Compound tag = chunks.getTileEntity(x, y, z);
         int baseColorIndex = -1;
-        if (tag != null) {
-            baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
-
-            // base Color
-            BannerPattern bpBase = new BannerPattern();
-            bpBase.setColor(baseColorIndex);
-            bpBase.setPattern("base");
-            PatternList.add(bpBase);
-
-            TAG_List patternList = (TAG_List) tag.getElement("Patterns");
-
-            if (patternList != null) {
-                for (NBT_Tag pattern : patternList.elements) {
-                    TAG_Compound c_pattern = (TAG_Compound) pattern;
-                    BannerPattern bp = new BannerPattern();
-                    bp.setColor((int) ((TAG_Int) c_pattern.getElement("Color")).value);
-                    bp.setPattern((String) ((TAG_String) c_pattern.getElement("Pattern")).value);
-                    PatternList.add(bp);
-                }
-            }
+        synchronized (PatternList) {
+	        PatternList.clear();
+	        // get banner layer information
+	        TAG_Compound tag = chunks.getTileEntity(x, y, z);
+	        if (tag != null) {
+	            baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
+	
+	            // base Color
+	            BannerPattern bpBase = new BannerPattern();
+	            bpBase.setColor(baseColorIndex);
+	            bpBase.setPattern("base");
+	            PatternList.add(bpBase);
+	
+	            TAG_List patternList = (TAG_List) tag.getElement("Patterns");
+	
+	            if (patternList != null) {
+	                for (NBT_Tag pattern : patternList.elements) {
+	                    TAG_Compound c_pattern = (TAG_Compound) pattern;
+	                    BannerPattern bp = new BannerPattern();
+	                    bp.setColor((int) ((TAG_Int) c_pattern.getElement("Color")).value);
+	                    bp.setPattern((String) ((TAG_String) c_pattern.getElement("Pattern")).value);
+	                    PatternList.add(bp);
+	                }
+	            }
+	        }
         }
 
         // use material hash (to generate unique material name and images)
@@ -175,13 +179,15 @@ public class Banner extends BlockModel {
         addBanner("conf/models/banner_"+bannerType+".obj", bannerMaterial, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
 
         try {
-            boolean alreadyExported = exportedMaterials.contains(bannerMaterial);
-            // already exported material?
-            if (!alreadyExported) {
-                exportedMaterials.add(bannerMaterial);
-                generateBannerImage(bannerMaterial);
-                exportBannerMaterial(bannerMaterial, baseColorIndex);
-            }
+        	synchronized (exportedMaterials) {
+	            boolean alreadyExported = exportedMaterials.contains(bannerMaterial);
+	            // already exported material?
+	            if (!alreadyExported) {
+	                exportedMaterials.add(bannerMaterial);
+	                generateBannerImage(bannerMaterial);
+	                exportBannerMaterial(bannerMaterial, baseColorIndex);
+	            }
+			}
         }
         catch (IOException e) {
             Log.error("Cant write Banner Texture...", e, true);
@@ -364,7 +370,7 @@ public class Banner extends BlockModel {
      * @param scale
      * @param rotation
      */
-    public void addBanner(String objFileName, String material, OBJOutputFile obj, double x, double y, double z, double scale, double rotation) {
+    public void addBanner(String objFileName, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
 
         OBJInputFile objFile = new OBJInputFile();
         File objMeshFile = new File(objFileName);

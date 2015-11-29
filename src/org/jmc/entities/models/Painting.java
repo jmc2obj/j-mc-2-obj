@@ -1,8 +1,8 @@
 package org.jmc.entities.models;
 
-import org.jmc.OBJOutputFile;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
 
 
 /**
@@ -11,12 +11,12 @@ import org.jmc.geom.Vertex;
 public class Painting extends EntityModel
 {
 	@Override
-	public void addEntity(OBJOutputFile obj, Transform transform) 
+	public void addEntity(ChunkProcessor obj, Transform transform) 
 	{
 		addObject(obj, transform, materials.get((byte) -1, (byte) -1)[0]);		
 	}
 	
-	private void addObject(OBJOutputFile obj, Transform transform, String mat)
+	private void addObject(ChunkProcessor obj, Transform transform, String mat)
 	{
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, -0.5f, -0.47f);

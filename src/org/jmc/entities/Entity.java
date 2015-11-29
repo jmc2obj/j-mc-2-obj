@@ -1,8 +1,8 @@
 package org.jmc.entities;
 
-import org.jmc.OBJOutputFile;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.models.EntityModel;
+import org.jmc.threading.ChunkProcessor;
 
 public abstract class Entity {
 	
@@ -13,6 +13,6 @@ public abstract class Entity {
 		this.model=model;
 	}
 
-	public abstract void addEntity(OBJOutputFile obj, TAG_Compound entity);
+	public abstract void addEntity(ChunkProcessor obj, TAG_Compound entity);
 	
 }

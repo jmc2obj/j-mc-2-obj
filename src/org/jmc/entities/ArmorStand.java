@@ -5,13 +5,13 @@ import java.io.IOException;
 
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.OBJOutputFile;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
+import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Log;
 
 public class ArmorStand extends Entity {
@@ -54,7 +54,7 @@ public class ArmorStand extends Entity {
 
 	
 	@Override
-	public void addEntity(OBJOutputFile obj, TAG_Compound entity) {
+	public void addEntity(ChunkProcessor obj, TAG_Compound entity) {
 		
 		pos = (TAG_List) entity.getElement("Pos");
 		rot = (TAG_List) entity.getElement("Rotation");
@@ -153,7 +153,7 @@ public class ArmorStand extends Entity {
 		
 	}
 
-	public void addArmor(String objFileName, String material, OBJOutputFile obj, double x, double y, double z, double scale, double rotation) {
+	public void addArmor(String objFileName, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
 		
 		OBJInputFile objFile = new OBJInputFile();
 		File objMeshFile = new File(objFileName);

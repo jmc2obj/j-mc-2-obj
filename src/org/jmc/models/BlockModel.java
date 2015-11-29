@@ -4,14 +4,14 @@ import java.awt.Rectangle;
 
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
-import org.jmc.ChunkDataBuffer;
-import org.jmc.OBJOutputFile;
 import org.jmc.Options;
 import org.jmc.BlockInfo.Occlusion;
 import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -170,7 +170,7 @@ public abstract class BlockModel {
 	 * @return Whether to draw each side, in order TOP, FRONT, BACK, LEFT,
 	 *         RIGHT, BOTTOM
 	 */
-	protected boolean[] drawSides(ChunkDataBuffer chunks, int x, int y, int z) {
+	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z) {
 		int xmin, xmax, ymin, ymax, zmin, zmax;
 		Rectangle xy, xz;
 		xy = chunks.getXYBoundaries();
@@ -242,7 +242,7 @@ public abstract class BlockModel {
 	 *            Whether to draw each side, in order TOP, FRONT, BACK, LEFT,
 	 *            RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(OBJOutputFile obj, float xs, float ys, float zs, float xe, float ye, float ze,
+	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
 			Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides) {
 		Vertex[] vertices = new Vertex[4];
 
@@ -306,6 +306,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(OBJOutputFile obj, ChunkDataBuffer chunks, int x, int y, int z, byte data, byte biome);
+	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome);
 
 }
