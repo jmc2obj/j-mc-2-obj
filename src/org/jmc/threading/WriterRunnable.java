@@ -188,10 +188,9 @@ public class WriterRunnable implements Runnable {
 	{		
 		for (UV uv : exportTexCoords)
 		{
-			BigDecimal uRound = new BigDecimal(uv.u).setScale(4, RoundingMode.HALF_UP);
-			BigDecimal vRound = new BigDecimal(uv.v).setScale(4, RoundingMode.HALF_UP);
+			BigDecimal uRound = new BigDecimal(uv.u).setScale(9, RoundingMode.HALF_UP);
+			BigDecimal vRound = new BigDecimal(uv.v).setScale(9, RoundingMode.HALF_UP);
 			out.print("vt " + uRound.toPlainString() + " " + vRound.toPlainString());
-			//out.format((Locale)null, "vt %.4f %.4f", uv.u, uv.v);
 			out.println();
 		}
 	}
@@ -208,7 +207,6 @@ public class WriterRunnable implements Runnable {
 			BigDecimal yRound = new BigDecimal(norm.y).setScale(3, RoundingMode.HALF_UP);
 			BigDecimal zRound = new BigDecimal(norm.z).setScale(3, RoundingMode.HALF_UP);
 			out.print("vn " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
-			//out.format((Locale)null, "vn %.3f %.3f %.3f", norm.x, norm.y, norm.z);
 			out.println();
 		}
 	}
@@ -228,10 +226,6 @@ public class WriterRunnable implements Runnable {
 			BigDecimal yRound = new BigDecimal(y).setScale(3, RoundingMode.HALF_UP);
 			BigDecimal zRound = new BigDecimal(z).setScale(3, RoundingMode.HALF_UP);
 			out.print("v " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
-			/*out.format((Locale)null, "v %.3f %.3f %.3f",
-					(vertex.x+x_offset)*file_scale,
-					(vertex.y+y_offset)*file_scale,
-					(vertex.z+z_offset)*file_scale);*/
 			out.println();
 		}
 	}

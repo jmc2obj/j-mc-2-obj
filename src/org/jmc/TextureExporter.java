@@ -377,6 +377,7 @@ public class TextureExporter {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
+		Log.info("Exporting textures to \"" + destination + "\"");
 		if (!destination.exists() || !destination.isDirectory()) {
 			if (destination.exists())
 				throw new RuntimeException("Cannot create texture directory! File is in the way!");
@@ -433,6 +434,7 @@ public class TextureExporter {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
+		Log.info("Exporting textures to \"" + destination + "\"");
 		if (!destination.exists() || !destination.isDirectory()) {
 			if (destination.exists())
 				throw new RuntimeException("Cannot create texture directory! File is in the way!");
