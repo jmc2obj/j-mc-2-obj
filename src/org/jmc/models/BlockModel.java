@@ -131,8 +131,8 @@ public abstract class BlockModel {
 		if (neighborId == 0 || Options.excludeBlocks.contains(neighborId))
 			return true;
 
-		if (Options.objectPerMaterial && (neighborId != blockId))
-			return true;
+//		if (Options.objectPerMaterial && (neighborId != blockId))
+//			return true;
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.VOLUME) {
 			return blockId != neighborId;
