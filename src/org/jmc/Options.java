@@ -127,6 +127,12 @@ public class Options
 	public static boolean objectPerMaterial = false;
 
 	/**
+	 * If true and objectPerMaterial is true, will ignore occlusion rules
+	 * and always create faces for adjacent blocks that aren't the same.
+	 */
+	public static boolean objectPerMaterialOcclusionBarrier = true;
+
+	/**
 	 * If true, will export a separate object for each chunk.
 	 */
 	public static boolean objectPerChunk = false;
