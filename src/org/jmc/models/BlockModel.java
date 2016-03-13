@@ -52,20 +52,34 @@ public abstract class BlockModel {
 	/**
 	 * returns a config Value
 	 * @param tagName
-	 * @param index
+	 * @param data
 	 * @return String
 	 */
-	public String getConfigNodeValue(String tagName, int index) {
+	public String getConfigNodeValue(String tagName, int data) {
 		XPath xpath = XPathFactory.newInstance().newXPath();
-		String configValue = "";
 		try {
 			NodeList configNode = (NodeList) xpath.evaluate(tagName, this.configNode, XPathConstants.NODESET);
-			Node currentItem = configNode.item(index);
-			configValue = currentItem.getTextContent();
+			if (configNode.getLength() == 0) {
+				Log.info("No config Nodes returned for:" + tagName + ":" + data);
+				return "";
+			} else if (configNode.getLength() == 1) {
+				return configNode.item(0).getTextContent();
+			} else {
+				Node currentItem;
+				for (int i = 0; i < configNode.getLength(); i++) {
+					currentItem = configNode.item(i);
+					Node currentItemData = currentItem.getAttributes().getNamedItem("data");
+					if (Integer.parseInt(currentItemData.getNodeValue()) == data) {
+						return currentItem.getTextContent();
+					}
+				}
+				Log.info("No config nodes matched for:" + tagName + ":" + data);
+				return configNode.item(0).getTextContent(); // in case nothing was found, use the first item
+			}
 		} catch (Exception e) {
 			Log.error("Cant read config Node", e, true);
+			return "";
 		}
-		return configValue;
 	}
 
 
