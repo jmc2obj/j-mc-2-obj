@@ -397,6 +397,23 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		lblSingleTexHelp.setForeground(Color.RED);
 
 		//##########################################################################################################
+		//UV Map
+		//##########################################################################################################
+		holderUV = new JPanel();
+		holderUV.setAlignmentX(Component.LEFT_ALIGNMENT);
+		pExportOptions.add(holderUV);
+		holderUV.setLayout(new BoxLayout(holderUV, BoxLayout.X_AXIS));
+
+		textFieldSingleTexUV = new JTextField();
+		textFieldSingleTexUV.setColumns(24);
+		textFieldSingleTexUV
+				.setMaximumSize(new Dimension(Integer.MAX_VALUE, textFieldSingleTexUV.getPreferredSize().height));
+		holderUV.add(textFieldSingleTexUV);
+
+		btnBrowseUV = new JButton(Messages.getString("OBJExportPanel.BROWSE"));
+		holderUV.add(btnBrowseUV);
+
+		//##########################################################################################################
 		//ExportThreads
 		//##########################################################################################################
 		holderThreads = new JPanel();
@@ -422,23 +439,6 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		lblThreadsWarn.setToolTipText(Messages.getString("OBJExportOptions.EXPORT_THREADS_WARN"));
 		lblThreadsWarn.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblThreadsWarn.setForeground(Color.RED);
-
-		//##########################################################################################################
-		//UV Map
-		//##########################################################################################################
-		holderUV = new JPanel();
-		holderUV.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pExportOptions.add(holderUV);
-		holderUV.setLayout(new BoxLayout(holderUV, BoxLayout.X_AXIS));
-
-		textFieldSingleTexUV = new JTextField();
-		textFieldSingleTexUV.setColumns(24);
-		textFieldSingleTexUV
-				.setMaximumSize(new Dimension(Integer.MAX_VALUE, textFieldSingleTexUV.getPreferredSize().height));
-		holderUV.add(textFieldSingleTexUV);
-
-		btnBrowseUV = new JButton(Messages.getString("OBJExportPanel.BROWSE"));
-		holderUV.add(btnBrowseUV);
 
 		//##########################################################################################################
 		//Export
