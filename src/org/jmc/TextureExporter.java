@@ -222,7 +222,8 @@ public class TextureExporter {
 	 * @return
 	 * @throws Exception
 	 */
-	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress)
+//	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress)
+	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean alphas, boolean merging, File destination)
 			throws Exception {
 		List<Texture> ret = new LinkedList<Texture>();
 		Set<String> texnameset = new HashSet<String>();
@@ -342,15 +343,36 @@ public class TextureExporter {
 					}
 				}
 
-				ret.add(new Texture(texName, texture, repeating, luma));
+				if(merging){
+					ret.add(new Texture(texName, texture, repeating, luma));
+				}
+				else{
+				
+					Texture texture2 = new Texture(texName, texture, repeating, luma);
+					
+					ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
+	
+					if (alphas) {
+						try {
+							convertToAlpha(texture2.image);
+							ImageIO.write(texture2.image, "png", new File(destination, texture2.name + "_a.png"));
+						} catch (Exception e) {
+							Log.info("Cannot save alpha for: " + texture2.name + " (" + e.getMessage() + ")");
+						}
+					}
+					
+				}
 
 			}
 
 			if (progress != null)
 				progress.setProgress((i + 1) / (float) fileNodes.getLength());
 		}
-
-		return ret;
+		
+		if(merging)
+			return ret;
+		else
+			return null;
 	}
 
 	/**
@@ -385,27 +407,27 @@ public class TextureExporter {
 				throw new RuntimeException("Cannot create texture directory!");
 		}
 
-		List<Texture> textures = getTextures(texturePack, scale, progress);
+/*		List<Texture> textures = */getTextures(texturePack, scale, progress, alphas, false, destination);
 
-		float texnum = textures.size();
-		float count = 0;
-
-		for (Texture texture : textures) {
-
-			ImageIO.write(texture.image, "png", new File(destination, texture.name + ".png"));
-
-			if (alphas) {
-				try {
-					convertToAlpha(texture.image);
-					ImageIO.write(texture.image, "png", new File(destination, texture.name + "_a.png"));
-				} catch (Exception e) {
-					Log.info("Cannot save alpha for: " + texture.name + " (" + e.getMessage() + ")");
-				}
-			}
-
-			if (progress != null)
-				progress.setProgress((++count) / texnum);
-		}
+//		float texnum = textures.size();
+//		float count = 0;
+//
+//		for (Texture texture : textures) {
+//
+//			ImageIO.write(texture.image, "png", new File(destination, texture.name + ".png"));
+//
+//			if (alphas) {
+//				try {
+//					convertToAlpha(texture.image);
+//					ImageIO.write(texture.image, "png", new File(destination, texture.name + "_a.png"));
+//				} catch (Exception e) {
+//					Log.info("Cannot save alpha for: " + texture.name + " (" + e.getMessage() + ")");
+//				}
+//			}
+//
+//			if (progress != null)
+//				progress.setProgress((++count) / texnum);
+//		}
 	}
 
 	/**
@@ -444,7 +466,7 @@ public class TextureExporter {
 
 		Map<String, Rectangle> ret = new HashMap<String, Rectangle>();
 
-		List<Texture> textures = getTextures(texturePack, scale, progress);
+		List<Texture> textures = getTextures(texturePack, scale, progress, alphas, true, destination);
 
 		// calculate maxwidth so to keep the size of the final file more or less
 		// square
