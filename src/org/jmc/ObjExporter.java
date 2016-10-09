@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jmc.Options.OffsetType;
+import org.jmc.models.Banner;
 import org.jmc.threading.ReaderRunnable;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.threading.ThreadOutputQueue;
@@ -159,7 +160,9 @@ public class ObjExporter {
 					if (Options.objectPerBlock)
 						writeRunner.setPrintUseMTL(false);
 				}
-
+				
+				Banner.resetReadError();
+				
 				Log.info("Processing chunks...");
 				
 				Thread[] threads = new Thread[Options.exportThreads];

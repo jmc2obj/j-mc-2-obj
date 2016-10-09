@@ -8,8 +8,12 @@
 package org.jmc.gui;
 
 import java.awt.Dimension;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import org.jmc.util.Log;
 
 
 
@@ -92,8 +96,19 @@ public class MainWindow extends JFrame
 	 */
 	public static void log(String msg, boolean isError)
 	{
-		if(isError)
-			consoleLog.setVisible(true);
+		if(isError){
+			try {
+				SwingUtilities.invokeAndWait(new Runnable(){
+					@Override
+					public void run() {
+						consoleLog.setVisible(true);
+					}});
+			} catch (InvocationTargetException e) {
+				Log.error("Error erroring!", e);
+			} catch (InterruptedException e) {
+				Log.error("Error erroring!", e);
+			}
+		}
 		consoleLog.log(msg, isError);
 	}
 	

@@ -24,6 +24,8 @@ public class Banner extends BlockModel {
     ArrayList<BannerPattern> PatternList = new ArrayList<BannerPattern>();
 
     private Set<String> exportedMaterials = new HashSet<String>();
+
+	private static boolean firstBaseReadError = true;
     /**
      * Class for Banner Pattern Layer
      */
@@ -211,7 +213,10 @@ public class Banner extends BlockModel {
             backgroundImage = ImageIO.read(new File(Options.outputDir + "/tex/banner_base.png"));
         }
         catch (IOException e) {
-            Log.error("Cant read banner_base - did you export Textures first?", e, true);
+        	synchronized (Banner.class) {
+                Log.error("Cant read banner_base - did you export Textures first?", e, firstBaseReadError);
+                firstBaseReadError = false;
+			}
         }
 
         if (backgroundImage != null) {
@@ -228,59 +233,61 @@ public class Banner extends BlockModel {
             // get Graphics - to draw the layers
             Graphics combinedGraphics = combined.getGraphics();
             combinedGraphics.drawImage(backgroundImage, 0, 0, null);
-
-            // each layer
-            for (BannerPattern bp : PatternList) {
-
-                // target of one layer
-                BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-
-                // pattern source image
-                BufferedImage patternSource = null;
-                try {
-                    patternSource = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + ".png"));
-                }
-                catch (IOException e) {
-                    Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
-                }
-
-                // pattern source image
-                BufferedImage patternAlpha = null;
-                try {
-                    patternAlpha = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + "_a.png"));
-                }
-                catch (IOException e) {
-                    Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
-                }
-
-
-                // draw into layer..
-                Color patternColor = getColorById(bp.getColor());
-
-
-                for(int x=0; x<imageWidth; x++) {
-                    for(int y=0; y<imageHeight; y++) {
-                        Color maskColor = new Color(patternSource.getRGB(x, y));
-                        Color mainMaskColor = new Color(patternAlpha.getRGB(x, y));
-
-
-                        int alpha = maskColor.getRed();
-                        // mask the mask with the mainmask :) YEAH
-                        if (alpha > mainMaskColor.getRed()) {
-                            alpha = alpha * (mainMaskColor.getRed()/255);
-                        }
-
-                        Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
-
-                        //    Log.info(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
-                        patternImage.setRGB(x, y, currentColor.getRGB());
-                    }
-                }
-
-                // draw this layer into the main image
-                combinedGraphics.drawImage(patternImage, 0, 0, null);
-
-                Log.info(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
+            
+            synchronized (PatternList) {
+	            // each layer
+	            for (BannerPattern bp : PatternList) {
+	
+	                // target of one layer
+	                BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+	
+	                // pattern source image
+	                BufferedImage patternSource = null;
+	                try {
+	                    patternSource = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + ".png"));
+	                }
+	                catch (IOException e) {
+	                    Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
+	                }
+	
+	                // pattern source image
+	                BufferedImage patternAlpha = null;
+	                try {
+	                    patternAlpha = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + "_a.png"));
+	                }
+	                catch (IOException e) {
+	                    Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
+	                }
+	
+	
+	                // draw into layer..
+	                Color patternColor = getColorById(bp.getColor());
+	
+	
+	                for(int x=0; x<imageWidth; x++) {
+	                    for(int y=0; y<imageHeight; y++) {
+	                        Color maskColor = new Color(patternSource.getRGB(x, y));
+	                        Color mainMaskColor = new Color(patternAlpha.getRGB(x, y));
+	
+	
+	                        int alpha = maskColor.getRed();
+	                        // mask the mask with the mainmask :) YEAH
+	                        if (alpha > mainMaskColor.getRed()) {
+	                            alpha = alpha * (mainMaskColor.getRed()/255);
+	                        }
+	
+	                        Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
+	
+	                        //    Log.info(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
+	                        patternImage.setRGB(x, y, currentColor.getRGB());
+	                    }
+	                }
+	
+	                // draw this layer into the main image
+	                combinedGraphics.drawImage(patternImage, 0, 0, null);
+	
+	                Log.info(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
+	            }
             }
 
             if (!ImageIO.write(combined, "PNG", new File(Options.outputDir+"/tex", materialImageName+".png"))) {
@@ -403,6 +410,10 @@ public class Banner extends BlockModel {
 
         // do it so!
         objFile.addObjectToOutput(myObjGroup, translate, obj);
+    }
+    
+    public static synchronized void resetReadError(){
+    	firstBaseReadError = true;
     }
 
 }
