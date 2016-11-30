@@ -274,6 +274,7 @@ public class TextureExporter {
 				throw new Exception("In " + confFilePath + ": 'file' tag is missing required attribute 'name'.");
 
 			BufferedImage image;
+			
 			try {
 				if (source.equalsIgnoreCase("texturepack"))
 					image = loadImageFromZip(zipfile, fileName);
@@ -324,6 +325,7 @@ public class TextureExporter {
 				int rowPos = Integer.parseInt(parts[0], 10) - 1;
 				int colPos = Integer.parseInt(parts[1], 10) - 1;
 
+				Log.info("Creating Buffer Image");
 				BufferedImage texture = new BufferedImage(width, height, image.getType());
 				image.getSubimage(colPos * width, rowPos * height, width, height).copyData(texture.getRaster());
 
@@ -348,9 +350,81 @@ public class TextureExporter {
 				}
 				else{
 				
+					Log.info("Creating Texture File");
 					Texture texture2 = new Texture(texName, texture, repeating, luma);
-					
+					Log.info("Writing Texture File");
 					ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
+					
+					try {
+						Log.info("Trying normal map");
+						BufferedImage imageN;
+						
+						Log.info("Searching for normal");
+						if (source.equalsIgnoreCase("texturepack"))
+							imageN = loadImageFromZip(zipfile, fileName.replace(".png", "_n.png"));
+						else if (source.equalsIgnoreCase("distr"))
+							imageN = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_n.png")));
+						else
+							imageN = loadImageFromFile(new File(fileName.replace(".png", "_n.png")));
+						
+						if (imageN.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+							imageN = convertImageType(imageN);
+						
+						Log.info("Found Normal. Creating Buffered Texture.");
+						BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
+						imageN.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureN.getRaster());
+						if (scale != 1.0) {
+							try {
+								textureN = scaleImage(textureN, scale);
+							} catch (Exception e) {
+								Log.info("Cannot scale image: " + texName + "_n (" + e.getMessage() + ")");
+							}
+						}
+						
+						Log.info("Creating Texture.");
+						Texture texture2N = new Texture(texName + "_n", textureN, repeating, false);
+						Log.info("Writing Texture.");
+						ImageIO.write(texture2N.image, "png", new File(destination, texture2N.name + ".png"));
+						
+					} catch (Exception e) {
+						Log.info("Error loading image: " + e.getMessage());
+						continue;
+					}
+
+					try {
+						
+						Log.info("Trying specular map");
+						BufferedImage imageS;
+						Log.info("Searching for spec");
+						if (source.equalsIgnoreCase("texturepack"))
+							imageS = loadImageFromZip(zipfile, fileName.replace(".png", "_s.png"));
+						else if (source.equalsIgnoreCase("distr"))
+							imageS = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_s.png")));
+						else
+							imageS = loadImageFromFile(new File(fileName.replace(".png", "_s.png")));
+						
+						if (imageS.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+							imageS = convertImageType(imageS);
+						
+						Log.info("Found Specular. Creating Buffered Texture.");
+						BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
+						imageS.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureS.getRaster());
+						if (scale != 1.0) {
+							try {
+								textureS = scaleImage(textureS, scale);
+							} catch (Exception e) {
+								Log.info("Cannot scale image: " + texName + "_s (" + e.getMessage() + ")");
+							}
+						}
+						Log.info("Creating Texture.");
+						Texture texture2S = new Texture(texName + "_s", textureS, repeating, false);
+						Log.info("Writing Texture.");
+						ImageIO.write(texture2S.image, "png", new File(destination, texture2S.name + ".png"));
+						
+					} catch (Exception e) {
+						Log.info("Error loading image: " + e.getMessage());
+						continue;
+					}
 	
 					if (alphas) {
 						try {
