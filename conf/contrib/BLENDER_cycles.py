@@ -114,8 +114,8 @@ def doIt():
                 if (texName == 'pumpkin_top_lit'):
                     texName = 'pumpkin_top'
                 
-                checkPath = '//tex\\'+texName+'.png'
-                checkPathAlpha = '//tex\\'+texName+'_a.png'
+                checkPath = '//tex/'+texName+'.png'
+                checkPathAlpha = '//tex/'+texName+'_a.png'
                 if image.filepath == checkPath:
                     texImage = image
                     texImageFound = True
@@ -1624,5 +1624,4 @@ def armor_enchanted(myNodes, myLinks):
 print('----------- START ------------')
 doIt()
 print ('DONE')
-
 
