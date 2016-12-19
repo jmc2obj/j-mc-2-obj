@@ -1,11 +1,11 @@
-# Blender 2.75 Cycles Material Script 
+# Blender 2.75 Cycles Material Script
 #
 # Instruction
 # -----------------------------------------------------------------------
-# 
+#
 # - Export with jmc2obj OBJ File and Textures (Alpha into seperate files!) into one folder
 #   Now you've got the following Folder Structure
-# 
+#
 #   YourFolderName
 #   |- tex (Folder)
 #      |- a lot of png files
@@ -92,10 +92,8 @@ def doIt():
                     print (bobj.name + ' not found...')
                     continue
 
-                diffuse_color = mat.diffuse_color
+                diffuse_color = mat.diffuse_color;
 
-
-                print ('Set Material for: '+slot.name)
                 mat.use_nodes = True
                 mat.cycles.sample_as_light = True
 
@@ -104,16 +102,17 @@ def doIt():
 
                 texImageFound = False
                 texAlphaImageFound = False
+                texName = re.sub('\.\d\d\d', '', slot.name)
+
+                if (texName == 'pumpkin_side_lit'):
+                    texName = 'pumpkin_side'
+                if (texName == 'pumpkin_top_lit'):
+                    texName = 'pumpkin_top'
+
+                print('Set Material for: '+slot.name + ' - ' + texName)
+
 
                 for image in bpy.data.images:
-
-                    texName = re.sub('\.\d\d\d', '', slot.name)
-
-                    if (texName == 'pumpkin_side_lit'):
-                        texName = 'pumpkin_side'
-                    if (texName == 'pumpkin_top_lit'):
-                        texName = 'pumpkin_top'
-
                     checkPath = '//tex/'+texName+'.png'
                     checkPathAlpha = '//tex/'+texName+'_a.png'
                     if image.filepath == checkPath:
@@ -124,7 +123,7 @@ def doIt():
                         texAlphaImageFound = True
 
                 # specials
-                if (bobj.name == 'armor_enchanted'):
+                if (texName == 'armor_enchanted'):
                     armor_enchanted(nodes, links);
                 else:
                     if texImageFound == False:
@@ -163,7 +162,7 @@ def doIt():
                             "glass_pane_side_orange": makeMcMainTranslucent,
                             "glass_pane_side_white": makeMcMainTranslucent,
                             "glass_white": makeMcMainTranslucent,
-                            "water": makeMcMainTranslucent,
+                            "water": makeMcMainDiffuseTranslucent,
 
                             "armor_leather_feet_overlay": makeMcMainInvisible,
 
@@ -182,7 +181,7 @@ def doIt():
                         }
 
                         try:
-                            nMainData = mainShader[bobj.name](nodes, links)
+                            nMainData = mainShader[texName](nodes, links)
                         except KeyError:
                             nMainData = mainShader['default'](nodes, links)
 
@@ -221,12 +220,9 @@ def doIt():
                             lastMixOut = nMainData["output"]
 
                         # emission demo (torches, sea_lantern, etc)
-                        if (
-                                            (bobj.name == 'sea_lantern') or
-                                            (bobj.name == 'torch_flame') or
-                                        (bobj.name == 'fire') or
-                                    ((bobj.name.startswith( 'pumpkin_') and bobj.name.endswith( '_lit')))
-                        ):
+                        if (texName in [ 'sea_lantern','torch_flame','fire'] or
+                                ((texName.startswith( 'pumpkin_') and texName.endswith( '_lit')))
+                            ):
                             mat.cycles.sample_as_light = True
 
                             nOutput.location = (1300.0, 0.0)
@@ -239,17 +235,17 @@ def doIt():
 
                             nEmit = nodes.new(type='ShaderNodeEmission');
                             nEmit.location = (700, 150.0)
-                            if bobj.name == 'sea_lantern':
+                            if texName == 'sea_lantern':
                                 nEmit.inputs[0].default_value = (1, 1, 1, 1)
                                 nEmit.inputs["Strength"].default_value = 5
 
-                            if bobj.name == 'torch_flame':
+                            if texName == 'torch_flame':
                                 nEmit.inputs[0].default_value = (1, 0.25, 0, 1)
                                 nEmit.inputs["Strength"].default_value = 30
-                            if bobj.name == 'fire':
+                            if texName == 'fire':
                                 nEmit.inputs[0].default_value = (1, 0.11, 0, 1)
                                 nEmit.inputs["Strength"].default_value = 50
-                            if (bobj.name.startswith( 'pumpkin_')):
+                            if (texName.startswith( 'pumpkin_')):
                                 nEmit.inputs[0].default_value = (1, 0.46, 0, 1)
                                 nEmit.inputs["Strength"].default_value = 7
 
@@ -287,9 +283,9 @@ def doIt():
                                 nMatMix.location = (650.0, -100.0)
 
 
-                                if (bobj.name == 'sea_lantern'):
+                                if (texName== 'sea_lantern'):
                                     nMatMix.inputs[0].default_value = 0.07
-                                if (bobj.name.startswith( 'pumpkin_')):
+                                if (texName.startswith( 'pumpkin_')):
                                     nMatMix.inputs[0].default_value = 0.005
 
 
@@ -304,8 +300,8 @@ def doIt():
 
                         # glass special
                         if (
-                                    (bobj.name.startswith( 'glass_')) or
-                                    (bobj.name == 'glass')
+                                    (texName.startswith( 'glass_')) or
+                                    (texName == 'glass')
                         ):
 
                             nOutput.location = (1900.0, 00.0)
@@ -403,11 +399,11 @@ def doIt():
                             #links.new(nAdd.outputs['Shader'], nOutput.inputs['Surface'])
 
 
-                        if ((bobj.name.startswith( 'armor_')) and
-                                (bobj.name != 'armor_stand') and
-                                (bobj.name != 'armor_enchanted')
+                        if ((texName.startswith( 'armor_')) and
+                                (texName != 'armor_stand') and
+                                (texName != 'armor_enchanted')
                             ):
-                            if (bobj.name.startswith('armor_leather')):
+                            if (texName.startswith('armor_leather')):
                                 nTex.location = (-200.0, -200.0)
                                 nMixRGB = nodes.new(type='ShaderNodeMixRGB');
                                 nMixRGB.location = (000.0, 0.0)
@@ -425,7 +421,7 @@ def doIt():
 
 
                         # water
-                        if (bobj.name == 'water'):
+                        if texName == 'water':
                             nOutput.location = (1100.0, 0.0)
 
                             nMix.inputs[0].default_value = 0.25
