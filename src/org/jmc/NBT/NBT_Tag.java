@@ -103,6 +103,9 @@ public abstract class NBT_Tag {
 		case 11:
 			ret=new TAG_Int_Array(name);
 			break;
+		case 12:
+			ret=new TAG_Long_Array(name);
+			break;
 		default:
 			throw(new Exception("NBT_Tag type error: "+type));
 		}
