@@ -13,6 +13,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -203,23 +204,22 @@ public class Chunk {
 				int base=yval.value*16*16*16;
 				
 				int blockBits = Math.max(tagBlockStates.data.length / 4096, 4); // Minimum of 4 bits.
-				for (int i = 0; i < tagBlockStates.data.length; i++) {
-					long blockState = tagBlockStates.data[i];
-					for (int bit = 0; bit < 64/*64 bit longs*/; bit += blockBits) {
-						long blockPid = blockState >> bit;// probably a horrifically bad way of doing this but i suck at bit manipulation.
-						long bitMask = 0;
-						for (int b = 0; b < blockBits ; b++) {
-							bitMask |= 1L << b;
-						}
-						blockPid &= bitMask;
-						
-						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
-						TAG_String blockName = (TAG_String)blockTag.getElement("Name");
-						//Log.debug(String.format("blockPid = %d, blockName = %s", blockPid, blockName.value));
-						
-						ret.id[base+i+(bit/blockBits)] = (short) IDConvert.strToInt(blockName.value);
-						//ret.data[] = //data from nbt tags??? probably needs special treatment for each block type
+				BitSet blockStates = BitSet.valueOf(tagBlockStates.data);
+				for (int i = 0; i < 4096; i++) {
+					long blockPid;
+					BitSet blockBitArr = blockStates.get(i*blockBits, (i+1)*blockBits);
+					if (blockBitArr.length() < 1) {
+						blockPid = 0;
+					} else {
+						blockPid = blockBitArr.toLongArray()[0];
 					}
+					
+					TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
+					TAG_String blockName = (TAG_String)blockTag.getElement("Name");
+					//Log.debug(String.format("blockPid = %d, blockName = %s, blockID = %d", blockPid, blockName.value, IDConvert.strToInt(blockName.value)));
+					
+					ret.id[base+i] = (short) IDConvert.strToInt(blockName.value);
+					//ret.data[] = //data from nbt tags??? probably needs special treatment for each block type
 				}
 				/*
 				for(int i=0; i<tagBlocks.data.length; i++)
