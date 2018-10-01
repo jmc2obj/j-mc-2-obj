@@ -203,7 +203,7 @@ public class Chunk {
 
 				int base=yval.value*16*16*16;
 				
-				int blockBits = Math.max(tagBlockStates.data.length / 4096, 4); // Minimum of 4 bits.
+				int blockBits = Math.max((tagBlockStates.data.length * 64) / 4096, 4); // Minimum of 4 bits.
 				BitSet blockStates = BitSet.valueOf(tagBlockStates.data);
 				for (int i = 0; i < 4096; i++) {
 					long blockPid;
