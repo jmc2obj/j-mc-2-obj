@@ -13,7 +13,7 @@ public class PistonBase extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data, byte biome)
+	protected String[] getMtlSides(byte data, int biome)
 	{
 		boolean open = (data & 8) != 0;
 		String[] abbrMtls = materials.get(data,biome);
@@ -30,7 +30,7 @@ public class PistonBase extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		boolean open = (data & 8) != 0;
 		int dir = (data & 7);

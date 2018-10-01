@@ -21,7 +21,12 @@ import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
+import org.jmc.NBT.TAG_Int_Array;
 import org.jmc.NBT.TAG_List;
+import org.jmc.NBT.TAG_Long_Array;
+import org.jmc.NBT.TAG_String;
+import org.jmc.util.IDConvert;
+import org.jmc.util.Log;
 /**
  * Class describing a chunk. A chunk is a 16x16 group of blocks of 
  * varying heights (in Anvil) or 128 (in Region).
@@ -66,7 +71,7 @@ public class Chunk {
 	{
 		this.is_anvil=is_anvil;
 
-		root=(TAG_Compound) NBT_Tag.make(is);		
+		root=(TAG_Compound) NBT_Tag.make(is);
 		is.close();
 
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
@@ -132,7 +137,7 @@ public class Chunk {
 		{
 			id=new short[block_num];
 			data=new byte[block_num];
-			biome=new byte[biome_num];
+			biome=new int[biome_num];
 			Arrays.fill(biome, (byte)255);
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
@@ -149,7 +154,7 @@ public class Chunk {
 		/**
 		 * Biome IDSs (only XZ axes).
 		 */
-		public byte [] biome;
+		public int [] biome;
 
 		/**
 		 * Entities.
@@ -171,7 +176,7 @@ public class Chunk {
 		Blocks ret=null;		
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 
-		if(is_anvil)
+		if(is_anvil)// can we detect if the level format is >= 1.13?
 		{
 			int ymax=0;			
 			TAG_List sections = (TAG_List) level.getElement("Sections");
@@ -189,13 +194,34 @@ public class Chunk {
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
-				TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
-				TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-				TAG_Byte_Array tagBiomes = (TAG_Byte_Array) level.getElement("Biomes");
-				TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
+				TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
+				TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
+				TAG_Int_Array tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
+				//TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 
 				int base=yval.value*16*16*16;
+				
+				int blockBits = Math.max(tagBlockStates.data.length / 4096, 4); // Minimum of 4 bits.
+				for (int i = 0; i < tagBlockStates.data.length; i++) {
+					long blockState = tagBlockStates.data[i];
+					for (int bit = 0; bit < 64/*64 bit longs*/; bit += blockBits) {
+						long blockPid = blockState >> bit;// probably a horrifically bad way of doing this but i suck at bit manipulation.
+						long bitMask = 0;
+						for (int b = 0; b < blockBits ; b++) {
+							bitMask |= 1L << b;
+						}
+						blockPid &= bitMask;
+						
+						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
+						TAG_String blockName = (TAG_String)blockTag.getElement("Name");
+						//Log.debug(String.format("blockPid = %d, blockName = %s", blockPid, blockName.value));
+						
+						ret.id[base+i+(bit/blockBits)] = (short) IDConvert.strToInt(blockName.value);
+						//ret.data[] = //data from nbt tags??? probably needs special treatment for each block type
+					}
+				}
+				/*
 				for(int i=0; i<tagBlocks.data.length; i++)
 					ret.id[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
 
@@ -217,7 +243,7 @@ public class Chunk {
 					byte add2=(byte)(tagData.data[i]>>4);
 					ret.data[base+2*i]=add1;
 					ret.data[base+2*i+1]=add2;
-				}
+				}*/
 
 				if(tagBiomes!=null)
 				{
@@ -300,7 +326,7 @@ public class Chunk {
 
 		short blockID=0;
 		byte blockData=0;
-		byte blockBiome=0;
+		int blockBiome=0;
 		Color c;
 		Blocks bd=getBlocks();		
 
@@ -322,7 +348,7 @@ public class Chunk {
 
 		short ids[]=new short[16*16];
 		byte data[]=new byte[16*16];
-		byte biome[]=new byte[16*16];
+		int biome[]=new int[16*16];
 		int himage[]=null;
 		if(!fastmode)
 			himage=new int[16*16];

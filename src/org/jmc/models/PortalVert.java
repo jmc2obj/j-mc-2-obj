@@ -13,7 +13,7 @@ public class PortalVert extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		// find in which direction are the other portal blocks
 		boolean ns = chunks.getBlockID(x, y, z-1) == blockId || chunks.getBlockID(x, y, z+1) == blockId;

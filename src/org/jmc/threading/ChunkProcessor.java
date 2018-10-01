@@ -122,7 +122,7 @@ public class ChunkProcessor
 				{
 					short blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
-					byte blockBiome=chunk.getBlockBiome(x, z);
+					int blockBiome=chunk.getBlockBiome(x, z);
 					
 					if(blockID==0)
 						continue;

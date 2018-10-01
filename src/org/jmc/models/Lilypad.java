@@ -13,7 +13,7 @@ public class Lilypad extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		// Minecraft decides which direction the lilypad faces based on some 
 		// on-the-fly calculation (it's not stored in the data value)

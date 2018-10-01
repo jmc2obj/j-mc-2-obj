@@ -12,7 +12,7 @@ public class Snow extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		drawSides[0] = true;

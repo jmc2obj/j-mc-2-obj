@@ -111,7 +111,7 @@ public class ThreadChunkDeligate {
 		}
 	}
 	
-	public byte getBlockBiome(int x, int z)
+	public int getBlockBiome(int x, int z)
 	{
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);

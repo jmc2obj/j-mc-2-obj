@@ -12,7 +12,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class PistonArm extends BlockModel
 {
 
-	private String[] getMtlSidesTop(byte data, byte biome)
+	private String[] getMtlSidesTop(byte data, int biome)
 	{
 		boolean sticky = (data & 8) != 0;
 		String[] abbrMtls = materials.get(data,biome);
@@ -27,7 +27,7 @@ public class PistonArm extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesArm(byte data, byte biome)
+	private String[] getMtlSidesArm(byte data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -43,7 +43,7 @@ public class PistonArm extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		int dir = (data & 7);
 

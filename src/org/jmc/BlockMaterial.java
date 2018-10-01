@@ -13,7 +13,7 @@ public class BlockMaterial
 
 	private String[][] dataMaterials = new String[16][];
 
-	private Map<Byte,String[][]> biomeMaterials = new HashMap<Byte, String[][]>();
+	private Map<Integer,String[][]> biomeMaterials = new HashMap<Integer, String[][]>();
 
 	private byte dataMask = (byte)0x0F;
 
@@ -57,7 +57,7 @@ public class BlockMaterial
 	 * @param dataValue
 	 * @param mtlNames
 	 */
-	public void put(byte biomeValue, byte dataValue, String[] mtlNames)
+	public void put(int biomeValue, byte dataValue, String[] mtlNames)
 	{
 		if (dataValue < -1 || dataValue > 15)
 			throw new IllegalArgumentException("dataValue must be between -1 and 15");				
@@ -102,7 +102,7 @@ public class BlockMaterial
 	 * @param biomeValue Block biome value.
 	 * @return Array of material names, or null.
 	 */
-	public String[] get(byte dataValue, byte biomeValue)
+	public String[] get(byte dataValue, int biomeValue)
 	{		
 		String[] mtlNames = null;
 		if(Options.renderBiomes && biomeMaterials.containsKey(biomeValue))

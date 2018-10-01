@@ -12,7 +12,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Lever extends BlockModel
 {
 
-	private String[] getMtlSidesBase(byte data, byte biome)
+	private String[] getMtlSidesBase(byte data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -26,7 +26,7 @@ public class Lever extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesLever(byte data, byte biome)
+	private String[] getMtlSidesLever(byte data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -42,7 +42,7 @@ public class Lever extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		boolean on = (data & 8) != 0;
 		int dir = (data & 7);

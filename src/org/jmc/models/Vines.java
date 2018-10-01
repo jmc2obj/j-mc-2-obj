@@ -15,7 +15,7 @@ public class Vines extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		short topId = chunks.getBlockID(x, y+1, z);
 		

@@ -14,7 +14,7 @@ public class RedstoneRepeater extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data, byte biome)
+	protected String[] getMtlSides(byte data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -29,7 +29,7 @@ public class RedstoneRepeater extends BlockModel
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		int dir = data & 3;
 		int delay = (data>>2) & 3;

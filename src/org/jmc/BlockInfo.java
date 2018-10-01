@@ -88,7 +88,7 @@ public class BlockInfo
 	 * @param data Block data
 	 * @return Block color
 	 */
-	public Color getPreviewColor(byte data, byte biome)
+	public Color getPreviewColor(byte data, int biome)
 	{
 		String[] mtlNames = getMaterials().get(data,biome);
 		if (mtlNames == null || mtlNames.length == 0)

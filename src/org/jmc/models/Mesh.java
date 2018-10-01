@@ -124,7 +124,7 @@ public class Mesh extends BlockModel
 	}
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		if(data<0) data=(byte) (16+data);
 
@@ -134,7 +134,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , byte data, byte biome, Transform trans)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , byte data, int biome, Transform trans)
 	{
 		boolean match=mesh_data.matches(chunks, x, y, z, data);
 

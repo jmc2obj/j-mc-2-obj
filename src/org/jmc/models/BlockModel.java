@@ -72,7 +72,7 @@ public abstract class BlockModel {
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data, byte biome) {
+	protected String[] getMtlSides(byte data, int biome) {
 		String[] abbrMtls = materials.get(data, biome);
 
 		String[] mtlSides = new String[6];
@@ -306,6 +306,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome);
+	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome);
 
 }

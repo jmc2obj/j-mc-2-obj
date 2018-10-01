@@ -11,7 +11,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class WoodLog extends BlockModel
 {
 
-	protected String[] getMtlSides(byte data, byte biome, int dir)
+	protected String[] getMtlSides(byte data, int biome, int dir)
 	{
 		String[] mat = materials.get(data, biome);
 		
@@ -40,7 +40,7 @@ public class WoodLog extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		// 0 - upright
 		// 1 - lying east-west

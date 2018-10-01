@@ -13,7 +13,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class TripwireHook extends BlockModel
 {
 
-	private String[] getMtlSides(byte data, byte biome, int i)
+	private String[] getMtlSides(byte data, int biome, int i)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -29,7 +29,7 @@ public class TripwireHook extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		int dir = (data & 3);
 		boolean connected = (data & 4) != 0;
