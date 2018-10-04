@@ -396,7 +396,7 @@ public class Chunk {
 				blockData = data[z*16+x];
 				blockBiome = biome[z*16+x];
 				
-				if(blockID != null && blockID.endsWith("air"))
+				if(blockID != null && !blockID.endsWith("air"))
 				{
 					c = BlockTypes.get(blockID).getPreviewColor(blockData,blockBiome);
 					if(c!=null)
