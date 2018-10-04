@@ -12,11 +12,11 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class RedstoneWire extends BlockModel
 {
 
-	private boolean isConnectable(int otherBlockId, boolean sameLevel)
+	private boolean isConnectable(String otherBlockId, boolean sameLevel)
 	{
 		if (blockId == otherBlockId)
 			return true;
-		if (sameLevel && (otherBlockId == 75 || otherBlockId == 76))
+		if (sameLevel && (otherBlockId == "minecraft:redstone_torch" || otherBlockId == "minecraft:redstone_wall_torch"))
 			return true;
 		return false;
 	}

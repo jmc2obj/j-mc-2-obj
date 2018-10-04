@@ -32,14 +32,14 @@ public class BlockTypes
 	private static final String CONFIG_FILE = "conf/blocks.conf";
 
 
-	private static HashMap<Short, BlockInfo> blockTable;
+	private static HashMap<String, BlockInfo> blockTable;
 
-	private static HashSet<Short> unknownBlockIds;
+	private static HashSet<String> unknownBlockIds;
 	
 	private static BlockInfo unknownBlock;
 
 
-	private static void readConfig(HashMap<Short, BlockInfo> blockTable) throws Exception
+	private static void readConfig(HashMap<String, BlockInfo> blockTable) throws Exception
 	{
 		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
@@ -53,12 +53,7 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 
-			short id = Short.parseShort(Xml.getAttribute(blockNode, "id", "0"), 10);
-			if (id < 1)
-			{
-				Log.info("Skipping block with invalid id");
-				continue;
-			}
+			String id = Xml.getAttribute(blockNode, "id", "0");
 
 			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Cube";
@@ -196,7 +191,7 @@ public class BlockTypes
 	{
 		mesh.mesh_data.data = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
 		mesh.mesh_data.mask = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
-		mesh.mesh_data.id  = (short) Integer.parseInt(Xml.getAttribute(meshNode, "id", "-1"), 10);
+		mesh.mesh_data.id  = Xml.getAttribute(meshNode, "id", "");
 		String offset_str = Xml.getAttribute(meshNode, "offset", "");
 		if(offset_str.length()>0)
 		{
@@ -351,12 +346,12 @@ public class BlockTypes
 		unknownBlock = new UnknownBlockInfo();
 
 		// create table to keep track of unknown block ids found
-		unknownBlockIds = new HashSet<Short>();
+		unknownBlockIds = new HashSet<String>();
 		
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");
 
-		blockTable = new HashMap<Short, BlockInfo>();
+		blockTable = new HashMap<String, BlockInfo>();
 		readConfig(blockTable);
 
 		Log.info("Loaded " + blockTable.size() + " block definitions.");
@@ -366,23 +361,23 @@ public class BlockTypes
 	/**
 	 * Gets the block information for the given block id.
 	 * If the block id is not found, returns a default BlockInfo structure for 
-	 * "unknown" blocks. The block id of the unknown block is always -1. 
+	 * "unknown" blocks. The block id of the unknown block is always "". 
 	 * 
-	 * @param id Block id
+	 * @param blockId Block id
 	 * @return BlockInfo structure
 	 */
-	public static BlockInfo get(short id)
+	public static BlockInfo get(String blockId)
 	{
-		BlockInfo bi = blockTable.get(id);
-		if (bi == null && id > 0 && !unknownBlockIds.contains(id)) {
-			Log.info("Found unknow block id: " + id);
-			unknownBlockIds.add(id);
+		BlockInfo bi = blockTable.get(blockId);
+		if (bi == null && !blockId.isEmpty() && !unknownBlockIds.contains(blockId)) {
+			Log.info("Found unknown block id: " + blockId);
+			unknownBlockIds.add(blockId);
 		}
 
 		return bi != null ? bi : unknownBlock;
 	}
 	
-	public static HashMap<Short, BlockInfo> getAll()
+	public static HashMap<String, BlockInfo> getAll()
 	{
 		return blockTable;
 	}

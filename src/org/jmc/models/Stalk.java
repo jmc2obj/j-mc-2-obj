@@ -16,25 +16,26 @@ public class Stalk extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		boolean n,s,e,w;
+		n=s=e=w=false;
 		
-		if (blockId == 104)
+		if (blockId == "minecraft:attached_pumpkin_stem")
 		{
 			// we're a pumpkin stalk, look for pumpkins around
-			n = chunks.getBlockID(x, y, z-1) == 86;
-			s = chunks.getBlockID(x, y, z+1) == 86;
-			e = chunks.getBlockID(x+1, y, z) == 86;
-			w = chunks.getBlockID(x-1, y, z) == 86;
+			n = chunks.getBlockID(x, y, z-1) == "minecraft:pumpkin";
+			s = chunks.getBlockID(x, y, z+1) == "minecraft:pumpkin";
+			e = chunks.getBlockID(x+1, y, z) == "minecraft:pumpkin";
+			w = chunks.getBlockID(x-1, y, z) == "minecraft:pumpkin";
 		}
-		else
+		else if (blockId == "minecraft:attached_melon_stem")
 		{
 			// we're a melon stalk, look for melons around 
-			n = chunks.getBlockID(x, y, z-1) == 103;
-			s = chunks.getBlockID(x, y, z+1) == 103;
-			e = chunks.getBlockID(x+1, y, z) == 103;
-			w = chunks.getBlockID(x-1, y, z) == 103;
+			n = chunks.getBlockID(x, y, z-1) == "minecraft:melon";
+			s = chunks.getBlockID(x, y, z+1) == "minecraft:melon";
+			e = chunks.getBlockID(x+1, y, z) == "minecraft:melon";
+			w = chunks.getBlockID(x-1, y, z) == "minecraft:melon";
 		}
 		
-		if (data == 7 && (n||s||e||w))
+		if (blockId == "minecraft:attached_pumpkin_stem" || blockId == "minecraft:attached_melon_stem" && (n||s||e||w))
 		{
 			// bent stalk
 			Transform translate = new Transform();

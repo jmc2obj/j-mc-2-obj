@@ -13,17 +13,24 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Fence extends BlockModel
 {
 	/** Blocks to which fences will connect */
-	private static HashSet<Short> connectable;
+	private static HashSet<String> connectable;
 	
 	static
 	{
-		short[] ids = new short[] {
+		/*short[] ids = new short[] {
 				1,2,3,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,
 				60,61,62,73,74,80,82,84,85,86,87,88,91,97,98,107,110,112,113,121,123,124,129,183,184,
 				185,186,187,188,189,190,191,192
+			};*/
+		String[] ids = new String[] {
+				"stone","grass","dirt"
+				/*,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,
+				60,61,62,73,74,80,82,84,85,86,87,88,91,97,98,107,110,112,113,121,123,124,129,183,184,
+				185,186,187,188,189,190,191,192*/
+				//FIXME this ID spaghetti mess!!
 			};
 		
-		connectable = new HashSet<Short>(ids.length);
+		connectable = new HashSet<String>(ids.length);
 		for (int i = 0; i < ids.length; i++)
 			connectable.add(ids[i]);
 	}

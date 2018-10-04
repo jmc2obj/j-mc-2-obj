@@ -186,7 +186,7 @@ public class Options
 	/**
 	 * List of block ids to exclude.
 	 */
-	public static Set<Short> excludeBlocks = new HashSet<Short>();
+	public static Set<String> excludeBlocks = new HashSet<String>();
 
 	/**
 	 * If true, UV file is used to convert UVs during export.

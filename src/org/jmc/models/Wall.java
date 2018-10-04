@@ -13,23 +13,28 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Wall extends BlockModel
 {
 	/** Blocks to which walls will connect */
-	private static HashSet<Short> connectable;
+	private static HashSet<String> connectable;
 	
 	static
 	{
-		short[] ids = new short[] {
+		/*short[] ids = new String[] {
 				1,2,3,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,
 				60,61,62,73,74,80,82,84,86,87,88,91,97,98,107,110,112,121,123,124,129
+			};*/
+		String[] ids = new String[] {
+				"stone","grass","dirt"
+				//,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,60,61,62,73,74,80,82,84,86,87,88,91,97,98,107,110,112,121,123,124,129
+				//FIXME this ID spaghetti mess!!
 			};
 		
-		connectable = new HashSet<Short>(ids.length);
+		connectable = new HashSet<String>(ids.length);
 		for (int i = 0; i < ids.length; i++)
-			connectable.add(ids[i]);
+			connectable.add("minecraft:" + ids[i]);
 	}
 	
 	private boolean checkConnect(ThreadChunkDeligate chunks, byte data, int x, int y, int z)
 	{
-		int otherId = chunks.getBlockID(x, y, z);
+		String otherId = chunks.getBlockID(x, y, z);
 		if (connectable.contains(otherId))
 			return true;
 

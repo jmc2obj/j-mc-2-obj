@@ -17,17 +17,17 @@ public class UnknownBlockInfo extends BlockInfo
 
 	UnknownBlockInfo()
 	{
-		super(-1, "unknown", null, Occlusion.NONE, null);
+		super("", "unknown", null, Occlusion.NONE, null);
 
 		materials = new BlockMaterial();
 		materials.put(new String[] { "unknown" });
 
 		cubeModel = new Cube();
-		cubeModel.setBlockId((short)-1);
+		cubeModel.setBlockId("");
 		cubeModel.setMaterials(materials);
 
 		noneModel = new None();
-		noneModel.setBlockId((short)-1);
+		noneModel.setBlockId("");
 		noneModel.setMaterials(materials);
 	}
 

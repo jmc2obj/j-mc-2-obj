@@ -12,9 +12,9 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Tripwire extends BlockModel
 {
 
-	private boolean isConnectable(int otherBlockId)
+	private boolean isConnectable(String otherBlockId)
 	{
-		return otherBlockId == blockId || otherBlockId == 131;
+		return otherBlockId == blockId || otherBlockId == "minecraft:tripwire";
 	}
 	
 	@Override

@@ -29,7 +29,7 @@ public class BlockInfo
 
 	
 	/** Block id */
-	protected int id;
+	protected String id;
 	
 	/** Block name */
 	protected String name;
@@ -45,7 +45,7 @@ public class BlockInfo
 	
 
 	/** @return Block id */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -71,9 +71,9 @@ public class BlockInfo
 
 	
 	/** Convenience constructor */
-	BlockInfo(int id, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
+	BlockInfo(String id2, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
 	{
-		this.id = id;
+		this.id = id2;
 		this.name = name;
 		this.materials = materials;
 		this.occlusion = occlusion;

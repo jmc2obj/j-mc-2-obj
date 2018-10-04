@@ -16,12 +16,12 @@ public class Pane extends BlockModel
 {
 	
 	/** Checks whether the pane should connect to another block */
-	private boolean checkConnect(short otherId)
+	private boolean checkConnect(String otherId)
 	{
 		// connects to other panes, glass, and any solid blocks
-		if (otherId == 0)
+		if (otherId.endsWith("air"))
 			return false;
-		if (otherId == 101 || otherId == 102 || otherId == 160 || otherId == 20 || otherId == 95)
+		if (otherId == "minecraft:iron_bars" || otherId.endsWith("glass_pane") || otherId.endsWith("glass"))
 			return true;
 		return BlockTypes.get(otherId).getOcclusion() == BlockInfo.Occlusion.FULL;
 	}

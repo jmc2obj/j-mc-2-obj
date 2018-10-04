@@ -25,7 +25,7 @@ import javax.xml.xpath.XPathFactory;
  * rendering the geometry that represents the blocks.
  */
 public abstract class BlockModel {
-	protected short blockId = -1;
+	protected String blockId = "";
 	protected Node configNode = null;
 	protected BlockMaterial materials = null;
 
@@ -33,8 +33,8 @@ public abstract class BlockModel {
 	 * Id of the block this model will be rendering. This information may
 	 * influence the behavior of the model.
 	 */
-	public void setBlockId(short val) {
-		this.blockId = val;
+	public void setBlockId(String id) {
+		this.blockId = id;
 	}
 
 	/**
@@ -121,14 +121,14 @@ public abstract class BlockModel {
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, short neighborId) {
+	protected boolean drawSide(Side side, String neighborId) {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighborId == -1)
+		if (neighborId == "")
 			return Options.renderSides;
 
-		if (neighborId == 0 || Options.excludeBlocks.contains(neighborId))
+		if (neighborId.endsWith("air") || Options.excludeBlocks.contains(neighborId))
 			return true;
 
 		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (neighborId != blockId))
@@ -184,12 +184,12 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP, y == ymax ? -1 : chunks.getBlockID(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, z == zmin ? -1 : chunks.getBlockID(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, z == zmax ? -1 : chunks.getBlockID(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, x == xmin ? -1 : chunks.getBlockID(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, x == xmax ? -1 : chunks.getBlockID(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y == ymin ? -1 : chunks.getBlockID(x, y - 1, z));
+		sides[0] = drawSide(Side.TOP, y == ymax ? "" : chunks.getBlockID(x, y + 1, z));
+		sides[1] = drawSide(Side.FRONT, z == zmin ? "" : chunks.getBlockID(x, y, z - 1));
+		sides[2] = drawSide(Side.BACK, z == zmax ? "" : chunks.getBlockID(x, y, z + 1));
+		sides[3] = drawSide(Side.LEFT, x == xmin ? "" : chunks.getBlockID(x - 1, y, z));
+		sides[4] = drawSide(Side.RIGHT, x == xmax ? "" : chunks.getBlockID(x + 1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z));
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
 			short data = chunks.getBlockData(x, y, z);

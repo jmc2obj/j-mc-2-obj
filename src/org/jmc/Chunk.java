@@ -136,7 +136,7 @@ public class Chunk {
 		 */
 		public Blocks(int block_num, int biome_num)
 		{
-			id=new short[block_num];
+			id=new String[block_num];
 			data=new byte[block_num];
 			biome=new int[biome_num];
 			Arrays.fill(biome, (byte)255);
@@ -146,7 +146,7 @@ public class Chunk {
 		/**
 		 * Block IDs.
 		 */
-		public short [] id;
+		public String [] id;
 		/**
 		 * Block meta-data.
 		 */
@@ -218,7 +218,7 @@ public class Chunk {
 					TAG_String blockName = (TAG_String)blockTag.getElement("Name");
 					//Log.debug(String.format("blockPid = %d, blockName = %s, blockID = %d", blockPid, blockName.value, IDConvert.strToInt(blockName.value)));
 					
-					ret.id[base+i] = (short) IDConvert.strToInt(blockName.value);
+					ret.id[base+i] = blockName.value;
 					//ret.data[] = //data from nbt tags??? probably needs special treatment for each block type
 				}
 				/*
@@ -266,7 +266,7 @@ public class Chunk {
 			ret=new Blocks(blocks.data.length,256);
 
 			for(int i=0; i<blocks.data.length; i++)
-				ret.id[i]=blocks.data[i];
+				ret.id[i]=IDConvert.intToStr(blocks.data[i]);//TODO old format conversion
 
 			for(int i=0; i<data.data.length; i++)
 			{
@@ -324,7 +324,7 @@ public class Chunk {
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
-		short blockID=0;
+		String blockID="minecraft:air";
 		byte blockData=0;
 		int blockBiome=0;
 		Color c;
@@ -346,7 +346,7 @@ public class Chunk {
 			floor=ceiling-1;
 
 
-		short ids[]=new short[16*16];
+		String ids[]=new String[16*16];
 		byte data[]=new byte[16*16];
 		int biome[]=new int[16*16];
 		int himage[]=null;
@@ -358,7 +358,7 @@ public class Chunk {
 		{
 			for(x = 0; x < 16; x++)
 			{
-				ids[z*16+x]=0;
+				ids[z*16+x]="minecraft:air";
 
 				for(y = floor; y < ceiling; y++)
 				{
@@ -375,7 +375,7 @@ public class Chunk {
 						blockData = bd.data[y + (z * 128) + (x * 128) * 16];
 					}
 
-					if(blockID != 0)
+					if(blockID != null && !blockID.endsWith("air"))
 					{
 						ids[z*16+x]=blockID;
 						data[z*16+x]=blockData;
@@ -395,7 +395,8 @@ public class Chunk {
 				blockID = ids[z*16+x];
 				blockData = data[z*16+x];
 				blockBiome = biome[z*16+x];
-				if(blockID != 0)
+				
+				if(blockID != null && blockID.endsWith("air"))
 				{
 					c = BlockTypes.get(blockID).getPreviewColor(blockData,blockBiome);
 					if(c!=null)

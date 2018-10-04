@@ -25,7 +25,7 @@ public class Mesh extends BlockModel
 		public byte data;
 		public byte mask;		
 		public Vertex offset;
-		public short id;		
+		public String id;		
 		public Transform transform;
 		public boolean fallthrough;
 
@@ -33,7 +33,7 @@ public class Mesh extends BlockModel
 		{
 			data=-1;
 			mask=-1;
-			id=-1;
+			id="";
 			offset=null;
 			transform=null;
 			fallthrough=false;
@@ -51,13 +51,13 @@ public class Mesh extends BlockModel
 			else
 			{
 				byte d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
-				short i=chunks.getBlockID(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				String i=chunks.getBlockID(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
 
 				if(mask>0) d=(byte)(d&mask);
 
 				if(data>=0 && data!=d) return false;
 
-				if(id>=0 && i!=id) return false;
+				if(!id.endsWith("air") && i!=id) return false;
 
 				return true;
 			}

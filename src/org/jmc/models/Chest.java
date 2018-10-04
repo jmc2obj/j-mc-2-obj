@@ -30,11 +30,11 @@ public class Chest extends BlockModel
 	/**	Checks whether the chest is able to form double-chests */
 	private boolean canDouble()
 	{
-		return this.blockId != 130;
+		return this.blockId != "minecraft:chest";
 	}
 	
 	/** Checks whether the chest is part of a double-chest */
-	private boolean checkConnect(short otherId)
+	private boolean checkConnect(String otherId)
 	{
 		return canDouble() && blockId == otherId;
 	}

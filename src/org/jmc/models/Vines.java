@@ -17,9 +17,9 @@ public class Vines extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
-		short topId = chunks.getBlockID(x, y+1, z);
+		String topId = chunks.getBlockID(x, y+1, z);
 		
-		boolean top = topId != 0 && BlockTypes.get(topId).getOcclusion() == BlockInfo.Occlusion.FULL;
+		boolean top = !topId.endsWith("air") && BlockTypes.get(topId).getOcclusion() == BlockInfo.Occlusion.FULL;
 		boolean s = (data & 1) != 0;
 		boolean w = (data & 2) != 0;
 		boolean n = (data & 4) != 0;

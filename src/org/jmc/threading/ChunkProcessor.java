@@ -120,19 +120,19 @@ public class ChunkProcessor
 			{
 				for(int y = ymin; y < ymax; y++)
 				{
-					short blockID=chunk.getBlockID(x, y, z);
+					String blockID=chunk.getBlockID(x, y, z);
 					byte blockData=chunk.getBlockData(x, y, z);
 					int blockBiome=chunk.getBlockBiome(x, z);
 					
-					if(blockID==0)
+					if(blockID.endsWith("air"))
 						continue;
 					
 					if(Options.excludeBlocks.contains(blockID))
 						continue;
 
 					if(Options.convertOres){
-						if(blockID == 14 || blockID == 15 || blockID == 16 || blockID == 21 || blockID == 56 || blockID == 73 || blockID == 74 || blockID == 129){
-							blockID = 1;
+						if(blockID.endsWith("ore")){
+							blockID = "minecraft:stone";
 						}
 					}
 					

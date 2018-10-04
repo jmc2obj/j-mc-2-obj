@@ -29,7 +29,7 @@ public class DirtGrass extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
-		boolean snow = chunks.getBlockID(x, y+1, z) == 78;
+		boolean snow = chunks.getBlockID(x, y+1, z) == "minecraft:snow";
 		
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,
