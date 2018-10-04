@@ -29,11 +29,11 @@ public class Liquid extends BlockModel
     
 	private boolean isSameLiquid(String otherBlockId)
 	{
-		if (blockId == otherBlockId)
+		if (blockId.equals(otherBlockId))
 			return true;
-		if ((blockId == "minecraft:water" || blockId == "minecraft:flowing_water") && (otherBlockId == "minecraft:flowing_water" || otherBlockId == "minecraft:water"))
+		if ((blockId.equals("minecraft:water") || blockId.equals("minecraft:flowing_water")) && (otherBlockId.equals("minecraft:flowing_water") || otherBlockId.equals("minecraft:water")))
 			return true;
-		if ((blockId == "minecraft:flowing_lava" || blockId == "minecraft:lava") && (otherBlockId == "minecraft:flowing_lava" || otherBlockId == "minecraft:lava"))
+		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherBlockId.equals("minecraft:flowing_lava") || otherBlockId.equals("minecraft:lava")))
 			return true;
 		return false;
 	}
