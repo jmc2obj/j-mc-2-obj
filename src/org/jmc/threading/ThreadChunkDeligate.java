@@ -65,25 +65,29 @@ public class ThreadChunkDeligate {
 	
 	public String getBlockID(int x, int y, int z)
 	{
-		if(y<0) return "";
+		if(y<0) return "minecraft:air";
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return "";
+		if(blocks==null) return "minecraft:air";
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);		
-					
+		
+		String id;
+		
 		if(isAnvil)
 		{			
 			if(y>=blocks.id.length/(16*16)) return "minecraft:air";
-			return blocks.id[rx + (rz * 16) + (y * 16) * 16];			
+			id = blocks.id[rx + (rz * 16) + (y * 16) * 16];
+			return id != null ? id : "minecraft:air";
 		}
 		else
 		{
 			if(y>=128) return "minecraft:air";
-			return blocks.id[y + (rz * 128) + (rx * 128) * 16];			
+			id = blocks.id[y + (rz * 128) + (rx * 128) * 16];
+			return id != null ? id : "minecraft:air";
 		}
 	}
 	

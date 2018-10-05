@@ -14,7 +14,7 @@ public class Tripwire extends BlockModel
 
 	private boolean isConnectable(String otherBlockId)
 	{
-		return otherBlockId == blockId || otherBlockId == "minecraft:tripwire";
+		return otherBlockId.equals(blockId) || otherBlockId.equals("minecraft:tripwire");
 	}
 	
 	@Override

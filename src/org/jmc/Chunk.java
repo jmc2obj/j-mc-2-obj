@@ -17,6 +17,7 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jmc.BlockInfo.Occlusion;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
@@ -26,6 +27,7 @@ import org.jmc.NBT.TAG_Int_Array;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_Long_Array;
 import org.jmc.NBT.TAG_String;
+import org.jmc.models.BlockModel;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 /**
@@ -216,7 +218,7 @@ public class Chunk {
 					
 					TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
 					TAG_String blockName = (TAG_String)blockTag.getElement("Name");
-					//Log.debug(String.format("blockPid = %d, blockName = %s, blockID = %d", blockPid, blockName.value, IDConvert.strToInt(blockName.value)));
+					//Log.debug(String.format("blockPid = %d, blockName = %s", blockPid, blockName.value));
 					
 					ret.id[base+i] = blockName.value;
 					//ret.data[] = //data from nbt tags??? probably needs special treatment for each block type
@@ -375,7 +377,7 @@ public class Chunk {
 						blockData = bd.data[y + (z * 128) + (x * 128) * 16];
 					}
 
-					if(blockID != null && !blockID.endsWith("air"))
+					if(blockID != null && !BlockTypes.get(blockID).getOcclusion().equals(Occlusion.NONE))
 					{
 						ids[z*16+x]=blockID;
 						data[z*16+x]=blockData;
@@ -396,7 +398,7 @@ public class Chunk {
 				blockData = data[z*16+x];
 				blockBiome = biome[z*16+x];
 				
-				if(blockID != null && !blockID.endsWith("air"))
+				if(blockID != null && !BlockTypes.get(blockID).getOcclusion().equals(Occlusion.NONE))
 				{
 					c = BlockTypes.get(blockID).getPreviewColor(blockData,blockBiome);
 					if(c!=null)
