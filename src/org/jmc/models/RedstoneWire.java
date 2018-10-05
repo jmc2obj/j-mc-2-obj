@@ -14,9 +14,9 @@ public class RedstoneWire extends BlockModel
 
 	private boolean isConnectable(String otherBlockId, boolean sameLevel)
 	{
-		if (blockId == otherBlockId)
+		if (blockId.equals(otherBlockId))
 			return true;
-		if (sameLevel && (otherBlockId == "minecraft:redstone_torch" || otherBlockId == "minecraft:redstone_wall_torch"))
+		if (sameLevel && (otherBlockId.equals("minecraft:redstone_torch") || otherBlockId.equals("minecraft:redstone_wall_torch")))
 			return true;
 		return false;
 	}

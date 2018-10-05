@@ -31,7 +31,7 @@ public class Liquid extends BlockModel
 	{
 		if (blockId.equals(otherBlockId))
 			return true;
-		if ((blockId.equals("minecraft:water") || blockId.equals("minecraft:flowing_water")) && (otherBlockId.equals("minecraft:flowing_water") || otherBlockId.equals("minecraft:water")))
+		if ((blockId.equals("minecraft:flowing_water") || blockId.equals("minecraft:water")) && (otherBlockId.equals("minecraft:flowing_water") || otherBlockId.equals("minecraft:water")))
 			return true;
 		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherBlockId.equals("minecraft:flowing_lava") || otherBlockId.equals("minecraft:lava")))
 			return true;

@@ -125,17 +125,17 @@ public abstract class BlockModel {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighborId == "")
+		if (neighborId.equals(""))
 			return Options.renderSides;
 
 		if (neighborId.endsWith("air") || Options.excludeBlocks.contains(neighborId))
 			return true;
 
-		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (neighborId != blockId))
+		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighborId.equals(blockId)))
 			return true;
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.VOLUME) {
-			return blockId != neighborId;
+			return !blockId.equals(neighborId);
 		}
 
 		switch (BlockTypes.get(neighborId).getOcclusion()) {
@@ -145,7 +145,7 @@ public abstract class BlockModel {
 			return true;
 		case TRANSPARENT:
 		case VOLUME:
-			return neighborId != blockId;
+			return !neighborId.equals(blockId);
 		case BOTTOM:
 		case SNOW:
 			return side != Side.TOP;
@@ -193,17 +193,17 @@ public abstract class BlockModel {
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
 			short data = chunks.getBlockData(x, y, z);
-			if (blockId == chunks.getBlockID(x, y + 1, z) && data == chunks.getBlockData(x, y + 1, z))
+			if (blockId.equals(chunks.getBlockID(x, y + 1, z)) && data == chunks.getBlockData(x, y + 1, z))
 				sides[0] = false;
-			if (blockId == chunks.getBlockID(x, y, z - 1) && data == chunks.getBlockData(x, y, z - 1))
+			if (blockId.equals(chunks.getBlockID(x, y, z - 1)) && data == chunks.getBlockData(x, y, z - 1))
 				sides[1] = false;
-			if (blockId == chunks.getBlockID(x, y, z + 1) && data == chunks.getBlockData(x, y, z + 1))
+			if (blockId.equals(chunks.getBlockID(x, y, z + 1)) && data == chunks.getBlockData(x, y, z + 1))
 				sides[2] = false;
-			if (blockId == chunks.getBlockID(x - 1, y, z) && data == chunks.getBlockData(x - 1, y, z))
+			if (blockId.equals(chunks.getBlockID(x - 1, y, z)) && data == chunks.getBlockData(x - 1, y, z))
 				sides[3] = false;
-			if (blockId == chunks.getBlockID(x + 1, y, z) && data == chunks.getBlockData(x + 1, y, z))
+			if (blockId.equals(chunks.getBlockID(x + 1, y, z)) && data == chunks.getBlockData(x + 1, y, z))
 				sides[4] = false;
-			if (blockId == chunks.getBlockID(x, y - 1, z) && data == chunks.getBlockData(x, y - 1, z))
+			if (blockId.equals(chunks.getBlockID(x, y - 1, z)) && data == chunks.getBlockData(x, y - 1, z))
 				sides[5] = false;
 		}
 

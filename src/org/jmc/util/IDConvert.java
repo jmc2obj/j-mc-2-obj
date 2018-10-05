@@ -43,7 +43,7 @@ public class IDConvert {
 	}
 
 	public static String intToStr(int id) {
-		String str = "minecraft:air";
+		String str = "";
         for(Map.Entry<String, Integer> entry: mappings.entrySet()){
             if(id == entry.getValue()){
                 str = entry.getKey();

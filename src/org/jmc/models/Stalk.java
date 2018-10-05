@@ -18,24 +18,24 @@ public class Stalk extends BlockModel
 		boolean n,s,e,w;
 		n=s=e=w=false;
 		
-		if (blockId == "minecraft:attached_pumpkin_stem")
+		if (blockId.equals( "minecraft:attached_pumpkin_stem"))
 		{
 			// we're a pumpkin stalk, look for pumpkins around
-			n = chunks.getBlockID(x, y, z-1) == "minecraft:pumpkin";
-			s = chunks.getBlockID(x, y, z+1) == "minecraft:pumpkin";
-			e = chunks.getBlockID(x+1, y, z) == "minecraft:pumpkin";
-			w = chunks.getBlockID(x-1, y, z) == "minecraft:pumpkin";
+			n = chunks.getBlockID(x, y, z-1).equals("minecraft:pumpkin");
+			s = chunks.getBlockID(x, y, z+1).equals("minecraft:pumpkin");
+			e = chunks.getBlockID(x+1, y, z).equals("minecraft:pumpkin");
+			w = chunks.getBlockID(x-1, y, z).equals("minecraft:pumpkin");
 		}
-		else if (blockId == "minecraft:attached_melon_stem")
+		else if (blockId.equals("minecraft:attached_melon_stem"))
 		{
 			// we're a melon stalk, look for melons around 
-			n = chunks.getBlockID(x, y, z-1) == "minecraft:melon";
-			s = chunks.getBlockID(x, y, z+1) == "minecraft:melon";
-			e = chunks.getBlockID(x+1, y, z) == "minecraft:melon";
-			w = chunks.getBlockID(x-1, y, z) == "minecraft:melon";
+			n = chunks.getBlockID(x, y, z-1).equals("minecraft:melon");
+			s = chunks.getBlockID(x, y, z+1).equals("minecraft:melon");
+			e = chunks.getBlockID(x+1, y, z).equals("minecraft:melon");
+			w = chunks.getBlockID(x-1, y, z).equals("minecraft:melon");
 		}
 		
-		if (blockId == "minecraft:attached_pumpkin_stem" || blockId == "minecraft:attached_melon_stem" && (n||s||e||w))
+		if (blockId.equals("minecraft:attached_pumpkin_stem") || blockId.equals("minecraft:attached_melon_stem") && (n||s||e||w))
 		{
 			// bent stalk
 			Transform translate = new Transform();

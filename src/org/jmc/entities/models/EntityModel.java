@@ -101,7 +101,7 @@ public abstract class EntityModel
 	 */
 	protected boolean drawSide(Side side, String neighborId)
 	{
-		if (neighborId == "")
+		if (neighborId.equals(""))
 			return Options.renderSides;
 		
 		if (neighborId.endsWith("air"))
@@ -114,7 +114,7 @@ public abstract class EntityModel
 			case NONE:
 				return true;
 			case TRANSPARENT:
-				return neighborId != blockId;
+				return !neighborId.equals(blockId);
 			case BOTTOM:
 				return side != Side.TOP;
 			default:

@@ -16,12 +16,12 @@ public class Rails extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
 	{
 		String mtl;
-		if (blockId == "minecraft:powered_rail" || blockId == "minecraft:activator_rail") {
+		if (blockId.equals("minecraft:powered_rail") || blockId.equals("minecraft:activator_rail")) {
 			// powered rail (off / on)
 			mtl = (data & 8) == 0 ? materials.get(data,biome)[1] : materials.get(data,biome)[0];
 			data = (byte)(data & 7);
 		}
-		else if (blockId == "minecraft:detector_rail")
+		else if (blockId.equals("minecraft:detector_rail"))
 		{
 			// detector
 			mtl = materials.get(data,biome)[0];

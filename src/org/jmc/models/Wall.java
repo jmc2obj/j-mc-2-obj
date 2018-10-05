@@ -39,7 +39,7 @@ public class Wall extends BlockModel
 			return true;
 
 		int otherData = chunks.getBlockData(x, y, z);
-		return otherId == this.blockId && otherData == data;
+		return otherId.equals(this.blockId) && otherData == data;
 	}
 	
 	
