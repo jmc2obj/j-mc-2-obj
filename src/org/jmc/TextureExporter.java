@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
  * packs.
  */
 public class TextureExporter {
+	private static final int FORMAT_1_13 = 4; // 1.13 resource pack
 	private static final int FORMAT_1_6 = 3; // 1.6 resource pack
 	private static final int FORMAT_1_5 = 2; // 1.5 texture pack
 	private static final int FORMAT_PRE_1_5 = 1; // pre-1.5 texture pack
@@ -186,22 +187,26 @@ public class TextureExporter {
 		try {
 			zis = new ZipInputStream(new FileInputStream(zipfile));
 
-			boolean foundAssetsDir = false;
+			boolean found1_13AssetsDir = false;
+			boolean found1_6AssetsDir = false;
 			boolean foundBlocksDir = false;
 			boolean foundTerrainPng = false;
 
 			ZipEntry entry = null;
 			while ((entry = zis.getNextEntry()) != null) {
 				String entryName = entry.getName();
-				if (entryName.startsWith("assets/minecraft/"))
-					foundAssetsDir = true;
+				if (entryName.startsWith("assets/minecraft/textures/block"))
+					found1_13AssetsDir = true;
+				else if (entryName.startsWith("assets/minecraft/textures/blocks"))
+					found1_6AssetsDir = true;
 				else if (entryName.startsWith("textures/blocks/"))
 					foundBlocksDir = true;
 				else if (entryName.equals("terrain.png"))
 					foundTerrainPng = true;
 			}
 
-			return	foundAssetsDir ? FORMAT_1_6 : 
+			return	found1_13AssetsDir ? FORMAT_1_13 : 
+					found1_6AssetsDir ? FORMAT_1_6 : 
 					foundBlocksDir ? FORMAT_1_5 : 
 					foundTerrainPng ? FORMAT_PRE_1_5 :
 					FORMAT_INVALID;
@@ -238,8 +243,12 @@ public class TextureExporter {
 
 		String confFilePath;
 		switch (detectTexturePackFormat(zipfile)) {
+		case FORMAT_1_13:
+			Log.info("Found resource pack (Minecraft 1.13 or later)");
+			confFilePath = "conf/texsplit_1.13.conf";
+			break;
 		case FORMAT_1_6:
-			Log.info("Found resource pack (Minecraft 1.6 or later)");
+			Log.info("Found resource pack (Minecraft 1.6 - 1.13)");
 			confFilePath = "conf/texsplit_1.6.conf";
 			break;
 		case FORMAT_1_5:
