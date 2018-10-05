@@ -28,6 +28,7 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_Long_Array;
 import org.jmc.NBT.TAG_String;
 import org.jmc.models.BlockModel;
+import org.jmc.models.None;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 /**
@@ -398,7 +399,7 @@ public class Chunk {
 				blockData = data[z*16+x];
 				blockBiome = biome[z*16+x];
 				
-				if(blockID != null && !BlockTypes.get(blockID).getOcclusion().equals(Occlusion.NONE))
+				if(blockID != null && BlockTypes.get(blockID).getModel().getClass() != None.class)
 				{
 					c = BlockTypes.get(blockID).getPreviewColor(blockData,blockBiome);
 					if(c!=null)
