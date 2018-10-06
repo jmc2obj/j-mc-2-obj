@@ -41,7 +41,7 @@ public class CheckUpdate {
 	{
 		try{
 			
-			URL updateLink=new URL("http://jmc2obj.net/downloads/update.xml");
+			URL updateLink=new URL("https://www.jmc2obj.net/downloads/update.xml");
 			Document doc = Xml.loadDocument(updateLink);
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			
@@ -64,7 +64,7 @@ public class CheckUpdate {
 	{
 		try{
 			
-			URL updateLink=new URL("http://jmc2obj.net/downloads/update.xml");
+			URL updateLink=new URL("https://www.jmc2obj.net/downloads/update.xml");
 			Document doc = Xml.loadDocument(updateLink);
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			
@@ -84,7 +84,7 @@ public class CheckUpdate {
 	public static String getUrl()
 	{
 		try{
-			URL updateLink=new URL("http://jmc2obj.net/downloads/update.xml");
+			URL updateLink=new URL("https://www.jmc2obj.net/downloads/update.xml");
 			Document doc = Xml.loadDocument(updateLink);
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			

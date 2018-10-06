@@ -36,7 +36,8 @@ public class About {
         developer_list.add("<td>Kenneth Zhou</td><td>programming</td>");
         developer_list.add("<td>Moonlight63</td><td>programming</td>");
         developer_list.add("<td>Benjamin Egner</td><td>programming</td>");
-
+	developer_list.add("<td>zzlwd</td><td>translation</td>");		
+		
         Collections.shuffle(developer_list);
         
         msg+="<u>"+Messages.getString("About.AUTHORS")+"</u><br>";

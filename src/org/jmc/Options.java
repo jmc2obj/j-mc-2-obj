@@ -37,7 +37,7 @@ public class Options
 	/**
 	 * A list of available locales in the program.
 	 */	
-	public static Locale availableLocales[] = { Locale.ENGLISH, Locale.GERMAN, new Locale("pl") };
+	public static Locale availableLocales[] = { Locale.ENGLISH, Locale.GERMAN, Locale.CHINESE, new Locale("pl") };
 
 	/**
 	 * User interface mode.
