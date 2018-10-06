@@ -2179,82 +2179,82 @@ map_Kd tex/wool_yellow.png
 newmtl carpet_black
 Kd 0.1059 0.0902 0.0902
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_black.png
+map_Kd tex/wool_black.png
 
 newmtl carpet_blue
 Kd 0.1529 0.2000 0.6039
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_blue.png
+map_Kd tex/wool_blue.png
 
 newmtl carpet_brown
 Kd 0.3373 0.2000 0.1098
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_brown.png
+map_Kd tex/wool_brown.png
 
 newmtl carpet_cyan
 Kd 0.1529 0.4588 0.5882
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_cyan.png
+map_Kd tex/wool_cyan.png
 
 newmtl carpet_dark_gray
 Kd 0.2627 0.2627 0.2627
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_dark_gray.png
+map_Kd tex/wool_dark_gray.png
 
 newmtl carpet_green
 Kd 0.2196 0.3020 0.0941
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_green.png
+map_Kd tex/wool_green.png
 
 newmtl carpet_light_blue
 Kd 0.4078 0.5451 0.8314
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_light_blue.png
+map_Kd tex/wool_light_blue.png
 
 newmtl carpet_light_gray
 Kd 0.6196 0.6510 0.6510
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_light_gray.png
+map_Kd tex/wool_light_gray.png
 
 newmtl carpet_lime
 Kd 0.2314 0.7412 0.1882
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_lime.png
+map_Kd tex/wool_lime.png
 
 newmtl carpet_magenta
 Kd 0.7490 0.2980 0.7882
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_magenta.png
+map_Kd tex/wool_magenta.png
 
 newmtl carpet_orange
 Kd 0.9176 0.5020 0.2157
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_orange.png
+map_Kd tex/wool_orange.png
 
 newmtl carpet_pink
 Kd 0.8510 0.5176 0.6078
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_pink.png
+map_Kd tex/wool_pink.png
 
 newmtl carpet_purple
 Kd 0.5059 0.2118 0.7686
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_purple.png
+map_Kd tex/wool_purple.png
 
 newmtl carpet_red
 Kd 0.6431 0.1765 0.1608
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_red.png
+map_Kd tex/wool_red.png
 
 newmtl carpet_white
 Kd 0.8706 0.8706 0.8706
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_white.png
+map_Kd tex/wool_white.png
 
 newmtl carpet_yellow
 Kd 0.7608 0.7098 0.1098
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/carpet_yellow.png
+map_Kd tex/wool_yellow.png
 
 newmtl workbench_front
 Kd 0.4196 0.2784 0.1686
