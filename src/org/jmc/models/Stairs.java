@@ -9,6 +9,7 @@ import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.Half;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Log;
 import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 
@@ -185,11 +186,9 @@ public class Stairs extends BlockModel {
 		String[] mtls = getMtlSides(data, biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 
-		int dir = data & 3; // 0-east; 1-west; 2-south; 3-north
-		int up = data & 4; // 0-regular ; 1-upside down
-		if (up != 0)
-			up = 1;
-		int shape = getStairModification(chunks, x, y, z, data);
+		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north
+		int up = data.get("half").equals("top") ? 1 : 0;
+		int shape = getStairModification(chunks, x, y, z, data);//TODO stairs might store their shape in data now.
 		int invert = 0;
 		if (shape == 1 || shape == 3)
 			invert = 2;
@@ -240,9 +239,9 @@ public class Stairs extends BlockModel {
 	 * @return -1 for no change in shape, 0 for small block left, 1 small block
 	 *         right, 2 big block left, 3 big block right
 	 */
-	private int getStairModification(ThreadChunkDeligate chunks, int x, int y, int z, byte data) {
-		int dir = data & 3; // 0-east; 1-west; 2-south; 3-north
-		int up = data & 4; // 0-regular ; 1-upside down
+	private int getStairModification(ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String,String> data) {
+		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north
+		int up = data.get("half").equals("top") ? 1 : 0;
 		int ndir = -1;
 		int nup = -1;
 
@@ -251,10 +250,10 @@ public class Stairs extends BlockModel {
 			// get the block behind
 			if (BlockTypes.get(chunks.getBlockID(x + 1, y, z)).getModel() instanceof Stairs) {
 				// get the direction of the block behind
-				ndir = chunks.getBlockData(x + 1, y, z) & 3;
+				ndir = getFacingDir(chunks.getBlockData(x + 1, y, z));
 
 				// check if both are up or down
-				nup = chunks.getBlockData(x + 1, y, z) & 4;
+				nup = chunks.getBlockData(x + 1, y, z).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 
@@ -264,8 +263,8 @@ public class Stairs extends BlockModel {
 					return 1;
 			}
 			if (BlockTypes.get(chunks.getBlockID(x - 1, y, z)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x - 1, y, z) & 3;
-				nup = chunks.getBlockData(x - 1, y, z) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x - 1, y, z));
+				nup = chunks.getBlockData(x - 1, y, z).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 2)
@@ -276,8 +275,8 @@ public class Stairs extends BlockModel {
 			break;
 		case 1:
 			if (BlockTypes.get(chunks.getBlockID(x - 1, y, z)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x - 1, y, z) & 3;
-				nup = chunks.getBlockData(x - 1, y, z) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x - 1, y, z));
+				nup = chunks.getBlockData(x - 1, y, z).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 2)
@@ -286,8 +285,8 @@ public class Stairs extends BlockModel {
 					return 0;
 			}
 			if (BlockTypes.get(chunks.getBlockID(x + 1, y, z)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x + 1, y, z) & 3;
-				nup = chunks.getBlockData(x + 1, y, z) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x + 1, y, z));
+				nup = chunks.getBlockData(x + 1, y, z).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 2)
@@ -298,8 +297,8 @@ public class Stairs extends BlockModel {
 			break;
 		case 2:
 			if (BlockTypes.get(chunks.getBlockID(x, y, z + 1)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x, y, z + 1) & 3;
-				nup = chunks.getBlockData(x, y, z + 1) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x, y, z + 1));
+				nup = chunks.getBlockData(x, y, z + 1).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 1)
@@ -308,8 +307,8 @@ public class Stairs extends BlockModel {
 					return 1;
 			}
 			if (BlockTypes.get(chunks.getBlockID(x, y, z - 1)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x, y, z - 1) & 3;
-				nup = chunks.getBlockData(x, y, z - 1) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x, y, z - 1));
+				nup = chunks.getBlockData(x, y, z - 1).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 1)
@@ -320,8 +319,8 @@ public class Stairs extends BlockModel {
 		case 3:
 		default:
 			if (BlockTypes.get(chunks.getBlockID(x, y, z - 1)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x, y, z - 1) & 3;
-				nup = chunks.getBlockData(x, y, z - 1) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x, y, z - 1));
+				nup = chunks.getBlockData(x, y, z - 1).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 1)
@@ -330,8 +329,8 @@ public class Stairs extends BlockModel {
 					return 0;
 			}
 			if (BlockTypes.get(chunks.getBlockID(x, y, z + 1)).getModel() instanceof Stairs) {
-				ndir = chunks.getBlockData(x, y, z + 1) & 3;
-				nup = chunks.getBlockData(x, y, z + 1) & 4;
+				ndir = getFacingDir(chunks.getBlockData(x, y, z + 1));
+				nup = chunks.getBlockData(x, y, z + 1).get("half").equals("top") ? 1 : 0;
 				if (up != nup)
 					break;
 				if (ndir == 1)
@@ -343,6 +342,29 @@ public class Stairs extends BlockModel {
 		}
 
 		return -1;
+	}
+
+	private int getFacingDir(HashMap<String, String> data) {
+		int dir;
+		switch (data.get("facing")) {
+		case "north":
+			dir = 3;
+			break;
+		case "east":
+			dir = 0;
+			break;
+		case "south":
+			dir = 2;
+			break;
+		case "west":
+			dir = 1;
+			break;
+
+		default:
+			Log.error("Unknown stair facing value! " + data.get("facing"), null, false);
+			dir = 0;
+		}
+		return dir;
 	}
 
 }
