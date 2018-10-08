@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import java.util.HashMap;
+
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -41,7 +43,7 @@ public class Chest extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
 		String[] mtlSingle = getMtlSides(data, biome, 0);
 		String[] mtlDouble = canDouble() ? getMtlSides(data, biome, 1) : null;

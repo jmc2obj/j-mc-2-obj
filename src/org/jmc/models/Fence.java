@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.jmc.geom.UV;
@@ -37,7 +38,7 @@ public class Fence extends BlockModel
 	
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
 		String[] mtls = getMtlSides(data, biome);
 		UV[] uvTop, uvSide;

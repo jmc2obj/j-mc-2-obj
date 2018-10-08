@@ -1,10 +1,13 @@
 package org.jmc.models;
 
+import java.util.HashMap;
+
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Log;
 
 
 /**
@@ -14,27 +17,30 @@ public class Door extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		boolean top;
-		int open;
-		int reversed;
+		boolean top = data.get("half").equals("upper");
+		int open = Boolean.parseBoolean(data.get("open")) ? 1 : 0;
+		int reversed = data.get("hinge").equals("right") ? 1 : 0;// left hinge was default
 		int direction;
 		
-		top = (data & 8) != 0;
-		if (top)
-		{
-			byte bottomData = chunks.getBlockData(x, y-1, z);
-			open = (bottomData & 4) != 0 ? 1 : 0;
-			reversed = (data & 1) != 0 ? 1 : 0;
-			direction = (bottomData & 3);
-		}
-		else
-		{
-			byte topData = chunks.getBlockData(x, y+1, z);
-			open = (data & 4) != 0 ? 1 : 0;
-			reversed = (topData & 1) != 0 ? 1 : 0;
-			direction = (data & 3);
+		switch (data.get("facing")) {
+		case "north":
+			direction = 3;
+			break;
+		case "east":
+			direction = 0;
+			break;
+		case "south":
+			direction = 1;
+			break;
+		case "west":
+			direction = 2;
+			break;
+
+		default:
+			Log.error("Unknown door facing value! " + data.get("facing"), null, false);
+			direction = 0;
 		}
 
 		String mtl = top ? materials.get(data,biome)[0] : materials.get(data,biome)[1];

@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import java.util.HashMap;
+
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -13,7 +15,7 @@ public class Lilypad extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
 		// Minecraft decides which direction the lilypad faces based on some 
 		// on-the-fly calculation (it's not stored in the data value)

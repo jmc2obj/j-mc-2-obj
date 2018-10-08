@@ -12,8 +12,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -140,7 +142,9 @@ public class Chunk {
 		public Blocks(int block_num, int biome_num)
 		{
 			id=new String[block_num];
-			data=new byte[block_num];
+			data=new ArrayList<HashMap<String, String>>(block_num);
+			for (int i = 0; i < block_num; i++) 
+				data.add(new HashMap<String, String>());
 			biome=new int[biome_num];
 			Arrays.fill(biome, (byte)255);
 			entities=new LinkedList<TAG_Compound>();
@@ -153,7 +157,7 @@ public class Chunk {
 		/**
 		 * Block meta-data.
 		 */
-		public byte [] data;
+		public List<HashMap<String, String>> data;
 
 		/**
 		 * Biome IDSs (only XZ axes).
@@ -222,31 +226,18 @@ public class Chunk {
 					//Log.debug(String.format("blockPid = %d, blockName = %s", blockPid, blockName.value));
 					
 					ret.id[base+i] = blockName.value;
-					//ret.data[] = //data from nbt tags??? probably needs special treatment for each block type
-				}
-				/*
-				for(int i=0; i<tagBlocks.data.length; i++)
-					ret.id[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
-
-				if(tagAdd!=null)
-				{
-					for(int i=0; i<tagAdd.data.length; i++)
-					{
-						short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
-						short add1 = (short)(add&0x0f);
-						short add2 = (short)(add>>4);
-						ret.id[base+2*i] += (add1<<8);
-						ret.id[base+2*i+1] += (add2<<8);
+					
+					HashMap<String, String> data = new HashMap<String, String>();
+					TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
+					if (propertiesTag != null) {
+						for (NBT_Tag tag : propertiesTag.elements) {
+							TAG_String propTag = (TAG_String)tag;
+							data.put(propTag.getName(), propTag.value);
+						}
 					}
+					
+					ret.data.set(base+i, data);//data from nbt tags??? probably needs special treatment for each block type
 				}
-
-				for(int i=0; i<tagData.data.length; i++)
-				{
-					byte add1=(byte)(tagData.data[i]&0x0f);
-					byte add2=(byte)(tagData.data[i]>>4);
-					ret.data[base+2*i]=add1;
-					ret.data[base+2*i+1]=add2;
-				}*/
 
 				if(tagBiomes!=null)
 				{
@@ -275,8 +266,9 @@ public class Chunk {
 			{
 				add1=(byte) (data.data[i]&0x0f);
 				add2=(byte) (data.data[i]>>4);
-				ret.data[2*i]=add1;
-				ret.data[2*i+1]=add2;
+				//ret.data[2*i]=add1;
+				//ret.data[2*i+1]=add2;
+				//TODO old format conversion
 			}
 
 
@@ -328,7 +320,7 @@ public class Chunk {
 		gb.fillRect(0, 0, width, height);
 
 		String blockID="minecraft:air";
-		byte blockData=0;
+		HashMap<String, String> blockData=new HashMap<String, String>();
 		int blockBiome=0;
 		Color c;
 		Blocks bd=getBlocks();		
@@ -350,7 +342,9 @@ public class Chunk {
 
 
 		String ids[]=new String[16*16];
-		byte data[]=new byte[16*16];
+		List<HashMap<String, String>> data=new ArrayList<HashMap<String, String>>(16*16);
+		for (int i = 0; i < 16*16; i++)
+			data.add(i, new HashMap<String, String>());
 		int biome[]=new int[16*16];
 		int himage[]=null;
 		if(!fastmode)
@@ -370,18 +364,18 @@ public class Chunk {
 					if(is_anvil)
 					{
 						blockID = bd.id[x + (z * 16) + (y * 16) * 16];
-						blockData = bd.data[x + (z * 16) + (y * 16) * 16];
+						blockData = bd.data.get(x + (z * 16) + (y * 16) * 16);
 					}
 					else
 					{
 						blockID = bd.id[y + (z * 128) + (x * 128) * 16];
-						blockData = bd.data[y + (z * 128) + (x * 128) * 16];
+						blockData = bd.data.get(y + (z * 128) + (x * 128) * 16);
 					}
 
 					if(blockID != null && !BlockTypes.get(blockID).getOcclusion().equals(Occlusion.NONE))
 					{
 						ids[z*16+x]=blockID;
-						data[z*16+x]=blockData;
+						data.set(z*16+x, blockData);
 						biome[z*16+x]=blockBiome;
 						if(!fastmode)
 							himage[z*16+x]=y;
@@ -396,7 +390,7 @@ public class Chunk {
 			for(x = 0; x < 16; x++)
 			{
 				blockID = ids[z*16+x];
-				blockData = data[z*16+x];
+				blockData = data.get(z*16+x);
 				blockBiome = biome[z*16+x];
 				
 				if(blockID != null && BlockTypes.get(blockID).getModel().getClass() != None.class)

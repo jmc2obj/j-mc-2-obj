@@ -1,6 +1,7 @@
 package org.jmc;
 
 import java.awt.Color;
+import java.util.HashMap;
 
 import org.jmc.models.BlockModel;
 import org.jmc.util.Log;
@@ -85,15 +86,15 @@ public class BlockInfo
 	 * Convenience method to get the color to use for this block in the map preview.
 	 * The color is taken from the first material in the block's material list.
 	 *  
-	 * @param data Block data
+	 * @param blockData Block data
 	 * @return Block color
 	 */
-	public Color getPreviewColor(byte data, int biome)
+	public Color getPreviewColor(HashMap<String, String> blockData, int biome)
 	{
-		String[] mtlNames = getMaterials().get(data,biome);
+		String[] mtlNames = getMaterials().get(blockData,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
-			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+data);
+			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);
 			return Materials.getColor("unknown");
 		}
 		return Materials.getColor(mtlNames[0]);

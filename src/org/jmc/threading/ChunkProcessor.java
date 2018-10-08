@@ -121,7 +121,7 @@ public class ChunkProcessor
 				for(int y = ymin; y < ymax; y++)
 				{
 					String blockID=chunk.getBlockID(x, y, z);
-					byte blockData=chunk.getBlockData(x, y, z);
+					HashMap<String, String> blockData=chunk.getBlockData(x, y, z);
 					int blockBiome=chunk.getBlockBiome(x, z);
 					
 					if(blockID.endsWith("air"))

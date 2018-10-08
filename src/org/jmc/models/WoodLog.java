@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import java.util.HashMap;
+
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -11,7 +13,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class WoodLog extends BlockModel
 {
 
-	protected String[] getMtlSides(byte data, int biome, int dir)
+	protected String[] getMtlSides(HashMap<String, String> data, int biome, int dir)
 	{
 		String[] mat = materials.get(data, biome);
 		
@@ -40,13 +42,29 @@ public class WoodLog extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
+		int dir;
 		// 0 - upright
 		// 1 - lying east-west
 		// 2 - lying north-south
 		// 3 - Anything greater (aka: 3) will return an all bark block
-		int dir = (data & 15) >> 2;
+		String axis = data.get("axis");
+		switch (axis) {
+		case "x":
+			dir = 1;
+			break;
+		case "y":
+			dir = 0;
+			break;
+		case "z":
+			dir = 2;
+			break;
+
+		default:
+			dir = 0;
+			throw new RuntimeException("invalid WoodLog axis!");
+		}
 		
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,

@@ -1,11 +1,16 @@
 package org.jmc.models;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.jmc.BlockInfo.Occlusion;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.Options;
-import org.jmc.BlockInfo.Occlusion;
 import org.jmc.geom.Side;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -15,10 +20,6 @@ import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
 /**
  * Base class for the block model handlers. These handlers are responsible for
@@ -72,7 +73,7 @@ public abstract class BlockModel {
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data, int biome) {
+	protected String[] getMtlSides(HashMap<String, String> data, int biome) {
 		String[] abbrMtls = materials.get(data, biome);
 
 		String[] mtlSides = new String[6];
@@ -192,18 +193,18 @@ public abstract class BlockModel {
 		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z));
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
-			short data = chunks.getBlockData(x, y, z);
-			if (blockId.equals(chunks.getBlockID(x, y + 1, z)) && data == chunks.getBlockData(x, y + 1, z))
+			HashMap<String, String> data = chunks.getBlockData(x, y, z);
+			if (blockId.equals(chunks.getBlockID(x, y + 1, z)) && data.equals(chunks.getBlockData(x, y + 1, z)))
 				sides[0] = false;
-			if (blockId.equals(chunks.getBlockID(x, y, z - 1)) && data == chunks.getBlockData(x, y, z - 1))
+			if (blockId.equals(chunks.getBlockID(x, y, z - 1)) && data.equals(chunks.getBlockData(x, y, z - 1)))
 				sides[1] = false;
-			if (blockId.equals(chunks.getBlockID(x, y, z + 1)) && data == chunks.getBlockData(x, y, z + 1))
+			if (blockId.equals(chunks.getBlockID(x, y, z + 1)) && data.equals(chunks.getBlockData(x, y, z + 1)))
 				sides[2] = false;
-			if (blockId.equals(chunks.getBlockID(x - 1, y, z)) && data == chunks.getBlockData(x - 1, y, z))
+			if (blockId.equals(chunks.getBlockID(x - 1, y, z)) && data.equals(chunks.getBlockData(x - 1, y, z)))
 				sides[3] = false;
-			if (blockId.equals(chunks.getBlockID(x + 1, y, z)) && data == chunks.getBlockData(x + 1, y, z))
+			if (blockId.equals(chunks.getBlockID(x + 1, y, z)) && data.equals(chunks.getBlockData(x + 1, y, z)))
 				sides[4] = false;
-			if (blockId.equals(chunks.getBlockID(x, y - 1, z)) && data == chunks.getBlockData(x, y - 1, z))
+			if (blockId.equals(chunks.getBlockID(x, y - 1, z)) && data.equals(chunks.getBlockData(x, y - 1, z)))
 				sides[5] = false;
 		}
 
@@ -306,6 +307,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome);
+	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome);
 
 }

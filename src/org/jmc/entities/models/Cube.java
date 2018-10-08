@@ -24,7 +24,7 @@ public class Cube extends EntityModel
 	 */
 	protected String[] getMtlSides()
 	{
-		String[] abbrMtls = materials.get((byte) -1, (byte) -1);
+		String[] abbrMtls = materials.get(null, -1);
 
 		String[] mtlSides = new String[6];
 		if (abbrMtls.length < 2)

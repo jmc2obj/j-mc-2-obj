@@ -1,6 +1,7 @@
 package org.jmc.entities.models;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
@@ -44,7 +45,7 @@ public abstract class EntityModel
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data, byte biome)
+	protected String[] getMtlSides(HashMap<String, String> data, byte biome)
 	{
 		String[] abbrMtls = materials.get(data, biome);
 		

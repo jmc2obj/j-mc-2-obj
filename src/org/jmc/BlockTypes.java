@@ -3,6 +3,7 @@ package org.jmc;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -17,6 +18,7 @@ import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -83,27 +85,37 @@ public class BlockTypes
 			{
 				Node matNode = matNodes.item(j);
 
-				int data = Integer.parseInt(Xml.getAttribute(matNode, "data", "-1"), 10);
-				int mask = Integer.parseInt(Xml.getAttribute(matNode, "mask", "-1"), 10);
-				int biome = Integer.parseInt(Xml.getAttribute(matNode, "biome", "-1"), 10);
+				HashMap<String, String> data = new HashMap<String, String>();
+				int biome = -1;
+				
+				NamedNodeMap matAttribs = matNode.getAttributes();
+				
+				for (int k = 0; k < matAttribs.getLength(); k++) {
+					Node attrib = matAttribs.item(k);
+					String attrName = attrib.getNodeName();
+					String attrVal = attrib.getNodeValue();
+					if (attrName.equalsIgnoreCase("biome")) 
+						biome = Integer.parseInt(attrVal, 10);
+					else {
+						data.put(attrName, attrVal);
+					}
+				}
+				
 				String mats = matNode.getTextContent();
-				if (data < -1 || data > 15 || mats.trim().isEmpty() || biome < -1 || biome > 255 )
+				if (mats.trim().isEmpty() || biome < -1 || biome > 255 )//TODO biome 255 id limit needed?
 				{
 					Log.info("Block " + id + " has invalid material. Ignoring.");
 					continue;
 				}
-
-				if (mask >= 0)
-					materials.setDataMask((byte)mask);
-
+				
 				if(biome >= 0)
 				{
-					materials.put((byte)biome, (byte)data, mats.split("\\s*,\\s*"));
+					materials.put(biome, data, mats.split("\\s*,\\s*"));
 				}
 				else
 				{
-					if (data >= 0)
-						materials.put((byte)data, mats.split("\\s*,\\s*"));
+					if (!data.isEmpty())
+						materials.put(data, mats.split("\\s*,\\s*"));
 					else
 						materials.put(mats.split("\\s*,\\s*"));
 				}

@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import java.util.HashMap;
+
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -22,7 +24,7 @@ public class RedstoneWire extends BlockModel
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
 		boolean on = (data & 15) > 0;
 		String mtlCross = on ? materials.get(data,biome)[0] : materials.get(data,biome)[2];

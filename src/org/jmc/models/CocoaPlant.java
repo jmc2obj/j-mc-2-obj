@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import java.util.HashMap;
+
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -14,7 +16,7 @@ public class CocoaPlant extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data, int biome)
+	protected String[] getMtlSides(HashMap<String, String> data, int biome)
 	{
 		int growth = (data >> 2) & 3;
 		
@@ -32,7 +34,7 @@ public class CocoaPlant extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
 		int dir = data & 3;
 		int growth = (data >> 2) & 3;

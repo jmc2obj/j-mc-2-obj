@@ -11,11 +11,9 @@ public class BlockMaterial
 {
 	private String[] baseMaterials = null;
 
-	private String[][] dataMaterials = new String[16][];
+	private HashMap<HashMap<String, String>, String[]> dataMaterials = new HashMap<HashMap<String, String>, String[]>();
 
-	private Map<Integer,String[][]> biomeMaterials = new HashMap<Integer, String[][]>();
-
-	private byte dataMask = (byte)0x0F;
+	private Map<Integer, HashMap<HashMap<String, String>, String[]>> biomeMaterials = new HashMap<Integer, HashMap<HashMap<String, String>, String[]>>();
 
 
 	/**
@@ -39,14 +37,14 @@ public class BlockMaterial
 	 * @param dataValue
 	 * @param mtlNames 
 	 */
-	public void put(byte dataValue, String[] mtlNames)
+	public void put(HashMap<String, String> dataValue, String[] mtlNames)
 	{
-		if (dataValue < 0 || dataValue > 15)
-			throw new IllegalArgumentException("dataValue must be between 0 and 15");
+		if (dataValue == null)
+			throw new IllegalArgumentException("dataValue must not be null");
 		if (mtlNames == null || mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be null or empty");
 
-		dataMaterials[dataValue] = mtlNames;
+		dataMaterials.put(dataValue, mtlNames);
 	}
 
 	/**
@@ -57,36 +55,24 @@ public class BlockMaterial
 	 * @param dataValue
 	 * @param mtlNames
 	 */
-	public void put(int biomeValue, byte dataValue, String[] mtlNames)
+	public void put(int biomeValue, HashMap<String, String> dataValue, String[] mtlNames)
 	{
-		if (dataValue < -1 || dataValue > 15)
-			throw new IllegalArgumentException("dataValue must be between -1 and 15");				
+		if (dataValue == null)
+			throw new IllegalArgumentException("dataValue must not be null");			
 		if (mtlNames == null || mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be null or empty");
 
-		String[][] mtls = null;
+		HashMap<HashMap<String, String>, String[]> mtls = null;
 
 		if(biomeMaterials.containsKey(biomeValue))
 			mtls=biomeMaterials.get(biomeValue);
 		else
 		{
-			mtls = new String[17][];
+			mtls = new HashMap<HashMap<String,String>, String[]>();
 			biomeMaterials.put(biomeValue, mtls);
 		}
 
-		if(dataValue>=0)
-			mtls[dataValue] = mtlNames;
-		else
-			mtls[16] = mtlNames;
-	}
-
-
-	/**
-	 * Sets the bit mask to use when looking up materials by data value.
-	 */
-	public void setDataMask(byte val)
-	{
-		dataMask = val;
+		mtls.put(dataValue, mtlNames);
 	}
 
 
@@ -98,48 +84,51 @@ public class BlockMaterial
 	 * default materials; if the default materials are not defined returns the
 	 * materials for the lowest data value defined.
 	 * 
-	 * @param dataValue Block data value.
+	 * @param blockData Block data value. If null empty HashMap is used.
 	 * @param biomeValue Block biome value.
 	 * @return Array of material names, or null.
 	 */
-	public String[] get(byte dataValue, int biomeValue)
-	{		
+	public String[] get(HashMap<String, String> blockData, int biomeValue)
+	{
+		if (blockData == null)
+			blockData = new HashMap<String, String>();
+		
 		String[] mtlNames = null;
 		if(Options.renderBiomes && biomeMaterials.containsKey(biomeValue))
 		{
-			String[][] mtls=biomeMaterials.get(biomeValue);
-			mtlNames = mtls[dataValue & dataMask];
+			HashMap<HashMap<String, String>, String[]> mtls=biomeMaterials.get(biomeValue);
+			mtlNames = mtls.get(blockData);
 			if (mtlNames == null)
-				mtlNames = mtls[16];
+				mtlNames = mtls.get(new HashMap<String, String>());
 			if (mtlNames == null)
-				for (int i = 0; i < mtls.length; i++)
-					if (mtls[i] != null) {
-						mtlNames = mtls[i];
+				for (String[] mtl : mtls.values())
+					if (mtl != null) {
+						mtlNames = mtl;
 						break;
 					}
 		}
 		else
 		{
-			mtlNames = dataMaterials[dataValue & dataMask];
+			mtlNames = dataMaterials.get(blockData);
 			if (mtlNames == null)
 				mtlNames = baseMaterials;
 			if (mtlNames == null)
-				for (int i = 0; i < dataMaterials.length; i++)
-					if (dataMaterials[i] != null) {
-						mtlNames = dataMaterials[i];
+				for (String[] mtl : dataMaterials.values())
+					if (mtl != null) {
+						mtlNames = mtl;
 						break;
 					}
 
 			if (mtlNames == null && !biomeMaterials.isEmpty())
 			{
-				String[][] mtls = biomeMaterials.values().iterator().next();
-				mtlNames = mtls[dataValue & dataMask];
+				Map<HashMap<String, String>, String[]> mtls = biomeMaterials.values().iterator().next();
+				mtlNames = mtls.get(blockData);
 				if (mtlNames == null)
-					mtlNames = mtls[16];
+					mtlNames = mtls.get(new HashMap<String, String>());
 				if (mtlNames == null)
-					for (int i = 0; i < mtls.length; i++)
-						if (mtls[i] != null) {
-							mtlNames = mtls[i];
+					for (String[] mtl : mtls.values())
+						if (mtl != null) {
+							mtlNames = mtl;
 							break;
 						}
 			}
