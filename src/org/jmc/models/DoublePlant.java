@@ -17,7 +17,7 @@ public class DoublePlant extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		boolean top = (data & 8) != 0;
+		boolean top = data.get("half").equals("upper");
 		if (top) {
 			// must get the type of plant from the block below
 			data = chunks.getBlockData(x, y-1, z);
@@ -42,7 +42,7 @@ public class DoublePlant extends BlockModel
 			vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
 			obj.addFace(vertices, null, t, mtls[1]);
 
-			if (data == 0) {
+			if (chunks.getBlockID(x, y, z).equals("minecraft:sunflower")) {
 				// Sunflower
 				Transform r = new Transform();
 				Double o = (double)(x*y*z);
