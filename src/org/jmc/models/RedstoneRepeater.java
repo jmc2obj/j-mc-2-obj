@@ -33,8 +33,8 @@ public class RedstoneRepeater extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		int dir = data & 3;
-		int delay = (data>>2) & 3;
+		String dir = data.get("facing");
+		int delay = Integer.parseInt(data.get("delay"))-1;
 		
 
 		Transform rotate = new Transform();
@@ -43,13 +43,13 @@ public class RedstoneRepeater extends BlockModel
 		
 		switch (dir)
 		{
-			case 1:
+			case "west":
 				rotate.rotate(0, 90, 0);
 				break;
-			case 2:
+			case "north":
 				rotate.rotate(0, 180, 0);
 				break;
-			case 3:
+			case "east":
 				rotate.rotate(0, -90, 0);
 				break;
 		}

@@ -14,7 +14,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Lever extends BlockModel
 {
 
-	private String[] getMtlSidesBase(byte data, int biome)
+	private String[] getMtlSidesBase(HashMap<String, String> data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -28,7 +28,7 @@ public class Lever extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesLever(byte data, int biome)
+	private String[] getMtlSidesLever(HashMap<String, String> data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -46,9 +46,10 @@ public class Lever extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		boolean on = (data & 8) != 0;
-		int dir = (data & 7);
-		
+		boolean on = data.get("powered").equals("true");
+		String dir = data.get("facing");
+		String face = data.get("face");
+		String orientation = face + dir; // Puts it together such as wallnorth, ceilingsouth
 		
 		/*
 		 The model is rendered vertically facing south and then rotated  
@@ -64,16 +65,20 @@ public class Lever extends BlockModel
 		
 		
 		// base
-		switch (dir)
+		switch (orientation)
 		{
-			case 1: rotate.rotate(0, -90, 0); break;	// wall e
-			case 2: rotate.rotate(0, 90, 0); break;		// wall w
-			case 3: rotate.rotate(0, 0, 0); break;		// wall s
-			case 4: rotate.rotate(0, 180, 0); break;	// wall n
-			case 5: rotate.rotate(-90, 0, 0); break;	// ground n-s
-			case 6: rotate.rotate(-90, 0, 90); break;	// ground e-w
-			case 7: rotate.rotate(90, 0, 0); break;		// ceiling n-s
-			case 0: rotate.rotate(90, 0, 90); break;	// ceiling e-w
+			case "walleast": rotate.rotate(0, -90, 0); 	break;	// wall e
+			case "wallwest": rotate.rotate(0, 90, 0); break;		// wall w
+			case "wallsouth": rotate.rotate(0, 0, 0); break;		// wall s
+			case "wallnorth": rotate.rotate(0, 180, 0); break;	// wall n
+			case "floornorth": rotate.rotate(-90, 0, 0); break;	// ground n-s
+			case "floorsouth": rotate.rotate(-90, 0, 0); break;	// ground n-s
+			case "floorwest": rotate.rotate(-90, 0, 90); break;	// ground e-w
+			case "flooreast": rotate.rotate(-90, 0, 90); break;	// ground e-w
+			case "ceilingnorth": rotate.rotate(90, 0, 0); break;		// ceiling n-s
+			case "ceilingsouth": rotate.rotate(90, 0, 0); break;		// ceiling n-s
+			case "ceilingwest": rotate.rotate(90, 0, 90); break;	// ceiling e-w
+			case "ceilingeast": rotate.rotate(90, 0, 90); break;	// ceiling e-w
 		}
 		translate.translate(x, y, z);
 		rt = translate.multiply(rotate);
@@ -94,42 +99,58 @@ public class Lever extends BlockModel
 				drawSides);
 
 		// lever
-		switch (dir)
+		switch (orientation)
 		{
-			case 1:
+			case "walleast":
 				rotate2.rotate(0, 0, on ? -35 : 35);
 				rotate.rotate(0, -90, 0);
 				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
 				break;
-			case 2:
+			case "wallwest":
 				rotate2.rotate(0, 0, on ? 35 : -35);
 				rotate.rotate(0, 90, 0);
 				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
 				break;
-			case 3:
+			case "wallsouth":
 				rotate.rotate(on ? 35 : -35, 0, 0);
 				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
 				break;
-			case 4:
+			case "wallnorth":
 				rotate.rotate(on ? -35 : 35, 180, 0);
 				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
 				break;
-			case 5:
+			case "floornorth":
 				rotate.rotate(-90 + (on ? -35 : 35), 0, 0);
 				translate.translate(x, y, z + (on ? -0.35f : 0.35f));
 				break;
-			case 6:
+			case "floorsouth":
+				rotate.rotate(-90 + (on ? 35 : -35), 0, 0);
+				translate.translate(x, y, z + (on ? 0.35f : -0.35f));
+				break;				
+			case "floorwest":
 				rotate.rotate(-90, (on ? 35 : -35), 90);
 				translate.translate(x + (on ? -0.35f : 0.35f), y, z);
 				break;
-			case 7:
+			case "flooreast":
+				rotate.rotate(-90, (on ? -35 : 35), 90);
+				translate.translate(x + (on ? 0.35f : -0.35f), y, z);
+				break;				
+			case "ceilingnorth":
 				rotate.rotate(90 + (on ? 35 : -35), 0, 0);
 				translate.translate(x, y, z + (on ? -0.35f : 0.35f));
 				break;
-			case 0:
+			case "ceilingsouth":
+				rotate.rotate(90 + (on ? -35 : 35), 0, 0);
+				translate.translate(x, y, z + (on ? 0.35f : -0.35f));
+				break;					
+			case "ceilingwest":
 				rotate.rotate(90, (on ? 35 : -35), 90);
 				translate.translate(x + (on ? -0.35f : 0.35f), y, z);
 				break;
+			case "ceilingeast":
+				rotate.rotate(90, (on ? -35 : 35), 90);
+				translate.translate(x + (on ? 0.35f : -0.35f), y, z);
+				break;				
 		}
 		rt = translate.multiply(rotate2.multiply(rotate));
 

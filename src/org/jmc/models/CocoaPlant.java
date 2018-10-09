@@ -18,7 +18,7 @@ public class CocoaPlant extends BlockModel
 	@Override
 	protected String[] getMtlSides(HashMap<String, String> data, int biome)
 	{
-		int growth = (data >> 2) & 3;
+		int growth = Integer.parseInt(data.get("age"));
 		
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -36,8 +36,8 @@ public class CocoaPlant extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		int dir = data & 3;
-		int growth = (data >> 2) & 3;
+		String dir = data.get("facing");
+		int growth = Integer.parseInt(data.get("age"));
 				
 		/*
 		 The model is rendered facing south and then rotated  
@@ -48,10 +48,10 @@ public class CocoaPlant extends BlockModel
 
 		switch (dir)
 		{
-			case 0: rotate.rotate(0, 180, 0); break;
-			case 1: rotate.rotate(0, -90, 0); break;
-			case 2: rotate.rotate(0, 0, 0); break;
-			case 3: rotate.rotate(0, 90, 0); break;
+			case "south": rotate.rotate(0, 180, 0); break;
+			case "west": rotate.rotate(0, -90, 0); break;
+			case "north": rotate.rotate(0, 0, 0); break;
+			case "east": rotate.rotate(0, 90, 0); break;
 		}
 		translate.translate(x, y, z);
 		rt = translate.multiply(rotate);

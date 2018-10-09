@@ -18,8 +18,8 @@ public class Bed extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		int dir = (data & 3);
-		boolean head = (data & 8) != 0;
+		String dir = data.get("facing");
+		boolean head = data.get("part").equals("head");
 
 
 		Transform rotate = new Transform();
@@ -28,9 +28,9 @@ public class Bed extends BlockModel
 
 		switch (dir)
 		{
-			case 0: rotate.rotate(0, 180, 0); break;
-			case 1: rotate.rotate(0, -90, 0); break;
-			case 3: rotate.rotate(0, 90, 0); break;
+			case "north": rotate.rotate(0, 180, 0); break;
+			case "west": rotate.rotate(0, -90, 0); break;
+			case "east": rotate.rotate(0, 90, 0); break;
 		}
 		translate.translate(x, y, z);		
 		rt = translate.multiply(rotate);

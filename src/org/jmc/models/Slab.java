@@ -21,23 +21,29 @@ public class Slab extends BlockModel
 		UV[][] uvSides;
 		float ys, ye;
 		
-		if ((data & 0x8) == 0)
+		if (data.get("type").equals("bottom")) // slab occupies the lower half
 		{
-			// slab occupies the lower half
+			
 			drawSides[0] = true;
 			uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,0.5f), new UV(0,0.5f) };
 			ys = -0.5f;
 			ye = 0.0f;
 		}
-		else
+		else if (data.get("type").equals("top")) // slab occupies the upper half
 		{
-			// slab occupies the upper half
+			
 			drawSides[5] = true;
 			uvSide = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,1), new UV(0,1) };
 			ys = 0.0f;
 			ye = 0.5f;
 			
-			data = (byte)(data & 0x7);
+			//data = (byte)(data & 0x7);   Why was this code here?
+		} 
+		else // it's a double slab (full block)
+		{
+			uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1) };
+			ys = -0.5f;
+			ye = 0.5f;
 		}
 
 		uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };

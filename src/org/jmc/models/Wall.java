@@ -23,7 +23,7 @@ public class Wall extends BlockModel
 				60,61,62,73,74,80,82,84,86,87,88,91,97,98,107,110,112,121,123,124,129
 			};*/
 		String[] ids = new String[] {
-				"stone","grass","dirt"
+				"stone","grass","dirt","cobblestone_wall","mossy_cobblestone_wall"
 				//,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,60,61,62,73,74,80,82,84,86,87,88,91,97,98,107,110,112,121,123,124,129
 				//FIXME this ID spaghetti mess!!
 			};
@@ -33,13 +33,13 @@ public class Wall extends BlockModel
 			connectable.add("minecraft:" + ids[i]);
 	}
 	
-	private boolean checkConnect(ThreadChunkDeligate chunks, byte data, int x, int y, int z)
+	private boolean checkConnect(ThreadChunkDeligate chunks, HashMap<String, String> data, int x, int y, int z)
 	{
 		String otherId = chunks.getBlockID(x, y, z);
 		if (connectable.contains(otherId))
 			return true;
 
-		int otherData = chunks.getBlockData(x, y, z);
+		HashMap<String, String> otherData = chunks.getBlockData(x, y, z);
 		return otherId.equals(this.blockId) && otherData == data;
 	}
 	

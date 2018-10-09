@@ -26,7 +26,7 @@ public class RedstoneWire extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		boolean on = (data & 15) > 0;
+		boolean on = Integer.parseInt(data.get("power")) > 0;
 		String mtlCross = on ? materials.get(data,biome)[0] : materials.get(data,biome)[2];
 		String mtlLine  = on ? materials.get(data,biome)[1] : materials.get(data,biome)[3];
 		
@@ -59,10 +59,10 @@ public class RedstoneWire extends BlockModel
 			else
 				uv = new UV[] { new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1) };
 
-			vertices[0] = new Vertex(x-0.5f, y-0.49f, z+0.5f);
-			vertices[1] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
-			vertices[2] = new Vertex(x+0.5f, y-0.49f, z-0.5f);			
-			vertices[3] = new Vertex(x-0.5f, y-0.49f, z-0.5f);
+			vertices[1] = new Vertex(x-0.5f, y-0.49f, z+0.5f);
+			vertices[2] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
+			vertices[3] = new Vertex(x+0.5f, y-0.49f, z-0.5f);			
+			vertices[0] = new Vertex(x-0.5f, y-0.49f, z-0.5f);
 			obj.addFace(vertices, uv, null, mtlLine);
 		}
 		else 
@@ -82,10 +82,10 @@ public class RedstoneWire extends BlockModel
 					new UV(xmax+0.5f, 0.5f-zmin),
 					new UV(xmin+0.5f, 0.5f-zmin)
 				};
-			vertices[0] = new Vertex(x+xmin, y-0.49f, z+zmax);
-			vertices[1] = new Vertex(x+xmax, y-0.49f, z+zmax);
-			vertices[2] = new Vertex(x+xmax, y-0.49f, z+zmin);			
-			vertices[3] = new Vertex(x+xmin, y-0.49f, z+zmin);
+			vertices[1] = new Vertex(x+xmin, y-0.49f, z+zmax);
+			vertices[2] = new Vertex(x+xmax, y-0.49f, z+zmax);
+			vertices[3] = new Vertex(x+xmax, y-0.49f, z+zmin);			
+			vertices[0] = new Vertex(x+xmin, y-0.49f, z+zmin);
 			obj.addFace(vertices, uv, null, mtlCross);
 		}
 		
@@ -94,34 +94,34 @@ public class RedstoneWire extends BlockModel
 
 		if (conn_n_up)
 		{
-			vertices[0] = new Vertex(x-0.5f, y-0.5f, z-0.49f);
-			vertices[1] = new Vertex(x+0.5f, y-0.5f, z-0.49f);
-			vertices[2] = new Vertex(x+0.5f, y+0.5f, z-0.49f);
-			vertices[3] = new Vertex(x-0.5f, y+0.5f, z-0.49f);
+			vertices[1] = new Vertex(x-0.5f, y-0.5f, z-0.49f);
+			vertices[2] = new Vertex(x+0.5f, y-0.5f, z-0.49f);
+			vertices[3] = new Vertex(x+0.5f, y+0.5f, z-0.49f);
+			vertices[0] = new Vertex(x-0.5f, y+0.5f, z-0.49f);
 			obj.addFace(vertices, uv, null, mtlLine);
 		}
 		if (conn_s_up)
 		{
-			vertices[0] = new Vertex(x+0.5f, y-0.5f, z+0.49f);
-			vertices[1] = new Vertex(x-0.5f, y-0.5f, z+0.49f);
-			vertices[2] = new Vertex(x-0.5f, y+0.5f, z+0.49f);
-			vertices[3] = new Vertex(x+0.5f, y+0.5f, z+0.49f);
+			vertices[1] = new Vertex(x+0.5f, y-0.5f, z+0.49f);
+			vertices[2] = new Vertex(x-0.5f, y-0.5f, z+0.49f);
+			vertices[3] = new Vertex(x-0.5f, y+0.5f, z+0.49f);
+			vertices[0] = new Vertex(x+0.5f, y+0.5f, z+0.49f);
 			obj.addFace(vertices, uv, null, mtlLine);
 		}
 		if (conn_e_up)
 		{
-			vertices[0] = new Vertex(x+0.49f, y-0.5f, z-0.5f);
-			vertices[1] = new Vertex(x+0.49f, y-0.5f, z+0.5f);
-			vertices[2] = new Vertex(x+0.49f, y+0.5f, z+0.5f);
-			vertices[3] = new Vertex(x+0.49f, y+0.5f, z-0.5f);
+			vertices[1] = new Vertex(x+0.49f, y-0.5f, z-0.5f);
+			vertices[2] = new Vertex(x+0.49f, y-0.5f, z+0.5f);
+			vertices[3] = new Vertex(x+0.49f, y+0.5f, z+0.5f);
+			vertices[0] = new Vertex(x+0.49f, y+0.5f, z-0.5f);
 			obj.addFace(vertices, uv, null, mtlLine);
 		}
 		if (conn_w_up)
 		{
-			vertices[0] = new Vertex(x-0.49f, y-0.5f, z+0.5f);
-			vertices[1] = new Vertex(x-0.49f, y-0.5f, z-0.5f);
-			vertices[2] = new Vertex(x-0.49f, y+0.5f, z-0.5f);
-			vertices[3] = new Vertex(x-0.49f, y+0.5f, z+0.5f);
+			vertices[1] = new Vertex(x-0.49f, y-0.5f, z+0.5f);
+			vertices[2] = new Vertex(x-0.49f, y-0.5f, z-0.5f);
+			vertices[3] = new Vertex(x-0.49f, y+0.5f, z-0.5f);
+			vertices[0] = new Vertex(x-0.49f, y+0.5f, z+0.5f);
 			obj.addFace(vertices, uv, null, mtlLine);
 		}
 	}

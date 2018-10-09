@@ -23,24 +23,41 @@ public class Button extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 
-		switch (data & 7)
+		String face = data.get("face");
+		String dir = data.get("facing");
+		
+		switch (dir)
 		{
-			case 1:
-				rotate.rotate(0, -90, 0);
-				break;
-			case 2:
-				rotate.rotate(0, 90, 0);
-				break;
-			case 3:
-				rotate.rotate(0, 0, 0);
-				break;
-			case 4:
+			case "north":
 				rotate.rotate(0, 180, 0);
 				break;
-			case 5: // button on the ground
-				rotate.rotate(-90, 0, 90);
+			case "south":
+				rotate.rotate(0, 0, 0);
+				break;
+			case "west":
+				rotate.rotate(0, 90, 0);
+				break;
+			case "east":
+				rotate.rotate(0, -90, 0);
 				break;
 		}
+		
+
+		 if (face.equals("floor"))
+		 {
+			 if (dir.equals("west") || dir.equals("east")) {
+				 rotate.rotate(-90, 0, 90); }
+			 else
+				 rotate.rotate(-90, 0, 0);
+		 }
+		 else if (face.equals("ceiling"))
+		 {
+			 if (dir.equals("west") || dir.equals("east")) {
+				 rotate.rotate(90, 0, 90); }
+			 else
+				 rotate.rotate(90, 0, 0);
+		 }
+		
 		translate.translate(x, y, z);		
 			
 		rt = translate.multiply(rotate);
