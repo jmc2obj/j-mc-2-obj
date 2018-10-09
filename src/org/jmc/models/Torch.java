@@ -24,45 +24,57 @@ public class Torch extends BlockModel
 		Transform translate = new Transform();
 		Transform txTorch, txFlame;
 
-		switch(data)
+		System.out.print("It made it into here");
+		
+		if (data.containsKey("facing")) 
 		{
-			case 1:
-				rotate.rotate(0, 0, -25);
-				translate.translate(x-0.3f, y+0.125f, z);
-				txTorch = translate.multiply(rotate);
-
-				translate.translate(x-0.26f, y+0.125f, z);
-				txFlame = translate;
-				break;
-			case 2:
-				rotate.rotate(0, 0, 25);
-				translate.translate(x+0.3f, y+0.125f, z);
-				txTorch = translate.multiply(rotate);
-
-				translate.translate(x+0.26f, y+0.125f, z);
-				txFlame = translate;
-				break;
-			case 3:
-				rotate.rotate(25, 0, 0);			
-				translate.translate(x, y+0.125f, z-0.3f);
-				txTorch = translate.multiply(rotate);
-
-				translate.translate(x, y+0.125f, z-0.26f);
-				txFlame = translate;
-				break;
-			case 4:
-				rotate.rotate(-25, 0, 0);
-				translate.translate(x, y+0.125f, z+0.3f);
-				txTorch = translate.multiply(rotate);
-
-				translate.translate(x, y+0.125f, z+0.26f);
-				txFlame = translate;
-				break;
-			default:
-				translate.translate(x, y, z);
-				txTorch = translate;
-				txFlame = translate;
-				break;
+			switch(data.get("facing"))
+			{
+				case "east":
+					System.out.print("eh");
+					rotate.rotate(0, 0, -25);
+					translate.translate(x-0.3f, y+0.125f, z);
+					txTorch = translate.multiply(rotate);
+	
+					translate.translate(x-0.26f, y+0.125f, z);
+					txFlame = translate;
+					break;
+				case "west":
+					rotate.rotate(0, 0, 25);
+					translate.translate(x+0.3f, y+0.125f, z);
+					txTorch = translate.multiply(rotate);
+	
+					translate.translate(x+0.26f, y+0.125f, z);
+					txFlame = translate;
+					break;
+				case "south":
+					rotate.rotate(25, 0, 0);			
+					translate.translate(x, y+0.125f, z-0.3f);
+					txTorch = translate.multiply(rotate);
+	
+					translate.translate(x, y+0.125f, z-0.26f);
+					txFlame = translate;
+					break;
+				case "north":
+					rotate.rotate(-25, 0, 0);
+					translate.translate(x, y+0.125f, z+0.3f);
+					txTorch = translate.multiply(rotate);
+	
+					translate.translate(x, y+0.125f, z+0.26f);
+					txFlame = translate;
+					break;
+				default:
+					translate.translate(x, y, z);
+					txTorch = translate;
+					txFlame = translate;
+					break;					
+			}
+		} 
+		else 
+		{
+			translate.translate(x, y, z);
+			txTorch = translate;
+			txFlame = translate;			
 		}
 		
 		Vertex[] vertices = new Vertex[4];
@@ -104,7 +116,7 @@ public class Torch extends BlockModel
 		obj.addFace(vertices, null, txTorch, mtls[0]);
 		
 		// bottom
-		if (data != 5 || drawSides(chunks,x,y,z)[5])
+		if (data.containsKey("facing") || drawSides(chunks,x,y,z)[5])
 		{
 			vertices[0] = new Vertex( 1/16f, -0.5f,  1/16f); uv[0] = new UV(7/16f, 0);
 			vertices[1] = new Vertex(-1/16f, -0.5f,  1/16f); uv[1] = new UV(9/16f, 0);

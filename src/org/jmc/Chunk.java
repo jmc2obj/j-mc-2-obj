@@ -29,7 +29,6 @@ import org.jmc.NBT.TAG_Int_Array;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_Long_Array;
 import org.jmc.NBT.TAG_String;
-import org.jmc.models.BlockModel;
 import org.jmc.models.None;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;

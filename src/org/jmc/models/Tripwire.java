@@ -16,7 +16,7 @@ public class Tripwire extends BlockModel
 
 	private boolean isConnectable(String otherBlockId)
 	{
-		return otherBlockId.equals(blockId) || otherBlockId.equals("minecraft:tripwire");
+		return otherBlockId.equals(blockId) || otherBlockId.equals("minecraft:tripwire_hook");
 	}
 	
 	@Override
@@ -24,8 +24,12 @@ public class Tripwire extends BlockModel
 	{
 		String mtl = materials.get(data,biome)[0];
 		
-		boolean active = (data & 4) != 0;
+		boolean active = data.get("powered").equals("true");
 		
+		
+		/////////////////////
+		// For some reason none of these seem to be working! Need to look at them some more
+		/////////////////////
 		boolean conn_n = isConnectable(chunks.getBlockID(x, y, z-1));
 		boolean conn_s = isConnectable(chunks.getBlockID(x, y, z+1));
 		boolean conn_w = isConnectable(chunks.getBlockID(x-1, y, z));

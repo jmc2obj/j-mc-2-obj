@@ -27,7 +27,8 @@ public class SignPost extends BlockModel
 		Transform rt;
 
 		float r = 0;
-		switch (data & 15)
+		int rotation = Integer.parseInt(data.get("rotation"));
+		switch (rotation)
 		{
 			case 0: r = -180f; break;
 			case 1: r = -157.5f; break;

@@ -15,7 +15,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class TripwireHook extends BlockModel
 {
 
-	private String[] getMtlSides(byte data, int biome, int i)
+	private String[] getMtlSides(HashMap<String, String> data, int biome, int i)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -33,8 +33,8 @@ public class TripwireHook extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		int dir = (data & 3);
-		boolean connected = (data & 4) != 0;
+		String dir = data.get("facing");
+		boolean connected = data.get("attached").equals("true");
 		
 		/*
 		 The model is rendered facing south and then rotated  
@@ -45,10 +45,10 @@ public class TripwireHook extends BlockModel
 
 		switch (dir)
 		{
-			case 0: rotate.rotate(0, 0, 0); break;
-			case 1: rotate.rotate(0, 90, 0); break;
-			case 2: rotate.rotate(0, 180, 0); break;
-			case 3: rotate.rotate(0, -90, 0); break;
+			case "south": rotate.rotate(0, 0, 0); break;
+			case "west": rotate.rotate(0, 90, 0); break;
+			case "north": rotate.rotate(0, 180, 0); break;
+			case "east": rotate.rotate(0, -90, 0); break;
 		}
 		translate.translate(x, y, z);
 		baseTrans = translate.multiply(rotate);

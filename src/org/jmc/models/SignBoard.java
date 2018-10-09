@@ -23,21 +23,21 @@ public class SignBoard extends BlockModel
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform rt;
-
-		switch (data)
+		
+		switch (data.get("facing"))
 		{
-			case 2:
+			case "north":
 				rotate.rotate(0, 0, 0);
 				break;
-			case 3:
+			case "west":
+			  	rotate.rotate(0, -90, 0);
+				break;
+			case "south":
 				rotate.rotate(0, 180, 0);
 				break;
-			case 4:
-				rotate.rotate(0, -90, 0);
-				break;
-			case 5:
+			case "east":
 				rotate.rotate(0, 90, 0);
-				break;
+				break;		  
 		}
 		translate.translate(x, y, z);		
 			
