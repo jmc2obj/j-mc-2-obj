@@ -334,7 +334,7 @@ public class TextureExporter {
 				int rowPos = Integer.parseInt(parts[0], 10) - 1;
 				int colPos = Integer.parseInt(parts[1], 10) - 1;
 
-				Log.info("Creating Buffer Image");
+				Log.debug("Creating Buffer Image");
 				BufferedImage texture = new BufferedImage(width, height, image.getType());
 				image.getSubimage(colPos * width, rowPos * height, width, height).copyData(texture.getRaster());
 
@@ -359,16 +359,24 @@ public class TextureExporter {
 				}
 				else{
 				
-					Log.info("Creating Texture File");
+					Log.debug("Creating Texture File: " + texName);
 					Texture texture2 = new Texture(texName, texture, repeating, luma);
-					Log.info("Writing Texture File");
+					Log.debug("Writing Texture File: " + texName);
 					ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
 					
+					if (alphas) {
+						try {
+							convertToAlpha(texture2.image);
+							ImageIO.write(texture2.image, "png", new File(destination, texture2.name + "_a.png"));
+						} catch (Exception e) {
+							Log.info("Cannot save alpha for: " + texture2.name + " (" + e.getMessage() + ")");
+						}
+					}
+					
 					try {
-						Log.info("Trying normal map");
 						BufferedImage imageN;
+						Log.debug("Trying normal map");
 						
-						Log.info("Searching for normal");
 						if (source.equalsIgnoreCase("texturepack"))
 							imageN = loadImageFromZip(zipfile, fileName.replace(".png", "_n.png"));
 						else if (source.equalsIgnoreCase("distr"))
@@ -379,7 +387,7 @@ public class TextureExporter {
 						if (imageN.getType() != BufferedImage.TYPE_4BYTE_ABGR)
 							imageN = convertImageType(imageN);
 						
-						Log.info("Found Normal. Creating Buffered Texture.");
+						Log.debug("Found Normal. Creating Buffered Texture.");
 						BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
 						imageN.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureN.getRaster());
 						if (scale != 1.0) {
@@ -390,21 +398,20 @@ public class TextureExporter {
 							}
 						}
 						
-						Log.info("Creating Texture.");
+						Log.debug("Creating Normal Texture. " + texName + "_n");
 						Texture texture2N = new Texture(texName + "_n", textureN, repeating, false);
-						Log.info("Writing Texture.");
+						Log.debug("Writing Normal Texture. " + texture2N.name);
 						ImageIO.write(texture2N.image, "png", new File(destination, texture2N.name + ".png"));
 						
 					} catch (Exception e) {
-						Log.info("Error loading image: " + e.getMessage());
+						Log.info("Error loading normal texture: " + e.getMessage());
 						continue;
 					}
 
 					try {
-						
-						Log.info("Trying specular map");
 						BufferedImage imageS;
-						Log.info("Searching for spec");
+						Log.debug("Trying specular map");
+						
 						if (source.equalsIgnoreCase("texturepack"))
 							imageS = loadImageFromZip(zipfile, fileName.replace(".png", "_s.png"));
 						else if (source.equalsIgnoreCase("distr"))
@@ -415,7 +422,7 @@ public class TextureExporter {
 						if (imageS.getType() != BufferedImage.TYPE_4BYTE_ABGR)
 							imageS = convertImageType(imageS);
 						
-						Log.info("Found Specular. Creating Buffered Texture.");
+						Log.debug("Found Specular. Creating Buffered Texture.");
 						BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
 						imageS.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureS.getRaster());
 						if (scale != 1.0) {
@@ -425,23 +432,14 @@ public class TextureExporter {
 								Log.info("Cannot scale image: " + texName + "_s (" + e.getMessage() + ")");
 							}
 						}
-						Log.info("Creating Texture.");
+						Log.debug("Creating Specular Texture. " + texName + "_s");
 						Texture texture2S = new Texture(texName + "_s", textureS, repeating, false);
-						Log.info("Writing Texture.");
+						Log.debug("Writing Specular Texture. " + texture2S.name);
 						ImageIO.write(texture2S.image, "png", new File(destination, texture2S.name + ".png"));
 						
 					} catch (Exception e) {
-						Log.info("Error loading image: " + e.getMessage());
+						Log.info("Error loading specular image: " + e.getMessage());
 						continue;
-					}
-	
-					if (alphas) {
-						try {
-							convertToAlpha(texture2.image);
-							ImageIO.write(texture2.image, "png", new File(destination, texture2.name + "_a.png"));
-						} catch (Exception e) {
-							Log.info("Cannot save alpha for: " + texture2.name + " (" + e.getMessage() + ")");
-						}
 					}
 					
 				}

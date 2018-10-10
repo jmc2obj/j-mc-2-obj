@@ -1,20 +1,32 @@
 package org.jmc.models;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.jmc.NBT.*;
+import javax.imageio.ImageIO;
+
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.Options;
+import org.jmc.NBT.NBT_Tag;
+import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_Int;
+import org.jmc.NBT.TAG_List;
+import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
-
-import javax.imageio.ImageIO;
 
 public class Banner extends BlockModel {
 
@@ -85,11 +97,6 @@ public class Banner extends BlockModel {
         // banner facing
         double rotation = 0;
 
-        // obj correction
-        byte rotationData = data;
-        rotationData |= rotationData << 2;
-
-
         // scale the models down
         double offsetScale = -0.5;
 
@@ -97,42 +104,37 @@ public class Banner extends BlockModel {
         double offsetY = 0;
         double offsetZ = 0;
 
-
-        int facing = 0;
         switch(bannerType) {
             case "wall":
-                facing = rotationData & 3;
                 offsetY = -1.51;
-                switch (facing)
-                {
-                    case 0:
-                        rotation = 180;
-                        offsetX = 0.52;
-                        offsetZ = 0;
-                        break;
-                    case 1:
-                        rotation = -90;
-                        offsetX = -1;
-                        offsetZ = -0.48;
-                        break;
-                    case 2:
-                        rotation = 0;
-                        offsetX = 0.486;
-                        offsetZ = 1.0;
-                        break;
-                    case 3:
-                        rotation = 90;
-                        offsetX = 0;
-                        offsetZ = -0.52;
-                        break;
-                }
+                switch (data.get("facing")) {
+				case "north":
+                    rotation = -90;
+                    offsetX = 0;
+                    offsetZ = 0.514;
+					break;
+				case "east":
+                    rotation = 0;
+                    offsetX = -0.514;
+                    offsetZ = 0.0;
+					break;
+				case "south":
+                    rotation = 90;
+                    offsetX = 0;
+                    offsetZ = -0.52;
+					break;
+				case "west":
+                    rotation = 180;
+                    offsetX = 0.52;
+                    offsetZ = 0;
+					break;
+				}
                 break;
             case "standing":
+            	
+                int dataRot = Integer.parseInt(data.get("rotation"));
 
-                // don't know if its correct - but it seams to work
-                facing = (Math.abs(data)/2);
-
-                rotation = 90 + facing * 45;
+                rotation = 90 + (360.0f / 16.0f) * dataRot;
 
                 offsetY = -0.48;
 
@@ -147,7 +149,40 @@ public class Banner extends BlockModel {
 	        // get banner layer information
 	        TAG_Compound tag = chunks.getTileEntity(x, y, z);
 	        if (tag != null) {
-	            baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
+	            //baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
+	        	String bid = chunks.getBlockID(x, y, z);
+	        	if (bid.contains("white"))
+	        		baseColorIndex = 0;
+	        	else if (bid.contains("orange"))
+	        		baseColorIndex = 1;
+	        	else if (bid.contains("magenta"))
+	        		baseColorIndex = 2;
+	        	else if (bid.contains("light_blue"))
+	        		baseColorIndex = 3;
+	        	else if (bid.contains("yellow"))
+	        		baseColorIndex = 4;
+	        	else if (bid.contains("lime"))
+	        		baseColorIndex = 5;
+	        	else if (bid.contains("pink"))
+	        		baseColorIndex = 6;
+	        	else if (bid.contains("gray"))
+	        		baseColorIndex = 7;
+	        	else if (bid.contains("light_gray"))
+	        		baseColorIndex = 8;
+	        	else if (bid.contains("cyan"))
+	        		baseColorIndex = 9;
+	        	else if (bid.contains("purple"))
+	        		baseColorIndex = 10;
+	        	else if (bid.contains("blue"))
+	        		baseColorIndex = 11;
+	        	else if (bid.contains("brown"))
+	        		baseColorIndex = 12;
+	        	else if (bid.contains("green"))
+	        		baseColorIndex = 13;
+	        	else if (bid.contains("red"))
+	        		baseColorIndex = 14;
+	        	else if (bid.contains("black"))
+	        		baseColorIndex = 15;
 	
 	            // base Color
 	            BannerPattern bpBase = new BannerPattern();
@@ -182,7 +217,7 @@ public class Banner extends BlockModel {
 
         try {
         	synchronized (exportedMaterials) {
-	            boolean alreadyExported = exportedMaterials.contains(bannerMaterial);
+	            boolean alreadyExported = false;//TODO PUT ME BACK! exportedMaterials.contains(bannerMaterial);
 	            // already exported material?
 	            if (!alreadyExported) {
 	                exportedMaterials.add(bannerMaterial);
@@ -262,31 +297,31 @@ public class Banner extends BlockModel {
 	
 	                // draw into layer..
 	                Color patternColor = getColorById(bp.getColor());
-	
-	
+	                
+	                
 	                for(int x=0; x<imageWidth; x++) {
 	                    for(int y=0; y<imageHeight; y++) {
 	                        Color maskColor = new Color(patternSource.getRGB(x, y));
 	                        Color mainMaskColor = new Color(patternAlpha.getRGB(x, y));
-	
-	
+	                        
+	                        
 	                        int alpha = maskColor.getRed();
 	                        // mask the mask with the mainmask :) YEAH
 	                        if (alpha > mainMaskColor.getRed()) {
 	                            alpha = alpha * (mainMaskColor.getRed()/255);
 	                        }
-	
+	                        
 	                        Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
-	
-	                        //    Log.info(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
+	                        
+	                        //Log.debug(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
 	                        patternImage.setRGB(x, y, currentColor.getRGB());
 	                    }
 	                }
-	
+	                
 	                // draw this layer into the main image
 	                combinedGraphics.drawImage(patternImage, 0, 0, null);
-	
-	                Log.info(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
+	                
+	                Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
 	            }
             }
 
@@ -308,22 +343,22 @@ public class Banner extends BlockModel {
         Color mappedColor = new Color(0, 0, 0);
 
         switch(colorId) {
-            case 0: mappedColor = new Color(0, 0, 0); break;
-            case 1: mappedColor = new Color(153, 51, 51); break;
-            case 2: mappedColor = new Color(102, 127, 51); break;
-            case 3: mappedColor = new Color(102, 76, 51); break;
-            case 4: mappedColor = new Color(51, 76, 178); break;
-            case 5: mappedColor = new Color(127, 63, 178); break;
-            case 6: mappedColor = new Color(76, 127, 153); break;
-            case 7: mappedColor = new Color(153, 153, 153); break;
-            case 8: mappedColor = new Color(76, 76, 76); break;
-            case 9: mappedColor = new Color(242, 127, 165); break;
-            case 10: mappedColor = new Color(127, 204, 25); break;
-            case 11: mappedColor = new Color(229, 229, 51); break;
-            case 12: mappedColor = new Color(102, 153, 216); break;
-            case 13: mappedColor = new Color(178, 76, 216); break;
-            case 14: mappedColor = new Color(216, 127, 51); break;
-            case 15: mappedColor = new Color(255, 255, 255); break;
+			case 0: mappedColor = new Color(255, 255, 255); break;//White
+			case 1: mappedColor = new Color(216, 127, 51); break;//Orange
+			case 2: mappedColor = new Color(178, 76, 216); break;//Magenta
+			case 3: mappedColor = new Color(80, 153, 216); break;//Light Blue
+			case 4: mappedColor = new Color(229, 200, 51); break;//Yellow
+			case 5: mappedColor = new Color(120, 190, 23); break;//Lime
+			case 6: mappedColor = new Color(242, 127, 165); break;//Pink
+			case 7: mappedColor = new Color(76, 76, 76); break;//Grey
+			case 8: mappedColor = new Color(153, 153, 153); break;//Light Grey
+			case 9: mappedColor = new Color(76, 127, 153); break;//Cyan
+			case 10: mappedColor = new Color(127, 63, 178); break;//Purple
+			case 11: mappedColor = new Color(51, 76, 178); break;//Blue
+			case 12: mappedColor = new Color(102, 76, 51); break;//Brown
+			case 13: mappedColor = new Color(102, 127, 51); break;//Green
+			case 14: mappedColor = new Color(153, 51, 51); break;//Red
+			case 15: mappedColor = new Color(0, 0, 0); break;//Blacke
         }
         return mappedColor;
     }
@@ -358,8 +393,8 @@ public class Banner extends BlockModel {
             out.println("newmtl " + materialName);
             out.println("Kd " + intChannel2Float(baseColor.getRed()) + " " + intChannel2Float(baseColor.getGreen()) + " " + intChannel2Float(baseColor.getBlue()));
             out.println("Ks 0.0000 0.0000 0.0000");
-            out.println("map_Kd tex/" + materialName + ".png");
-            out.print("map_Kd tex/banner_base_a.png");
+            out.print("map_Kd tex/" + materialName + ".png");
+            //out.print("map_d tex/banner_base_a.png");
         } catch (IOException e) {
             throw new RuntimeException("Unexpected error apending material file");
         }
