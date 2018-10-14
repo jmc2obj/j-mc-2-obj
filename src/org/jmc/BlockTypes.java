@@ -200,28 +200,46 @@ public class BlockTypes
 
 	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		mesh.mesh_data.data = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
-		mesh.mesh_data.mask = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
-		mesh.mesh_data.id  = Xml.getAttribute(meshNode, "id", "");
-		String offset_str = Xml.getAttribute(meshNode, "offset", "");
-		if(offset_str.length()>0)
-		{
-			String [] tok=offset_str.split(",");
-			if(tok.length!=3)
-			{
-				Log.info("Error parsing offset string: offset=\""+offset_str+"\"");
-			}
-			else
-			{
-				int x=Integer.parseInt(tok[0],10);
-				int y=Integer.parseInt(tok[1],10);
-				int z=Integer.parseInt(tok[2],10);
-				mesh.mesh_data.offset = new Vertex(x,y,z);
+		HashMap<String, String> data = new HashMap<String, String>();
+		NamedNodeMap meshAttribs = meshNode.getAttributes();
+		
+		if (meshAttribs != null) {
+			for (int k = 0; k < meshAttribs.getLength(); k++) {
+				Node attrib = meshAttribs.item(k);
+				String attrName = attrib.getNodeName();
+				String attrVal = attrib.getNodeValue();
+				if (attrName.equalsIgnoreCase("id")) {
+					mesh.mesh_data.id  = attrVal;
+				}
+				else if (attrName.equalsIgnoreCase("offset")) {
+					if(attrVal.length()>0)
+					{
+						String [] tok=attrVal.split(",");
+						if(tok.length!=3)
+						{
+							Log.info("Error parsing offset string: offset=\""+attrVal+"\"");
+						}
+						else
+						{
+							int x=Integer.parseInt(tok[0],10);
+							int y=Integer.parseInt(tok[1],10);
+							int z=Integer.parseInt(tok[2],10);
+							mesh.mesh_data.offset = new Vertex(x,y,z);
+						}
+					}
+				}
+				else if (attrName.equalsIgnoreCase("fallthrough")) {
+					mesh.mesh_data.fallthrough = Boolean.parseBoolean(attrVal);
+				}
+				else {
+					//transform nodes have other attributes.
+					if (meshNode.getNodeName().equalsIgnoreCase("mesh"))
+						data.put(attrName, attrVal);
+				}
 			}
 		}
 		
-		if(Xml.getAttribute(meshNode, "fallthrough", "").toLowerCase().equals("true"))
-			mesh.mesh_data.fallthrough=true;
+		mesh.mesh_data.data = data;
 	}
 	
 	private static void recurseChildren(NodeList children, Mesh mesh)

@@ -22,8 +22,7 @@ public class Mesh extends BlockModel
 
 	public static class MeshData
 	{
-		public byte data;
-		public byte mask;		
+		public HashMap<String, String> data;
 		public Vertex offset;
 		public String id;		
 		public Transform transform;
@@ -31,33 +30,29 @@ public class Mesh extends BlockModel
 
 		public MeshData()
 		{
-			data=-1;
-			mask=-1;
+			data=new HashMap<String, String>();
 			id="";
 			offset=null;
 			transform=null;
 			fallthrough=false;
 		}
 
-		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, byte block_data)
+		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> block_data)
 		{			
 			if(offset==null || offset==new Vertex(0,0,0))
 			{
-				byte d=block_data;
-				if(mask>0) d=(byte)(block_data&mask);
-				if(data>=0 && data!=d) return false;
+				HashMap<String, String> d=block_data;
+				if(!data.isEmpty() && !data.equals(d)) return false;
 				return true;
 			}
 			else
 			{
-				byte d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				HashMap<String, String> d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
 				String i=chunks.getBlockID(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
 
-				if(mask>0) d=(byte)(d&mask);
+				if(!data.isEmpty() && !data.equals(d)) return false;
 
-				if(data>=0 && data!=d) return false;
-
-				if(!id.endsWith("air") && i!=id) return false;
+				if(!i.isEmpty() && !i.equals(id)) return false;
 
 				return true;
 			}
@@ -65,7 +60,7 @@ public class Mesh extends BlockModel
 
 	}
 
-	@SuppressWarnings("unused")
+	//@SuppressWarnings("unused")
 	private String obj_str;
 	private OBJInputFile objin_file;
 	private OBJGroup group;
@@ -126,7 +121,7 @@ public class Mesh extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		if(data<0) data=(byte) (16+data);
+		//What did this do? if(data<0) data=(byte) (16+data);
 
 		Transform translate = new Transform();
 		translate.translate(x, y, z);
@@ -134,7 +129,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , byte data, int biome, Transform trans)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , HashMap<String, String> data, int biome, Transform trans)
 	{
 		boolean match=mesh_data.matches(chunks, x, y, z, data);
 
@@ -162,20 +157,20 @@ public class Mesh extends BlockModel
 	}
 
 	//DEBUG
-	/*
+	@Override
 	public String toString()
 	{
-		String ret;
+		String ret = "";
 
-		ret="MESH ("+this.hashCode()+")\n";
-		ret+="STR "+obj_str+"\n";
-		ret+="DATA "+mesh_data.data+" & "+mesh_data.mask+"\n";
-		ret+="OBJECTS "+objects.size()+":\n";
+		ret+="MESH ("+this.hashCode()+"), ";
+		ret+="STR "+obj_str+", ";
+		ret+="DATA "+mesh_data.data+", ";
+		ret+="OBJECTS "+objects.size()+":";
 		for(Mesh object:objects)
-			ret+=object.toString();
-		ret+="------\n";
+			ret+= "\n" + object.toString();
+		if (objects.size() > 0)
+			ret+="\n----";
 
 		return ret;
 	}
-	*/
 }
