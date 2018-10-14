@@ -231,6 +231,30 @@ Kd 0.3294 0.3294 0.3294
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/bedrock.png
 
+newmtl beetroots_stage0
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/beetroots_stage0.png
+map_d tex/beetroots_stage0_a.png
+
+newmtl beetroots_stage1
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/beetroots_stage1.png
+map_d tex/beetroots_stage1_a.png
+
+newmtl beetroots_stage2
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/beetroots_stage2.png
+map_d tex/beetroots_stage2_a.png
+
+newmtl beetroots_stage3
+Kd 0.5137 0.7569 0.2667
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/beetroots_stage3.png
+map_d tex/beetroots_stage3_a.png
+
 newmtl blue_ice
 Kd 0.4500 0.6700 0.9900
 Ks 0.0000 0.0000 0.0000
@@ -793,66 +817,6 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/double_plant_grass_top.png
 map_d tex/double_plant_grass_top_a.png
 
-newmtl double_plant_paeonia_bottom
-Kd 0.8941 0.7294 0.9686
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_paeonia_bottom.png
-map_d tex/double_plant_paeonia_bottom_a.png
-
-newmtl double_plant_paeonia_top
-Kd 0.8941 0.7294 0.9686
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_paeonia_top.png
-map_d tex/double_plant_paeonia_top_a.png
-
-newmtl double_plant_rose_bottom
-Kd 0.7961 0.0235 0.0392
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_rose_bottom.png
-map_d tex/double_plant_rose_bottom_a.png
-
-newmtl double_plant_rose_top
-Kd 0.7961 0.0235 0.0392
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_rose_top.png
-map_d tex/double_plant_rose_top_a.png
-
-newmtl double_plant_sunflower_back
-Kd 0.9451 0.8941 0.1412
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_sunflower_back.png
-map_d tex/double_plant_sunflower_back_a.png
-
-newmtl double_plant_sunflower_bottom
-Kd 0.9451 0.8941 0.1412
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_sunflower_bottom.png
-map_d tex/double_plant_sunflower_bottom_a.png
-
-newmtl double_plant_sunflower_front
-Kd 0.9451 0.8941 0.1412
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_sunflower_front.png
-map_d tex/double_plant_sunflower_front_a.png
-
-newmtl double_plant_sunflower_top
-Kd 0.9451 0.8941 0.1412
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_sunflower_top.png
-map_d tex/double_plant_sunflower_top_a.png
-
-newmtl double_plant_syringa_bottom
-Kd 0.8941 0.7294 0.9686
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_syringa_bottom.png
-map_d tex/double_plant_syringa_bottom_a.png
-
-newmtl double_plant_syringa_top
-Kd 0.8941 0.7294 0.9686
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/double_plant_syringa_top.png
-map_d tex/double_plant_syringa_top_a.png
-
 newmtl dropper_front
 Kd 0.4235 0.4235 0.4235
 Ks 0.0000 0.0000 0.0000
@@ -963,71 +927,128 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/fire_coral_fan.png
 map_d tex/fire_coral_fan_a.png
 
-newmtl flower_allium
+
+newmtl allium
 Kd 0.8941 0.7294 0.9686
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_allium.png
-map_d tex/flower_allium_a.png
+map_Kd tex/allium.png
+map_d tex/allium_a.png
 
-newmtl flower_blue_orchid
+newmtl blue_orchid
 Kd 0.1843 0.8078 0.9922
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_blue_orchid.png
-map_d tex/flower_blue_orchid_a.png
+map_Kd tex/blue_orchid.png
+map_d tex/blue_orchid_a.png
 
-newmtl flower_houstonia
+newmtl azure_bluet
 Kd 0.9059 0.9059 0.9059
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_houstonia.png
-map_d tex/flower_houstonia_a.png
+map_Kd tex/azure_bluet.png
+map_d tex/azure_bluet_a.png
 
-newmtl flower_oxeye_daisy
+newmtl oxeye_daisy
 Kd 0.9059 0.9059 0.9059
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_oxeye_daisy.png
-map_d tex/flower_oxeye_daisy_a.png
+map_Kd tex/oxeye_daisy.png
+map_d tex/oxeye_daisy_a.png
 
-newmtl flower_paeonia
-Kd 0.8941 0.7294 0.9686
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_paeonia.png
-map_d tex/flower_paeonia_a.png
-
-newmtl flower_red
+newmtl poppy
 Kd 0.7961 0.0235 0.0392
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_red.png
-map_d tex/flower_red_a.png
+map_Kd tex/poppy.png
+map_d tex/poppy_a.png
 
-newmtl flower_tulip_orange
+newmtl orange_tulip
 Kd 0.8823 0.4784 0.1412
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_tulip_orange.png
-map_d tex/flower_tulip_orange_a.png
+map_Kd tex/orange_tulip.png
+map_d tex/orange_tulip_a.png
 
-newmtl flower_tulip_pink
+newmtl pink_tulip
 Kd 0.8941 0.7294 0.9686
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_tulip_pink.png
-map_d tex/flower_tulip_pink_a.png
+map_Kd tex/pink_tulip.png
+map_d tex/pink_tulip_a.png
 
-newmtl flower_tulip_red
+newmtl red_tulip
 Kd 0.7961 0.0235 0.0392
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_tulip_red.png
-map_d tex/flower_tulip_red_a.png
+map_Kd tex/red_tulip.png
+map_d tex/red_tulip_a.png
 
-newmtl flower_tulip_white
+newmtl white_tulip
 Kd 0.9059 0.9059 0.9059
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_tulip_white.png
-map_d tex/flower_tulip_white_a.png
+map_Kd tex/white_tulip.png
+map_d tex/white_tulip_a.png
 
-newmtl flower_yellow
+newmtl dandelion
 Kd 0.7569 0.7804 0.0078
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/flower_yellow.png
-map_d tex/flower_yellow_a.png
+map_Kd tex/dandelion.png
+map_d tex/dandelion_a.png
+
+
+newmtl peony_bottom
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/peony_bottom.png
+map_d tex/peony_bottom_a.png
+
+newmtl peony_top
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/peony_top.png
+map_d tex/peony_a.png
+
+newmtl rose_bush_bottom
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rose_bush_bottom.png
+map_d tex/rose_bush_bottom_a.png
+
+newmtl rose_bush_top
+Kd 0.7961 0.0235 0.0392
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/rose_bush_top.png
+map_d tex/rose_bush_top_a.png
+
+newmtl sunflower_back
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sunflower_back.png
+map_d tex/sunflower_back_a.png
+
+newmtl sunflower_bottom
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sunflower_bottom.png
+map_d tex/sunflower_bottom_a.png
+
+newmtl sunflower_front
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sunflower_front.png
+map_d tex/sunflower_front_a.png
+
+newmtl sunflower_top
+Kd 0.9451 0.8941 0.1412
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/sunflower_top.png
+map_d tex/sunflower_top_a.png
+
+newmtl lilac_bottom
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lilac_bottom.png
+map_d tex/lilac_bottom_a.png
+
+newmtl lilac_top
+Kd 0.8941 0.7294 0.9686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lilac_top.png
+map_d tex/lilac_top_a.png
+
 
 newmtl flowerpot
 Kd 0.4882 0.2718 0.2121
@@ -1277,11 +1298,41 @@ Kd 0.5333 0.4980 0.4941
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/gravel.png
 
-newmtl hatch
+newmtl oak_trapdoor
 Kd 0.6157 0.5020 0.3098
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/hatch.png
-map_d tex/hatch_a.png
+map_Kd tex/oak_trapdoor.png
+map_d tex/oak_trapdoor_a.png
+
+newmtl spruce_trapdoor
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/spruce_trapdoor.png
+map_d tex/spruce_trapdoor_a.png
+
+newmtl birch_trapdoor
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/birch_trapdoor.png
+map_d tex/birch_trapdoor_a.png
+
+newmtl jungle_trapdoor
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jungle_trapdoor.png
+map_d tex/jungle_trapdoor_a.png
+
+newmtl acacia_trapdoor
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/acacia_trapdoor.png
+map_d tex/acacia_trapdoor_a.png
+
+newmtl dark_oak_trapdoor
+Kd 0.6157 0.5020 0.3098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dark_oak_trapdoor.png
+map_d tex/dark_oak_trapdoor_a.png
 
 newmtl hay_block_side
 Kd 0.7255 0.6118 0.0745

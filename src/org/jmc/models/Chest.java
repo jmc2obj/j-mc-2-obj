@@ -34,10 +34,12 @@ public class Chest extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
 		String[] mtlSingle = getMtlSides(data, biome, 0);
-		String[] mtlDouble = !data.get("type").equals("single") ? getMtlSides(data, biome, 1) : null;
-		//boolean conn_l = false;
-		//boolean conn_r = false;
-		
+		String[] mtlDouble = null;
+		if (data.containsKey("type")) // If able to be double chest 
+		{ 
+				mtlDouble = !data.get("type").equals("single") ? getMtlSides(data, biome, 1) : null; 
+		}
+				
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform rt;
@@ -66,7 +68,7 @@ public class Chest extends BlockModel
 		boolean[] drawSides;
 		UV[][] uvSides;
 		
-		if (data.get("type").equals("right"))
+		if (data.containsKey("type") && data.get("type").equals("right"))
 		{
 			// body
 			drawSides = new boolean[] { false, true, true, false, true, drawSides(chunks, x, y, z)[5] };
@@ -104,7 +106,7 @@ public class Chest extends BlockModel
 				};
 			addBox(obj, -0.5625f,-0.0625f,-0.5f, -0.4375f,0.1875f,-0.4375f, rt, mtlDouble, uvSides, drawSides);
 		}
-		else if (data.get("type").equals("left"))
+		else if (data.containsKey("type") && data.get("type").equals("left"))
 		{
 			// body
 			drawSides = new boolean[] { false, true, true, true, false, drawSides(chunks, x, y, z)[5] };

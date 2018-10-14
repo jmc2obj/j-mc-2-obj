@@ -23,15 +23,12 @@ public class Torch extends BlockModel
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform txTorch, txFlame;
-
-		System.out.print("It made it into here");
 		
 		if (data.containsKey("facing")) 
 		{
 			switch(data.get("facing"))
 			{
 				case "east":
-					System.out.print("eh");
 					rotate.rotate(0, 0, -25);
 					translate.translate(x-0.3f, y+0.125f, z);
 					txTorch = translate.multiply(rotate);
