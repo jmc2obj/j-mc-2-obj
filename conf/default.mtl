@@ -7,23 +7,23 @@ Kd 0.2500 0.2500 0.2500
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/anvil_side.png
 
-newmtl anvil_top_1
+newmtl anvil_top
 Kd 0.2500 0.2500 0.2500
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/anvil_top_1.png
-map_d tex/anvil_top_1_a.png
+map_Kd tex/anvil_top.png
+map_d tex/anvil_top_a.png
 
-newmtl anvil_top_2
+newmtl chipped_anvil_top
 Kd 0.2500 0.2500 0.2500
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/anvil_top_1.png
-map_d tex/anvil_top_1_a.png
+map_Kd tex/chipped_anvil_top.png
+map_d tex/chipped_anvil_top_a.png
 
-newmtl anvil_top_3
+newmtl damaged_anvil_top
 Kd 0.2500 0.2500 0.2500
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/anvil_top_1.png
-map_d tex/anvil_top_1_a.png
+map_Kd tex/damaged_anvil_top.png
+map_d tex/damaged_anvil_top_a.png
 
 newmtl armor_stand
 Kd 1.0000 1.0000 1.0000
@@ -192,39 +192,101 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/beacon_beam.png
 map_d tex/beacon_beam_a.png
 
-newmtl bed_foot_front
-Kd 0.5608 0.0902 0.0902
+newmtl black_bed
+Kd 0.1059 0.0902 0.0902
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/bed_foot_front.png
-map_d tex/bed_foot_front_a.png
+map_Kd tex/black_bed.png
+map_d tex/black_bed_a.png
 
-newmtl bed_foot_side
-Kd 0.5608 0.0902 0.0902
+newmtl blue_bed
+Kd 0.1529 0.2000 0.6039
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/bed_foot_side.png
-map_d tex/bed_foot_side_a.png
+map_Kd tex/blue_bed.png
+map_d tex/blye_bed_a.png
 
-newmtl bed_foot_top
-Kd 0.5608 0.0902 0.0902
+newmtl brown_bed
+Kd 0.3373 0.2000 0.1098
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/bed_foot_top.png
+map_Kd tex/brown_bed.png
+map_d tex/brown_bed_a.png
 
-newmtl bed_head_front
-Kd 0.5608 0.0902 0.0902
+newmtl cyan_bed
+Kd 0.1529 0.4588 0.5882
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/bed_head_front.png
-map_d tex/bed_head_front_a.png
+map_Kd tex/cyan_bed.png
+map_d tex/cyan_bed_a.png
 
-newmtl bed_head_side
-Kd 0.5608 0.0902 0.0902
+newmtl gray_bed
+Kd 0.2627 0.2627 0.2627
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/bed_head_side.png
-map_d tex/bed_head_side_a.png
+map_Kd tex/gray_bed.png
+map_d tex/gray_bed_a.png
 
-newmtl bed_head_top
-Kd 0.5608 0.0902 0.0902
+newmtl green_bed
+Kd 0.2196 0.3020 0.0941
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/bed_head_top.png
+map_Kd tex/green_bed.png
+map_d tex/green_bed_a.png
+
+newmtl light_blue_bed
+Kd 0.4078 0.5451 0.8314
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/light_blue_bed.png
+map_d tex/light_blue_bed_a.png
+
+newmtl light_gray_bed
+Kd 0.6196 0.6510 0.6510
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/light_gray_bed.png
+map_d tex/light_gray_bed_a.png
+
+newmtl lime_bed
+Kd 0.2314 0.7412 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lime_bed.png
+map_d tex/lime_bed_a.png
+
+newmtl magenta_bed
+Kd 0.7490 0.2980 0.7882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/magenta_bed.png
+map_d tex/magenta_bed_a.png
+
+newmtl orange_bed
+Kd 0.9176 0.5020 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/orange_bed.png
+map_d tex/orange_bed_a.png
+
+newmtl pink_bed
+Kd 0.8510 0.5176 0.6078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pink_bed.png
+map_d tex/pink_bed_a.png
+
+newmtl purple_bed
+Kd 0.5059 0.2118 0.7686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/purple_bed.png
+map_d tex/purple_bed_a.png
+
+newmtl red_bed
+Kd 0.6431 0.1765 0.1608
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_bed.png
+map_d tex/red_bed_a.png
+
+newmtl white_bed
+Kd 0.8706 0.8706 0.8706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/white_bed.png
+map_d tex/white_bed_a.png
+
+newmtl yellow_bed
+Kd 0.7608 0.7098 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/yellow_bed.png
+map_d tex/yellow_bed_a.png
 
 newmtl bedrock
 Kd 0.3294 0.3294 0.3294
@@ -480,10 +542,20 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/cocoa_plant_3.png
 map_d tex/cocoa_plant_3_a.png
 
-newmtl command_side
+newmtl command_block
 Kd 0.7960 0.5700 0.4242
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/command_side.png
+map_Kd tex/command_block.png
+
+newmtl chain_command_block
+Kd 0.4660 0.6900 0.5942
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chain_command_block.png
+
+newmtl repeating_command_block
+Kd 0.4160 0.3100 0.7842
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/repeating_command_block.png
 
 newmtl crops_1
 Kd 0.5137 0.7569 0.2667
@@ -847,6 +919,11 @@ Kd 0.5000 0.0313 0.0313
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/enchant_table_top.png
 
+newmtl end_rod
+Kd 1.0000 1.0000 1.0000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/end_rod.png
+
 newmtl end_stone_bricks
 Kd 0.8632 0.8705 0.6470
 Ks 0.0000 0.0000 0.0000
@@ -1061,10 +1138,10 @@ Kd 0.3059 0.3059 0.3059
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/furnace_front.png
 
-newmtl furnace_front_vertical
+newmtl dispenser_front_vertical
 Kd 0.3059 0.3059 0.3059
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/furnace_front_vertical.png
+map_Kd tex/dispenser_front_vertical.png
 
 newmtl furnace_lit_front
 Kd 0.3059 0.3059 0.3059
@@ -1080,6 +1157,26 @@ newmtl furnace_top
 Kd 0.3059 0.3059 0.3059
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/furnace_top.png
+
+newmtl observer_front
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/observer_front.png
+
+newmtl observer_back
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/observer_back.png
+
+newmtl observer_side
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/observer_side.png
+
+newmtl observer_top
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/observer_top.png
 
 newmtl glass
 Kd 1.0000 1.0000 1.0000
@@ -1106,10 +1203,10 @@ Kd 1.0000 1.0000 1.0000
 map_Kd tex/glass_cyan.png
 map_d tex/glass_cyan_a.png
 
-newmtl glass_dark_gray
+newmtl glass_gray
 Kd 1.0000 1.0000 1.0000
-map_Kd tex/glass_dark_gray.png
-map_d tex/glass_dark_gray_a.png
+map_Kd tex/glass_gray.png
+map_d tex/glass_gray_a.png
 
 newmtl glass_green
 Kd 1.0000 1.0000 1.0000
@@ -1196,11 +1293,11 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/glass_pane_side_cyan.png
 map_d tex/glass_pane_side_cyan_a.png
 
-newmtl glass_pane_side_dark_gray
+newmtl glass_pane_side_gray
 Kd 1.0000 1.0000 1.0000
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/glass_pane_side_dark_gray.png
-map_d tex/glass_pane_side_dark_gray_a.png
+map_Kd tex/glass_pane_side_gray.png
+map_d tex/glass_pane_side_gray_a.png
 
 newmtl glass_pane_side_green
 Kd 1.0000 1.0000 1.0000
@@ -1564,26 +1661,26 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/mushroom_brown.png
 map_d tex/mushroom_brown_a.png
 
-newmtl mushroom_brown_cap
-Kd 0.4000 0.3176 0.1961
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/mushroom_brown_cap.png
-
-newmtl mushroom_inside
-Kd 0.9490 0.7960 0.5804
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/mushroom_inside.png
-
 newmtl mushroom_red
 Kd 0.7725 0.2353 0.2471
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/mushroom_red.png
 map_d tex/mushroom_red_a.png
 
-newmtl mushroom_red_cap
+newmtl brown_mushroom_block
+Kd 0.4000 0.3176 0.1961
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/brown_mushroom_block.png
+
+newmtl red_mushroom_block
 Kd 0.8867 0.2031 0.2031
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/mushroom_red_cap.png
+map_Kd tex/red_mushroom_block.png
+
+newmtl mushroom_block_inside
+Kd 0.9490 0.7960 0.5804
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/mushroom_block_inside.png
 
 newmtl mushroom_stem
 Kd 0.9375 0.8789 0.8438
@@ -2177,6 +2274,24 @@ Kd 0.7333 0.5255 0.1412
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/yellow_terracotta.png
 
+newmtl seagrass
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/seagrass.png
+map_d tex/seagrass_a.png
+
+newmtl tall_seagrass_bottom
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tall_seagrass_bottom.png
+map_d tex/tall_seagrass_bottom_a.png
+
+newmtl tall_seagrass_top
+Kd 0.2896 0.4060 0.1555
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/tall_seagrass_top.png
+map_d tex/tall_seagrass_top_a.png
+
 newmtl stone
 Kd 0.4902 0.4902 0.4902
 Ks 0.0000 0.0000 0.0000
@@ -2471,10 +2586,10 @@ Kd 0.1529 0.4588 0.5882
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/wool_cyan.png
 
-newmtl wool_dark_gray
+newmtl wool_gray
 Kd 0.2627 0.2627 0.2627
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/wool_dark_gray.png
+map_Kd tex/wool_gray.png
 
 newmtl wool_green
 Kd 0.2196 0.3020 0.0941
@@ -2551,10 +2666,10 @@ Kd 0.1529 0.4588 0.5882
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/wool_cyan.png
 
-newmtl carpet_dark_gray
+newmtl carpet_gray
 Kd 0.2627 0.2627 0.2627
 Ks 0.0000 0.0000 0.0000
-map_Kd tex/wool_dark_gray.png
+map_Kd tex/wool_gray.png
 
 newmtl carpet_green
 Kd 0.2196 0.3020 0.0941
@@ -2853,6 +2968,90 @@ Kd 0.7608 0.7098 0.1098
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/yellow_glazed_terracotta.png
 
+newmtl shulker_box
+Kd 0.8000 0.8000 0.8000
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/shulker_box.png
+
+newmtl black_shulker_box
+Kd 0.1059 0.0902 0.0902
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/black_shulker_box.png
+
+newmtl blue_shulker_box
+Kd 0.1529 0.2000 0.6039
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/blue_shulker_box.png
+
+newmtl brown_shulker_box
+Kd 0.3373 0.2000 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/brown_shulker_box.png
+
+newmtl cyan_shulker_box
+Kd 0.1529 0.4588 0.5882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/cyan_shulker_box.png
+
+newmtl gray_shulker_box
+Kd 0.2627 0.2627 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/gray_shulker_box.png
+
+newmtl green_shulker_box
+Kd 0.2196 0.3020 0.0941
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/green_shulker_box.png
+
+newmtl light_blue_shulker_box
+Kd 0.4078 0.5451 0.8314
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/light_blue_shulker_box.png
+
+newmtl light_gray_shulker_box
+Kd 0.6196 0.6510 0.6510
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/light_gray_shulker_box.png
+
+newmtl lime_shulker_box
+Kd 0.2314 0.7412 0.1882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/lime_shulker_box.png
+
+newmtl magenta_shulker_box
+Kd 0.7490 0.2980 0.7882
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/magenta_shulker_box.png
+
+newmtl orange_shulker_box
+Kd 0.9176 0.5020 0.2157
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/orange_shulker_box.png
+
+newmtl pink_shulker_box
+Kd 0.8510 0.5176 0.6078
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/pink_shulker_box.png
+
+newmtl purple_shulker_box
+Kd 0.5059 0.2118 0.7686
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/purple_shulker_box.png
+
+newmtl red_shulker_box
+Kd 0.6431 0.1765 0.1608
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/red_shulker_box.png
+
+newmtl white_shulker_box
+Kd 0.8706 0.8706 0.8706
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/white_shulker_box.png
+
+newmtl yellow_shulker_box
+Kd 0.7608 0.7098 0.1098
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/yellow_shulker_box.png
 
 newmtl workbench_front
 Kd 0.4196 0.2784 0.1686

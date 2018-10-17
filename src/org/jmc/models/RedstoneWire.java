@@ -51,42 +51,71 @@ public class RedstoneWire extends BlockModel
 		Vertex[] vertices = new Vertex[4];
 		UV[] uv;
 		
-		// ground wire
+		// Straight ground wire
 		if (straight)
 		{
 			if (conn_n || conn_s)
 				uv = new UV[] { new UV(0,1), new UV(0,0), new UV(1,0), new UV(1,1) };
 			else
-				uv = new UV[] { new UV(0,0), new UV(1,0), new UV(1,1), new UV(0,1) };
+				uv = new UV[] { new UV(0,1), new UV(1,1), new UV(1,0), new UV(0,0) };
 
 			vertices[1] = new Vertex(x-0.5f, y-0.49f, z+0.5f);
 			vertices[2] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
 			vertices[3] = new Vertex(x+0.5f, y-0.49f, z-0.5f);			
 			vertices[0] = new Vertex(x-0.5f, y-0.49f, z-0.5f);
 			obj.addFace(vertices, uv, null, mtlLine);
-		}
+		} 
+		// Intersection point
 		else 
 		{
-			float xmin = -3/16f;
-			float xmax =  3/16f;
-			float zmin = -3/16f;
-			float zmax =  3/16f;
-			if (conn_w) xmin = -8/16f;
-			if (conn_e) xmax =  8/16f;
-			if (conn_n) zmin = -8/16f;
-			if (conn_s) zmax =  8/16f;
-
-			uv = new UV[] {
-					new UV(xmin+0.5f, 0.5f-zmax),
-					new UV(xmax+0.5f, 0.5f-zmax),
-					new UV(xmax+0.5f, 0.5f-zmin),
-					new UV(xmin+0.5f, 0.5f-zmin)
-				};
-			vertices[1] = new Vertex(x+xmin, y-0.49f, z+zmax);
-			vertices[2] = new Vertex(x+xmax, y-0.49f, z+zmax);
-			vertices[3] = new Vertex(x+xmax, y-0.49f, z+zmin);			
-			vertices[0] = new Vertex(x+xmin, y-0.49f, z+zmin);
+			// The main intersection dot
+			uv = new UV[] { new UV(0.75f,0.25f), new UV(0.25f,0.25f), new UV(0.25f,0.75f), new UV(0.75f, 0.75f) };			
+			vertices[1] = new Vertex(x-0.25f, y-0.48f, z+0.25f);
+			vertices[2] = new Vertex(x-0.25f, y-0.48f, z-0.25f);
+			vertices[3] = new Vertex(x+0.25f, y-0.48f, z-0.25f);			
+			vertices[0] = new Vertex(x+0.25f, y-0.48f, z+0.25f);			
 			obj.addFace(vertices, uv, null, mtlCross);
+			
+			//If connects north
+			if (conn_n) {
+				uv = new UV[] { new UV(0,1), new UV(0,0.5f), new UV(1,0.5f), new UV(1,1) };				
+				vertices[1] = new Vertex(x-0.5f, y-0.49f, z);
+				vertices[2] = new Vertex(x+0.5f, y-0.49f, z);
+				vertices[3] = new Vertex(x+0.5f, y-0.49f, z-0.5f);			
+				vertices[0] = new Vertex(x-0.5f, y-0.49f, z-0.5f);
+				obj.addFace(vertices, uv, null, mtlLine);					
+			}
+	
+			//If connects south
+			if (conn_s) {
+				uv = new UV[] { new UV(0,0.5f), new UV(0,0), new UV(1,0), new UV(1,0.5f) };				
+				vertices[1] = new Vertex(x-0.5f, y-0.49f, z+0.5f);
+				vertices[2] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
+				vertices[3] = new Vertex(x+0.5f, y-0.49f, z);			
+				vertices[0] = new Vertex(x-0.5f, y-0.49f, z);
+				obj.addFace(vertices, uv, null, mtlLine);				
+			}
+
+			//If connects west
+			if (conn_w) {
+				uv = new UV[] { new UV(0,0.5f), new UV(1,0.5f), new UV(1,0), new UV(0,0) };				
+				vertices[1] = new Vertex(x, y-0.49f, z+0.5f);
+				vertices[2] = new Vertex(x-0.5f, y-0.49f, z+0.5f);
+				vertices[3] = new Vertex(x-0.5f, y-0.49f, z-0.5f);			
+				vertices[0] = new Vertex(x, y-0.49f, z-0.5f);
+				obj.addFace(vertices, uv, null, mtlLine);					
+			}	
+			
+			//If connects east
+			if (conn_e) {
+				uv = new UV[] { new UV(0,1), new UV(1,1), new UV(1,0.5f), new UV(0,0.5f) };				
+				vertices[1] = new Vertex(x+0.5f, y-0.49f, z+0.5f);
+				vertices[2] = new Vertex(x, y-0.49f, z+0.5f);
+				vertices[3] = new Vertex(x, y-0.49f, z-0.5f);			
+				vertices[0] = new Vertex(x+0.5f, y-0.49f, z-0.5f);
+				obj.addFace(vertices, uv, null, mtlLine);					
+			}					
+			
 		}
 		
 		// wall wire

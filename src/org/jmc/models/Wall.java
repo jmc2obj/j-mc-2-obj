@@ -1,8 +1,6 @@
 package org.jmc.models;
 
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -13,37 +11,6 @@ import org.jmc.threading.ThreadChunkDeligate;
  */
 public class Wall extends BlockModel
 {
-	/** Blocks to which walls will connect */
-	private static HashSet<String> connectable;
-	
-	static
-	{
-		/*short[] ids = new String[] {
-				1,2,3,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,
-				60,61,62,73,74,80,82,84,86,87,88,91,97,98,107,110,112,121,123,124,129
-			};*/
-		String[] ids = new String[] {
-				"stone","grass","dirt","cobblestone_wall","mossy_cobblestone_wall"
-				//,4,5,7,12,13,14,15,16,17,19,21,22,23,24,25,35,41,42,43,45,47,48,49,56,57,58,60,61,62,73,74,80,82,84,86,87,88,91,97,98,107,110,112,121,123,124,129
-				//FIXME this ID spaghetti mess!!
-			};
-		
-		connectable = new HashSet<String>(ids.length);
-		for (int i = 0; i < ids.length; i++)
-			connectable.add("minecraft:" + ids[i]);
-	}
-	
-	private boolean checkConnect(ThreadChunkDeligate chunks, HashMap<String, String> data, int x, int y, int z)
-	{
-		String otherId = chunks.getBlockID(x, y, z);
-		if (connectable.contains(otherId))
-			return true;
-
-		HashMap<String, String> otherData = chunks.getBlockData(x, y, z);
-		return otherId.equals(this.blockId) && otherData == data;
-	}
-	
-	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
@@ -51,11 +18,11 @@ public class Wall extends BlockModel
 		UV[] uvTop, uvSide;
 		UV[][] uvSides;
 
-		boolean conn_n = checkConnect(chunks, data, x, y, z-1);
-		boolean conn_s = checkConnect(chunks, data, x, y, z+1);
-		boolean conn_e = checkConnect(chunks, data, x-1, y, z);
-		boolean conn_w = checkConnect(chunks, data, x+1, y, z);
-		boolean conn_u = checkConnect(chunks, data, x, y+1, z);
+		boolean conn_n = data.get("north").equals("true");
+		boolean conn_s = data.get("south").equals("true");
+		boolean conn_e = data.get("east").equals("true");
+		boolean conn_w = data.get("west").equals("true");
+		boolean conn_u = data.get("up").equals("true");
 				
 		// center column
 		if (!(conn_n && conn_s && !conn_e && !conn_w) && !(!conn_n && !conn_s && conn_e && conn_w) || conn_u)
@@ -81,16 +48,16 @@ public class Wall extends BlockModel
 			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
 			addBox(obj, x-0.1875f, y-0.5f, z, x+0.1875f, y+0.3125f, z+0.5f, null, mtls, uvSides, null);
 		}
-		// east wall
-		if (conn_e)
+		// west wall
+		if (conn_w)
 		{
 			uvTop = new UV[] { new UV(8/16f, 5/16f), new UV(1, 5/16f), new UV(1, 11/16f), new UV(8/16f, 11/16f) };
 			uvSide = new UV[] { new UV(8/16f, 0), new UV(1, 0), new UV(1, 13/16f), new UV(8/16f, 13/16f) };
 			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
 			addBox(obj, x-0.5f, y-0.5f, z-0.1875f, x, y+0.3125f, z+0.1875f, null, mtls, uvSides, null);
 		}
-		// west wall
-		if (conn_w)
+		// east wall
+		if (conn_e)
 		{
 			uvTop = new UV[] { new UV(0, 5/16f), new UV(8/16f, 5/16f), new UV(8/16f, 11/16f), new UV(0, 11/16f) };
 			uvSide = new UV[] { new UV(0, 0), new UV(8/16f, 0), new UV(8/16f, 13/16f), new UV(0, 13/16f) };
