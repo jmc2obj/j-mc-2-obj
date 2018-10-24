@@ -93,7 +93,7 @@ public class BlockTypes
 					Node attrib = matAttribs.item(k);
 					String attrName = attrib.getNodeName();
 					String attrVal = attrib.getNodeValue();
-					if (attrName.equalsIgnoreCase("biome")) 
+					if (attrName.equalsIgnoreCase("jmc_biome")) 
 						biome = Integer.parseInt(attrVal, 10);
 					else {
 						data.put(attrName, attrVal);
@@ -192,6 +192,8 @@ public class BlockTypes
 						continue;
 					}					
 				}
+				
+				mesh.propagateMaterials();
 			}
 
 			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model)); 
@@ -211,7 +213,7 @@ public class BlockTypes
 				if (attrName.equalsIgnoreCase("id")) {
 					mesh.mesh_data.id  = attrVal;
 				}
-				else if (attrName.equalsIgnoreCase("offset")) {
+				else if (attrName.equalsIgnoreCase("jmc_offset")) {
 					if(attrVal.length()>0)
 					{
 						String [] tok=attrVal.split(",");
@@ -228,8 +230,13 @@ public class BlockTypes
 						}
 					}
 				}
-				else if (attrName.equalsIgnoreCase("fallthrough")) {
+				else if (attrName.equalsIgnoreCase("jmc_fallthrough")) {
 					mesh.mesh_data.fallthrough = Boolean.parseBoolean(attrVal);
+				}
+				else if (attrName.equalsIgnoreCase("jmc_material")) {
+					BlockMaterial mat = new BlockMaterial();
+					mat.put(new String[] {attrVal});
+					mesh.setMaterials(mat);
 				}
 				else {
 					//transform nodes have other attributes.
@@ -261,9 +268,9 @@ public class BlockTypes
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
 			{
+				String name=child.getNodeName();
 				Mesh new_mesh=new Mesh();				
 				
-				String name=child.getNodeName();
 				if(name.equals("mesh"))
 					parseMeshNode(child,new_mesh);
 				else if(name.equals("translate") || name.equals("rotate") || name.equals("scale"))

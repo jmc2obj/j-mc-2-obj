@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -118,6 +119,14 @@ public class Mesh extends BlockModel
 		objects.add(mesh);
 	}
 
+	public void propagateMaterials() {
+		for (Mesh mesh : objects) {
+			if (materials != null && mesh.materials == null && !materials.get(null, 0)[0].equals("unknown"))
+				mesh.setMaterials(materials);
+			mesh.propagateMaterials();
+		}
+	}
+	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
@@ -142,6 +151,12 @@ public class Mesh extends BlockModel
 
 			if(group!=null && objin_file!=null)
 			{
+				if (materials != null) {
+					String[] mats = materials.get(data, biome);
+					if (mats != null) {
+						objin_file.overwriteMaterial(group, mats[0]);
+					}
+				}
 				objin_file.addObjectToOutput(group, trans, obj);
 			}
 		}
@@ -160,16 +175,23 @@ public class Mesh extends BlockModel
 	@Override
 	public String toString()
 	{
+		return toString(0);
+	}
+	
+	public String toString(int depth)
+	{
 		String ret = "";
+		for (int i = 0; i<depth;i++)
+			ret += '\t';
 
 		ret+="MESH ("+this.hashCode()+"), ";
 		ret+="STR "+obj_str+", ";
+		if (materials != null)
+			ret+="MAT "+Arrays.toString(materials.get(null, 0))+", ";
 		ret+="DATA "+mesh_data.data+", ";
 		ret+="OBJECTS "+objects.size()+":";
 		for(Mesh object:objects)
-			ret+= "\n" + object.toString();
-		if (objects.size() > 0)
-			ret+="\n----";
+			ret+= "\n" + object.toString(depth + 1);
 
 		return ret;
 	}
