@@ -91,7 +91,7 @@ public class ItemFrame extends Entity
 				short map_id = ((TAG_Short)item.getElement("Damage")).value;
 				// Log.info("Found map with id: '" + map_id+ "'");
 				String [] matname={"map_" + map_id + "_item_frame"};
-				materials.put((byte) 0, matname );
+				materials.put(null, matname );
 				
 				
 				FilledMapDat map_data = new FilledMapDat(Options.worldDir);
@@ -127,7 +127,7 @@ public class ItemFrame extends Entity
 			default:
 				// Log.info("Unsupported FrameItem: '" + item_id + "'");
 				String [] matname1={"item_frame"};
-				materials.put((byte) 0, matname1 );
+				materials.put(null, matname1 );
 				break;
 		}
 		model.setMaterials(materials);
