@@ -493,6 +493,21 @@ Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/chest_trapped.png
 
+newmtl chorus_flower
+Kd 0.3437 0.1886 0.3451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chorus_flower.png
+
+newmtl chorus_flower_dead
+Kd 0.3437 0.1886 0.3451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chorus_flower_dead.png
+
+newmtl chorus_plant
+Kd 0.3437 0.1886 0.3451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chorus_plant.png
+
 newmtl clay
 Kd 0.6235 0.6471 0.6941
 Ks 0.0000 0.0000 0.0000
@@ -781,6 +796,11 @@ Kd 0.4235 0.4235 0.4235
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/dispenser_front.png
 
+newmtl dispenser_front_vertical
+Kd 0.3059 0.3059 0.3059
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dispenser_front_vertical.png
+
 newmtl door_acacia_lower
 Kd 0.6602 0.3569 0.1992
 Ks 0.0000 0.0000 0.0000
@@ -889,10 +909,30 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/double_plant_grass_top.png
 map_d tex/double_plant_grass_top_a.png
 
+newmtl dried_kelp_top
+Kd 0.1735 0.2235 0.1235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dried_kelp_top.png
+
+newmtl dried_kelp_side
+Kd 0.1735 0.2235 0.1235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dried_kelp_top.png
+
+newmtl dried_kelp_bottom
+Kd 0.1735 0.2235 0.1235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dried_kelp_top.png
+
 newmtl dropper_front
 Kd 0.4235 0.4235 0.4235
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/dropper_front.png
+
+newmtl dropper_front_vertical
+Kd 0.4235 0.4235 0.4235
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dropper_front_vertical.png
 
 newmtl emerald_ore
 Kd 0.4000 0.5294 0.4832
@@ -1137,11 +1177,6 @@ newmtl furnace_front
 Kd 0.3059 0.3059 0.3059
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/furnace_front.png
-
-newmtl dispenser_front_vertical
-Kd 0.3059 0.3059 0.3059
-Ks 0.0000 0.0000 0.0000
-map_Kd tex/dispenser_front_vertical.png
 
 newmtl furnace_lit_front
 Kd 0.3059 0.3059 0.3059
