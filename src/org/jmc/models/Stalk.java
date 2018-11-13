@@ -20,22 +20,27 @@ public class Stalk extends BlockModel
 		boolean n,s,e,w;
 		n=s=e=w=false;
 		
-		if (blockId.equals( "minecraft:attached_pumpkin_stem"))
+		if (data.containsKey("facing")) 
 		{
-			// we're a pumpkin stalk, look for pumpkins around
-			n = chunks.getBlockID(x, y, z-1).equals("minecraft:pumpkin");
-			s = chunks.getBlockID(x, y, z+1).equals("minecraft:pumpkin");
-			e = chunks.getBlockID(x+1, y, z).equals("minecraft:pumpkin");
-			w = chunks.getBlockID(x-1, y, z).equals("minecraft:pumpkin");
+			switch (data.get("facing")) {
+			case "north":
+				n = true;
+				break;
+			case "south":
+				s = true;
+				break;
+			case "west":
+				w = true;
+				break;
+			case "east":
+				e = true;
+				break;				
+			default:
+				n = true;
+				break;
+			}
 		}
-		else if (blockId.equals("minecraft:attached_melon_stem"))
-		{
-			// we're a melon stalk, look for melons around 
-			n = chunks.getBlockID(x, y, z-1).equals("minecraft:melon");
-			s = chunks.getBlockID(x, y, z+1).equals("minecraft:melon");
-			e = chunks.getBlockID(x+1, y, z).equals("minecraft:melon");
-			w = chunks.getBlockID(x-1, y, z).equals("minecraft:melon");
-		}
+
 		
 		if (blockId.equals("minecraft:attached_pumpkin_stem") || blockId.equals("minecraft:attached_melon_stem") && (n||s||e||w))
 		{

@@ -3,7 +3,6 @@ package org.jmc.models;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.jmc.BlockTypes;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.Half;
@@ -188,7 +187,34 @@ public class Stairs extends BlockModel {
 
 		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north
 		int up = data.get("half").equals("top") ? 1 : 0;
-		int shape = getStairModification(chunks, x, y, z, data);//TODO stairs might store their shape in data now.
+		
+		/*
+		 *  -1 for no change in shape (straight)
+		 *  0 for small block left (outer_right)
+		 *  1 small block right (outer_left)
+		 *  2 big block left (inner_right)
+		 *  3 big block right (inner_left)
+		 */
+		int shape;
+		switch (data.get("shape"))
+		{
+			case ("outer_right"):
+				shape = 0;
+				break;
+			case ("outer_left"):
+				shape = 1;
+				break;
+			case ("inner_right"):
+				shape = 2;
+				break;
+			case ("inner_left"):
+				shape = 3;
+				break;
+			default: // Straight
+				shape = -1;
+				break;
+		}
+			
 		int invert = 0;
 		if (shape == 1 || shape == 3)
 			invert = 2;
@@ -221,127 +247,6 @@ public class Stairs extends BlockModel {
 			}
 		}
 
-	}
-
-	/**
-	 * Retrieves if the stair requires any shape modification
-	 * 
-	 * @param chunks
-	 *            object containing the data from neighboring blocks
-	 * @param x
-	 *            x location
-	 * @param y
-	 *            y location
-	 * @param z
-	 *            z location
-	 * @param data
-	 *            data of current block containing rotation of current stair
-	 * @return -1 for no change in shape, 0 for small block left, 1 small block
-	 *         right, 2 big block left, 3 big block right
-	 */
-	private int getStairModification(ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String,String> data) {
-		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north
-		int up = data.get("half").equals("top") ? 1 : 0;
-		int ndir = -1;
-		int nup = -1;
-
-		switch (dir) {
-		case 0:
-			// get the block behind
-			if (BlockTypes.get(chunks.getBlockID(x + 1, y, z)).getModel() instanceof Stairs) {
-				// get the direction of the block behind
-				ndir = getFacingDir(chunks.getBlockData(x + 1, y, z));
-
-				// check if both are up or down
-				nup = chunks.getBlockData(x + 1, y, z).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-
-				if (ndir == 2)// if the direction is perpendicular to this one
-					return 0;
-				if (ndir == 3)
-					return 1;
-			}
-			if (BlockTypes.get(chunks.getBlockID(x - 1, y, z)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x - 1, y, z));
-				nup = chunks.getBlockData(x - 1, y, z).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 2)
-					return 2;
-				if (ndir == 3)
-					return 3;
-			}
-			break;
-		case 1:
-			if (BlockTypes.get(chunks.getBlockID(x - 1, y, z)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x - 1, y, z));
-				nup = chunks.getBlockData(x - 1, y, z).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 2)
-					return 1;
-				if (ndir == 3)
-					return 0;
-			}
-			if (BlockTypes.get(chunks.getBlockID(x + 1, y, z)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x + 1, y, z));
-				nup = chunks.getBlockData(x + 1, y, z).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 2)
-					return 3;
-				if (ndir == 3)
-					return 2;
-			}
-			break;
-		case 2:
-			if (BlockTypes.get(chunks.getBlockID(x, y, z + 1)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x, y, z + 1));
-				nup = chunks.getBlockData(x, y, z + 1).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 1)
-					return 0;
-				if (ndir == 0)
-					return 1;
-			}
-			if (BlockTypes.get(chunks.getBlockID(x, y, z - 1)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x, y, z - 1));
-				nup = chunks.getBlockData(x, y, z - 1).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 1)
-					return 2;
-				if (ndir == 0)
-					return 3;
-			}
-		case 3:
-		default:
-			if (BlockTypes.get(chunks.getBlockID(x, y, z - 1)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x, y, z - 1));
-				nup = chunks.getBlockData(x, y, z - 1).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 1)
-					return 1;
-				if (ndir == 0)
-					return 0;
-			}
-			if (BlockTypes.get(chunks.getBlockID(x, y, z + 1)).getModel() instanceof Stairs) {
-				ndir = getFacingDir(chunks.getBlockData(x, y, z + 1));
-				nup = chunks.getBlockData(x, y, z + 1).get("half").equals("top") ? 1 : 0;
-				if (up != nup)
-					break;
-				if (ndir == 1)
-					return 3;
-				if (ndir == 0)
-					return 2;
-			}
-			break;
-		}
-
-		return -1;
 	}
 
 	private int getFacingDir(HashMap<String, String> data) {

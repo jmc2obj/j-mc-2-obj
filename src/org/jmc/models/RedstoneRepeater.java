@@ -21,12 +21,17 @@ public class RedstoneRepeater extends BlockModel
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
-		mtlSides[0] = abbrMtls[0];
-		mtlSides[1] = abbrMtls[1];
-		mtlSides[2] = abbrMtls[1];
-		mtlSides[3] = abbrMtls[1];
-		mtlSides[4] = abbrMtls[1];
-		mtlSides[5] = abbrMtls[2];
+		
+		if (data.get("powered").equals("true")) {
+			mtlSides[0] = abbrMtls[0];			
+		} else {
+			mtlSides[0] = abbrMtls[1];	
+		}	
+		mtlSides[1] = abbrMtls[2];
+		mtlSides[2] = abbrMtls[2];
+		mtlSides[3] = abbrMtls[2];
+		mtlSides[4] = abbrMtls[2];
+		mtlSides[5] = abbrMtls[3];
 		return mtlSides;
 	}
 	
@@ -58,7 +63,12 @@ public class RedstoneRepeater extends BlockModel
 
 		
 		String[] mtlsBase = getMtlSides(data,biome);
-		String mtlTorch = materials.get(data,biome)[3];
+		String mtlTorch;
+		if (data.get("powered").equals("true")) {
+			mtlTorch = materials.get(data,biome)[4];		
+		} else {
+			mtlTorch = materials.get(data,biome)[5];	
+		}			
 
 		// base
 		boolean[] drawSides = new boolean[] { true, true, true, true, true, drawSides(chunks,x,y,z)[5] };
@@ -74,8 +84,10 @@ public class RedstoneRepeater extends BlockModel
 				uvSides, 
 				drawSides);
 
+		uvSide = new UV[] { new UV(5/16f, 5/16f), new UV(11/16f, 5/16f), new UV(11/16f, 1), new UV(5/16f, 1) };		
+		UV[] uvTop = new UV[] { new UV(7/16f, 8/16f), new UV(9/16f, 8/16f), new UV(9/16f, 10/16f), new UV(7/16f, 10/16f) };		
+		
 		// fixed torch
-		uvSide = new UV[] { new UV(5/16f, 5/16f), new UV(11/16f, 5/16f), new UV(11/16f, 1), new UV(5/16f, 1) };
 		// front
 		obj.addFace(new Vertex[] {new Vertex(3/16f, -6/16f, -6/16f), new Vertex(-3/16f, -6/16f, -6/16f), new Vertex(-3/16f, 5/16f, -6/16f), new Vertex(3/16f, 5/16f, -6/16f)}, uvSide, rt, mtlTorch);
 		// back
@@ -84,6 +96,8 @@ public class RedstoneRepeater extends BlockModel
 		obj.addFace(new Vertex[] {new Vertex(-1/16f, -6/16f, -8/16f), new Vertex(-1/16f, -6/16f, -2/16f), new Vertex(-1/16f, 5/16f, -2/16f), new Vertex(-1/16f, 5/16f, -8/16f)}, uvSide, rt, mtlTorch);
 		// right
 		obj.addFace(new Vertex[] {new Vertex(1/16f, -6/16f, -8/16f), new Vertex(1/16f, -6/16f, -2/16f), new Vertex(1/16f, 5/16f, -2/16f), new Vertex(1/16f, 5/16f, -8/16f)}, uvSide, rt, mtlTorch);
+		// top
+		obj.addFace(new Vertex[] {new Vertex(1/16f, -1/16f, -4/16f), new Vertex(1/16f, -1/16f, -6/16f), new Vertex(-1/16f, -1/16f, -6/16f), new Vertex(-1/16f, -1/16f, -4/16f)}, uvTop, rt, mtlTorch);
 		
 		// delay torch
 		// front
@@ -94,6 +108,8 @@ public class RedstoneRepeater extends BlockModel
 		obj.addFace(new Vertex[] {new Vertex(-1/16f, -6/16f, (2*delay-4)/16f), new Vertex(-1/16f, -6/16f, (2*delay+2)/16f), new Vertex(-1/16f, 5/16f, (2*delay+2)/16f), new Vertex(-1/16f, 5/16f, (2*delay-4)/16f)}, uvSide, rt, mtlTorch);
 		// right
 		obj.addFace(new Vertex[] {new Vertex(1/16f, -6/16f, (2*delay-4)/16f), new Vertex(1/16f, -6/16f, (2*delay+2)/16f), new Vertex(1/16f, 5/16f, (2*delay+2)/16f), new Vertex(1/16f, 5/16f, (2*delay-4)/16f)}, uvSide, rt, mtlTorch);
+		// top
+		obj.addFace(new Vertex[] {new Vertex(1/16f, -1/16f, (2*delay-0)/16f), new Vertex(1/16f, -1/16f, (2*delay-2)/16f), new Vertex(-1/16f, -1/16f, (2*delay-2)/16f), new Vertex(-1/16f, -1/16f, (2*delay-0)/16f)}, uvTop, rt, mtlTorch);
 	}
 
 }
