@@ -1,5 +1,7 @@
 package org.jmc.geom;
 
+import java.util.Arrays;
+
 import org.jmc.geom.FaceUtils.Face;
 
 /**
@@ -178,5 +180,10 @@ public class Transform {
 
 		ret = multiply(trans);
 		matrix = ret.matrix;
+	}
+	
+	@Override
+	public String toString() {
+		return Arrays.deepToString(matrix);
 	}
 }

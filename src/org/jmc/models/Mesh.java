@@ -189,6 +189,8 @@ public class Mesh extends BlockModel
 		if (materials != null)
 			ret+="MAT "+Arrays.toString(materials.get(null, 0))+", ";
 		ret+="DATA "+mesh_data.data+", ";
+		if (mesh_data.transform != null)
+			ret+="TRANS "+mesh_data.transform.toString()+", ";
 		ret+="OBJECTS "+objects.size()+":";
 		for(Mesh object:objects)
 			ret+= "\n" + object.toString(depth + 1);
