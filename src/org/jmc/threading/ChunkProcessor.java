@@ -43,6 +43,14 @@ public class ChunkProcessor
 	}
 	
 	/**
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String, boolean) addFace}
+	 */
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	{
+		addFace(verts, norms, uv, trans, mtl, true);
+	}
+	
+	/**
 	 * Add a face with the given vertices to the chunk output.
 	 * 
 	 * @param verts vertices of the face
@@ -51,8 +59,9 @@ public class ChunkProcessor
 	 * (only accepted if face is a quad!).
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
+	 * @param canOptimise Allows this face to be optimised
 	 */
-	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl, boolean canOptimise)
 	{
 		if (uv == null)
 		{
@@ -77,7 +86,7 @@ public class ChunkProcessor
 			face = trans.multiply(face);
 		}
 		face.chunk_idx = chunk_idx_count;
-		if (Options.optimiseGeometry) {
+		if (Options.optimiseGeometry && canOptimise) {
 			optimisedFaces.add(face);
 		} else {
 			faces.add(face);
@@ -148,7 +157,7 @@ public class ChunkProcessor
 			}
 		}
 		
-		if (Options.optimiseGeometry) {
+		if (Options.optimiseGeometry ) {
 			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
 			for (Face f : optimisedFaces){
 				int planar = f.isPlanar();

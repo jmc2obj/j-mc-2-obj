@@ -308,7 +308,7 @@ public class OBJInputFile
 			}
 
 			// Log.info("out OBJ file material: "+f.mtl+" / "+v+" / "+norm+" / "+uv+" / "+trans);
-			out.addFace(v, norm, uv, trans, f.mtl);
+			out.addFace(v, norm, uv, trans, f.mtl, false);
 		}
 	}
 }

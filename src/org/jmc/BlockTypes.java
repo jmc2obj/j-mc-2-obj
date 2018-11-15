@@ -124,7 +124,7 @@ public class BlockTypes
 
 			if (!hasMtl)
 			{
-				Log.info("Block " + id + " has no materials. Using default.");
+				Log.debug("Block " + id + " has no materials. Using default.");
 				materials.put(new String[] { "unknown" });
 			}
 
