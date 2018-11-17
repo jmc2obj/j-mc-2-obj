@@ -189,7 +189,7 @@ public class ObjExporter {
 					}
 				}
 				
-				Log.info("Adding to queue:" + (System.nanoTime() - timer)/1000000000d);
+				Log.debug("Adding to queue:" + (System.nanoTime() - timer)/1000000000d);
 				
 				inputQueue.finish();
 				
@@ -198,13 +198,13 @@ public class ObjExporter {
 				for (Thread thread : threads){
 					thread.join();
 				}
-				Log.info("Reading Chunks:" + (System.nanoTime() - timer)/1000000000d);
+				Log.debug("Reading Chunks:" + (System.nanoTime() - timer)/1000000000d);
 				timer = System.nanoTime();
 				
 				outputQueue.finish();
 				writeThread.join();
 				
-				Log.info("Writing File:" + (System.nanoTime() - timer)/1000000000d);
+				Log.debug("Writing File:" + (System.nanoTime() - timer)/1000000000d);
 				Log.info("Total:" + (System.nanoTime() - timer2)/1000000000d);
 				
 				chunk_buffer.removeAllChunks();
