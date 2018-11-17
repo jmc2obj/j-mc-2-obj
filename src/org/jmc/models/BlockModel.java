@@ -122,7 +122,7 @@ public abstract class BlockModel {
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, String neighborId) {
+	protected boolean drawSide(Side side, String neighborId, HashMap<String, String> neighborData) {
 		if (Options.objectPerBlock)
 			return true;
 
@@ -134,10 +134,6 @@ public abstract class BlockModel {
 
 		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighborId.equals(blockId)))
 			return true;
-
-		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.VOLUME) {
-			return !blockId.equals(neighborId);
-		}
 
 		switch (BlockTypes.get(neighborId).getOcclusion()) {
 		case FULL:
@@ -185,12 +181,12 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP, y == ymax ? "" : chunks.getBlockID(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, z == zmin ? "" : chunks.getBlockID(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, z == zmax ? "" : chunks.getBlockID(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, x == xmin ? "" : chunks.getBlockID(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, x == xmax ? "" : chunks.getBlockID(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z));
+		sides[0] = drawSide(Side.TOP, y == ymax ? "" : chunks.getBlockID(x, y + 1, z), chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Side.FRONT, z == zmin ? "" : chunks.getBlockID(x, y, z - 1), chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Side.BACK, z == zmax ? "" : chunks.getBlockID(x, y, z + 1), chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Side.LEFT, x == xmin ? "" : chunks.getBlockID(x - 1, y, z), chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Side.RIGHT, x == xmax ? "" : chunks.getBlockID(x + 1, y, z), chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z), chunks.getBlockData(x, y - 1, z));
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
 			HashMap<String, String> data = chunks.getBlockData(x, y, z);

@@ -17,8 +17,8 @@ import org.jmc.EntityTypes;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
-import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils;
+import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -149,6 +149,9 @@ public class ChunkProcessor
 					
 					try {
 						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						if (Boolean.parseBoolean(blockData.get("waterlogged"))) {
+							BlockTypes.get("minecraft:water").getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						}
 					}
 					catch (Exception ex) {
 						Log.error("Error rendering block, skipping.", ex);

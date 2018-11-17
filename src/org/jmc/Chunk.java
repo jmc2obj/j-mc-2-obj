@@ -234,6 +234,9 @@ public class Chunk {
 							data.put(propTag.getName(), propTag.value);
 						}
 					}
+					if (Boolean.parseBoolean(data.get("waterlogged")) && !data.containsKey("level")) {
+						data.put("level", "0");//probably bad but easiest solution.
+					}
 					
 					ret.data.set(base+i, data);//data from nbt tags??? probably needs special treatment for each block type
 				}
