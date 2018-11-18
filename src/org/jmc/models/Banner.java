@@ -3,11 +3,8 @@ package org.jmc.models;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +12,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.jmc.Materials;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.Options;
@@ -217,7 +215,7 @@ public class Banner extends BlockModel {
 
         try {
         	synchronized (exportedMaterials) {
-	            boolean alreadyExported = false;//TODO PUT ME BACK! exportedMaterials.contains(bannerMaterial);
+	            boolean alreadyExported = exportedMaterials.contains(bannerMaterial);
 	            // already exported material?
 	            if (!alreadyExported) {
 	                exportedMaterials.add(bannerMaterial);
@@ -364,40 +362,14 @@ public class Banner extends BlockModel {
     }
 
     /**
-     * Returns a formatet float string of a color int value
-     * @param colorValue
-     * @return
-     */
-    private String intChannel2Float(int colorValue) {
-
-        double fColor = (double)colorValue/(double)255;
-        String floatColor = String.format("%.4f", fColor);
-
-        return floatColor;
-    }
-
-    /**
      * Append the current texture to material file
      * @param materialName
      */
     private void exportBannerMaterial(String materialName, int baseColorIndex) {
-
-
-        File mtlfile = new File(Options.outputDir, Options.mtlFileName);
-
+    	
         Color baseColor = getColorById(baseColorIndex);
-
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(mtlfile, true)))) {
-            out.println("");
-            out.println("");
-            out.println("newmtl " + materialName);
-            out.println("Kd " + intChannel2Float(baseColor.getRed()) + " " + intChannel2Float(baseColor.getGreen()) + " " + intChannel2Float(baseColor.getBlue()));
-            out.println("Ks 0.0000 0.0000 0.0000");
-            out.print("map_Kd tex/" + materialName + ".png");
-            //out.print("map_d tex/banner_base_a.png");
-        } catch (IOException e) {
-            throw new RuntimeException("Unexpected error apending material file");
-        }
+        
+        Materials.addMaterial(materialName, baseColor, null, "tex/" + materialName + ".png", null);
     }
 
     /**

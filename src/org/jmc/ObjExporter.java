@@ -88,11 +88,6 @@ public class ObjExporter {
 		}
 
 		try {
-			if (writeMtl) {
-				Materials.copyMTLFile(mtlfile);
-				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
-			}
-
 			if (writeObj) {
 				if (Options.maxX - Options.minX == 0 || Options.maxY - Options.minY == 0
 						|| Options.maxZ - Options.minZ == 0) {
@@ -376,6 +371,11 @@ public class ObjExporter {
 						Log.error("Failed to erase temp dir: " + tmpdir.getAbsolutePath()
 								+ "\nPlease remove it yourself!", null);
 				}
+			}
+			
+			if (writeMtl) {
+				Materials.copyMTLFile(mtlfile);
+				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
 			}
 
 			Log.info("Done!");
