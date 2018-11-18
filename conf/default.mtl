@@ -1693,7 +1693,6 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/mob_skeleton.png
 map_d tex/mob_skeleton_a.png
 
-
 newmtl mob_skeleton_wither
 Kd 0.1725 0.1725 0.1725
 Ks 0.0000 0.0000 0.0000
@@ -1704,6 +1703,11 @@ newmtl mob_zombie
 Kd 0.2745 0.4275 0.2118
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/mob_zombie.png
+
+newmtl dragon
+Kd 0.1725 0.1725 0.1725
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/dragon.png
 
 newmtl mushroom_brown
 Kd 0.5882 0.4431 0.3451
@@ -2472,6 +2476,26 @@ newmtl stripped_spruce_log_top
 Kd 0.7098 0.5725 0.3686
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/stripped_spruce_log_top.png
+
+newmtl structure_block_save
+Kd 0.1200 0.1000 0.1500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/structure_block_save.png
+
+newmtl structure_block_load
+Kd 0.1200 0.1000 0.1500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/structure_block_load.png
+
+newmtl structure_block_corner
+Kd 0.1200 0.1000 0.1500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/structure_block_corner.png
+
+newmtl structure_block_data
+Kd 0.1200 0.1000 0.1500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/structure_block_data.png
 
 newmtl sugarcane
 Kd 0.5137 0.7686 0.2784
