@@ -34,10 +34,10 @@ public class Pane extends BlockModel
 		String mtl = materials.get(data,biome)[0];
 		String mtlSide = materials.get(data,biome)[1];
 		
-		boolean n = checkConnect(chunks.getBlockID(x, y, z-1));
-		boolean s = checkConnect(chunks.getBlockID(x, y, z+1));
-		boolean e = checkConnect(chunks.getBlockID(x+1, y, z));
-		boolean w = checkConnect(chunks.getBlockID(x-1, y, z));
+		boolean n = data.get("north").equals("true");
+		boolean s = data.get("south").equals("true");
+		boolean e = data.get("east").equals("true");
+		boolean w = data.get("west").equals("true");
 		boolean none = !(n || s || e || w);
 
 		boolean up = checkConnect(chunks.getBlockID(x, y+1, z));
@@ -48,7 +48,60 @@ public class Pane extends BlockModel
 		
 		Vertex[] vertices = new Vertex[4];
 		UV[] uv = new UV[4];
-		if (n || none)
+		
+		if (none)
+		{
+			uv[0] = new UV(9/16f, 0);
+			uv[1] = new UV(7/16f, 0);
+			uv[2] = new UV(7/16f, 1);
+			uv[3] = new UV(9/16f, 1);
+			vertices[0] = new Vertex(1/16f, -0.5f, -1/16f);
+			vertices[1] = new Vertex(1/16f, -0.5f,  1/16f);
+			vertices[2] = new Vertex(1/16f,  0.5f,  1/16f);
+			vertices[3] = new Vertex(1/16f,  0.5f, -1/16f);
+			obj.addFace(vertices, uv, t, mtl);
+			
+			vertices[0] = new Vertex(-1/16f, -0.5f, 1/16f);
+			vertices[1] = new Vertex(-1/16f, -0.5f,  -1/16f);
+			vertices[2] = new Vertex(-1/16f,  0.5f,  -1/16f);
+			vertices[3] = new Vertex(-1/16f,  0.5f, 1/16f);
+			obj.addFace(vertices, uv, t, mtl);			
+			
+			vertices[0] = new Vertex(1/16f, -0.5f, 1/16f);
+			vertices[1] = new Vertex(-1/16f, -0.5f,  1/16f);
+			vertices[2] = new Vertex(-1/16f,  0.5f,  1/16f);
+			vertices[3] = new Vertex(1/16f,  0.5f, 1/16f);
+			obj.addFace(vertices, uv, t, mtl);
+			
+			vertices[0] = new Vertex(-1/16f, -0.5f, -1/16f);
+			vertices[1] = new Vertex(1/16f, -0.5f,  -1/16f);
+			vertices[2] = new Vertex(1/16f,  0.5f,  -1/16f);
+			vertices[3] = new Vertex(-1/16f,  0.5f, -1/16f);
+			obj.addFace(vertices, uv, t, mtl);	
+			
+			uv[0] = new UV(9/16f, 7/16f);
+			uv[1] = new UV(7/16f, 7/16f);
+			uv[2] = new UV(7/16f, 9/16f);
+			uv[3] = new UV(9/16f, 9/16f);
+			if (!up)
+			{
+				vertices[0] = new Vertex(-1/16f, 0.5f, -1/16f);
+				vertices[1] = new Vertex(1/16f, 0.5f,  -1/16f);
+				vertices[2] = new Vertex(1/16f,  0.5f,  1/16f);
+				vertices[3] = new Vertex(-1/16f,  0.5f, 1/16f);
+				obj.addFace(vertices, uv, t, mtlSide);				
+			}
+			if (!down)
+			{
+				vertices[0] = new Vertex(-1/16f, -0.5f, -1/16f);
+				vertices[1] = new Vertex(1/16f, -0.5f,  -1/16f);
+				vertices[2] = new Vertex(1/16f,  -0.5f,  1/16f);
+				vertices[3] = new Vertex(-1/16f,  -0.5f, 1/16f);				
+			}
+		}
+		
+		
+		if (n)
 		{
 			uv[0] = new UV(0, 0);
 			uv[1] = new UV(0.5f, 0);
@@ -94,7 +147,7 @@ public class Pane extends BlockModel
 			obj.addFace(vertices, uv, t, mtlSide);
 		}
 		
-		if (s || none)
+		if (s)
 		{
 			uv[0] = new UV(0.5f, 0);
 			uv[1] = new UV(1, 0);
@@ -140,7 +193,7 @@ public class Pane extends BlockModel
 			obj.addFace(vertices, uv, t, mtlSide);
 		}
 
-		if (e || none)
+		if (e)
 		{
 			uv[0] = new UV(0, 0);
 			uv[1] = new UV(0.5f, 0);
@@ -186,7 +239,7 @@ public class Pane extends BlockModel
 			obj.addFace(vertices, uv, t, mtlSide);
 		}
 		
-		if (w || none)
+		if (w)
 		{
 			uv[0] = new UV(0.5f, 0);
 			uv[1] = new UV(1, 0);
