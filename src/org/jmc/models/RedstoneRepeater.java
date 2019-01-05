@@ -40,6 +40,7 @@ public class RedstoneRepeater extends BlockModel
 	{
 		String dir = data.get("facing");
 		int delay = Integer.parseInt(data.get("delay"))-1;
+		boolean locked = Boolean.parseBoolean(data.get("locked"));
 		
 
 		Transform rotate = new Transform();
@@ -99,17 +100,33 @@ public class RedstoneRepeater extends BlockModel
 		// top
 		obj.addFace(new Vertex[] {new Vertex(1/16f, -1/16f, -4/16f), new Vertex(1/16f, -1/16f, -6/16f), new Vertex(-1/16f, -1/16f, -6/16f), new Vertex(-1/16f, -1/16f, -4/16f)}, uvTop, rt, mtlTorch);
 		
-		// delay torch
-		// front
-		obj.addFace(new Vertex[] {new Vertex(3/16f, -6/16f, (2*delay-2)/16f), new Vertex(-3/16f, -6/16f, (2*delay-2)/16f), new Vertex(-3/16f, 5/16f, (2*delay-2)/16f), new Vertex(3/16f, 5/16f, (2*delay-2)/16f)}, uvSide, rt, mtlTorch);
-		// back
-		obj.addFace(new Vertex[] {new Vertex(-3/16f, -6/16f, (2*delay-0)/16f), new Vertex(3/16f, -6/16f, (2*delay-0)/16f), new Vertex(3/16f, 5/16f, (2*delay-0)/16f), new Vertex(-3/16f, 5/16f, (2*delay-0)/16f)}, uvSide, rt, mtlTorch);
-		// left
-		obj.addFace(new Vertex[] {new Vertex(-1/16f, -6/16f, (2*delay-4)/16f), new Vertex(-1/16f, -6/16f, (2*delay+2)/16f), new Vertex(-1/16f, 5/16f, (2*delay+2)/16f), new Vertex(-1/16f, 5/16f, (2*delay-4)/16f)}, uvSide, rt, mtlTorch);
-		// right
-		obj.addFace(new Vertex[] {new Vertex(1/16f, -6/16f, (2*delay-4)/16f), new Vertex(1/16f, -6/16f, (2*delay+2)/16f), new Vertex(1/16f, 5/16f, (2*delay+2)/16f), new Vertex(1/16f, 5/16f, (2*delay-4)/16f)}, uvSide, rt, mtlTorch);
-		// top
-		obj.addFace(new Vertex[] {new Vertex(1/16f, -1/16f, (2*delay-0)/16f), new Vertex(1/16f, -1/16f, (2*delay-2)/16f), new Vertex(-1/16f, -1/16f, (2*delay-2)/16f), new Vertex(-1/16f, -1/16f, (2*delay-0)/16f)}, uvTop, rt, mtlTorch);
+		if (locked) {
+			// delay bar
+			String[] barSides = new String[6];
+			java.util.Arrays.fill(barSides, materials.get(data,biome)[6]);
+			
+			UV[][] uvBarSides = new UV[][] {
+				new UV[] { new UV( 9/16f,  2/16f), new UV( 9/16f, 14/16f), new UV( 7/16f, 14/16f), new UV( 7/16f,  2/16f) }, //t
+				new UV[] { new UV( 2/16f,  7/16f), new UV(14/16f,  7/16f), new UV(14/16f,  9/16f), new UV( 2/16f,  9/16f) }, //f
+				new UV[] { new UV( 2/16f,  7/16f), new UV(14/16f,  7/16f), new UV(14/16f,  9/16f), new UV( 2/16f,  9/16f) }, //b
+				new UV[] { new UV( 7/16f,  7/16f), new UV( 9/16f,  7/16f), new UV( 9/16f,  9/16f), new UV( 7/16f,  9/16f) }, //l
+				new UV[] { new UV( 7/16f,  7/16f), new UV( 9/16f,  7/16f), new UV( 9/16f,  9/16f), new UV( 7/16f,  9/16f) }, //r
+				new UV[] { new UV( 9/16f,  2/16f), new UV( 9/16f, 14/16f), new UV( 7/16f, 14/16f), new UV( 7/16f,  2/16f) }};//b
+				
+			addBox(obj, -6/16f, -6/16f, (2*delay-2)/16f, 6/16f, -4/16f, (2*delay-0)/16f,  rt,  barSides,  uvBarSides,  null);
+		} else {
+			// delay torch
+			// front
+			obj.addFace(new Vertex[] {new Vertex(3/16f, -6/16f, (2*delay-2)/16f), new Vertex(-3/16f, -6/16f, (2*delay-2)/16f), new Vertex(-3/16f, 5/16f, (2*delay-2)/16f), new Vertex(3/16f, 5/16f, (2*delay-2)/16f)}, uvSide, rt, mtlTorch);
+			// back
+			obj.addFace(new Vertex[] {new Vertex(-3/16f, -6/16f, (2*delay-0)/16f), new Vertex(3/16f, -6/16f, (2*delay-0)/16f), new Vertex(3/16f, 5/16f, (2*delay-0)/16f), new Vertex(-3/16f, 5/16f, (2*delay-0)/16f)}, uvSide, rt, mtlTorch);
+			// left
+			obj.addFace(new Vertex[] {new Vertex(-1/16f, -6/16f, (2*delay-4)/16f), new Vertex(-1/16f, -6/16f, (2*delay+2)/16f), new Vertex(-1/16f, 5/16f, (2*delay+2)/16f), new Vertex(-1/16f, 5/16f, (2*delay-4)/16f)}, uvSide, rt, mtlTorch);
+			// right
+			obj.addFace(new Vertex[] {new Vertex(1/16f, -6/16f, (2*delay-4)/16f), new Vertex(1/16f, -6/16f, (2*delay+2)/16f), new Vertex(1/16f, 5/16f, (2*delay+2)/16f), new Vertex(1/16f, 5/16f, (2*delay-4)/16f)}, uvSide, rt, mtlTorch);
+			// top
+			obj.addFace(new Vertex[] {new Vertex(1/16f, -1/16f, (2*delay-0)/16f), new Vertex(1/16f, -1/16f, (2*delay-2)/16f), new Vertex(-1/16f, -1/16f, (2*delay-2)/16f), new Vertex(-1/16f, -1/16f, (2*delay-0)/16f)}, uvTop, rt, mtlTorch);
+		}
 	}
 
 }
