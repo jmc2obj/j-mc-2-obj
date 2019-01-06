@@ -202,6 +202,10 @@ public class Chunk {
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
+				if (tagPalette == null) {
+					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
+					break;
+				}
 				TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
 				TAG_Int_Array tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
 				//TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
