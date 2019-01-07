@@ -39,7 +39,7 @@ public class Main
 			Locale.setDefault(Locale.ENGLISH);			
 		}
 		
-		System.out.println("jmc2obj "+Version.VERSION+" ("+Version.REVISION()+")");
+		System.out.println("jmc2obj "+Version.VERSION());
 
 		if (args.length == 0) {
 			Options.uiMode = UIMode.GUI;
