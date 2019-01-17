@@ -7,6 +7,7 @@ import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Log;
 
 
 /**
@@ -28,15 +29,28 @@ public class Liquid extends BlockModel
     {
         return Math.min(Math.min(a, b), Math.min(c, d));
     }
-
+	
+	private int getDataLevel(HashMap<String, String> data) {
+		String level = data.get("level");
+		if (level != null) {
+			try {
+				return Integer.parseInt(level);
+			}
+			catch (NumberFormatException e) {
+				Log.debug("Tried to parse liquid level but it was: " + level);
+				e.printStackTrace();
+			}
+		}
+		return 0;
+	}
     
 	private boolean isSameLiquid(String otherBlockId, HashMap<String, String> otherBlockData)
 	{
 		if (blockId.equals(otherBlockId))
 			return true;
 		if ((blockId.equals("minecraft:flowing_water") || blockId.equals("minecraft:water")) && 
-				(otherBlockId.equals("minecraft:flowing_water") || otherBlockId.equals("minecraft:water")) ||
-				Boolean.parseBoolean(otherBlockData.get("waterlogged")))
+				otherBlockId.equals("minecraft:flowing_water") || otherBlockId.equals("minecraft:water") ||
+				otherBlockId.equals("minecraft:bubble_column") || Boolean.parseBoolean(otherBlockData.get("waterlogged")))
 			return true;
 		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherBlockId.equals("minecraft:flowing_lava") || otherBlockId.equals("minecraft:lava")))
 			return true;
@@ -53,12 +67,7 @@ public class Liquid extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
 	{
-		int level;
-		if (data.containsKey("level")) {
-			level = Integer.parseInt(data.get("level"));
-		} else {
-			level = 0;
-		}
+		int level = getDataLevel(data);
 		// despite the new states water seems to store 'falling' in bit 4 of level
 		boolean falling = (level & 8) != 0;
 		
@@ -113,14 +122,14 @@ public class Liquid extends BlockModel
 			boolean same_sw = isSameLiquid(chunks.getBlockID(x-1, y, z+1), chunks.getBlockData(x-1, y, z+1));
 			boolean same_w  = isSameLiquid(chunks.getBlockID(x-1, y, z), chunks.getBlockData(x-1, y, z));
 			
-			int lvl_nw = same_nw ? Integer.parseInt(chunks.getBlockData(x-1, y, z-1).get("level")) & 7 : 8;
-			int lvl_n  = same_n ? Integer.parseInt(chunks.getBlockData(x, y, z-1).get("level")) & 7 : 8;
-			int lvl_ne = same_ne ? Integer.parseInt(chunks.getBlockData(x+1, y, z-1).get("level")) & 7 : 8;
-			int lvl_e  = same_e ? Integer.parseInt(chunks.getBlockData(x+1, y, z).get("level")) & 7 : 8;
-			int lvl_se = same_se ? Integer.parseInt(chunks.getBlockData(x+1, y, z+1).get("level")) & 7 : 8;
-			int lvl_s  = same_s ? Integer.parseInt(chunks.getBlockData(x, y, z+1).get("level")) & 7 : 8;
-			int lvl_sw = same_sw ? Integer.parseInt(chunks.getBlockData(x-1, y, z+1).get("level")) & 7 : 8;
-			int lvl_w  = same_w ? Integer.parseInt(chunks.getBlockData(x-1, y, z).get("level")) & 7 : 8;
+			int lvl_nw = same_nw ? getDataLevel(chunks.getBlockData(x-1, y, z-1)) & 7 : 8;
+			int lvl_n  = same_n ? getDataLevel(chunks.getBlockData(x, y, z-1)) & 7 : 8;
+			int lvl_ne = same_ne ? getDataLevel(chunks.getBlockData(x+1, y, z-1)) & 7 : 8;
+			int lvl_e  = same_e ? getDataLevel(chunks.getBlockData(x+1, y, z)) & 7 : 8;
+			int lvl_se = same_se ? getDataLevel(chunks.getBlockData(x+1, y, z+1)) & 7 : 8;
+			int lvl_s  = same_s ? getDataLevel(chunks.getBlockData(x, y, z+1)) & 7 : 8;
+			int lvl_sw = same_sw ? getDataLevel(chunks.getBlockData(x-1, y, z+1)) & 7 : 8;
+			int lvl_w  = same_w ? getDataLevel(chunks.getBlockData(x-1, y, z)) & 7 : 8;
 
 			/*
 			 * Calculate corner heights
