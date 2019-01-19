@@ -242,7 +242,7 @@ public class MainPanel extends JPanel {
 
 				chunk_loader = new ViewChunkLoaderThread(preview);
 				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				(new Thread(chunk_loader)).start();
+				(new Thread(chunk_loader, "ViewChunkLoader")).start();
 
 			}
 		});
@@ -546,7 +546,7 @@ public class MainPanel extends JPanel {
 				// chunk_loader=new FullChunkLoaderThread(preview);
 				chunk_loader = new ViewChunkLoaderThread(preview);
 				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				(new Thread(chunk_loader)).start();
+				(new Thread(chunk_loader, "ViewChunkLoader")).start();
 
 				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
 				MainWindow.export.mapLoaded();
@@ -632,7 +632,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		(new Thread(memory_monitor)).start();
+		(new Thread(memory_monitor, "MemoryMonitor")).start();
 
 	}
 
