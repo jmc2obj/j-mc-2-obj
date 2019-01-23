@@ -1,16 +1,16 @@
 package org.jmc.models;
 
-import java.util.HashMap;
 import java.util.Vector;
 
+import org.jmc.BlockData;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.Half;
+import org.jmc.geom.Side;
+import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
-import org.jmc.geom.Side;
-import org.jmc.geom.Transform;
 
 /**
  * Model for stairs.
@@ -180,7 +180,7 @@ public class Stairs extends BlockModel {
 	}
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome) {
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
 
 		String[] mtls = getMtlSides(data, biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
@@ -249,7 +249,7 @@ public class Stairs extends BlockModel {
 
 	}
 
-	private int getFacingDir(HashMap<String, String> data) {
+	private int getFacingDir(BlockData data) {
 		int dir;
 		switch (data.get("facing")) {
 		case "north":

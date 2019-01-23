@@ -6,12 +6,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.jmc.BlockData;
 import org.jmc.Materials;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
@@ -84,7 +84,7 @@ public class Banner extends BlockModel {
     }
 
     @Override
-    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome) {
+    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
 
         //Log.info("Banner ***************************");
 

@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -14,7 +13,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Lever extends BlockModel
 {
 
-	private String[] getMtlSidesBase(HashMap<String, String> data, int biome)
+	private String[] getMtlSidesBase(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -28,7 +27,7 @@ public class Lever extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesLever(HashMap<String, String> data, int biome)
+	private String[] getMtlSidesLever(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -44,7 +43,7 @@ public class Lever extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean on = data.get("powered").equals("true");
 		String dir = data.get("facing");

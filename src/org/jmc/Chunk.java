@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -141,9 +140,9 @@ public class Chunk {
 		public Blocks(int block_num, int biome_num)
 		{
 			id=new String[block_num];
-			data=new ArrayList<HashMap<String, String>>(block_num);
+			data=new ArrayList<BlockData>(block_num);
 			for (int i = 0; i < block_num; i++) 
-				data.add(new HashMap<String, String>());
+				data.add(new BlockData());
 			biome=new int[biome_num];
 			Arrays.fill(biome, (byte)255);
 			entities=new LinkedList<TAG_Compound>();
@@ -156,7 +155,7 @@ public class Chunk {
 		/**
 		 * Block meta-data.
 		 */
-		public List<HashMap<String, String>> data;
+		public ArrayList<BlockData> data;
 
 		/**
 		 * Biome IDSs (only XZ axes).
@@ -230,7 +229,7 @@ public class Chunk {
 					
 					ret.id[base+i] = blockName.value;
 					
-					HashMap<String, String> data = new HashMap<String, String>();
+					BlockData data = new BlockData();
 					TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
 					if (propertiesTag != null) {
 						for (NBT_Tag tag : propertiesTag.elements) {
@@ -240,8 +239,8 @@ public class Chunk {
 					}
 					
 					if (blockName.value.contains("kelp") || blockName.value.endsWith("seagrass") ||
-							blockName.value.contains("_coral") || blockName.value.contains("sea_pickle")) {
-						data.put("waterlogged", "true");
+							blockName.value.contains("sea_pickle")) {
+						data.putIfAbsent("waterlogged", "true");
 					}
 					
 					ret.data.set(base+i, data);//data from nbt tags??? probably needs special treatment for each block type
@@ -328,7 +327,7 @@ public class Chunk {
 		gb.fillRect(0, 0, width, height);
 
 		String blockID="minecraft:air";
-		HashMap<String, String> blockData=new HashMap<String, String>();
+		BlockData blockData=new BlockData();
 		int blockBiome=0;
 		Color c;
 		Blocks bd=getBlocks();		
@@ -350,9 +349,9 @@ public class Chunk {
 
 
 		String ids[]=new String[16*16];
-		List<HashMap<String, String>> data=new ArrayList<HashMap<String, String>>(16*16);
+		List<BlockData> data=new ArrayList<BlockData>(16*16);
 		for (int i = 0; i < 16*16; i++)
-			data.add(i, new HashMap<String, String>());
+			data.add(i, new BlockData());
 		int biome[]=new int[16*16];
 		int himage[]=null;
 		if(!fastmode)

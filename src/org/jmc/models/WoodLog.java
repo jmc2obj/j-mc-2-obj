@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -13,7 +12,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class WoodLog extends BlockModel
 {
 
-	protected String[] getMtlSides(HashMap<String, String> data, int biome, int dir)
+	protected String[] getMtlSides(BlockData data, int biome, int dir)
 	{
 		String[] mat = materials.get(data, biome);
 		
@@ -42,7 +41,7 @@ public class WoodLog extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		int dir;
 		// 0 - upright

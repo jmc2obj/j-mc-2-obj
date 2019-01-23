@@ -1,12 +1,12 @@
 package org.jmc.models;
 
 import java.awt.Rectangle;
-import java.util.HashMap;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.jmc.BlockData;
 import org.jmc.BlockInfo.Occlusion;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
@@ -73,7 +73,7 @@ public abstract class BlockModel {
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(HashMap<String, String> data, int biome) {
+	protected String[] getMtlSides(BlockData data, int biome) {
 		String[] abbrMtls = materials.get(data, biome);
 
 		String[] mtlSides = new String[6];
@@ -122,7 +122,7 @@ public abstract class BlockModel {
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, String neighborId, HashMap<String, String> neighborData) {
+	protected boolean drawSide(Side side, String neighborId, BlockData neighborData) {
 		if (Options.objectPerBlock)
 			return true;
 
@@ -181,15 +181,15 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP, y == ymax ? "" : chunks.getBlockID(x, y + 1, z), chunks.getBlockData(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, z == zmin ? "" : chunks.getBlockID(x, y, z - 1), chunks.getBlockData(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, z == zmax ? "" : chunks.getBlockID(x, y, z + 1), chunks.getBlockData(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, x == xmin ? "" : chunks.getBlockID(x - 1, y, z), chunks.getBlockData(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, x == xmax ? "" : chunks.getBlockID(x + 1, y, z), chunks.getBlockData(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z), chunks.getBlockData(x, y - 1, z));
+		sides[0] = drawSide(Side.TOP, y == ymax ? "" : chunks.getBlockID(x, y + 1, z), y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Side.FRONT, z == zmin ? "" : chunks.getBlockID(x, y, z - 1), z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Side.BACK, z == zmax ? "" : chunks.getBlockID(x, y, z + 1), z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Side.LEFT, x == xmin ? "" : chunks.getBlockID(x - 1, y, z), x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Side.RIGHT, x == xmax ? "" : chunks.getBlockID(x + 1, y, z), x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z), y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
 
 		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
-			HashMap<String, String> data = chunks.getBlockData(x, y, z);
+			BlockData data = chunks.getBlockData(x, y, z);
 			if (blockId.equals(chunks.getBlockID(x, y + 1, z)) && data.equals(chunks.getBlockData(x, y + 1, z)))
 				sides[0] = false;
 			if (blockId.equals(chunks.getBlockID(x, y, z - 1)) && data.equals(chunks.getBlockData(x, y, z - 1)))
@@ -303,6 +303,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome);
+	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome);
 
 }

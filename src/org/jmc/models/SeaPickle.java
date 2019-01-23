@@ -1,8 +1,8 @@
 package org.jmc.models;
 
-import java.util.HashMap;
 import java.util.Random;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -17,7 +17,7 @@ public class SeaPickle extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		// The amount of eggs (1-4)
 		int pickles = Integer.parseInt(data.get("pickles"));
@@ -77,7 +77,7 @@ public class SeaPickle extends BlockModel
 		}
 	}
 	
-	private void newPickle(ChunkProcessor obj, ThreadChunkDeligate chunks, float x, float z, float height, Transform rt, HashMap<String, String> data, int biome)
+	private void newPickle(ChunkProcessor obj, ThreadChunkDeligate chunks, float x, float z, float height, Transform rt, BlockData data, int biome)
 	{
 		boolean[] drawSides = new boolean[] {true,true,true,true,true,false};
 		UV[] uvTop, uvSide, uvTopInner;

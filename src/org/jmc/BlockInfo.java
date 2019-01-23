@@ -1,7 +1,6 @@
 package org.jmc;
 
 import java.awt.Color;
-import java.util.HashMap;
 
 import org.jmc.models.BlockModel;
 import org.jmc.util.Log;
@@ -89,7 +88,7 @@ public class BlockInfo
 	 * @param blockData Block data
 	 * @return Block color
 	 */
-	public Color getPreviewColor(HashMap<String, String> blockData, int biome)
+	public Color getPreviewColor(BlockData blockData, int biome)
 	{
 		String[] mtlNames = getMaterials().get(blockData,biome);
 		if (mtlNames == null || mtlNames.length == 0)

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jmc.BlockData;
 import org.jmc.BlockTypes;
 import org.jmc.EntityTypes;
 import org.jmc.Options;
@@ -130,7 +131,7 @@ public class ChunkProcessor
 				for(int y = ymin; y < ymax; y++)
 				{
 					String blockID=chunk.getBlockID(x, y, z);
-					HashMap<String, String> blockData=chunk.getBlockData(x, y, z);
+					BlockData blockData=chunk.getBlockData(x, y, z);
 					int blockBiome=chunk.getBlockBiome(x, z);
 					
 					if(blockID.endsWith("air"))

@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -14,7 +13,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class PistonArm extends BlockModel
 {
 
-	private String[] getMtlSidesTop(HashMap<String, String> data, int biome)
+	private String[] getMtlSidesTop(BlockData data, int biome)
 	{
 		boolean sticky = data.get("type").equals("sticky");
 		String[] abbrMtls = materials.get(data,biome);
@@ -29,7 +28,7 @@ public class PistonArm extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesArm(HashMap<String, String> data, int biome)
+	private String[] getMtlSidesArm(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -45,7 +44,7 @@ public class PistonArm extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String dir = data.get("facing");
 

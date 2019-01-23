@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -14,7 +13,7 @@ public class Observer extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		/*
 		  The model is rendered facing south, then rotated

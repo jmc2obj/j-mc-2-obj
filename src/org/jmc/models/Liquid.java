@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.Side;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -30,7 +29,7 @@ public class Liquid extends BlockModel
         return Math.min(Math.min(a, b), Math.min(c, d));
     }
 	
-	private int getDataLevel(HashMap<String, String> data) {
+	private int getDataLevel(BlockData data) {
 		String level = data.get("level");
 		if (level != null) {
 			try {
@@ -44,7 +43,7 @@ public class Liquid extends BlockModel
 		return 0;
 	}
     
-	private boolean isSameLiquid(String otherBlockId, HashMap<String, String> otherBlockData)
+	private boolean isSameLiquid(String otherBlockId, BlockData otherBlockData)
 	{
 		if (blockId.equals(otherBlockId))
 			return true;
@@ -58,14 +57,14 @@ public class Liquid extends BlockModel
 	}
 	
 	@Override
-	protected boolean drawSide(Side side, String neighborId, HashMap<String, String> neighborData) {
+	protected boolean drawSide(Side side, String neighborId, BlockData neighborData) {
 		boolean ret = super.drawSide(side, neighborId, neighborData);
 		ret &= !isSameLiquid(neighborId, neighborData);
 		return ret;
 	}
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		int level = getDataLevel(data);
 		// despite the new states water seems to store 'falling' in bit 4 of level

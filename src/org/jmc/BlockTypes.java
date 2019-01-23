@@ -84,7 +84,7 @@ public class BlockTypes
 			{
 				Node matNode = matNodes.item(j);
 
-				HashMap<String, String> data = new HashMap<String, String>();
+				BlockData data = new BlockData();
 				int biome = -1;
 				
 				NamedNodeMap matAttribs = matNode.getAttributes();
@@ -202,7 +202,7 @@ public class BlockTypes
 
 	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		HashMap<String, String> data = new HashMap<String, String>();
+		BlockData data = new BlockData();
 		NamedNodeMap meshAttribs = meshNode.getAttributes();
 		
 		if (meshAttribs != null) {

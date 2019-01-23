@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jmc.BlockData;
 import org.jmc.Chunk;
 import org.jmc.Chunk.Blocks;
 import org.jmc.ChunkDataBuffer;
@@ -91,26 +92,26 @@ public class ThreadChunkDeligate {
 		}
 	}
 	
-	public HashMap<String, String> getBlockData(int x, int y, int z)
+	public BlockData getBlockData(int x, int y, int z)
 	{
-		if(y<0) return new HashMap<String, String>();
+		if(y<0) return new BlockData();
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);		
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return new HashMap<String, String>();
+		if(blocks==null) return new BlockData();
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);				
 				
 		if(isAnvil)
 		{						
-			if(y>=blocks.id.length/(16*16)) return new HashMap<String, String>();
+			if(y>=blocks.id.length/(16*16)) return new BlockData();
 			return blocks.data.get(rx + (rz * 16) + (y * 16) * 16);			
 		}
 		else
 		{
-			if(y>=128) return new HashMap<String, String>();
+			if(y>=128) return new BlockData();
 			return blocks.data.get(y + (rz * 128) + (rx * 128) * 16);			
 		}
 	}

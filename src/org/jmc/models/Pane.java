@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.BlockInfo;
 import org.jmc.BlockTypes;
 import org.jmc.geom.Transform;
@@ -29,7 +28,7 @@ public class Pane extends BlockModel
 	}
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String mtl = materials.get(data,biome)[0];
 		String mtlSide = materials.get(data,biome)[1];

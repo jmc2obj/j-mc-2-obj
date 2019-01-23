@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -14,7 +13,7 @@ public class Conduit extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		// Splitting the conduit 16/16 texture into the four 6/6 textures
 		UV[] uv1 = new UV[] { new UV(2/16f,8/16f), new UV(2/16f,14/16f), new UV(8/16f,14/16f), new UV(8/16f,8/16f) };

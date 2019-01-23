@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jmc.BlockData;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.geom.Transform;
@@ -23,7 +24,7 @@ public class Mesh extends BlockModel
 
 	public static class MeshData
 	{
-		public HashMap<String, String> data;
+		public BlockData data;
 		public Vertex offset;
 		public String id;		
 		public Transform transform;
@@ -31,24 +32,24 @@ public class Mesh extends BlockModel
 
 		public MeshData()
 		{
-			data=new HashMap<String, String>();
+			data=new BlockData();
 			id="";
 			offset=null;
 			transform=null;
 			fallthrough=false;
 		}
 
-		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> block_data)
+		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, BlockData data2)
 		{			
 			if(offset==null || offset==new Vertex(0,0,0))
 			{
-				HashMap<String, String> d=block_data;
+				BlockData d=data2;
 				if(!data.isEmpty() && !data.equals(d)) return false;
 				return true;
 			}
 			else
 			{
-				HashMap<String, String> d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				BlockData d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
 				String i=chunks.getBlockID(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
 
 				if(!data.isEmpty() && !data.equals(d)) return false;
@@ -128,7 +129,7 @@ public class Mesh extends BlockModel
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		//What did this do? if(data<0) data=(byte) (16+data);
 
@@ -138,7 +139,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , HashMap<String, String> data, int biome, Transform trans)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , BlockData data, int biome, Transform trans)
 	{
 		boolean match=mesh_data.matches(chunks, x, y, z, data);
 

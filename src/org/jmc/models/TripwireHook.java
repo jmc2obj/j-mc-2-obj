@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import java.util.HashMap;
-
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -15,7 +14,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class TripwireHook extends BlockModel
 {
 
-	private String[] getMtlSides(HashMap<String, String> data, int biome, int i)
+	private String[] getMtlSides(BlockData data, int biome, int i)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -31,7 +30,7 @@ public class TripwireHook extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, HashMap<String, String> data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String dir = data.get("facing");
 		boolean connected = data.get("attached").equals("true");
