@@ -17,7 +17,7 @@ public class PortalVert extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		// find in which direction are the other portal blocks
-		boolean ns = data.get("axis").equals("y");
+		boolean ns = data.get("axis").equals("z");
 		
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
