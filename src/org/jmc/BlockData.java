@@ -12,4 +12,16 @@ public class BlockData extends HashMap<String, String> {
 		}
 		return true;
 	}
+	
+	/**
+	 * @param key map key
+	 * @return result of {@link Boolean#parseBoolean(String) parseBoolean} on value, will return false if key not found 
+	 */
+	public boolean getBool(String key) {
+		if (this.containsKey(key)) {
+			return Boolean.parseBoolean(this.get(key));
+		} else {
+			return false;
+		}
+	}
 }
