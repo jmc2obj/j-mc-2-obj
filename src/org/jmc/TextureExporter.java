@@ -248,7 +248,7 @@ public class TextureExporter {
 			confFilePath = "conf/texsplit_1.13.conf";
 			break;
 		case FORMAT_1_6:
-			Log.info("Found resource pack (Minecraft 1.6 - 1.13)");
+			Log.info("Found resource pack (Minecraft 1.6 - 1.12)");
 			confFilePath = "conf/texsplit_1.6.conf";
 			break;
 		case FORMAT_1_5:
