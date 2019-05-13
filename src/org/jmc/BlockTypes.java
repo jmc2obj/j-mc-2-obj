@@ -59,7 +59,7 @@ public class BlockTypes
 			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Cube";
 			BlockInfo.Occlusion occlusion = BlockInfo.Occlusion.FULL; 
-			BlockMaterial materials = new BlockMaterial();
+			BlockMaterial materials = new BlockMaterial(id);
 
 			String aux;
 			aux = (String)xpath.evaluate("model", blockNode, XPathConstants.STRING);
@@ -84,7 +84,7 @@ public class BlockTypes
 			{
 				Node matNode = matNodes.item(j);
 
-				BlockData data = new BlockData();
+				BlockData data = new BlockData(id);
 				int biome = -1;
 				
 				NamedNodeMap matAttribs = matNode.getAttributes();
@@ -202,7 +202,7 @@ public class BlockTypes
 
 	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		BlockData data = new BlockData();
+		BlockData data = new BlockData(mesh.blockId);
 		NamedNodeMap meshAttribs = meshNode.getAttributes();
 		
 		if (meshAttribs != null) {
@@ -234,7 +234,7 @@ public class BlockTypes
 					mesh.mesh_data.fallthrough = Boolean.parseBoolean(attrVal);
 				}
 				else if (attrName.equalsIgnoreCase("jmc_material")) {
-					BlockMaterial mat = new BlockMaterial();
+					BlockMaterial mat = new BlockMaterial(mesh.blockId);
 					mat.put(new String[] {attrVal});
 					mesh.setMaterials(mat);
 				}

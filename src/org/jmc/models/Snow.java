@@ -1,6 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
+import org.jmc.geom.Side;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -11,15 +12,32 @@ import org.jmc.threading.ThreadChunkDeligate;
  */
 public class Snow extends BlockModel
 {
-
+	
+	@Override
+	protected boolean getCustomOcclusion(Side side, BlockData neighbourData, BlockData data) {
+		int layers = data.getInt("layers");
+		if (side == Side.BOTTOM || layers >= 8) {
+			return true;
+		}
+		
+		int neighbourLayers = neighbourData.getInt("layers");
+		if (data.id.equals(neighbourData.id) && neighbourLayers != -1 && neighbourLayers <= layers) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
-		drawSides[0] = true;
-		int layers = Integer.parseInt(data.get("layers"));
+		int layers = data.getInt("layers");
 		
-		if (Integer.parseInt(data.get("layers")) > 8)
+		if (layers < 8) 
+			drawSides[0] = true;
+		
+		if (layers > 8)
 			layers = 8;
 		float height = (layers) / 8.0f;
 

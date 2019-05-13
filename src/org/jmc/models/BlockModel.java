@@ -7,7 +7,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.jmc.BlockData;
-import org.jmc.BlockInfo.Occlusion;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.Options;
@@ -26,7 +25,7 @@ import org.w3c.dom.NodeList;
  * rendering the geometry that represents the blocks.
  */
 public abstract class BlockModel {
-	protected String blockId = "";
+	public String blockId = "";
 	protected Node configNode = null;
 	protected BlockMaterial materials = null;
 
@@ -109,6 +108,18 @@ public abstract class BlockModel {
 
 		return mtlSides;
 	}
+	
+	/**
+	 * If Occlusion is set to custom this will be called from a neighboring block
+	 * to know if a face should be drawn
+	 * 
+	 * @param side the side the neighboring block is at.
+	 * @param data the data for this block.
+	 * @return true if this block occludes side.
+	 */
+	protected boolean getCustomOcclusion(Side side, BlockData neighbourData, BlockData data) {
+		return true;
+	}
 
 	/**
 	 * Helper method to check if the side of a cube needs to be drawn, based on
@@ -122,30 +133,31 @@ public abstract class BlockModel {
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, String neighborId, BlockData neighborData) {
+	protected boolean drawSide(Side side, BlockData data, BlockData neighborData) {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighborId.equals(""))
+		if (neighborData.id.equals(""))
 			return Options.renderSides;
 
-		if (neighborId.endsWith("air") || Options.excludeBlocks.contains(neighborId))
+		if (neighborData.id.endsWith("air") || Options.excludeBlocks.contains(neighborData.id))
 			return true;
 
-		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighborId.equals(blockId)))
+		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighborData.id.equals(blockId)))
 			return true;
 
-		switch (BlockTypes.get(neighborId).getOcclusion()) {
+		switch (BlockTypes.get(neighborData.id).getOcclusion()) {
 		case FULL:
 			return false;
 		case NONE:
 			return true;
 		case TRANSPARENT:
 		case VOLUME:
-			return !neighborId.equals(blockId);
+			return !neighborData.id.equals(blockId);
 		case BOTTOM:
-		case SNOW:
 			return side != Side.TOP;
+		case CUSTOM:
+			return !BlockTypes.get(neighborData.id).getModel().getCustomOcclusion(side.getOpposite(), data, neighborData);
 		default:
 			return false;
 		}
@@ -181,28 +193,13 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP, y == ymax ? "" : chunks.getBlockID(x, y + 1, z), y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, z == zmin ? "" : chunks.getBlockID(x, y, z - 1), z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, z == zmax ? "" : chunks.getBlockID(x, y, z + 1), z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, x == xmin ? "" : chunks.getBlockID(x - 1, y, z), x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, x == xmax ? "" : chunks.getBlockID(x + 1, y, z), x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y == ymin ? "" : chunks.getBlockID(x, y - 1, z), y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
-
-		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
-			BlockData data = chunks.getBlockData(x, y, z);
-			if (blockId.equals(chunks.getBlockID(x, y + 1, z)) && data.equals(chunks.getBlockData(x, y + 1, z)))
-				sides[0] = false;
-			if (blockId.equals(chunks.getBlockID(x, y, z - 1)) && data.equals(chunks.getBlockData(x, y, z - 1)))
-				sides[1] = false;
-			if (blockId.equals(chunks.getBlockID(x, y, z + 1)) && data.equals(chunks.getBlockData(x, y, z + 1)))
-				sides[2] = false;
-			if (blockId.equals(chunks.getBlockID(x - 1, y, z)) && data.equals(chunks.getBlockData(x - 1, y, z)))
-				sides[3] = false;
-			if (blockId.equals(chunks.getBlockID(x + 1, y, z)) && data.equals(chunks.getBlockData(x + 1, y, z)))
-				sides[4] = false;
-			if (blockId.equals(chunks.getBlockID(x, y - 1, z)) && data.equals(chunks.getBlockData(x, y - 1, z)))
-				sides[5] = false;
-		}
+		BlockData data = chunks.getBlockData(x, y, z);
+		sides[0] = drawSide(Side.TOP, data, y == ymax ? new BlockData("") : chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Side.FRONT, data, z == zmin ? new BlockData("") : chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Side.BACK, data, z == zmax ? new BlockData("") : chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Side.LEFT, data, x == xmin ? new BlockData("") : chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Side.RIGHT, data, x == xmax ? new BlockData("") : chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, data, y == ymin ? new BlockData("") : chunks.getBlockData(x, y - 1, z));
 
 		return sides;
 	}

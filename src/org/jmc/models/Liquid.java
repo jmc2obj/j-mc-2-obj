@@ -43,23 +43,24 @@ public class Liquid extends BlockModel
 		return 0;
 	}
     
-	private boolean isSameLiquid(String otherBlockId, BlockData otherBlockData)
+	private boolean isSameLiquid(BlockData otherBlockData)
 	{
-		if (blockId.equals(otherBlockId))
+		String otherID = otherBlockData.id; 
+		if (blockId.equals(otherID))
 			return true;
 		if ((blockId.equals("minecraft:flowing_water") || blockId.equals("minecraft:water")) && 
-				otherBlockId.equals("minecraft:flowing_water") || otherBlockId.equals("minecraft:water") ||
-				otherBlockId.equals("minecraft:bubble_column") || Boolean.parseBoolean(otherBlockData.get("waterlogged")))
+				otherID.equals("minecraft:flowing_water") || otherID.equals("minecraft:water") ||
+				otherID.equals("minecraft:bubble_column") || Boolean.parseBoolean(otherBlockData.get("waterlogged")))
 			return true;
-		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherBlockId.equals("minecraft:flowing_lava") || otherBlockId.equals("minecraft:lava")))
+		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherID.equals("minecraft:flowing_lava") || otherID.equals("minecraft:lava")))
 			return true;
 		return false;
 	}
 	
 	@Override
-	protected boolean drawSide(Side side, String neighborId, BlockData neighborData) {
-		boolean ret = super.drawSide(side, neighborId, neighborData);
-		ret &= !isSameLiquid(neighborId, neighborData);
+	protected boolean drawSide(Side side, BlockData data, BlockData neighborData) {
+		boolean ret = super.drawSide(side, data, neighborData);
+		ret &= !isSameLiquid(neighborData);
 		return ret;
 	}
 
@@ -81,17 +82,17 @@ public class Liquid extends BlockModel
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 
 
-		boolean same_up_nw = isSameLiquid(chunks.getBlockID(x-1, y+1, z-1), chunks.getBlockData(x-1, y+1, z-1));
-		boolean same_up_n  = isSameLiquid(chunks.getBlockID(x, y+1, z-1), chunks.getBlockData(x, y+1, z-1));
-		boolean same_up_ne = isSameLiquid(chunks.getBlockID(x+1, y+1, z-1), chunks.getBlockData(x+1, y+1, z-1));
-		boolean same_up_e  = isSameLiquid(chunks.getBlockID(x+1, y+1, z), chunks.getBlockData(x+1, y+1, z));
-		boolean same_up_se = isSameLiquid(chunks.getBlockID(x+1, y+1, z+1), chunks.getBlockData(x+1, y+1, z+1));
-		boolean same_up_s  = isSameLiquid(chunks.getBlockID(x, y+1, z+1), chunks.getBlockData(x, y+1, z+1));
-		boolean same_up_sw = isSameLiquid(chunks.getBlockID(x-1, y+1, z+1), chunks.getBlockData(x-1, y+1, z+1));
-		boolean same_up_w  = isSameLiquid(chunks.getBlockID(x-1, y+1, z), chunks.getBlockData(x-1, y+1, z));
+		boolean same_up_nw = isSameLiquid(chunks.getBlockData(x-1, y+1, z-1));
+		boolean same_up_n  = isSameLiquid(chunks.getBlockData(x, y+1, z-1));
+		boolean same_up_ne = isSameLiquid(chunks.getBlockData(x+1, y+1, z-1));
+		boolean same_up_e  = isSameLiquid(chunks.getBlockData(x+1, y+1, z));
+		boolean same_up_se = isSameLiquid(chunks.getBlockData(x+1, y+1, z+1));
+		boolean same_up_s  = isSameLiquid(chunks.getBlockData(x, y+1, z+1));
+		boolean same_up_sw = isSameLiquid(chunks.getBlockData(x-1, y+1, z+1));
+		boolean same_up_w  = isSameLiquid(chunks.getBlockData(x-1, y+1, z));
 		
-		boolean same_up = isSameLiquid(chunks.getBlockID(x, y+1, z), chunks.getBlockData(x, y+1, z));
-		boolean same_down = isSameLiquid(chunks.getBlockID(x, y-1, z), chunks.getBlockData(x, y-1, z));
+		boolean same_up = isSameLiquid(chunks.getBlockData(x, y+1, z));
+		boolean same_down = isSameLiquid(chunks.getBlockData(x, y-1, z));
 
 		if (same_up)
 		{
@@ -112,14 +113,14 @@ public class Liquid extends BlockModel
 		}
 		else
 		{
-			boolean same_nw = isSameLiquid(chunks.getBlockID(x-1, y, z-1), chunks.getBlockData(x-1, y, z-1));
-			boolean same_n  = isSameLiquid(chunks.getBlockID(x, y, z-1), chunks.getBlockData(x, y, z-1));
-			boolean same_ne = isSameLiquid(chunks.getBlockID(x+1, y, z-1), chunks.getBlockData(x+1, y, z-1));
-			boolean same_e  = isSameLiquid(chunks.getBlockID(x+1, y, z), chunks.getBlockData(x+1, y, z));
-			boolean same_se = isSameLiquid(chunks.getBlockID(x+1, y, z+1), chunks.getBlockData(x+1, y, z+1));
-			boolean same_s  = isSameLiquid(chunks.getBlockID(x, y, z+1), chunks.getBlockData(x, y, z+1));
-			boolean same_sw = isSameLiquid(chunks.getBlockID(x-1, y, z+1), chunks.getBlockData(x-1, y, z+1));
-			boolean same_w  = isSameLiquid(chunks.getBlockID(x-1, y, z), chunks.getBlockData(x-1, y, z));
+			boolean same_nw = isSameLiquid(chunks.getBlockData(x-1, y, z-1));
+			boolean same_n  = isSameLiquid(chunks.getBlockData(x, y, z-1));
+			boolean same_ne = isSameLiquid(chunks.getBlockData(x+1, y, z-1));
+			boolean same_e  = isSameLiquid(chunks.getBlockData(x+1, y, z));
+			boolean same_se = isSameLiquid(chunks.getBlockData(x+1, y, z+1));
+			boolean same_s  = isSameLiquid(chunks.getBlockData(x, y, z+1));
+			boolean same_sw = isSameLiquid(chunks.getBlockData(x-1, y, z+1));
+			boolean same_w  = isSameLiquid(chunks.getBlockData(x-1, y, z));
 			
 			int lvl_nw = same_nw ? getDataLevel(chunks.getBlockData(x-1, y, z-1)) & 7 : 8;
 			int lvl_n  = same_n ? getDataLevel(chunks.getBlockData(x, y, z-1)) & 7 : 8;

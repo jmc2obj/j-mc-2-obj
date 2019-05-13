@@ -82,7 +82,7 @@ public class ItemFrame extends Entity
 		rt = translate.multiply(rotate);
 		
 		
-		BlockMaterial materials=new BlockMaterial();
+		BlockMaterial materials=new BlockMaterial("");
 		
 		switch (item_id)
 		{

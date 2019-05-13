@@ -203,7 +203,7 @@ public class Chunk {
 				TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
 				if (tagPalette == null) {
 					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
-					break;
+					continue;
 				}
 				TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
 				TAG_Int_Array tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
@@ -229,7 +229,7 @@ public class Chunk {
 					
 					ret.id[base+i] = blockName.value;
 					
-					BlockData data = new BlockData();
+					BlockData data = new BlockData(blockName.value);
 					TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
 					if (propertiesTag != null) {
 						for (NBT_Tag tag : propertiesTag.elements) {
@@ -327,7 +327,7 @@ public class Chunk {
 		gb.fillRect(0, 0, width, height);
 
 		String blockID="minecraft:air";
-		BlockData blockData=new BlockData();
+		BlockData blockData=new BlockData(blockID);
 		int blockBiome=0;
 		Color c;
 		Blocks bd=getBlocks();		
@@ -351,7 +351,7 @@ public class Chunk {
 		String ids[]=new String[16*16];
 		List<BlockData> data=new ArrayList<BlockData>(16*16);
 		for (int i = 0; i < 16*16; i++)
-			data.add(i, new BlockData());
+			data.add(i, new BlockData(blockID));
 		int biome[]=new int[16*16];
 		int himage[]=null;
 		if(!fastmode)

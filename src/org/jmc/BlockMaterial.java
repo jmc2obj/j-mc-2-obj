@@ -10,6 +10,13 @@ import java.util.Map.Entry;
  */
 public class BlockMaterial
 {
+	public String blockID;
+	
+	public BlockMaterial(String blockID) {
+		this.blockID = blockID;
+	}
+	
+	
 	private String[] baseMaterials = null;
 
 	private Map<BlockData, String[]> dataMaterials = new LinkedHashMap<BlockData, String[]>();
@@ -92,7 +99,7 @@ public class BlockMaterial
 	public String[] get(BlockData data, int biomeValue)
 	{
 		if (data == null)
-			data = new BlockData();
+			data = new BlockData(blockID);
 		
 		String[] mtlNames = null;
 		if(Options.renderBiomes && biomeMaterials.containsKey(biomeValue))
@@ -102,7 +109,7 @@ public class BlockMaterial
 			if (mtlNames == null)
 				mtlNames = getMasked(mtls, data);
 			if (mtlNames == null)
-				mtlNames = mtls.get(new BlockData());
+				mtlNames = mtls.get(new BlockData(blockID));
 			if (mtlNames == null)
 				mtlNames = getFirstMtl(mtls);
 		}
@@ -123,7 +130,7 @@ public class BlockMaterial
 				if (mtlNames == null)
 					mtlNames = getMasked(mtls, data);
 				if (mtlNames == null)
-					mtlNames = mtls.get(new BlockData());
+					mtlNames = mtls.get(new BlockData(blockID));
 				if (mtlNames == null)
 					mtlNames = getFirstMtl(mtls);
 			}
