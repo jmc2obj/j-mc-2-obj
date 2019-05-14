@@ -29,7 +29,6 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_Long_Array;
 import org.jmc.NBT.TAG_String;
 import org.jmc.models.None;
-import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 /**
  * Class describing a chunk. A chunk is a 16x16 group of blocks of 
@@ -178,19 +177,24 @@ public class Chunk {
 	 * @return block data as a byte array
 	 */
 	public Blocks getBlocks()
-	{		
-		Blocks ret=null;		
+	{
+		Blocks ret=null;
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 
-		if(is_anvil)// can we detect if the level format is >= 1.13?
+		if(is_anvil)
 		{
-			int ymax=0;			
+			int ymax=0;
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			for(NBT_Tag section: sections.elements)
 			{
-				TAG_Compound c_section = (TAG_Compound) section;					
+				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 				if(yval.value>ymax) ymax=yval.value;
+			}
+			
+			int chunkVer = 0;
+			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
+				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
 			}
 
 			ymax=(ymax+1)*16;
@@ -200,50 +204,94 @@ public class Chunk {
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
-				TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
-				if (tagPalette == null) {
-					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
-					continue;
-				}
-				TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
-				TAG_Int_Array tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
-				//TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-
+				TAG_Int_Array tagBiomes;
+				if (chunkVer <= 1464) {
+					TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
+					int[] biomes = new int[tagByteBiomes.data.length];
+					for (int i = 0; i < tagByteBiomes.data.length; i++) {
+						biomes[i] = tagByteBiomes.data[i];
+					}
+					tagBiomes = new TAG_Int_Array("Biomes", biomes);
+				}
+				else {
+					tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
+				}
+				
 				int base=yval.value*16*16*16;
 				
-				int blockBits = Math.max((tagBlockStates.data.length * 64) / 4096, 4); // Minimum of 4 bits.
-				BitSet blockStates = BitSet.valueOf(tagBlockStates.data);
-				for (int i = 0; i < 4096; i++) {
-					long blockPid;
-					BitSet blockBitArr = blockStates.get(i*blockBits, (i+1)*blockBits);
-					if (blockBitArr.length() < 1) {
-						blockPid = 0;
-					} else {
-						blockPid = blockBitArr.toLongArray()[0];
-					}
-					
-					TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
-					TAG_String blockName = (TAG_String)blockTag.getElement("Name");
-					//Log.debug(String.format("blockPid = %d, blockName = %s", blockPid, blockName.value));
-					
-					ret.id[base+i] = blockName.value;
-					
-					BlockData data = new BlockData(blockName.value);
-					TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
-					if (propertiesTag != null) {
-						for (NBT_Tag tag : propertiesTag.elements) {
-							TAG_String propTag = (TAG_String)tag;
-							data.put(propTag.getName(), propTag.value);
+				if (chunkVer <= 1450) {// <= 1.12
+					short[] oldIDs = new short[ret.id.length];
+					byte[] oldData = new byte[ret.data.size()];
+					TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
+					TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
+					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
+					for(int i=0; i<tagBlocks.data.length; i++)
+						oldIDs[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
+
+					if(tagAdd!=null)
+					{
+						for(int i=0; i<tagAdd.data.length; i++)
+						{
+							short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
+							short add1 = (short)(add&0x0f);
+							short add2 = (short)(add>>4);
+							oldIDs[base+2*i] += (add1<<8);
+							oldIDs[base+2*i+1] += (add2<<8);
 						}
 					}
-					
-					if (blockName.value.contains("kelp") || blockName.value.endsWith("seagrass") ||
-							blockName.value.contains("sea_pickle")) {
-						data.putIfAbsent("waterlogged", "true");
+
+					for(int i=0; i<tagData.data.length; i++)
+					{
+						byte add1=(byte)(tagData.data[i]&0x0f);
+						byte add2=(byte)(tagData.data[i]>>4);
+						oldData[base+2*i]=add1;
+						oldData[base+2*i+1]=add2;
 					}
 					
-					ret.data.set(base+i, data);//data from nbt tags??? probably needs special treatment for each block type
+					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
+					break;
+					
+				} else if (chunkVer >= 1451) {// >= 1.13
+					TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
+					TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
+					
+					if (tagPalette == null || tagBlockStates == null) {
+						continue;
+					}
+					
+					int blockBits = Math.max((tagBlockStates.data.length * 64) / 4096, 4); // Minimum of 4 bits.
+					BitSet blockStates = BitSet.valueOf(tagBlockStates.data);
+					for (int i = 0; i < 4096; i++) {
+						long blockPid;
+						BitSet blockBitArr = blockStates.get(i*blockBits, (i+1)*blockBits);
+						if (blockBitArr.length() < 1) {
+							blockPid = 0;
+						} else {
+							blockPid = blockBitArr.toLongArray()[0];
+						}
+						
+						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
+						TAG_String blockName = (TAG_String)blockTag.getElement("Name");
+						
+						ret.id[base+i] = blockName.value;
+						
+						BlockData data = new BlockData();
+						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
+						if (propertiesTag != null) {
+							for (NBT_Tag tag : propertiesTag.elements) {
+								TAG_String propTag = (TAG_String)tag;
+								data.put(propTag.getName(), propTag.value);
+							}
+						}
+						
+						if (blockName.value.contains("kelp") || blockName.value.endsWith("seagrass") ||
+								blockName.value.contains("_coral") || blockName.value.contains("sea_pickle")) {
+							data.putIfAbsent("waterlogged", "true");
+						}
+						
+						ret.data.set(base+i, data);
+					}
 				}
 
 				if(tagBiomes!=null)
@@ -265,20 +313,22 @@ public class Chunk {
 
 			byte add1,add2;
 			ret=new Blocks(blocks.data.length,256);
+			short[] oldIDs = new short[ret.id.length];
+			byte[] oldData = new byte[ret.data.size()];
 
 			for(int i=0; i<blocks.data.length; i++)
-				ret.id[i]=IDConvert.intToStr(blocks.data[i]);//TODO old format conversion
+				oldIDs[i] = blocks.data[i];
 
 			for(int i=0; i<data.data.length; i++)
 			{
 				add1=(byte) (data.data[i]&0x0f);
 				add2=(byte) (data.data[i]>>4);
-				//ret.data[2*i]=add1;
-				//ret.data[2*i+1]=add2;
+				oldData[2*i]=add1;
+				oldData[2*i+1]=add2;
 				//TODO old format conversion
 			}
-
-
+			Log.info("Chunk is very old version, skipping! " + pos_x + " " + pos_z);
+			
 		}
 
 		TAG_List entities = (TAG_List) level.getElement("Entities");
@@ -330,7 +380,7 @@ public class Chunk {
 		BlockData blockData=new BlockData(blockID);
 		int blockBiome=0;
 		Color c;
-		Blocks bd=getBlocks();		
+		Blocks bd=getBlocks();
 
 		int ymax=0;
 		if(is_anvil)
@@ -417,10 +467,10 @@ public class Chunk {
 			for(z = 0; z < 16; z++)
 			{
 				for(x = 0; x < 16; x++)
-				{				
+				{
 					h=himage[z*16+x]%256;
 					gh.setColor(new Color(h,h,h));
-					gh.fillRect(x*4, z*4, 4, 4);				
+					gh.fillRect(x*4, z*4, 4, 4);
 				}
 			}
 		}

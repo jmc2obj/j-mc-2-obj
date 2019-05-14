@@ -54,7 +54,7 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 
-			String id = Xml.getAttribute(blockNode, "id", "0");
+			String id = Xml.getAttribute(blockNode, "id", "");
 
 			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Cube";
