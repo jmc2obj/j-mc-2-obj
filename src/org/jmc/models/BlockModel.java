@@ -194,12 +194,12 @@ public abstract class BlockModel {
 		boolean sides[] = new boolean[6];
 
 		BlockData data = chunks.getBlockData(x, y, z);
-		sides[0] = drawSide(Side.TOP, data, y == ymax ? new BlockData("") : chunks.getBlockData(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, data, z == zmin ? new BlockData("") : chunks.getBlockData(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, data, z == zmax ? new BlockData("") : chunks.getBlockData(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, data, x == xmin ? new BlockData("") : chunks.getBlockData(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, data, x == xmax ? new BlockData("") : chunks.getBlockData(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, data, y == ymin ? new BlockData("") : chunks.getBlockData(x, y - 1, z));
+		sides[0] = drawSide(Side.TOP, data, y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Side.FRONT, data, z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Side.BACK, data, z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Side.LEFT, data, x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Side.RIGHT, data, x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Side.BOTTOM, data, y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
 
 		return sides;
 	}

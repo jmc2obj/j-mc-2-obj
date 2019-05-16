@@ -276,7 +276,7 @@ public class Chunk {
 						
 						ret.id[base+i] = blockName.value;
 						
-						BlockData data = new BlockData();
+						BlockData data = new BlockData(blockName.value);
 						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
 						if (propertiesTag != null) {
 							for (NBT_Tag tag : propertiesTag.elements) {
@@ -351,7 +351,7 @@ public class Chunk {
 		}
 
 		return ret;
-	}	
+	}
 
 	/**
 	 * Renders the block and height images.
