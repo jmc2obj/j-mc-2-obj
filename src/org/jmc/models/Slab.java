@@ -1,6 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
+import org.jmc.geom.Side;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -54,6 +55,47 @@ public class Slab extends BlockModel
 				getMtlSides(data,biome),
 				uvSides, 
 				drawSides);
+	}
+	
+	@Override
+	protected boolean getCustomOcclusion(Side side, BlockData neighbourData, BlockData data) {
+		if (data.get("type").equals("bottom"))
+		{
+			switch (side) {
+				case BOTTOM:
+					return true;
+				case TOP:
+					return false;
+				case BACK:
+				case FRONT:
+				case LEFT:
+				case RIGHT:
+					return data.equalData(neighbourData);
+				default:
+					return false;
+			}
+		}
+		else if (data.get("type").equals("top"))
+		{
+			switch (side) {
+			case BOTTOM:
+				return false;
+			case TOP:
+				return true;
+			case BACK:
+			case FRONT:
+			case LEFT:
+			case RIGHT:
+				return data.equalData(neighbourData);
+			default:
+				return false;
+		}
+			
+		} 
+		else
+		{
+			return true;
+		}
 	}
 
 }

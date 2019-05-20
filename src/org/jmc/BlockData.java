@@ -1,5 +1,6 @@
 package org.jmc;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 
 @SuppressWarnings("serial")
@@ -32,6 +33,14 @@ public class BlockData extends HashMap<String, String> {
 			return this.id.equals(((BlockData)o).id);
 		}
 		return false;
+	}
+	
+	/**
+	 * @param other
+	 * @return result of {@link AbstractMap#equals(Object)} ignoring block id
+	 */
+	public boolean equalData(BlockData other) {
+		return super.equals(other);
 	}
 	
 	/**
