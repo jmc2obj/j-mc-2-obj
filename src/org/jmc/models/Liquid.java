@@ -58,9 +58,9 @@ public class Liquid extends BlockModel
 	}
 	
 	@Override
-	protected boolean drawSide(Side side, BlockData data, BlockData neighborData) {
-		boolean ret = super.drawSide(side, data, neighborData);
-		ret &= !isSameLiquid(neighborData);
+	protected boolean drawSide(Side side, BlockData data, BlockData neighbourData) {
+		boolean ret = super.drawSide(side, data, neighbourData);
+		ret &= !isSameLiquid(neighbourData);
 		return ret;
 	}
 

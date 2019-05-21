@@ -92,30 +92,30 @@ public abstract class EntityModel
 	
 	/**
 	 * Helper method to check if the side of a cube needs to be drawn, based on 
-	 * the occlusion type of the neighboring block and whether or not the block
+	 * the occlusion type of the neighbouring block and whether or not the block
 	 * is at the world (or selection) edge.
 	 *  
-	 * @param neighborId Id of the neighboring block, or -1 if there is no 
-	 * neighbor (because the block is at the world edge)
+	 * @param neighbourId Id of the neighbouring block, or -1 if there is no 
+	 * Neighbour (because the block is at the world edge)
 	 * @param side Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, String neighborId)
+	protected boolean drawSide(Side side, String neighbourId)
 	{
-		if (neighborId.equals(""))
+		if (neighbourId.equals(""))
 			return Options.renderSides;
 		
-		if (neighborId.endsWith("air"))
+		if (neighbourId.endsWith("air"))
 			return true;
 		
-		switch(BlockTypes.get(neighborId).getOcclusion())
+		switch(BlockTypes.get(neighbourId).getOcclusion())
 		{
 			case FULL:
 				return false;
 			case NONE:
 				return true;
 			case TRANSPARENT:
-				return !neighborId.equals(blockId);
+				return !neighbourId.equals(blockId);
 			case BOTTOM:
 				return side != Side.TOP;
 			default:
@@ -126,7 +126,7 @@ public abstract class EntityModel
 	
 	/**
 	 * Helper method to check which sides of a cube need to be drawn, based on 
-	 * the occlusion type of the neighboring blocks and whether or not the block
+	 * the occlusion type of the neighbouring blocks and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
 	 * @param chunks World chunk data

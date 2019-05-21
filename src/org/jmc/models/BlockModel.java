@@ -110,10 +110,10 @@ public abstract class BlockModel {
 	}
 	
 	/**
-	 * If Occlusion is set to custom this will be called from a neighboring block
+	 * If Occlusion is set to custom this will be called from a neighbouring block
 	 * to know if a face should be drawn
 	 * 
-	 * @param side the side the neighboring block is at.
+	 * @param side the side the neighbouring block is at.
 	 * @param data the data for this block.
 	 * @return true if this block occludes side.
 	 */
@@ -123,41 +123,41 @@ public abstract class BlockModel {
 
 	/**
 	 * Helper method to check if the side of a cube needs to be drawn, based on
-	 * the occlusion type of the neighboring block and whether or not the block
+	 * the occlusion type of the neighbouring block and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
-	 * @param neighborId
-	 *            Id of the neighboring block, or -1 if there is no neighbor
+	 * @param neighbourId
+	 *            Id of the neighbouring block, or -1 if there is no neighbour
 	 *            (because the block is at the world edge)
 	 * @param side
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, BlockData data, BlockData neighborData) {
+	protected boolean drawSide(Side side, BlockData data, BlockData neighbourData) {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighborData.id.equals(""))
+		if (neighbourData.id.equals(""))
 			return Options.renderSides;
 
-		if (neighborData.id.endsWith("air") || Options.excludeBlocks.contains(neighborData.id))
+		if (neighbourData.id.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
 			return true;
 
-		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighborData.id.equals(blockId)))
+		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighbourData.id.equals(blockId)))
 			return true;
 
-		switch (BlockTypes.get(neighborData.id).getOcclusion()) {
+		switch (BlockTypes.get(neighbourData.id).getOcclusion()) {
 		case FULL:
 			return false;
 		case NONE:
 			return true;
 		case TRANSPARENT:
 		case VOLUME:
-			return !neighborData.id.equals(blockId);
+			return !neighbourData.id.equals(blockId);
 		case BOTTOM:
 			return side != Side.TOP;
 		case CUSTOM:
-			return !BlockTypes.get(neighborData.id).getModel().getCustomOcclusion(side.getOpposite(), data, neighborData);
+			return !BlockTypes.get(neighbourData.id).getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
 		default:
 			return false;
 		}
@@ -165,7 +165,7 @@ public abstract class BlockModel {
 
 	/**
 	 * Helper method to check which sides of a cube need to be drawn, based on
-	 * the occlusion type of the neighboring blocks and whether or not the block
+	 * the occlusion type of the neighbouring blocks and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
 	 * @param chunks

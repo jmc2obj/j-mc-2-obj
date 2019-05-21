@@ -49,7 +49,7 @@ public class ObjExporter {
 	 * <li>Add the geometry to the OBJ, one chunk at a time.
 	 * <li>The ChunkDataBuffer holds a collection of chunks in the range of 
 	 * x-1..x+1 and z-1..z+1 around the chunk that is being processed. This
-	 * is so that neighboring block information exists for blocks that are at
+	 * is so that neighbouring block information exists for blocks that are at
 	 * the edge of the chunk.
 	 * <li>By holding only 9 chunks at a time, we can export arbitrarily large
 	 * maps in constant memory.
