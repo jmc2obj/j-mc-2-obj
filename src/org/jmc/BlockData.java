@@ -66,4 +66,9 @@ public class BlockData extends HashMap<String, String> {
 			return -1;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("id=%s %s", id, super.toString());
+	}
 }

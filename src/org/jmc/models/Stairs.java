@@ -6,7 +6,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.Half;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -52,34 +52,34 @@ public class Stairs extends BlockModel {
 		Face face;
 
 		// base
-		face = FaceUtils.getOuterBlockFace(Side.BOTTOM);
+		face = FaceUtils.getOuterBlockFace(Direction.DOWN);
 		face.mtl_idx = 5;
 		original_shape.add(face);
 		small_stair.add(face);
 		large_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.FRONT);
+		face = FaceUtils.getOuterBlockFace(Direction.NORTH);
 		face = FaceUtils.getHalf(face, Half.BOTTOM);
 		face.mtl_idx = 1;
 		original_shape.add(face);
 		small_stair.add(face);
 		large_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.BACK);
+		face = FaceUtils.getOuterBlockFace(Direction.SOUTH);
 		face = FaceUtils.getHalf(face, Half.BOTTOM);
 		face.mtl_idx = 2;
 		original_shape.add(face);
 		small_stair.add(face);
 		large_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.LEFT);
+		face = FaceUtils.getOuterBlockFace(Direction.WEST);
 		face = FaceUtils.getHalf(face, Half.BOTTOM);
 		face.mtl_idx = 3;
 		original_shape.add(face);
 		small_stair.add(face);
 		large_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.RIGHT);
+		face = FaceUtils.getOuterBlockFace(Direction.EAST);
 		face = FaceUtils.getHalf(face, Half.BOTTOM);
 		face.mtl_idx = 4;
 		original_shape.add(face);
@@ -87,7 +87,7 @@ public class Stairs extends BlockModel {
 		large_stair.add(face);
 
 		// stair top
-		face = FaceUtils.getOuterBlockFace(Side.TOP);
+		face = FaceUtils.getOuterBlockFace(Direction.UP);
 		face = FaceUtils.getHalf(face, Half.RIGHT);
 		face.mtl_idx = 0;
 		original_shape.add(face);
@@ -96,14 +96,14 @@ public class Stairs extends BlockModel {
 		face = FaceUtils.getHalf(face, Half.TOP);
 		small_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.TOP);
+		face = FaceUtils.getOuterBlockFace(Direction.UP);
 		face = FaceUtils.getHalf(face, Half.LEFT);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face.mtl_idx = 0;
 		large_stair.add(face);
 
 		// stair step
-		face = FaceUtils.getOuterBlockFace(Side.TOP);
+		face = FaceUtils.getOuterBlockFace(Direction.UP);
 		face = FaceUtils.getHalf(face, Half.LEFT);
 		face = FaceUtils.translate(face, 0, -0.5f, 0);
 		face.mtl_idx = 0;
@@ -113,7 +113,7 @@ public class Stairs extends BlockModel {
 		face = FaceUtils.getHalf(face, Half.BOTTOM);
 		large_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.TOP);
+		face = FaceUtils.getOuterBlockFace(Direction.UP);
 		face = FaceUtils.getHalf(face, Half.RIGHT);
 		face = FaceUtils.getHalf(face, Half.BOTTOM);
 		face = FaceUtils.translate(face, 0, -0.5f, 0);
@@ -121,7 +121,7 @@ public class Stairs extends BlockModel {
 		small_stair.add(face);
 
 		// front
-		face = FaceUtils.getOuterBlockFace(Side.LEFT);
+		face = FaceUtils.getOuterBlockFace(Direction.WEST);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face = FaceUtils.translate(face, 0.5f, 0, 0);
 		face.mtl_idx = 1;
@@ -130,7 +130,7 @@ public class Stairs extends BlockModel {
 		face = FaceUtils.getHalf(face, Half.RIGHT);
 		large_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.LEFT);
+		face = FaceUtils.getOuterBlockFace(Direction.WEST);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face = FaceUtils.getHalf(face, Half.LEFT);
 		face.mtl_idx = 1;
@@ -140,7 +140,7 @@ public class Stairs extends BlockModel {
 		small_stair.add(face);
 
 		// back
-		face = FaceUtils.getOuterBlockFace(Side.RIGHT);
+		face = FaceUtils.getOuterBlockFace(Direction.EAST);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face.mtl_idx = 2;
 		original_shape.add(face);
@@ -150,7 +150,7 @@ public class Stairs extends BlockModel {
 		small_stair.add(face);
 
 		// left
-		face = FaceUtils.getOuterBlockFace(Side.BACK);
+		face = FaceUtils.getOuterBlockFace(Direction.SOUTH);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face.mtl_idx = 3;
 		large_stair.add(face);
@@ -160,7 +160,7 @@ public class Stairs extends BlockModel {
 		small_stair.add(face);
 
 		// right
-		face = FaceUtils.getOuterBlockFace(Side.FRONT);
+		face = FaceUtils.getOuterBlockFace(Direction.NORTH);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face = FaceUtils.getHalf(face, Half.RIGHT);
 		face.mtl_idx = 4;
@@ -170,7 +170,7 @@ public class Stairs extends BlockModel {
 		face = FaceUtils.translate(face, 0, 0, 0.5f);
 		small_stair.add(face);
 
-		face = FaceUtils.getOuterBlockFace(Side.FRONT);
+		face = FaceUtils.getOuterBlockFace(Direction.NORTH);
 		face = FaceUtils.getHalf(face, Half.TOP);
 		face = FaceUtils.getHalf(face, Half.LEFT);
 		face = FaceUtils.translate(face, 0, 0, 0.5f);
@@ -214,7 +214,7 @@ public class Stairs extends BlockModel {
 				shape = -1;
 				break;
 		}
-			
+		
 		int invert = 0;
 		if (shape == 1 || shape == 3)
 			invert = 2;
@@ -233,10 +233,10 @@ public class Stairs extends BlockModel {
 		else
 			face_list = original_shape;
 
-		for (Face face : face_list) {			
+		for (Face face : face_list) {
 			
 			if (invert_normals[invert + up])
-				face = FaceUtils.invertNormals(face);			
+				face = FaceUtils.invertNormals(face);
 			
 			Face transface=trans.multiply(face);
 			
@@ -247,6 +247,73 @@ public class Stairs extends BlockModel {
 			}
 		}
 
+	}
+	
+	@Override
+	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
+		switch (side) {//top / bottom are always solid
+		case UP:
+			return data.get("half").equals("top");
+		case DOWN:
+			return data.get("half").equals("bottom");
+		default:
+			if (data.get("shape").startsWith("outer_"))
+				return false;
+			break;
+		}
+		
+		if (data.get("shape").equals("straight") && neighbourData.equalData(data)) {
+			return true;
+		}
+		
+		switch(data.get("facing")) {//blocks facing direction and left or right if corner piece
+		case "north":
+			switch(side) {
+			case NORTH:
+				return true;
+			case WEST:
+				return data.get("shape").equals("inner_left");
+			case EAST:
+				return data.get("shape").equals("inner_right");
+			default:
+				return false;
+			}
+		case "east":
+			switch(side) {
+			case EAST:
+				return true;
+			case NORTH:
+				return data.get("shape").equals("inner_left");
+			case SOUTH:
+				return data.get("shape").equals("inner_right");
+			default:
+				return false;
+			}
+		case "south":
+			switch(side) {
+			case SOUTH:
+				return true;
+			case EAST:
+				return data.get("shape").equals("inner_left");
+			case WEST:
+				return data.get("shape").equals("inner_right");
+			default:
+				return false;
+			}
+		case "west":
+			switch(side) {
+			case WEST:
+				return true;
+			case SOUTH:
+				return data.get("shape").equals("inner_left");
+			case NORTH:
+				return data.get("shape").equals("inner_right");
+			default:
+				return false;
+			}
+		default:
+			return false;
+		}
 	}
 
 	private int getFacingDir(BlockData data) {

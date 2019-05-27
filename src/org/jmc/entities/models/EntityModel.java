@@ -6,7 +6,7 @@ import org.jmc.BlockData;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.Options;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -100,7 +100,7 @@ public abstract class EntityModel
 	 * @param side Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, String neighbourId)
+	protected boolean drawSide(Direction side, String neighbourId)
 	{
 		if (neighbourId.equals(""))
 			return Options.renderSides;
@@ -117,7 +117,7 @@ public abstract class EntityModel
 			case TRANSPARENT:
 				return !neighbourId.equals(blockId);
 			case BOTTOM:
-				return side != Side.TOP;
+				return side != Direction.UP;
 			default:
 				return false;
 		}
@@ -150,12 +150,12 @@ public abstract class EntityModel
 		
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP,    y==ymax ? "" : chunks.getBlockID(x, y+1, z));
-		sides[1] = drawSide(Side.FRONT,  z==zmin ? "" : chunks.getBlockID(x, y, z-1));
-		sides[2] = drawSide(Side.BACK,   z==zmax ? "" : chunks.getBlockID(x, y, z+1));
-		sides[3] = drawSide(Side.LEFT,   x==xmin ? "" : chunks.getBlockID(x-1, y, z));
-		sides[4] = drawSide(Side.RIGHT,  x==xmax ? "" : chunks.getBlockID(x+1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y==ymin ? "" : chunks.getBlockID(x, y-1, z));
+		sides[0] = drawSide(Direction.UP,    y==ymax ? "" : chunks.getBlockID(x, y+1, z));
+		sides[1] = drawSide(Direction.NORTH,  z==zmin ? "" : chunks.getBlockID(x, y, z-1));
+		sides[2] = drawSide(Direction.SOUTH,   z==zmax ? "" : chunks.getBlockID(x, y, z+1));
+		sides[3] = drawSide(Direction.WEST,   x==xmin ? "" : chunks.getBlockID(x-1, y, z));
+		sides[4] = drawSide(Direction.EAST,  x==xmax ? "" : chunks.getBlockID(x+1, y, z));
+		sides[5] = drawSide(Direction.DOWN, y==ymin ? "" : chunks.getBlockID(x, y-1, z));
 
 		return sides;
 	}

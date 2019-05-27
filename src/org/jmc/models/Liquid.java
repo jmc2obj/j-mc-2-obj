@@ -1,7 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -58,7 +58,7 @@ public class Liquid extends BlockModel
 	}
 	
 	@Override
-	protected boolean drawSide(Side side, BlockData data, BlockData neighbourData) {
+	protected boolean drawSide(Direction side, BlockData data, BlockData neighbourData) {
 		boolean ret = super.drawSide(side, data, neighbourData);
 		ret &= !isSameLiquid(neighbourData);
 		return ret;

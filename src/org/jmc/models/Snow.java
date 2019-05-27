@@ -1,7 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -14,9 +14,9 @@ public class Snow extends BlockModel
 {
 	
 	@Override
-	protected boolean getCustomOcclusion(Side side, BlockData neighbourData, BlockData data) {
+	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
 		int layers = data.getInt("layers");
-		if (side == Side.BOTTOM || layers >= 8) {
+		if (side == Direction.DOWN || layers >= 8) {
 			return true;
 		}
 		

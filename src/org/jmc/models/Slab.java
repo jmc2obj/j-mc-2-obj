@@ -1,7 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -58,18 +58,18 @@ public class Slab extends BlockModel
 	}
 	
 	@Override
-	protected boolean getCustomOcclusion(Side side, BlockData neighbourData, BlockData data) {
+	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
 		if (data.get("type").equals("bottom"))
 		{
 			switch (side) {
-				case BOTTOM:
+				case DOWN:
 					return true;
-				case TOP:
+				case UP:
 					return false;
-				case BACK:
-				case FRONT:
-				case LEFT:
-				case RIGHT:
+				case SOUTH:
+				case NORTH:
+				case WEST:
+				case EAST:
 					return data.equalData(neighbourData);
 				default:
 					return false;
@@ -78,14 +78,14 @@ public class Slab extends BlockModel
 		else if (data.get("type").equals("top"))
 		{
 			switch (side) {
-			case BOTTOM:
+			case DOWN:
 				return false;
-			case TOP:
+			case UP:
 				return true;
-			case BACK:
-			case FRONT:
-			case LEFT:
-			case RIGHT:
+			case SOUTH:
+			case NORTH:
+			case WEST:
+			case EAST:
 				return data.equalData(neighbourData);
 			default:
 				return false;

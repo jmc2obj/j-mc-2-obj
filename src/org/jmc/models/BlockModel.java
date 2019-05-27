@@ -10,7 +10,7 @@ import org.jmc.BlockData;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.Options;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -117,7 +117,7 @@ public abstract class BlockModel {
 	 * @param data the data for this block.
 	 * @return true if this block occludes side.
 	 */
-	protected boolean getCustomOcclusion(Side side, BlockData neighbourData, BlockData data) {
+	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
 		return true;
 	}
 
@@ -133,7 +133,7 @@ public abstract class BlockModel {
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, BlockData data, BlockData neighbourData) {
+	protected boolean drawSide(Direction side, BlockData data, BlockData neighbourData) {
 		if (Options.objectPerBlock)
 			return true;
 
@@ -155,7 +155,7 @@ public abstract class BlockModel {
 		case VOLUME:
 			return !neighbourData.id.equals(blockId);
 		case BOTTOM:
-			return side != Side.TOP;
+			return side != Direction.UP;
 		case CUSTOM:
 			return !BlockTypes.get(neighbourData.id).getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
 		default:
@@ -176,8 +176,8 @@ public abstract class BlockModel {
 	 *            Block y coordinate
 	 * @param z
 	 *            Block z coordinate
-	 * @return Whether to draw each side, in order TOP, FRONT, BACK, LEFT,
-	 *         RIGHT, BOTTOM
+	 * @return Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
+	 *         EAST, DOWN
 	 */
 	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z) {
 		int xmin, xmax, ymin, ymax, zmin, zmax;
@@ -194,12 +194,12 @@ public abstract class BlockModel {
 		boolean sides[] = new boolean[6];
 
 		BlockData data = chunks.getBlockData(x, y, z);
-		sides[0] = drawSide(Side.TOP, data, y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, data, z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, data, z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, data, x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, data, x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, data, y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
+		sides[0] = drawSide(Direction.UP, data, y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Direction.NORTH, data, z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Direction.SOUTH, data, z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Direction.WEST, data, x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Direction.EAST, data, x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Direction.DOWN, data, y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
 
 		return sides;
 	}
@@ -225,16 +225,16 @@ public abstract class BlockModel {
 	 *            Transform to apply to the vertex coordinates. If null, no
 	 *            transform is applied
 	 * @param mtlSides
-	 *            Material for each side, in order TOP, FRONT, BACK, LEFT,
-	 *            RIGHT, BOTTOM
+	 *            Material for each side, in order UP, NORTH, SOUTH, WEST,
+	 *         EAST, DOWN
 	 * @param uvSides
-	 *            Texture coordinates for each side, in order TOP, FRONT, BACK,
-	 *            LEFT, RIGHT, BOTTOM. If null, uses default coordinates for all
+	 *            Texture coordinates for each side, in order UP, NORTH, SOUTH,
+	 *         	  WEST, EAST, DOWN. If null, uses default coordinates for all
 	 *            sides. If an individual side is null, uses default coordinates
 	 *            for that side.
 	 * @param drawSides
-	 *            Whether to draw each side, in order TOP, FRONT, BACK, LEFT,
-	 *            RIGHT, BOTTOM. If null, draws all sides.
+	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
+	 *            EAST, DOWN. If null, draws all sides.
 	 */
 	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
 			Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides) {
