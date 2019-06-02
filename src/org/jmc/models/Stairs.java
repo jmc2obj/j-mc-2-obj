@@ -262,12 +262,14 @@ public class Stairs extends BlockModel {
 			break;
 		}
 		
-		if (data.get("shape").equals("straight") && neighbourData.equalData(data)) {
+		Direction facing = Direction.valueOf(data.get("facing").toUpperCase());
+		
+		if (data.get("shape").equals("straight") && neighbourData.equalData(data) && side != facing && side != facing.getOpposite()) {
 			return true;
 		}
 		
-		switch(data.get("facing")) {//blocks facing direction and left or right if corner piece
-		case "north":
+		switch(facing) {//blocks facing direction and left or right if corner piece
+		case NORTH:
 			switch(side) {
 			case NORTH:
 				return true;
@@ -278,7 +280,7 @@ public class Stairs extends BlockModel {
 			default:
 				return false;
 			}
-		case "east":
+		case EAST:
 			switch(side) {
 			case EAST:
 				return true;
@@ -289,7 +291,7 @@ public class Stairs extends BlockModel {
 			default:
 				return false;
 			}
-		case "south":
+		case SOUTH:
 			switch(side) {
 			case SOUTH:
 				return true;
@@ -300,7 +302,7 @@ public class Stairs extends BlockModel {
 			default:
 				return false;
 			}
-		case "west":
+		case WEST:
 			switch(side) {
 			case WEST:
 				return true;
