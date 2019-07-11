@@ -20,8 +20,8 @@ public class Snow extends BlockModel
 			return true;
 		}
 		
-		int neighbourLayers = neighbourData.getInt("layers");
-		if (data.id.equals(neighbourData.id) && neighbourLayers != -1 && neighbourLayers <= layers) {
+		Integer neighbourLayers = neighbourData.getInt("layers");
+		if (data.id.equals(neighbourData.id) && neighbourLayers != null && neighbourLayers <= layers) {
 			return true;
 		}
 		
@@ -32,7 +32,7 @@ public class Snow extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
-		int layers = data.getInt("layers");
+		int layers = data.getInt("layers", 0);
 		
 		if (layers < 8) 
 			drawSides[0] = true;

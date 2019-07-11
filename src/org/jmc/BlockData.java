@@ -3,6 +3,8 @@ package org.jmc;
 import java.util.AbstractMap;
 import java.util.HashMap;
 
+import org.jmc.geom.Direction;
+
 @SuppressWarnings("serial")
 public class BlockData extends HashMap<String, String> {
 	
@@ -45,26 +47,71 @@ public class BlockData extends HashMap<String, String> {
 	
 	/**
 	 * @param key map key
-	 * @return result of {@link Boolean#parseBoolean(String) parseBoolean} on value, will return false if key not found 
+	 * @return result of {@link Boolean#parseBoolean(String) parseBoolean} on value, will return null if key not found 
 	 */
-	public boolean getBool(String key) {
+	public Boolean getBool(String key) {
 		if (this.containsKey(key)) {
 			return Boolean.parseBoolean(this.get(key));
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
 	/**
 	 * @param key map key
-	 * @return result of {@link Integer#parseInt(String) parseInt} on value, will return -1 if key not found 
+	 * @param def default value
+	 * @return result of {@link Boolean#parseBoolean(String) parseBoolean} on value, will return default if key not found 
 	 */
-	public int getInt(String key) {
+	public Boolean getBool(String key, Boolean def) {
+		Boolean b = getBool(key);
+		if (b == null) b = def;
+		return b;
+	}
+	
+	/**
+	 * @param key map key
+	 * @return result of {@link Integer#parseInt(String) parseInt} on value, will return null if key not found 
+	 */
+	public Integer getInt(String key) {
 		if (this.containsKey(key)) {
 			return Integer.parseInt(this.get(key));
 		} else {
-			return -1;
+			return null;
 		}
+	}
+	
+	/**
+	 * @param key map key
+	 * @param def default value
+	 * @return result of {@link Integer#parseInt(String) parseInt} on value, will return default if key not found 
+	 */
+	public Integer getInt(String key, Integer def) {
+		Integer i = getInt(key);
+		if (i == null) i = def;
+		return i;
+	}
+	
+	/**
+	 * @param key map key
+	 * @return result of Direction.valueOf on upper case value, will return null if key not found 
+	 */
+	public Direction getDirection(String key) {
+		if (this.containsKey(key)) {
+			return Direction.valueOf(this.get(key).toUpperCase());
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * @param key map key
+	 * @param def default value
+	 * @return result of Direction.valueOf on upper case value, will return default if key not found 
+	 */
+	public Direction getDirection(String key, Direction def) {
+		Direction d = getDirection(key);
+		if (d == null) d = def;
+		return d;
 	}
 	
 	@Override

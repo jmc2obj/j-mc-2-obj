@@ -144,6 +144,19 @@ public class Transform {
 		ret = multiply(trans);
 		matrix = ret.matrix;
 	}
+	
+	public void rotate(Direction dir) {
+		switch (dir)
+		{
+			default:
+			case NORTH: rotate(0, 0, 0); break;
+			case SOUTH: rotate(0, 180, 0); break;
+			case EAST: 	rotate(0, 90, 0); break;
+			case WEST: 	rotate(0, -90, 0); break;
+			case UP: 	rotate(90, 0, 0); break;
+			case DOWN: 	rotate(-90, 0, 0); break;
+		}
+	}
 
 	public void rotate2(double yaw, double pitch, double roll) {
 		// TODO: check if this works correctly

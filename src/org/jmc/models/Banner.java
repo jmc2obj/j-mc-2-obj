@@ -21,6 +21,7 @@ import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -105,23 +106,24 @@ public class Banner extends BlockModel {
         switch(bannerType) {
             case "wall":
                 offsetY = -1.51;
-                switch (data.get("facing")) {
-				case "north":
+                switch (data.getDirection("facing", Direction.NORTH)) {
+                default:
+				case NORTH:
                     rotation = -90;
                     offsetX = 0;
                     offsetZ = 0.514;
 					break;
-				case "east":
+				case EAST:
                     rotation = 0;
                     offsetX = -0.514;
                     offsetZ = 0.0;
 					break;
-				case "south":
+				case SOUTH:
                     rotation = 90;
                     offsetX = 0;
                     offsetZ = -0.52;
 					break;
-				case "west":
+				case WEST:
                     rotation = 180;
                     offsetX = 0.52;
                     offsetZ = 0;
