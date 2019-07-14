@@ -6,9 +6,6 @@ import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
 
-/**
- * Model for shrunken heads.
- */
 public class Observer extends BlockModel
 {
 
@@ -28,7 +25,7 @@ public class Observer extends BlockModel
 		{
 			case "up": rotate.rotate(-90, 0, 180); break;
 			case "down": rotate.rotate(90, 0, 180); break;
-			case "north": rotate.rotate(0, 0, 0); break;
+			case "north": rotate.rotate(0, 180, 0); break;
 			case "west": rotate.rotate(0, 90, 0); break;
 			case "east": rotate.rotate(0, -90, 0); break;
 		}

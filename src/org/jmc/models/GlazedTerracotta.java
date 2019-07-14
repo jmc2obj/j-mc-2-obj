@@ -7,9 +7,6 @@ import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
-/**
- * Model for piston blocks.
- */
 public class GlazedTerracotta extends BlockModel
 {
 	
