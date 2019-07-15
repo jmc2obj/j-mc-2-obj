@@ -5,10 +5,6 @@ import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
-
-/**
- * Model for cobblestone walls.
- */
 public class Wall extends BlockModel
 {
 	@Override

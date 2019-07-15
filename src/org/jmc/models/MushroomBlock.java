@@ -16,7 +16,7 @@ public class MushroomBlock extends BlockModel
 	{
 		String[] mat = materials.get(data, biome);
 		// Mushroom blocks are fully textured at first.
-		//                               top     north   south   west    east    south
+		//                               top     north   south   west    east    bottom
 		String[] sides = new String[] { mat[0], mat[0], mat[0], mat[0], mat[0], mat[0] };
 
 		// If directions are "false," then this side takes the pores texture instead.
