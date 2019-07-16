@@ -31,6 +31,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -115,6 +116,13 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 	
 	private JSpinner spinnerThreads;
 	private JPanel holderThreads;
+	private JCheckBox chckbxExportNormalMaps;
+	private JCheckBox chckbxExportSpecularMaps;
+	private JPanel holderExtraMapsChks;
+	private JPanel holderExtraMaps;
+	private JLabel lblExtraMaps;
+	private JLabel lblExtraMapsHelp;
+	private JPanel holderExtraMapsText;
 
 
 	/**
@@ -254,9 +262,41 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		chckbxCombineAllTextures.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderTexExport.add(chckbxCombineAllTextures);
 
-		chckbxExportSeparateLight = new JCheckBox(Messages.getString("ExportWindow.chckbxExportSeparateLight.text"));
+		chckbxExportSeparateLight = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SEPERATE_LIGHT"));
 		chckbxExportSeparateLight.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderTexExport.add(chckbxExportSeparateLight);
+		
+		holderExtraMaps = new JPanel();
+		holderExtraMaps.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		holderTexExport.add(holderExtraMaps);
+		holderExtraMaps.setLayout(new BoxLayout(holderExtraMaps, BoxLayout.Y_AXIS));
+		
+		holderExtraMapsText = new JPanel();
+		FlowLayout fl_holderExtraMapsText = (FlowLayout) holderExtraMapsText.getLayout();
+		fl_holderExtraMapsText.setVgap(2);
+		holderExtraMaps.add(holderExtraMapsText);
+		
+		lblExtraMaps = new JLabel(Messages.getString("TexsplitDialog.EXP_MAPS"));
+		holderExtraMapsText.add(lblExtraMaps);
+		lblExtraMaps.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		lblExtraMapsHelp = new JLabel("???");
+		holderExtraMapsText.add(lblExtraMapsHelp);
+		lblExtraMapsHelp.setToolTipText(Messages.getString("TexsplitDialog.EXP_MAPS_HELP"));
+		lblExtraMapsHelp.setForeground(Color.RED);
+		lblExtraMapsHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
+		
+		holderExtraMapsChks = new JPanel();
+		FlowLayout fl_holderExtraMapsChks = (FlowLayout) holderExtraMapsChks.getLayout();
+		fl_holderExtraMapsChks.setVgap(0);
+		fl_holderExtraMapsChks.setHgap(0);
+		holderExtraMaps.add(holderExtraMapsChks);
+		
+		chckbxExportNormalMaps = new JCheckBox(Messages.getString("TexsplitDialog.EXP_NORMAL"));
+		holderExtraMapsChks.add(chckbxExportNormalMaps);
+		
+		chckbxExportSpecularMaps = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SPECULAR"));
+		holderExtraMapsChks.add(chckbxExportSpecularMaps);
 
 		JLabel lblExportTexturesFrom = new JLabel(Messages.getString("TexsplitDialog.TEX_LOC"));
 		lblExportTexturesFrom.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -537,7 +577,7 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 				ExportTextures(new File(jfc.getSelectedFile().toString().concat("/tex")), null,
 						Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x", "")),
 						chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(),
-						chckbxExportSeparateLight.isSelected());
+						chckbxExportSeparateLight.isSelected(), chckbxExportNormalMaps.isSelected(), chckbxExportSpecularMaps.isSelected());
 
 			}
 		};
@@ -559,7 +599,7 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 				ExportTextures(new File(jfcDest.getSelectedFile().toString().concat("/tex")), jfc.getSelectedFile(),
 						Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x", "")),
 						chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(),
-						chckbxExportSeparateLight.isSelected());
+						chckbxExportSeparateLight.isSelected(), chckbxExportNormalMaps.isSelected(), chckbxExportSpecularMaps.isSelected());
 
 			}
 		};
@@ -1135,17 +1175,16 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 	}
 
 	private void ExportTextures(final File destination, final File texturepack, final double texScale,
-			final boolean texMerge, final boolean alphas, final boolean lumas) {
+			final boolean texMerge, final boolean alphas, final boolean lumas, final boolean normals, final boolean specular) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					if (texMerge) {
-						TextureExporter.mergeTextures(destination, texturepack, texScale, alphas, lumas,
-								ExportWindow.this);
+						TextureExporter.mergeTextures(destination, texturepack, texScale, alphas, lumas, normals, specular, ExportWindow.this);
 						ExportWindow.this.textFieldSingleTexUV.setText(new File(destination, "texture.uv").toString());
 					} else {
-						TextureExporter.splitTextures(destination, texturepack, texScale, alphas, ExportWindow.this);
+						TextureExporter.splitTextures(destination, texturepack, texScale, alphas, normals, specular, ExportWindow.this);
 					}
 				} catch (Exception e) {
 					Log.error(Messages.getString("TexsplitDialog.ERR_EXP"), e);

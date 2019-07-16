@@ -224,12 +224,15 @@ public class TextureExporter {
 	 * @param texturePack
 	 * @param scale
 	 * @param progress
+	 * @param alphas
+	 * @param merging
+	 * @param exportNormal
+	 * @param exportSpecular
 	 * @return
 	 * @throws Exception
 	 */
-//	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress)
-	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean alphas, boolean merging, File destination)
-			throws Exception {
+	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean alphas, boolean merging,
+			boolean exportNormal, boolean exportSpecular, File destination) throws Exception {
 		List<Texture> ret = new LinkedList<Texture>();
 		Set<String> texnameset = new HashSet<String>();
 
@@ -373,73 +376,75 @@ public class TextureExporter {
 						}
 					}
 					
-					try {
-						BufferedImage imageN;
-						Log.debug("Trying normal map");
-						
-						if (source.equalsIgnoreCase("texturepack"))
-							imageN = loadImageFromZip(zipfile, fileName.replace(".png", "_n.png"));
-						else if (source.equalsIgnoreCase("distr"))
-							imageN = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_n.png")));
-						else
-							imageN = loadImageFromFile(new File(fileName.replace(".png", "_n.png")));
-						
-						if (imageN.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-							imageN = convertImageType(imageN);
-						
-						Log.debug("Found Normal. Creating Buffered Texture.");
-						BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
-						imageN.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureN.getRaster());
-						if (scale != 1.0) {
-							try {
-								textureN = scaleImage(textureN, scale);
-							} catch (Exception e) {
-								Log.info("Cannot scale image: " + texName + "_n (" + e.getMessage() + ")");
+					if (exportNormal) {
+						try {
+							BufferedImage imageN;
+							Log.debug("Trying normal map");
+							
+							if (source.equalsIgnoreCase("texturepack"))
+								imageN = loadImageFromZip(zipfile, fileName.replace(".png", "_n.png"));
+							else if (source.equalsIgnoreCase("distr"))
+								imageN = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_n.png")));
+							else
+								imageN = loadImageFromFile(new File(fileName.replace(".png", "_n.png")));
+							
+							if (imageN.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+								imageN = convertImageType(imageN);
+							
+							Log.debug("Found Normal. Creating Buffered Texture.");
+							BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
+							imageN.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureN.getRaster());
+							if (scale != 1.0) {
+								try {
+									textureN = scaleImage(textureN, scale);
+								} catch (Exception e) {
+									Log.info("Cannot scale image: " + texName + "_n (" + e.getMessage() + ")");
+								}
 							}
+							
+							Log.debug("Creating Normal Texture. " + texName + "_n");
+							Texture texture2N = new Texture(texName + "_n", textureN, repeating, false);
+							Log.debug("Writing Normal Texture. " + texture2N.name);
+							ImageIO.write(texture2N.image, "png", new File(destination, texture2N.name + ".png"));
+							
+						} catch (Exception e) {
+							Log.info("Error loading normal texture: " + e.getMessage());
 						}
-						
-						Log.debug("Creating Normal Texture. " + texName + "_n");
-						Texture texture2N = new Texture(texName + "_n", textureN, repeating, false);
-						Log.debug("Writing Normal Texture. " + texture2N.name);
-						ImageIO.write(texture2N.image, "png", new File(destination, texture2N.name + ".png"));
-						
-					} catch (Exception e) {
-						Log.info("Error loading normal texture: " + e.getMessage());
-						continue;
 					}
-
-					try {
-						BufferedImage imageS;
-						Log.debug("Trying specular map");
-						
-						if (source.equalsIgnoreCase("texturepack"))
-							imageS = loadImageFromZip(zipfile, fileName.replace(".png", "_s.png"));
-						else if (source.equalsIgnoreCase("distr"))
-							imageS = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_s.png")));
-						else
-							imageS = loadImageFromFile(new File(fileName.replace(".png", "_s.png")));
-						
-						if (imageS.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-							imageS = convertImageType(imageS);
-						
-						Log.debug("Found Specular. Creating Buffered Texture.");
-						BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
-						imageS.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureS.getRaster());
-						if (scale != 1.0) {
-							try {
-								textureS = scaleImage(textureS, scale);
-							} catch (Exception e) {
-								Log.info("Cannot scale image: " + texName + "_s (" + e.getMessage() + ")");
+					
+					if (exportSpecular) {
+						try {
+							BufferedImage imageS;
+							Log.debug("Trying specular map");
+							
+							if (source.equalsIgnoreCase("texturepack"))
+								imageS = loadImageFromZip(zipfile, fileName.replace(".png", "_s.png"));
+							else if (source.equalsIgnoreCase("distr"))
+								imageS = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_s.png")));
+							else
+								imageS = loadImageFromFile(new File(fileName.replace(".png", "_s.png")));
+							
+							if (imageS.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+								imageS = convertImageType(imageS);
+							
+							Log.debug("Found Specular. Creating Buffered Texture.");
+							BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
+							imageS.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureS.getRaster());
+							if (scale != 1.0) {
+								try {
+									textureS = scaleImage(textureS, scale);
+								} catch (Exception e) {
+									Log.info("Cannot scale image: " + texName + "_s (" + e.getMessage() + ")");
+								}
 							}
+							Log.debug("Creating Specular Texture. " + texName + "_s");
+							Texture texture2S = new Texture(texName + "_s", textureS, repeating, false);
+							Log.debug("Writing Specular Texture. " + texture2S.name);
+							ImageIO.write(texture2S.image, "png", new File(destination, texture2S.name + ".png"));
+							
+						} catch (Exception e) {
+							Log.info("Error loading specular image: " + e.getMessage());
 						}
-						Log.debug("Creating Specular Texture. " + texName + "_s");
-						Texture texture2S = new Texture(texName + "_s", textureS, repeating, false);
-						Log.debug("Writing Specular Texture. " + texture2S.name);
-						ImageIO.write(texture2S.image, "png", new File(destination, texture2S.name + ".png"));
-						
-					} catch (Exception e) {
-						Log.info("Error loading specular image: " + e.getMessage());
-						continue;
 					}
 					
 				}
@@ -469,6 +474,10 @@ public class TextureExporter {
 	 *            Scaling to apply to textures.
 	 * @param alphas
 	 *            Whether to export separate alpha masks.
+	 * @param normals
+	 *            Whether to export separate normal maps.
+	 * @param specular
+	 *            Whether to export separate specular maps.
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
@@ -476,7 +485,7 @@ public class TextureExporter {
 	 *             if there is an error.
 	 */
 	public static void splitTextures(File destination, File texturePack, double scale, boolean alphas,
-			ProgressCallback progress) throws Exception {
+			boolean normals, boolean specular, ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
@@ -488,7 +497,7 @@ public class TextureExporter {
 				throw new RuntimeException("Cannot create texture directory!");
 		}
 
-/*		List<Texture> textures = */getTextures(texturePack, scale, progress, alphas, false, destination);
+/*		List<Texture> textures = */getTextures(texturePack, scale, progress, alphas, false, normals, specular, destination);
 
 //		float texnum = textures.size();
 //		float count = 0;
@@ -526,6 +535,10 @@ public class TextureExporter {
 	 *            Scaling to apply to textures.
 	 * @param alphas
 	 *            Whether to export separate alpha masks.
+	 * @param normals
+	 *            Whether to export separate normal maps.
+	 * @param specular
+	 *            Whether to export separate specular maps.
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
@@ -533,7 +546,7 @@ public class TextureExporter {
 	 *             if there is an error.
 	 */
 	public static void mergeTextures(File destination, File texturePack, double scale, boolean alphas, boolean lumas,
-			ProgressCallback progress) throws Exception {
+			boolean normals, boolean specular, ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
@@ -547,7 +560,7 @@ public class TextureExporter {
 
 		Map<String, Rectangle> ret = new HashMap<String, Rectangle>();
 
-		List<Texture> textures = getTextures(texturePack, scale, progress, alphas, true, destination);
+		List<Texture> textures = getTextures(texturePack, scale, progress, alphas, true, normals, specular, destination);
 
 		// calculate maxwidth so to keep the size of the final file more or less
 		// square

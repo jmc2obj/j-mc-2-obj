@@ -108,7 +108,7 @@ public class Main
 			try {
 				TextureExporter.splitTextures(
 						new File(Options.outputDir, "tex"), 
-						Options.texturePack, Options.textureScale, true, new ConsoleProgress());
+						Options.texturePack, Options.textureScale, true, true, true, new ConsoleProgress());
 			}
 			catch (Exception e) {
 				Log.error("Error saving textures:", e);
