@@ -514,6 +514,8 @@ public class MainPanel extends JPanel {
 					return;
 				}
 				Options.dimension = (Integer) cbDimension.getSelectedItem();
+				
+				Log.info("Loading " + Options.worldDir.getName() + "...");
 
 				LevelDat levelDat = new LevelDat(Options.worldDir);
 
@@ -522,7 +524,7 @@ public class MainPanel extends JPanel {
 					return;
 				}
 
-				Log.info(levelDat.toString());
+				Log.debug(levelDat.toString());
 
 				int player_x = 0;
 				int player_z = 0;
