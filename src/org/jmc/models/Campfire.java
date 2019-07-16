@@ -1,6 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -20,7 +21,7 @@ public class Campfire extends BlockModel
 		
 		mtls_LogsBottom = new String [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[1] };	
 		
-		if (data.get("lit").equals("true")) {
+		if (data.getBool("lit", false)) {
 			mtls_LogsTop = new String [] { mtls[1], mtls[2], mtls[2], mtls[1], mtls[1], mtls[1] };
 			mtls_Ash = new String [] { mtls[2], mtls[2], mtls[2], mtls[2], mtls[2], mtls[2] };
 		} else {
@@ -36,34 +37,35 @@ public class Campfire extends BlockModel
 		UV[][] uvSides;
 		boolean[] drawSides;
 		
-		String dir = data.get("facing");
+		Direction dir = data.getDirection("facing", Direction.SOUTH);
 		
 		switch (dir)
 		{
-			case "north": rotate.rotate(0, 180, 0); break;
-			case "south": rotate.rotate(0, 0, 0); break;			
-			case "west": rotate.rotate(0, 90, 0); break;
-			case "east": rotate.rotate(0, -90, 0); break;
+			case NORTH: rotate.rotate(0, 180, 0); break;
+			default:
+			case SOUTH: rotate.rotate(0, 0, 0); break;
+			case WEST: rotate.rotate(0, 90, 0); break;
+			case EAST: rotate.rotate(0, -90, 0); break;
 		}
-		translate.translate(x, y, z);		
+		translate.translate(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		// Bottom two logs
 		uvSide = new UV[] { new UV(0, 12/16f), new UV(16/16f, 12/16f), new UV(16/16f, 16/16f), new UV(0, 16/16f) };
-		uvTop = new UV[] { new UV(16/16f, 12/16f), new UV(16/16f, 16/16f), new UV(0, 16/16f), new UV(0, 12/16f) };		
-		uvSide2 = new UV[] { new UV(0, 8/16f), new UV(4/16f, 8/16f), new UV(4/16f, 12/16f), new UV(0, 12/16f) };	
-		uvSides = new UV[][] { uvTop, uvSide2, uvSide2, uvSide, uvSide, uvTop };		
-		addBox(obj,	-7/16f, -8/16f, -8/16f, -3/16f, -4/16f, 8/16f, rt, mtls_LogsBottom, uvSides, null);	
+		uvTop = new UV[] { new UV(16/16f, 12/16f), new UV(16/16f, 16/16f), new UV(0, 16/16f), new UV(0, 12/16f) };
+		uvSide2 = new UV[] { new UV(0, 8/16f), new UV(4/16f, 8/16f), new UV(4/16f, 12/16f), new UV(0, 12/16f) };
+		uvSides = new UV[][] { uvTop, uvSide2, uvSide2, uvSide, uvSide, uvTop };
+		addBox(obj,	-7/16f, -8/16f, -8/16f, -3/16f, -4/16f, 8/16f, rt, mtls_LogsBottom, uvSides, null);
 		addBox(obj,	3/16f, -8/16f, -8/16f, 7/16f, -4/16f, 8/16f, rt, mtls_LogsBottom, uvSides, null);
 		
 		// Top two logs
-		uvTop = new UV[] { new UV(0, 12/16f), new UV(16/16f, 12/16f), new UV(16/16f, 16/16f), new UV(0, 16/16f) };				
-		uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide2, uvSide2, uvTop };		
-		addBox(obj,	8/16f, -5/16f, -3/16f, -8/16f, -1/16f, -7/16f, rt, mtls_LogsTop, uvSides, null);	
-		addBox(obj,	8/16f, -5/16f, 7/16f, -8/16f, -1/16f, 3/16f, rt, mtls_LogsTop, uvSides, null);	
+		uvTop = new UV[] { new UV(0, 12/16f), new UV(16/16f, 12/16f), new UV(16/16f, 16/16f), new UV(0, 16/16f) };
+		uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide2, uvSide2, uvTop };
+		addBox(obj,	8/16f, -5/16f, -3/16f, -8/16f, -1/16f, -7/16f, rt, mtls_LogsTop, uvSides, null);
+		addBox(obj,	8/16f, -5/16f, 7/16f, -8/16f, -1/16f, 3/16f, rt, mtls_LogsTop, uvSides, null);
 		
 		// Fire cross
-		if (data.get("lit").equals("true")) 
+		if (data.getBool("lit", false))
 		{
 			Transform move = new Transform();
 			move.translate(x, y, z);
@@ -79,15 +81,15 @@ public class Campfire extends BlockModel
 			vertices[1] = new Vertex(+0.5f,-0.5f,+0.5f);
 			vertices[2] = new Vertex(+0.5f,+0.5f,+0.5f);
 			vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
-			obj.addFace(vertices, null, move, mtls[0]);	
+			obj.addFace(vertices, null, move, mtls[0]);
 		}
 		
 		// Ashes
 		drawSides = new boolean[] {true,true,true,false,false,false};
 		uvSide = new UV[] { new UV(0, 0), new UV(6/16f, 0), new UV(6/16f, 1/16f), new UV(0, 1/16f) };
-		uvSide2 = new UV[] { new UV(10/16f, 0), new UV(16/16f, 0), new UV(16/16f, 1/16f), new UV(10/16f, 1/16f) };		
-		uvTop = new UV[] { new UV(16/16f, 2/16f), new UV(16/16f, 8/16f), new UV(0, 8/16f), new UV(0, 2/16f) };		
-		uvSides = new UV[][] { uvTop, uvSide, uvSide2, null, null, null };		
-		addBox(obj,	-3/16f, -8/16f, -8/16f, 3/16f, -7/16f, 8/16f, rt, mtls_Ash, uvSides, drawSides);			
+		uvSide2 = new UV[] { new UV(10/16f, 0), new UV(16/16f, 0), new UV(16/16f, 1/16f), new UV(10/16f, 1/16f) };
+		uvTop = new UV[] { new UV(16/16f, 2/16f), new UV(16/16f, 8/16f), new UV(0, 8/16f), new UV(0, 2/16f) };
+		uvSides = new UV[][] { uvTop, uvSide, uvSide2, null, null, null };
+		addBox(obj,	-3/16f, -8/16f, -8/16f, 3/16f, -7/16f, 8/16f, rt, mtls_Ash, uvSides, drawSides);
 	}
 }

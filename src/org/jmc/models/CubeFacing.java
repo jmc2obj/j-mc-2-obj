@@ -29,7 +29,7 @@ public class CubeFacing extends BlockModel
 		//  or top, front, back, left, right, bottom
 		//    (top, north, south, west, east, bottom)
 		//      0     1      2     3     4      5
-		
+		// un-rotate the occlusion otherwise it rotates with the block.
 		switch (dir)
 		{
 			default:

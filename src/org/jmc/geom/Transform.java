@@ -145,6 +145,9 @@ public class Transform {
 		matrix = ret.matrix;
 	}
 	
+	/*
+	 * Rotates based on direction, assumes front facing NORTH
+	 */
 	public void rotate(Direction dir) {
 		switch (dir)
 		{

@@ -1,6 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -20,15 +21,7 @@ public class Stonecutter extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 		
-		String dir = data.get("facing");
-		
-		switch (dir)
-		{
-			case "north": rotate.rotate(0, 0, 0); break;
-			case "west": rotate.rotate(0, -90, 0); break;
-			case "east": rotate.rotate(0, 90, 0); break;
-			case "south": rotate.rotate(0, 180, 0); break;
-		}
+		rotate.rotate(data.getDirection("facing", Direction.NORTH));
 		translate.translate(x, y, z);		
 		rt = translate.multiply(rotate);
 

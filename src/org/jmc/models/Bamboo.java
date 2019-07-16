@@ -15,10 +15,10 @@ public class Bamboo extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		Transform move = new Transform();
-		move.translate(x, y, z);		
+		move.translate(x, y, z);
 		
 		String[] mtls = getMtlSides(data, biome);
-		String[] mtls_Stalk = new String [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[0] };	
+		String[] mtls_Stalk = new String [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[0] };
 		
         // Generates a random number to offset the bamboo in the x and z.
         Random rX = new Random();
@@ -27,13 +27,13 @@ public class Bamboo extends BlockModel
         
         Random rZ = new Random();
         rZ.setSeed((x+z)*2000);       
-        float randomZ = -0.35f + rZ.nextFloat() * 0.7f;		
+        float randomZ = -0.35f + rZ.nextFloat() * 0.7f;
 		
 		UV[] uvTop, uvSide;
 		UV[][] uvSides;
 
 		// If age 0 (thinner bamboo, 2x2)
-		if (Integer.parseInt(data.get("age")) == 0)
+		if (data.getInt("age") == 0)
 		{
 			uvTop = new UV[] { new UV(14/16f, 14/16f), new UV(16/16f, 14/16f), new UV(16/16f, 16/16f), new UV(14/16f, 16/16f) };
 			uvSide = new UV[] { new UV(6/16f, 0), new UV(8/16f, 0), new UV(8/16f, 16/16f), new UV(6/16f, 16/16f) };
@@ -57,7 +57,7 @@ public class Bamboo extends BlockModel
 			vertices[1] = new Vertex(randomX,-0.5f,+0.5f + randomZ);
 			vertices[2] = new Vertex(randomX,+0.5f,+0.5f + randomZ);
 			vertices[3] = new Vertex(randomX,+0.5f,-0.5f + randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[1]);	
+			obj.addFace(vertices, null, move, materials.get(data,biome)[1]);
 			
 			vertices[0] = new Vertex(-0.5f + randomX,-0.5f,randomZ);
 			vertices[1] = new Vertex(+0.5f + randomX,-0.5f,randomZ);
@@ -73,19 +73,19 @@ public class Bamboo extends BlockModel
 			vertices[1] = new Vertex(randomX,-0.5f,+0.5f + randomZ);
 			vertices[2] = new Vertex(randomX,+0.5f,+0.5f + randomZ);
 			vertices[3] = new Vertex(randomX,+0.5f,-0.5f + randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[2]);	
+			obj.addFace(vertices, null, move, materials.get(data,biome)[2]);
 			
 			vertices[0] = new Vertex(-0.5f + randomX,-0.5f,randomZ);
 			vertices[1] = new Vertex(+0.5f + randomX,-0.5f,randomZ);
 			vertices[2] = new Vertex(+0.5f + randomX,+0.5f,randomZ);
 			vertices[3] = new Vertex(-0.5f + randomX,+0.5f,randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[2]);			
+			obj.addFace(vertices, null, move, materials.get(data,biome)[2]);
 		}
 		// No leaves
 		else 
 		{
 			
 		}
-				
+		
 	}
 }

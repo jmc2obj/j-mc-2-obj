@@ -16,25 +16,26 @@ public class Lantern extends BlockModel
 		String[] mtls = getMtlSides(data, biome);
 		UV[] uvTop, uvSide;
 		UV[][] uvSides;
-
+		
+		boolean hanging = data.getBool("hanging", false);
 		// If hanging, we'll need to move 1 pixel up
-		float hanging = data.get("hanging").equals("true") ? 1/16f : 0;
+		float hangOffset = hanging ? 1/16f : 0;
 		
 		
 		// Bottom lantern portion
 		uvTop = new UV[] { new UV(0, 1/16f), new UV(6/16f, 1/16f), new UV(6/16f, 7/16f), new UV(0, 7/16f) };
 		uvSide = new UV[] { new UV(0, 7/16f), new UV(6/16f, 7/16f), new UV(6/16f, 14/16f), new UV(0, 14/16f) };
 		uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-		addBox(obj, x-3/16f, y-8/16f+hanging, z-3/16f, x+3/16f, y-1/16f+hanging, z+3/16f, null, mtls, uvSides, null);
+		addBox(obj, x-3/16f, y-8/16f+hangOffset, z-3/16f, x+3/16f, y-1/16f+hangOffset, z+3/16f, null, mtls, uvSides, null);
 		
 		// Small chunk above main portion
 		uvTop = new UV[] { new UV(1/16f, 2/16f), new UV(5/16f, 2/16f), new UV(5/16f, 6/16f), new UV(1/16f, 6/16f) };
 		uvSide = new UV[] { new UV(1/16f, 14/16f), new UV(5/16f, 14/16f), new UV(5/16f, 16/16f), new UV(1/16f, 16/16f) };
 		uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-		addBox(obj, x-2/16f, y-1/16f+hanging, z-2/16f, x+2/16f, y+1/16f+hanging, z+2/16f, null, mtls, uvSides, null);		
+		addBox(obj, x-2/16f, y-1/16f+hangOffset, z-2/16f, x+2/16f, y+1/16f+hangOffset, z+2/16f, null, mtls, uvSides, null);		
 
 		// If hanging, draw full chain
-		if (data.get("hanging").equals("true"))
+		if (hanging)
 		{
 			Transform move = new Transform();
 			move.translate(x, y, z);
