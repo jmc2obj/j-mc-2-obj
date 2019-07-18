@@ -32,7 +32,7 @@ public class Barrel extends BlockModel
 		translate.translate(x, y, z);
 		rt = translate.multiply(rotate);
 		
-		addBox(obj, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, rt, getMtlSides(data,biome), null, drawSides(chunks, x, y, z));
+		addBox(obj, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, rt, getMtlSides(data,biome), null, null);
 	}
 
 }
