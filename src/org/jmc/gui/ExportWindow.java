@@ -587,7 +587,7 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 			public void actionPerformed(ActionEvent arg0) {
 
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfc.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
+				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
 				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
 				if (retval != JFileChooser.APPROVE_OPTION)
 					return;
@@ -939,6 +939,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		cboxTexScale.addActionListener(genericSaveAction);
 
 		chckbxSeparateAlphaTexture.addActionListener(genericSaveAction);
+		chckbxExportNormalMaps.addActionListener(genericSaveAction);
+		chckbxExportSpecularMaps.addActionListener(genericSaveAction);
 		chckbxCombineAllTextures.addActionListener(genericSaveAction);
 		chckbxExportSeparateLight.addActionListener(genericSaveAction);
 
@@ -992,6 +994,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", true));
 		cboxTexScale.setSelectedItem("" + prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
 		chckbxSeparateAlphaTexture.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
+		chckbxExportNormalMaps.setSelected(prefs.getBoolean("TEXTURE_NORMAL", false));
+		chckbxExportSpecularMaps.setSelected(prefs.getBoolean("TEXTURE_SPECULAR", false));
 		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
 		chckbxCombineAllTextures.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
 		
@@ -1105,6 +1109,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 
 		prefs.putDouble("TEXTURE_SCALE_ID", Options.textureScale);
 		prefs.putBoolean("TEXTURE_ALPHA", Options.textureAlpha);
+		prefs.putBoolean("TEXTURE_NORMAL", Options.textureNormal);
+		prefs.putBoolean("TEXTURE_SPECULAR", Options.textureSpecular);
 		prefs.putBoolean("TEXTURE_LIGHT", Options.textureLight);
 		prefs.putBoolean("TEXTURE_MERGE", Options.textureMerge);
 		
@@ -1168,6 +1174,8 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		}
 
 		Options.textureAlpha = chckbxSeparateAlphaTexture.isSelected();
+		Options.textureNormal = chckbxExportNormalMaps.isSelected();
+		Options.textureSpecular = chckbxExportSpecularMaps.isSelected();
 		Options.textureLight = chckbxExportSeparateLight.isSelected();
 		Options.textureMerge = chckbxCombineAllTextures.isSelected();
 		
