@@ -199,6 +199,12 @@ public class Options
 	public static File UVFile;
 
 	/**
+	 * Whether to export the world.
+	 * Only used in console mode.
+	 */
+	public static boolean exportWorld = false;
+	
+	/**
 	 * Whether to export the .obj file.
 	 * Only used in console mode.
 	 */
@@ -220,6 +226,12 @@ public class Options
 	 * Only used in console mode.
 	 */
 	public static boolean exportTex = false;
+	
+	/**
+	 * Whether to export the base textures.
+	 * Only used in console mode.
+	 */
+	public static boolean textureDiffuse = true;
 
 	/**
 	 * Whether to overwrite .OBJ files on export.
@@ -247,7 +259,17 @@ public class Options
 	 * How many threads to use when exporting.
 	 */
 	public static int exportThreads = 8;
-
 	
-
+	/**
+	 * Whether to attempt exporting normal maps.
+	 */
+	public static boolean textureNormal = false;
+	
+	/**
+	 * Whether to attempt exporting specular maps.
+	 */
+	public static boolean textureSpecular = false;
+	
+	
+	
 }

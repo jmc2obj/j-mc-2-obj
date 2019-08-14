@@ -224,6 +224,7 @@ public class TextureExporter {
 	 * @param texturePack
 	 * @param scale
 	 * @param progress
+	 * @param diffuse
 	 * @param alphas
 	 * @param merging
 	 * @param exportNormal
@@ -231,8 +232,8 @@ public class TextureExporter {
 	 * @return
 	 * @throws Exception
 	 */
-	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean alphas, boolean merging,
-			boolean exportNormal, boolean exportSpecular, File destination) throws Exception {
+	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean diffuse, boolean alphas,
+			boolean merging, boolean exportNormal, boolean exportSpecular, File destination) throws Exception {
 		List<Texture> ret = new LinkedList<Texture>();
 		Set<String> texnameset = new HashSet<String>();
 
@@ -285,22 +286,13 @@ public class TextureExporter {
 			if (fileName == null || fileName.length() == 0)
 				throw new Exception("In " + confFilePath + ": 'file' tag is missing required attribute 'name'.");
 
-			BufferedImage image;
+			BufferedImage image = null;
 			
 			try {
-				if (source.equalsIgnoreCase("texturepack"))
-					image = loadImageFromZip(zipfile, fileName);
-				else if (source.equalsIgnoreCase("distr"))
-					image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
-				else
-					image = loadImageFromFile(new File(fileName));
+				image = loadImage(zipfile, source, fileName);
 			} catch (Exception e) {
 				Log.info("Error loading image: " + e.getMessage());
-				continue;
 			}
-
-			if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-				image = convertImageType(image);
 
 			int width = image.getWidth() / Integer.parseInt(cols, 10);
 			int height = rows.equals("*") ? width : (image.getHeight() / Integer.parseInt(rows, 10));
@@ -360,16 +352,19 @@ public class TextureExporter {
 				if(merging){
 					ret.add(new Texture(texName, texture, repeating, luma));
 				}
-				else{
-				
-					Log.debug("Creating Texture File: " + texName);
+				else {
+					Log.debug("Creating Texture for: " + texName);
 					Texture texture2 = new Texture(texName, texture, repeating, luma);
-					Log.debug("Writing Texture File: " + texName);
-					ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
+					
+					if (diffuse) {
+						Log.debug("Writing Diffuse Texture: " + texName);
+						ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
+					}
 					
 					if (alphas) {
 						try {
 							convertToAlpha(texture2.image);
+							Log.debug("Writing Alpha Texture: " + texture2.name + "_a.png");
 							ImageIO.write(texture2.image, "png", new File(destination, texture2.name + "_a.png"));
 						} catch (Exception e) {
 							Log.info("Cannot save alpha for: " + texture2.name + " (" + e.getMessage() + ")");
@@ -378,18 +373,9 @@ public class TextureExporter {
 					
 					if (exportNormal) {
 						try {
-							BufferedImage imageN;
 							Log.debug("Trying normal map");
 							
-							if (source.equalsIgnoreCase("texturepack"))
-								imageN = loadImageFromZip(zipfile, fileName.replace(".png", "_n.png"));
-							else if (source.equalsIgnoreCase("distr"))
-								imageN = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_n.png")));
-							else
-								imageN = loadImageFromFile(new File(fileName.replace(".png", "_n.png")));
-							
-							if (imageN.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-								imageN = convertImageType(imageN);
+							BufferedImage imageN = loadImage(zipfile, source, fileName.replace(".png", "_n.png"));
 							
 							Log.debug("Found Normal. Creating Buffered Texture.");
 							BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
@@ -414,18 +400,9 @@ public class TextureExporter {
 					
 					if (exportSpecular) {
 						try {
-							BufferedImage imageS;
 							Log.debug("Trying specular map");
 							
-							if (source.equalsIgnoreCase("texturepack"))
-								imageS = loadImageFromZip(zipfile, fileName.replace(".png", "_s.png"));
-							else if (source.equalsIgnoreCase("distr"))
-								imageS = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_s.png")));
-							else
-								imageS = loadImageFromFile(new File(fileName.replace(".png", "_s.png")));
-							
-							if (imageS.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-								imageS = convertImageType(imageS);
+							BufferedImage imageS = loadImage(zipfile, source, fileName.replace(".png", "_s.png"));
 							
 							Log.debug("Found Specular. Creating Buffered Texture.");
 							BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
@@ -461,6 +438,21 @@ public class TextureExporter {
 			return null;
 	}
 
+	private static BufferedImage loadImage(File zipfile, String source, String fileName) throws IOException {
+		BufferedImage image;
+		if (source.equalsIgnoreCase("texturepack"))
+			image = loadImageFromZip(zipfile, fileName);
+		else if (source.equalsIgnoreCase("distr"))
+			image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
+		else
+			image = loadImageFromFile(new File(fileName));
+		
+		if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+			image = convertImageType(image);
+		
+		return image;
+	}
+
 	/**
 	 * Reads a Minecraft texture pack and splits the individual block textures
 	 * into .png images.
@@ -472,6 +464,7 @@ public class TextureExporter {
 	 *            default textures.
 	 * @param scale
 	 *            Scaling to apply to textures.
+	 * @param diffuse TODO
 	 * @param alphas
 	 *            Whether to export separate alpha masks.
 	 * @param normals
@@ -484,8 +477,8 @@ public class TextureExporter {
 	 * @throws Exception
 	 *             if there is an error.
 	 */
-	public static void splitTextures(File destination, File texturePack, double scale, boolean alphas,
-			boolean normals, boolean specular, ProgressCallback progress) throws Exception {
+	public static void splitTextures(File destination, File texturePack, double scale, boolean diffuse,
+			boolean alphas, boolean normals, boolean specular, ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
@@ -497,7 +490,7 @@ public class TextureExporter {
 				throw new RuntimeException("Cannot create texture directory!");
 		}
 
-/*		List<Texture> textures = */getTextures(texturePack, scale, progress, alphas, false, normals, specular, destination);
+/*		List<Texture> textures = */getTextures(texturePack, scale, progress, diffuse, alphas, false, normals, specular, destination);
 
 //		float texnum = textures.size();
 //		float count = 0;
@@ -533,6 +526,8 @@ public class TextureExporter {
 	 *            default textures.
 	 * @param scale
 	 *            Scaling to apply to textures.
+	 * @param diffuse 
+	 *            Whether to export separate diffuse maps. 
 	 * @param alphas
 	 *            Whether to export separate alpha masks.
 	 * @param normals
@@ -545,8 +540,8 @@ public class TextureExporter {
 	 * @throws Exception
 	 *             if there is an error.
 	 */
-	public static void mergeTextures(File destination, File texturePack, double scale, boolean alphas, boolean lumas,
-			boolean normals, boolean specular, ProgressCallback progress) throws Exception {
+	public static void mergeTextures(File destination, File texturePack, double scale, boolean diffuse, boolean alphas,
+			boolean lumas, boolean normals, boolean specular, ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
@@ -560,7 +555,7 @@ public class TextureExporter {
 
 		Map<String, Rectangle> ret = new HashMap<String, Rectangle>();
 
-		List<Texture> textures = getTextures(texturePack, scale, progress, alphas, true, normals, specular, destination);
+		List<Texture> textures = getTextures(texturePack, scale, progress, diffuse, alphas, true, normals, specular, destination);
 
 		// calculate maxwidth so to keep the size of the final file more or less
 		// square

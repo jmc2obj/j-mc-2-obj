@@ -1189,10 +1189,10 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 			public void run() {
 				try {
 					if (texMerge) {
-						TextureExporter.mergeTextures(destination, texturepack, texScale, alphas, lumas, normals, specular, ExportWindow.this);
+						TextureExporter.mergeTextures(destination, texturepack, texScale, true, alphas, lumas, normals, specular, ExportWindow.this);
 						ExportWindow.this.textFieldSingleTexUV.setText(new File(destination, "texture.uv").toString());
 					} else {
-						TextureExporter.splitTextures(destination, texturepack, texScale, alphas, normals, specular, ExportWindow.this);
+						TextureExporter.splitTextures(destination, texturepack, texScale, true, alphas, normals, specular, ExportWindow.this);
 					}
 				} catch (Exception e) {
 					Log.error(Messages.getString("TexsplitDialog.ERR_EXP"), e);

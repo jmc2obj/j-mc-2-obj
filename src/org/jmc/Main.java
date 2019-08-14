@@ -101,18 +101,21 @@ public class Main
 			System.exit(-2);
 		}
 		
-		ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
-
 		if (Options.exportTex) {
-			System.out.println("Exporting textures...");
+			Log.info("Exporting textures...");
 			try {
 				TextureExporter.splitTextures(
 						new File(Options.outputDir, "tex"), 
-						Options.texturePack, Options.textureScale, true, true, true, new ConsoleProgress());
+						Options.texturePack, Options.textureScale, Options.textureDiffuse, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, new ConsoleProgress());
 			}
 			catch (Exception e) {
 				Log.error("Error saving textures:", e);
 			}
+			Log.info("Texture export complete.");
+		}
+		
+		if (Options.exportWorld) {
+			ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
 		}
 	}
 
