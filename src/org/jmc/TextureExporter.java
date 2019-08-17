@@ -216,7 +216,6 @@ public class TextureExporter {
 			ZipEntry entry = null;
 			while ((entry = zis.getNextEntry()) != null) {
 				String entryName = entry.getName();
-				Log.debug(entryName + " found in resource pack");
 				if (entryName.startsWith("assets/minecraft/textures/block"))
 					found1_13AssetsDir = true;
 				else if (entryName.startsWith("assets/minecraft/textures/blocks"))
