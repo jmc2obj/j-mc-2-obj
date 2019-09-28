@@ -172,10 +172,14 @@ public class MainPanel extends JPanel {
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
 		cbPath = new JComboBox();
 		cbPath.setEditable(true);
+		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
+		bLoad.setEnabled(false);
+		// bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		cbDimension = new JComboBox();
 		JButton bPath = new JButton("...");
 		pPath.add(bPath);
 		pPath.add(cbPath);
+		pPath.add(bLoad);
 		pPath.add(cbDimension);
 
 		(new PopulateLoadListThread()).start();
@@ -190,9 +194,6 @@ public class MainPanel extends JPanel {
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
-		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
-		bLoad.setEnabled(false);
-		// bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		bGoto = new JButton(Messages.getString("MainPanel.GOTO_BUTTON"));
 		bGoto.setEnabled(false);
 		bExport = new JButton(Messages.getString("MainPanel.EXPORT_BUTTON"));
@@ -203,7 +204,6 @@ public class MainPanel extends JPanel {
 		bAbout.setForeground(Color.red);
 		bAbout.setFont(new Font(bAbout.getFont().getFamily(), Font.BOLD, bAbout.getFont().getSize()));
 
-		pButtons.add(bLoad);
 		pButtons.add(bGoto);
 		pButtons.add(bExport);
 		pButtons.add(bSettings);
