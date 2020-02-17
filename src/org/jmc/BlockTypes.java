@@ -17,6 +17,7 @@ import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -32,14 +33,14 @@ public class BlockTypes
 	private static final String CONFIG_FILE = "conf/blocks.conf";
 
 
-	private static HashMap<Short, BlockInfo> blockTable;
+	private static HashMap<String, BlockInfo> blockTable;
 
-	private static HashSet<Short> unknownBlockIds;
+	private static HashSet<String> unknownBlockIds;
 	
 	private static BlockInfo unknownBlock;
 
 
-	private static void readConfig(HashMap<Short, BlockInfo> blockTable) throws Exception
+	private static void readConfig(HashMap<String, BlockInfo> blockTable) throws Exception
 	{
 		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
 		if (!confFile.canRead())
@@ -53,17 +54,12 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 
-			short id = Short.parseShort(Xml.getAttribute(blockNode, "id", "0"), 10);
-			if (id < 1)
-			{
-				Log.info("Skipping block with invalid id");
-				continue;
-			}
+			String id = Xml.getAttribute(blockNode, "id", "");
 
 			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Cube";
 			BlockInfo.Occlusion occlusion = BlockInfo.Occlusion.FULL; 
-			BlockMaterial materials = new BlockMaterial();
+			BlockMaterial materials = new BlockMaterial(id);
 
 			String aux;
 			aux = (String)xpath.evaluate("model", blockNode, XPathConstants.STRING);
@@ -88,27 +84,37 @@ public class BlockTypes
 			{
 				Node matNode = matNodes.item(j);
 
-				int data = Integer.parseInt(Xml.getAttribute(matNode, "data", "-1"), 10);
-				int mask = Integer.parseInt(Xml.getAttribute(matNode, "mask", "-1"), 10);
-				int biome = Integer.parseInt(Xml.getAttribute(matNode, "biome", "-1"), 10);
+				BlockData data = new BlockData(id);
+				int biome = -1;
+				
+				NamedNodeMap matAttribs = matNode.getAttributes();
+				
+				for (int k = 0; k < matAttribs.getLength(); k++) {
+					Node attrib = matAttribs.item(k);
+					String attrName = attrib.getNodeName();
+					String attrVal = attrib.getNodeValue();
+					if (attrName.equalsIgnoreCase("jmc_biome")) 
+						biome = Integer.parseInt(attrVal, 10);
+					else {
+						data.put(attrName, attrVal);
+					}
+				}
+				
 				String mats = matNode.getTextContent();
-				if (data < -1 || data > 15 || mats.trim().isEmpty() || biome < -1 || biome > 255 )
+				if (mats.trim().isEmpty() || biome < -1 || biome > 255 )//TODO biome 255 id limit needed?
 				{
 					Log.info("Block " + id + " has invalid material. Ignoring.");
 					continue;
 				}
-
-				if (mask >= 0)
-					materials.setDataMask((byte)mask);
-
+				
 				if(biome >= 0)
 				{
-					materials.put((byte)biome, (byte)data, mats.split("\\s*,\\s*"));
+					materials.put(biome, data, mats.split("\\s*,\\s*"));
 				}
 				else
 				{
-					if (data >= 0)
-						materials.put((byte)data, mats.split("\\s*,\\s*"));
+					if (!data.isEmpty())
+						materials.put(data, mats.split("\\s*,\\s*"));
 					else
 						materials.put(mats.split("\\s*,\\s*"));
 				}
@@ -118,7 +124,7 @@ public class BlockTypes
 
 			if (!hasMtl)
 			{
-				Log.info("Block " + id + " has no materials. Using default.");
+				Log.debug("Block " + id + " has no materials. Using default.");
 				materials.put(new String[] { "unknown" });
 			}
 
@@ -186,6 +192,8 @@ public class BlockTypes
 						continue;
 					}					
 				}
+				
+				mesh.propagateMaterials();
 			}
 
 			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model)); 
@@ -194,28 +202,51 @@ public class BlockTypes
 
 	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		mesh.mesh_data.data = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "data", "-1"), 10);
-		mesh.mesh_data.mask = (byte) Integer.parseInt(Xml.getAttribute(meshNode, "mask", "-1"), 10);
-		mesh.mesh_data.id  = (short) Integer.parseInt(Xml.getAttribute(meshNode, "id", "-1"), 10);
-		String offset_str = Xml.getAttribute(meshNode, "offset", "");
-		if(offset_str.length()>0)
-		{
-			String [] tok=offset_str.split(",");
-			if(tok.length!=3)
-			{
-				Log.info("Error parsing offset string: offset=\""+offset_str+"\"");
-			}
-			else
-			{
-				int x=Integer.parseInt(tok[0],10);
-				int y=Integer.parseInt(tok[1],10);
-				int z=Integer.parseInt(tok[2],10);
-				mesh.mesh_data.offset = new Vertex(x,y,z);
+		BlockData data = new BlockData(mesh.blockId);
+		NamedNodeMap meshAttribs = meshNode.getAttributes();
+		
+		if (meshAttribs != null) {
+			for (int k = 0; k < meshAttribs.getLength(); k++) {
+				Node attrib = meshAttribs.item(k);
+				String attrName = attrib.getNodeName();
+				String attrVal = attrib.getNodeValue();
+				if (attrName.equalsIgnoreCase("id")) {
+					mesh.mesh_data.id  = attrVal;
+				}
+				else if (attrName.equalsIgnoreCase("jmc_offset")) {
+					if(attrVal.length()>0)
+					{
+						String [] tok=attrVal.split(",");
+						if(tok.length!=3)
+						{
+							Log.info("Error parsing offset string: offset=\""+attrVal+"\"");
+						}
+						else
+						{
+							int x=Integer.parseInt(tok[0],10);
+							int y=Integer.parseInt(tok[1],10);
+							int z=Integer.parseInt(tok[2],10);
+							mesh.mesh_data.offset = new Vertex(x,y,z);
+						}
+					}
+				}
+				else if (attrName.equalsIgnoreCase("jmc_fallthrough")) {
+					mesh.mesh_data.fallthrough = Boolean.parseBoolean(attrVal);
+				}
+				else if (attrName.equalsIgnoreCase("jmc_material")) {
+					BlockMaterial mat = new BlockMaterial(mesh.blockId);
+					mat.put(new String[] {attrVal});
+					mesh.setMaterials(mat);
+				}
+				else {
+					//transform nodes have other attributes.
+					if (meshNode.getNodeName().equalsIgnoreCase("mesh"))
+						data.put(attrName, attrVal);
+				}
 			}
 		}
 		
-		if(Xml.getAttribute(meshNode, "fallthrough", "").toLowerCase().equals("true"))
-			mesh.mesh_data.fallthrough=true;
+		mesh.mesh_data.data = data;
 	}
 	
 	private static void recurseChildren(NodeList children, Mesh mesh)
@@ -237,9 +268,9 @@ public class BlockTypes
 			}
 			else if(child.getNodeType()==Node.ELEMENT_NODE)
 			{
+				String name=child.getNodeName();
 				Mesh new_mesh=new Mesh();				
 				
-				String name=child.getNodeName();
 				if(name.equals("mesh"))
 					parseMeshNode(child,new_mesh);
 				else if(name.equals("translate") || name.equals("rotate") || name.equals("scale"))
@@ -351,12 +382,12 @@ public class BlockTypes
 		unknownBlock = new UnknownBlockInfo();
 
 		// create table to keep track of unknown block ids found
-		unknownBlockIds = new HashSet<Short>();
+		unknownBlockIds = new HashSet<String>();
 		
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");
 
-		blockTable = new HashMap<Short, BlockInfo>();
+		blockTable = new HashMap<String, BlockInfo>();
 		readConfig(blockTable);
 
 		Log.info("Loaded " + blockTable.size() + " block definitions.");
@@ -366,23 +397,23 @@ public class BlockTypes
 	/**
 	 * Gets the block information for the given block id.
 	 * If the block id is not found, returns a default BlockInfo structure for 
-	 * "unknown" blocks. The block id of the unknown block is always -1. 
+	 * "unknown" blocks. The block id of the unknown block is always "". 
 	 * 
-	 * @param id Block id
+	 * @param blockId Block id
 	 * @return BlockInfo structure
 	 */
-	public static BlockInfo get(short id)
+	public static BlockInfo get(String blockId)
 	{
-		BlockInfo bi = blockTable.get(id);
-		if (bi == null && id > 0 && !unknownBlockIds.contains(id)) {
-			Log.info("Found unknow block id: " + id);
-			unknownBlockIds.add(id);
+		BlockInfo bi = blockTable.get(blockId);
+		if (bi == null && !blockId.isEmpty() && !unknownBlockIds.contains(blockId)) {
+			Log.info("Found unknown block id: " + blockId);
+			unknownBlockIds.add(blockId);
 		}
 
 		return bi != null ? bi : unknownBlock;
 	}
 	
-	public static HashMap<Short, BlockInfo> getAll()
+	public static HashMap<String, BlockInfo> getAll()
 	{
 		return blockTable;
 	}

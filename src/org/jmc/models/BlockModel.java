@@ -2,11 +2,15 @@ package org.jmc.models;
 
 import java.awt.Rectangle;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.jmc.BlockData;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.Options;
-import org.jmc.BlockInfo.Occlusion;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -16,16 +20,12 @@ import org.jmc.util.Log;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
 /**
  * Base class for the block model handlers. These handlers are responsible for
  * rendering the geometry that represents the blocks.
  */
 public abstract class BlockModel {
-	protected short blockId = -1;
+	public String blockId = "";
 	protected Node configNode = null;
 	protected BlockMaterial materials = null;
 
@@ -33,8 +33,8 @@ public abstract class BlockModel {
 	 * Id of the block this model will be rendering. This information may
 	 * influence the behavior of the model.
 	 */
-	public void setBlockId(short val) {
-		this.blockId = val;
+	public void setBlockId(String id) {
+		this.blockId = id;
 	}
 
 	/**
@@ -72,7 +72,7 @@ public abstract class BlockModel {
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data, byte biome) {
+	protected String[] getMtlSides(BlockData data, int biome) {
 		String[] abbrMtls = materials.get(data, biome);
 
 		String[] mtlSides = new String[6];
@@ -108,47 +108,56 @@ public abstract class BlockModel {
 
 		return mtlSides;
 	}
+	
+	/**
+	 * If Occlusion is set to custom this will be called from a neighbouring block
+	 * to know if a face should be drawn
+	 * 
+	 * @param side the side the neighbouring block is at.
+	 * @param data the data for this block.
+	 * @return true if this block occludes side.
+	 */
+	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
+		return true;
+	}
 
 	/**
 	 * Helper method to check if the side of a cube needs to be drawn, based on
-	 * the occlusion type of the neighboring block and whether or not the block
+	 * the occlusion type of the neighbouring block and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
-	 * @param neighborId
-	 *            Id of the neighboring block, or -1 if there is no neighbor
+	 * @param neighbourId
+	 *            Id of the neighbouring block, or -1 if there is no neighbour
 	 *            (because the block is at the world edge)
 	 * @param side
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, short neighborId) {
+	protected boolean drawSide(Direction side, BlockData data, BlockData neighbourData) {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighborId == -1)
+		if (neighbourData.id.equals(""))
 			return Options.renderSides;
 
-		if (neighborId == 0 || Options.excludeBlocks.contains(neighborId))
+		if (neighbourData.id.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
 			return true;
 
-		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (neighborId != blockId))
+		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighbourData.id.equals(blockId)))
 			return true;
 
-		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.VOLUME) {
-			return blockId != neighborId;
-		}
-
-		switch (BlockTypes.get(neighborId).getOcclusion()) {
+		switch (BlockTypes.get(neighbourData.id).getOcclusion()) {
 		case FULL:
 			return false;
 		case NONE:
 			return true;
 		case TRANSPARENT:
 		case VOLUME:
-			return neighborId != blockId;
+			return !neighbourData.id.equals(blockId);
 		case BOTTOM:
-		case SNOW:
-			return side != Side.TOP;
+			return side != Direction.UP;
+		case CUSTOM:
+			return !BlockTypes.get(neighbourData.id).getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
 		default:
 			return false;
 		}
@@ -156,7 +165,7 @@ public abstract class BlockModel {
 
 	/**
 	 * Helper method to check which sides of a cube need to be drawn, based on
-	 * the occlusion type of the neighboring blocks and whether or not the block
+	 * the occlusion type of the neighbouring blocks and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
 	 * @param chunks
@@ -167,8 +176,8 @@ public abstract class BlockModel {
 	 *            Block y coordinate
 	 * @param z
 	 *            Block z coordinate
-	 * @return Whether to draw each side, in order TOP, FRONT, BACK, LEFT,
-	 *         RIGHT, BOTTOM
+	 * @return Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
+	 *         EAST, DOWN
 	 */
 	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z) {
 		int xmin, xmax, ymin, ymax, zmin, zmax;
@@ -184,28 +193,13 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP, y == ymax ? -1 : chunks.getBlockID(x, y + 1, z));
-		sides[1] = drawSide(Side.FRONT, z == zmin ? -1 : chunks.getBlockID(x, y, z - 1));
-		sides[2] = drawSide(Side.BACK, z == zmax ? -1 : chunks.getBlockID(x, y, z + 1));
-		sides[3] = drawSide(Side.LEFT, x == xmin ? -1 : chunks.getBlockID(x - 1, y, z));
-		sides[4] = drawSide(Side.RIGHT, x == xmax ? -1 : chunks.getBlockID(x + 1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y == ymin ? -1 : chunks.getBlockID(x, y - 1, z));
-
-		if (BlockTypes.get(blockId).getOcclusion() == Occlusion.SNOW) {
-			short data = chunks.getBlockData(x, y, z);
-			if (blockId == chunks.getBlockID(x, y + 1, z) && data == chunks.getBlockData(x, y + 1, z))
-				sides[0] = false;
-			if (blockId == chunks.getBlockID(x, y, z - 1) && data == chunks.getBlockData(x, y, z - 1))
-				sides[1] = false;
-			if (blockId == chunks.getBlockID(x, y, z + 1) && data == chunks.getBlockData(x, y, z + 1))
-				sides[2] = false;
-			if (blockId == chunks.getBlockID(x - 1, y, z) && data == chunks.getBlockData(x - 1, y, z))
-				sides[3] = false;
-			if (blockId == chunks.getBlockID(x + 1, y, z) && data == chunks.getBlockData(x + 1, y, z))
-				sides[4] = false;
-			if (blockId == chunks.getBlockID(x, y - 1, z) && data == chunks.getBlockData(x, y - 1, z))
-				sides[5] = false;
-		}
+		BlockData data = chunks.getBlockData(x, y, z);
+		sides[0] = drawSide(Direction.UP, data, y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Direction.NORTH, data, z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Direction.SOUTH, data, z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Direction.WEST, data, x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Direction.EAST, data, x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Direction.DOWN, data, y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
 
 		return sides;
 	}
@@ -231,16 +225,16 @@ public abstract class BlockModel {
 	 *            Transform to apply to the vertex coordinates. If null, no
 	 *            transform is applied
 	 * @param mtlSides
-	 *            Material for each side, in order TOP, FRONT, BACK, LEFT,
-	 *            RIGHT, BOTTOM
+	 *            Material for each side, in order UP, NORTH, SOUTH, WEST,
+	 *         EAST, DOWN
 	 * @param uvSides
-	 *            Texture coordinates for each side, in order TOP, FRONT, BACK,
-	 *            LEFT, RIGHT, BOTTOM. If null, uses default coordinates for all
+	 *            Texture coordinates for each side, in order UP, NORTH, SOUTH,
+	 *         	  WEST, EAST, DOWN. If null, uses default coordinates for all
 	 *            sides. If an individual side is null, uses default coordinates
 	 *            for that side.
 	 * @param drawSides
-	 *            Whether to draw each side, in order TOP, FRONT, BACK, LEFT,
-	 *            RIGHT, BOTTOM. If null, draws all sides.
+	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
+	 *            EAST, DOWN. If null, draws all sides.
 	 */
 	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
 			Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides) {
@@ -306,6 +300,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome);
+	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome);
 
 }

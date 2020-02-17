@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -13,53 +14,69 @@ public class Rails extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String mtl;
-		if (blockId == 27 || blockId == 157) {
-			// powered rail (off / on)
-			mtl = (data & 8) == 0 ? materials.get(data,biome)[1] : materials.get(data,biome)[0];
-			data = (byte)(data & 7);
-		}
-		else if (blockId == 28)
-		{
-			// detector
-			mtl = materials.get(data,biome)[0];
-		}
-		else
-		{
-			// regular rail (straight / curved)
-			mtl = data < 6 ? materials.get(data,biome)[0] : materials.get(data,biome)[1];
-		}
-		
-		
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform rt;
 		
-		switch (data)
+		boolean ascending = false;
+		boolean curved = false;
+		boolean powered = Boolean.parseBoolean(data.get("powered"));
+		
+		switch (data.get("shape"))
 		{
-			case 1:
-			case 2:
-			case 7:
+			case "north_south":
+				break;
+			case "east_west":
 				rotate.rotate(0, 90, 0);
 				break;
-			case 3:
-			case 9:
+			case "ascending_north":
+				ascending = true;
+				break;
+			case "ascending_east":
+				ascending = true;
+				rotate.rotate(0, 90, 0);
+				break;
+			case "ascending_south":
+				ascending = true;
+				rotate.rotate(0, 180, 0);
+				break;
+			case "ascending_west":
+				ascending = true;
 				rotate.rotate(0, -90, 0);
 				break;
-			case 5:
-			case 8:
+			case "south_east":
+				curved = true;
+				break;
+			case "south_west":
+				curved = true;
+				rotate.rotate(0, 90, 0);
+				break;
+			case "north_west":
+				curved = true;
 				rotate.rotate(0, 180, 0);
+				break;
+			case "north_east":
+				curved = true;
+				rotate.rotate(0, -90, 0);
 				break;
 		}
 		translate.translate(x, y, z);		
 			
 		rt = translate.multiply(rotate);
 		
+		String mtl;
+		if (curved || powered) {
+			mtl = materials.get(data,biome)[1];
+		}
+		else
+		{
+			mtl = materials.get(data,biome)[0];
+		}
 		
 		Vertex[] vertices = new Vertex[4];
-		if (data < 2 || data > 5)
+		if (!ascending)
 		{
 			// flat
 			vertices[0] = new Vertex(-0.5f, -0.47f,  0.5f);

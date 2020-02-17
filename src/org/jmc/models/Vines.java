@@ -1,7 +1,6 @@
 package org.jmc.models;
 
-import org.jmc.BlockInfo;
-import org.jmc.BlockTypes;
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -15,15 +14,25 @@ public class Vines extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		short topId = chunks.getBlockID(x, y+1, z);
+		boolean top = data.get("up").equals("true");
+		boolean n,e,s,w;
+		n = e = w = s = false;
 		
-		boolean top = topId != 0 && BlockTypes.get(topId).getOcclusion() == BlockInfo.Occlusion.FULL;
-		boolean s = (data & 1) != 0;
-		boolean w = (data & 2) != 0;
-		boolean n = (data & 4) != 0;
-		boolean e = (data & 8) != 0;
+		if (data.get("north").equals("true")) {
+			n = true;
+		}
+		if (data.get("south").equals("true")) {
+			s = true;
+		}
+		if (data.get("east").equals("true")) {
+			e = true;
+		}
+		if (data.get("west").equals("true")) {
+			w = true;
+		}
+
 
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, -0.5f, -0.47f);

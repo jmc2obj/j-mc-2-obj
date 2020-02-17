@@ -213,7 +213,7 @@ public class BlockListWindow extends JFrame {
 	
 	DefaultListModel<CheckListItem> dlm = new DefaultListModel<>();
 	public void initialize() {
-		HashMap<Short, BlockInfo> blocks = BlockTypes.getAll();
+		HashMap<String, BlockInfo> blocks = BlockTypes.getAll();
 		blockInfo.addAll(blocks.values());
 		for (BlockInfo info : blockInfo) {
 			CheckListItem item = new CheckListItem(info);
@@ -342,12 +342,12 @@ public class BlockListWindow extends JFrame {
 
 	}
 
-	private Set<Short> getExcludedBlockIds() {
-		Set<Short> result = new HashSet<Short>();
+	private Set<String> getExcludedBlockIds() {
+		Set<String> result = new HashSet<String>();
 		for (int i = 0; i < listItems.size(); i++) {
 			if (!listItems.get(i).isSelected()) {
 				BlockInfo blkInfo = (BlockInfo)listItems.get(i).getItem();
-				result.add((short)blkInfo.getId());
+				result.add(blkInfo.getId());
 			}
 		}
 		return result;

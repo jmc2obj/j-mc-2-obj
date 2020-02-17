@@ -2,11 +2,13 @@ package org.jmc.models;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jmc.BlockData;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.geom.Transform;
@@ -22,42 +24,36 @@ public class Mesh extends BlockModel
 
 	public static class MeshData
 	{
-		public byte data;
-		public byte mask;		
+		public BlockData data;
 		public Vertex offset;
-		public short id;		
+		public String id;		
 		public Transform transform;
 		public boolean fallthrough;
 
 		public MeshData()
 		{
-			data=-1;
-			mask=-1;
-			id=-1;
+			data=new BlockData();
+			id="";
 			offset=null;
 			transform=null;
 			fallthrough=false;
 		}
 
-		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, byte block_data)
+		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, BlockData data2)
 		{			
 			if(offset==null || offset==new Vertex(0,0,0))
 			{
-				byte d=block_data;
-				if(mask>0) d=(byte)(block_data&mask);
-				if(data>=0 && data!=d) return false;
+				if(!data.isEmpty() && !data2.matchesMask(data)) return false;
 				return true;
 			}
 			else
 			{
-				byte d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
-				short i=chunks.getBlockID(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				BlockData d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				String i=d.id;
 
-				if(mask>0) d=(byte)(d&mask);
+				if(!data.isEmpty() && !d.matchesMask(data)) return false;
 
-				if(data>=0 && data!=d) return false;
-
-				if(id>=0 && i!=id) return false;
+				if(!i.isEmpty() && !i.equals(id)) return false;
 
 				return true;
 			}
@@ -65,7 +61,7 @@ public class Mesh extends BlockModel
 
 	}
 
-	@SuppressWarnings("unused")
+	//@SuppressWarnings("unused")
 	private String obj_str;
 	private OBJInputFile objin_file;
 	private OBJGroup group;
@@ -123,10 +119,18 @@ public class Mesh extends BlockModel
 		objects.add(mesh);
 	}
 
+	public void propagateMaterials() {
+		for (Mesh mesh : objects) {
+			if (materials != null && mesh.materials == null && !materials.get(null, 0)[0].equals("unknown"))
+				mesh.setMaterials(materials);
+			mesh.propagateMaterials();
+		}
+	}
+	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		if(data<0) data=(byte) (16+data);
+		//What did this do? if(data<0) data=(byte) (16+data);
 
 		Transform translate = new Transform();
 		translate.translate(x, y, z);
@@ -134,7 +138,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , byte data, byte biome, Transform trans)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , BlockData data, int biome, Transform trans)
 	{
 		boolean match=mesh_data.matches(chunks, x, y, z, data);
 
@@ -147,6 +151,12 @@ public class Mesh extends BlockModel
 
 			if(group!=null && objin_file!=null)
 			{
+				if (materials != null) {
+					String[] mats = materials.get(data, biome);
+					if (mats != null) {
+						objin_file.overwriteMaterial(group, mats[0]);
+					}
+				}
 				objin_file.addObjectToOutput(group, trans, obj);
 			}
 		}
@@ -162,20 +172,29 @@ public class Mesh extends BlockModel
 	}
 
 	//DEBUG
-	/*
+	@Override
 	public String toString()
 	{
-		String ret;
+		return toString(0);
+	}
+	
+	public String toString(int depth)
+	{
+		String ret = "";
+		for (int i = 0; i<depth;i++)
+			ret += '\t';
 
-		ret="MESH ("+this.hashCode()+")\n";
-		ret+="STR "+obj_str+"\n";
-		ret+="DATA "+mesh_data.data+" & "+mesh_data.mask+"\n";
-		ret+="OBJECTS "+objects.size()+":\n";
+		ret+="MESH ("+this.hashCode()+"), ";
+		ret+="STR "+obj_str+", ";
+		if (materials != null)
+			ret+="MAT "+Arrays.toString(materials.get(null, 0))+", ";
+		ret+="DATA "+mesh_data.data+", ";
+		if (mesh_data.transform != null)
+			ret+="TRANS "+mesh_data.transform.toString()+", ";
+		ret+="OBJECTS "+objects.size()+":";
 		for(Mesh object:objects)
-			ret+=object.toString();
-		ret+="------\n";
+			ret+= "\n" + object.toString(depth + 1);
 
 		return ret;
 	}
-	*/
 }

@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.DateFormat;
-import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -99,19 +97,13 @@ public class UpdateWindow extends JFrame{
 					
 					@Override
 					public void run() {
-						DateFormat df=DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);				
-						Date curr=Version.DATE();				
-						Date newd=CheckUpdate.getDate();
-
-						tfCurrent.setText(df.format(curr));
-						tfNew.setText(df.format(newd));
-
-						if(newd.after(curr))
-							lStatus.setText(Messages.getString("UpdateWindow.NEW_AVAIL")); 
-						else
-							lStatus.setText(Messages.getString("UpdateWindow.NO_NEW")); 
-
+						tfCurrent.setText(String.valueOf(Version.VERSION()));
+						tfNew.setText(String.valueOf(CheckUpdate.getVersion()));
 						
+						if(CheckUpdate.isAvailable())
+							lStatus.setText(Messages.getString("UpdateWindow.NEW_AVAIL"));
+						else
+							lStatus.setText(Messages.getString("UpdateWindow.NO_NEW"));
 						
 					}
 				}).start();
@@ -122,7 +114,7 @@ public class UpdateWindow extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				File folder=Filesystem.getDatafilesDir();
+				/*File folder=Filesystem.getDatafilesDir();
 				File updater=new File(folder,"conf/Updater.jar"); 
 				if(updater.exists())
 				{
@@ -163,7 +155,7 @@ public class UpdateWindow extends JFrame{
 							Log.info(Messages.getString("UpdateWindow.UPD_ERR_DESC")+e1); 
 						}
 					}
-				}
+				}*/// disable for now.
 
 				
 				try{
@@ -173,7 +165,7 @@ public class UpdateWindow extends JFrame{
 
 						if(desktop.isSupported(Desktop.Action.BROWSE))
 						{
-							desktop.browse( new URI("http://www.jmc2obj.net/downloads/") ); 
+							desktop.browse( new URI("https://github.com/jmc2obj/j-mc-2-obj/releases") ); 
 							return;
 						}
 					}

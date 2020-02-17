@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -10,7 +11,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class DirtGrass extends BlockModel
 {
 	
-	protected String[] getMtlSides(byte data, byte biome, boolean snow)
+	protected String[] getMtlSides(BlockData data, int biome, boolean snow)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 		
@@ -27,9 +28,9 @@ public class DirtGrass extends BlockModel
 	
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean snow = chunks.getBlockID(x, y+1, z) == 78;
+		boolean snow = chunks.getBlockID(x, y+1, z).equals("minecraft:snow");
 		
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,

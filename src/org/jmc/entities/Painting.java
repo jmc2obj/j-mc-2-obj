@@ -85,9 +85,9 @@ public class Painting extends Entity
 			
 		rt = translate.multiply(rotate);
 		
-		BlockMaterial materials=new BlockMaterial();
+		BlockMaterial materials=new BlockMaterial("");
 		String [] matname={motiv.toLowerCase()+"_painting"};
-		materials.put((byte) 0, matname );
+		materials.put(null, matname);
 		model.setMaterials(materials);
 		
 		model.setMaterials(materials);

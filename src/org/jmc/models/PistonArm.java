@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -12,9 +13,9 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class PistonArm extends BlockModel
 {
 
-	private String[] getMtlSidesTop(byte data, byte biome)
+	private String[] getMtlSidesTop(BlockData data, int biome)
 	{
-		boolean sticky = (data & 8) != 0;
+		boolean sticky = data.get("type").equals("sticky");
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
@@ -27,7 +28,7 @@ public class PistonArm extends BlockModel
 		return mtlSides;
 	}
 
-	private String[] getMtlSidesArm(byte data, byte biome)
+	private String[] getMtlSidesArm(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
@@ -43,10 +44,9 @@ public class PistonArm extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		int dir = (data & 7);
-
+		String dir = data.get("facing");
 
 		/*
 		  The model is rendered facing up, then rotated
@@ -57,11 +57,11 @@ public class PistonArm extends BlockModel
 
 		switch (dir)
 		{
-			case 0: rotate.rotate(180, 0, 0); break;
-			case 2: rotate.rotate(-90, 0, 0); break;
-			case 3: rotate.rotate(90, 0, 0); break;
-			case 4: rotate.rotate(0, 0, 90); break;
-			case 5: rotate.rotate(0, 0, -90); break;
+			case "down": rotate.rotate(180, 0, 0); break;
+			case "north": rotate.rotate(-90, 0, 0); break;
+			case "south": rotate.rotate(90, 0, 0); break;
+			case "west": rotate.rotate(0, 0, 90); break;
+			case "east": rotate.rotate(0, 0, -90); break;
 		}
 		translate.translate(x, y, z);		
 		rt = translate.multiply(rotate);

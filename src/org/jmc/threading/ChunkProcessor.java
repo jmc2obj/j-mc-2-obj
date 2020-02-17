@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jmc.BlockData;
 import org.jmc.BlockTypes;
 import org.jmc.EntityTypes;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
-import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils;
+import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -43,6 +44,14 @@ public class ChunkProcessor
 	}
 	
 	/**
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String, boolean) addFace}
+	 */
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	{
+		addFace(verts, norms, uv, trans, mtl, true);
+	}
+	
+	/**
 	 * Add a face with the given vertices to the chunk output.
 	 * 
 	 * @param verts vertices of the face
@@ -51,8 +60,9 @@ public class ChunkProcessor
 	 * (only accepted if face is a quad!).
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
 	 * @param mtl Name of the material for the face
+	 * @param canOptimise Allows this face to be optimised
 	 */
-	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl, boolean canOptimise)
 	{
 		if (uv == null)
 		{
@@ -77,7 +87,7 @@ public class ChunkProcessor
 			face = trans.multiply(face);
 		}
 		face.chunk_idx = chunk_idx_count;
-		if (Options.optimiseGeometry) {
+		if (Options.optimiseGeometry && canOptimise) {
 			optimisedFaces.add(face);
 		} else {
 			faces.add(face);
@@ -120,19 +130,19 @@ public class ChunkProcessor
 			{
 				for(int y = ymin; y < ymax; y++)
 				{
-					short blockID=chunk.getBlockID(x, y, z);
-					byte blockData=chunk.getBlockData(x, y, z);
-					byte blockBiome=chunk.getBlockBiome(x, z);
+					String blockID=chunk.getBlockID(x, y, z);
+					BlockData blockData=chunk.getBlockData(x, y, z);
+					int blockBiome=chunk.getBlockBiome(x, z);
 					
-					if(blockID==0)
+					if(blockID.endsWith("air"))
 						continue;
 					
 					if(Options.excludeBlocks.contains(blockID))
 						continue;
 
 					if(Options.convertOres){
-						if(blockID == 14 || blockID == 15 || blockID == 16 || blockID == 21 || blockID == 56 || blockID == 73 || blockID == 74 || blockID == 129){
-							blockID = 1;
+						if(blockID.endsWith("ore")){
+							blockID = "minecraft:stone";
 						}
 					}
 					
@@ -140,6 +150,9 @@ public class ChunkProcessor
 					
 					try {
 						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						if (Boolean.parseBoolean(blockData.get("waterlogged"))) {
+							BlockTypes.get("minecraft:water").getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						}
 					}
 					catch (Exception ex) {
 						Log.error("Error rendering block, skipping.", ex);
@@ -148,7 +161,7 @@ public class ChunkProcessor
 			}
 		}
 		
-		if (Options.optimiseGeometry) {
+		if (Options.optimiseGeometry ) {
 			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
 			for (Face f : optimisedFaces){
 				int planar = f.isPlanar();

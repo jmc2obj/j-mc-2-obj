@@ -2,10 +2,11 @@ package org.jmc.entities.models;
 
 import java.awt.Rectangle;
 
+import org.jmc.BlockData;
 import org.jmc.BlockMaterial;
 import org.jmc.BlockTypes;
 import org.jmc.Options;
-import org.jmc.geom.Side;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -19,7 +20,7 @@ import org.jmc.threading.ThreadChunkDeligate;
  */
 public abstract class EntityModel
 {
-	protected short blockId = -1;
+	protected String blockId = "";
 	protected BlockMaterial materials = null;
 	
 
@@ -27,7 +28,7 @@ public abstract class EntityModel
 	 * Id of the block this model will be rendering.
 	 * This information may influence the behavior of the model.
 	 */
-	public void setBlockId(short val)
+	public void setBlockId(String val)
 	{
 		this.blockId = val;
 	}
@@ -44,7 +45,7 @@ public abstract class EntityModel
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides(byte data, byte biome)
+	protected String[] getMtlSides(BlockData data, byte biome)
 	{
 		String[] abbrMtls = materials.get(data, biome);
 		
@@ -91,32 +92,32 @@ public abstract class EntityModel
 	
 	/**
 	 * Helper method to check if the side of a cube needs to be drawn, based on 
-	 * the occlusion type of the neighboring block and whether or not the block
+	 * the occlusion type of the neighbouring block and whether or not the block
 	 * is at the world (or selection) edge.
 	 *  
-	 * @param neighborId Id of the neighboring block, or -1 if there is no 
-	 * neighbor (because the block is at the world edge)
+	 * @param neighbourId Id of the neighbouring block, or -1 if there is no 
+	 * Neighbour (because the block is at the world edge)
 	 * @param side Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Side side, short neighborId)
+	protected boolean drawSide(Direction side, String neighbourId)
 	{
-		if (neighborId == -1)
+		if (neighbourId.equals(""))
 			return Options.renderSides;
 		
-		if (neighborId == 0)
+		if (neighbourId.endsWith("air"))
 			return true;
 		
-		switch(BlockTypes.get(neighborId).getOcclusion())
+		switch(BlockTypes.get(neighbourId).getOcclusion())
 		{
 			case FULL:
 				return false;
 			case NONE:
 				return true;
 			case TRANSPARENT:
-				return neighborId != blockId;
+				return !neighbourId.equals(blockId);
 			case BOTTOM:
-				return side != Side.TOP;
+				return side != Direction.UP;
 			default:
 				return false;
 		}
@@ -125,7 +126,7 @@ public abstract class EntityModel
 	
 	/**
 	 * Helper method to check which sides of a cube need to be drawn, based on 
-	 * the occlusion type of the neighboring blocks and whether or not the block
+	 * the occlusion type of the neighbouring blocks and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
 	 * @param chunks World chunk data
@@ -149,12 +150,12 @@ public abstract class EntityModel
 		
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Side.TOP,    y==ymax ? -1 : chunks.getBlockID(x, y+1, z));
-		sides[1] = drawSide(Side.FRONT,  z==zmin ? -1 : chunks.getBlockID(x, y, z-1));
-		sides[2] = drawSide(Side.BACK,   z==zmax ? -1 : chunks.getBlockID(x, y, z+1));
-		sides[3] = drawSide(Side.LEFT,   x==xmin ? -1 : chunks.getBlockID(x-1, y, z));
-		sides[4] = drawSide(Side.RIGHT,  x==xmax ? -1 : chunks.getBlockID(x+1, y, z));
-		sides[5] = drawSide(Side.BOTTOM, y==ymin ? -1 : chunks.getBlockID(x, y-1, z));
+		sides[0] = drawSide(Direction.UP,    y==ymax ? "" : chunks.getBlockID(x, y+1, z));
+		sides[1] = drawSide(Direction.NORTH,  z==zmin ? "" : chunks.getBlockID(x, y, z-1));
+		sides[2] = drawSide(Direction.SOUTH,   z==zmax ? "" : chunks.getBlockID(x, y, z+1));
+		sides[3] = drawSide(Direction.WEST,   x==xmin ? "" : chunks.getBlockID(x-1, y, z));
+		sides[4] = drawSide(Direction.EAST,  x==xmax ? "" : chunks.getBlockID(x+1, y, z));
+		sides[5] = drawSide(Direction.DOWN, y==ymin ? "" : chunks.getBlockID(x, y-1, z));
 
 		return sides;
 	}

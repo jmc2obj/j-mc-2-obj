@@ -1,9 +1,12 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
+import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Log;
 
 
 /**
@@ -25,25 +28,51 @@ public class Liquid extends BlockModel
     {
         return Math.min(Math.min(a, b), Math.min(c, d));
     }
-
+	
+	private int getDataLevel(BlockData data) {
+		String level = data.get("level");
+		if (level != null) {
+			try {
+				return Integer.parseInt(level);
+			}
+			catch (NumberFormatException e) {
+				Log.debug("Tried to parse liquid level but it was: " + level);
+				e.printStackTrace();
+			}
+		}
+		return 0;
+	}
     
-	private boolean isSameLiquid(int otherBlockId)
+	private boolean isSameLiquid(BlockData otherBlockData)
 	{
-		if (blockId == otherBlockId)
+		String otherID = otherBlockData.id; 
+		if (blockId.equals(otherID))
 			return true;
-		if ((blockId == 9 || blockId == 8) && (otherBlockId == 9 || otherBlockId == 8))
+		if ((blockId.equals("minecraft:flowing_water") || blockId.equals("minecraft:water")) && 
+				otherID.equals("minecraft:flowing_water") || otherID.equals("minecraft:water") ||
+				otherID.equals("minecraft:bubble_column") || Boolean.parseBoolean(otherBlockData.get("waterlogged")))
 			return true;
-		if ((blockId == 11 || blockId == 10) && (otherBlockId == 11 || otherBlockId == 10))
+		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherID.equals("minecraft:flowing_lava") || otherID.equals("minecraft:lava")))
 			return true;
 		return false;
 	}
-
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	protected boolean drawSide(Direction side, BlockData data, BlockData neighbourData) {
+		boolean ret = super.drawSide(side, data, neighbourData);
+		ret &= !isSameLiquid(neighbourData);
+		return ret;
+	}
+
+	@Override
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		int level = data & 7;
-		boolean falling = (data & 8) != 0;
+		int level = getDataLevel(data);
+		// despite the new states water seems to store 'falling' in bit 4 of level
+		boolean falling = (level & 8) != 0;
+		
+		level = level & 7;
+		
 		// heights for each block corner
 		float h_nw, h_ne, h_se, h_sw;
 		// flow direction
@@ -52,18 +81,18 @@ public class Liquid extends BlockModel
 		String mtl;
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 
+
+		boolean same_up_nw = isSameLiquid(chunks.getBlockData(x-1, y+1, z-1));
+		boolean same_up_n  = isSameLiquid(chunks.getBlockData(x, y+1, z-1));
+		boolean same_up_ne = isSameLiquid(chunks.getBlockData(x+1, y+1, z-1));
+		boolean same_up_e  = isSameLiquid(chunks.getBlockData(x+1, y+1, z));
+		boolean same_up_se = isSameLiquid(chunks.getBlockData(x+1, y+1, z+1));
+		boolean same_up_s  = isSameLiquid(chunks.getBlockData(x, y+1, z+1));
+		boolean same_up_sw = isSameLiquid(chunks.getBlockData(x-1, y+1, z+1));
+		boolean same_up_w  = isSameLiquid(chunks.getBlockData(x-1, y+1, z));
 		
-		boolean same_up_nw = isSameLiquid(chunks.getBlockID(x-1, y+1, z-1));
-		boolean same_up_n  = isSameLiquid(chunks.getBlockID(x, y+1, z-1));
-		boolean same_up_ne = isSameLiquid(chunks.getBlockID(x+1, y+1, z-1));
-		boolean same_up_e  = isSameLiquid(chunks.getBlockID(x+1, y+1, z));
-		boolean same_up_se = isSameLiquid(chunks.getBlockID(x+1, y+1, z+1));
-		boolean same_up_s  = isSameLiquid(chunks.getBlockID(x, y+1, z+1));
-		boolean same_up_sw = isSameLiquid(chunks.getBlockID(x-1, y+1, z+1));
-		boolean same_up_w  = isSameLiquid(chunks.getBlockID(x-1, y+1, z));
-		
-		boolean same_up = isSameLiquid(chunks.getBlockID(x, y+1, z));
-		boolean same_down = isSameLiquid(chunks.getBlockID(x, y-1, z));
+		boolean same_up = isSameLiquid(chunks.getBlockData(x, y+1, z));
+		boolean same_down = isSameLiquid(chunks.getBlockData(x, y-1, z));
 
 		if (same_up)
 		{
@@ -84,23 +113,23 @@ public class Liquid extends BlockModel
 		}
 		else
 		{
-			boolean same_nw = isSameLiquid(chunks.getBlockID(x-1, y, z-1));
-			boolean same_n  = isSameLiquid(chunks.getBlockID(x, y, z-1));
-			boolean same_ne = isSameLiquid(chunks.getBlockID(x+1, y, z-1));
-			boolean same_e  = isSameLiquid(chunks.getBlockID(x+1, y, z));
-			boolean same_se = isSameLiquid(chunks.getBlockID(x+1, y, z+1));
-			boolean same_s  = isSameLiquid(chunks.getBlockID(x, y, z+1));
-			boolean same_sw = isSameLiquid(chunks.getBlockID(x-1, y, z+1));
-			boolean same_w  = isSameLiquid(chunks.getBlockID(x-1, y, z));
+			boolean same_nw = isSameLiquid(chunks.getBlockData(x-1, y, z-1));
+			boolean same_n  = isSameLiquid(chunks.getBlockData(x, y, z-1));
+			boolean same_ne = isSameLiquid(chunks.getBlockData(x+1, y, z-1));
+			boolean same_e  = isSameLiquid(chunks.getBlockData(x+1, y, z));
+			boolean same_se = isSameLiquid(chunks.getBlockData(x+1, y, z+1));
+			boolean same_s  = isSameLiquid(chunks.getBlockData(x, y, z+1));
+			boolean same_sw = isSameLiquid(chunks.getBlockData(x-1, y, z+1));
+			boolean same_w  = isSameLiquid(chunks.getBlockData(x-1, y, z));
 			
-			int lvl_nw = same_nw ? chunks.getBlockData(x-1, y, z-1) & 7 : 8;
-			int lvl_n  = same_n ? chunks.getBlockData(x, y, z-1) & 7 : 8;
-			int lvl_ne = same_ne ? chunks.getBlockData(x+1, y, z-1) & 7 : 8;
-			int lvl_e  = same_e ? chunks.getBlockData(x+1, y, z) & 7 : 8;
-			int lvl_se = same_se ? chunks.getBlockData(x+1, y, z+1) & 7 : 8;
-			int lvl_s  = same_s ? chunks.getBlockData(x, y, z+1) & 7 : 8;
-			int lvl_sw = same_sw ? chunks.getBlockData(x-1, y, z+1) & 7 : 8;
-			int lvl_w  = same_w ? chunks.getBlockData(x-1, y, z) & 7 : 8;
+			int lvl_nw = same_nw ? getDataLevel(chunks.getBlockData(x-1, y, z-1)) & 7 : 8;
+			int lvl_n  = same_n ? getDataLevel(chunks.getBlockData(x, y, z-1)) & 7 : 8;
+			int lvl_ne = same_ne ? getDataLevel(chunks.getBlockData(x+1, y, z-1)) & 7 : 8;
+			int lvl_e  = same_e ? getDataLevel(chunks.getBlockData(x+1, y, z)) & 7 : 8;
+			int lvl_se = same_se ? getDataLevel(chunks.getBlockData(x+1, y, z+1)) & 7 : 8;
+			int lvl_s  = same_s ? getDataLevel(chunks.getBlockData(x, y, z+1)) & 7 : 8;
+			int lvl_sw = same_sw ? getDataLevel(chunks.getBlockData(x-1, y, z+1)) & 7 : 8;
+			int lvl_w  = same_w ? getDataLevel(chunks.getBlockData(x-1, y, z)) & 7 : 8;
 
 			/*
 			 * Calculate corner heights
@@ -253,34 +282,34 @@ public class Liquid extends BlockModel
 		}
 		if (drawSides[1])
 		{	// front
-			vertices[0] = new Vertex(x+0.5f, y-0.5f, z-0.5f); uv[0] = new UV(1,0);
-			vertices[1] = new Vertex(x-0.5f, y-0.5f, z-0.5f); uv[1] = new UV(0,0);
-			vertices[2] = new Vertex(x-0.5f, y+h_nw, z-0.5f); uv[2] = new UV(0,0.5f+h_ne);
-			vertices[3] = new Vertex(x+0.5f, y+h_ne, z-0.5f); uv[3] = new UV(1,0.5f+h_nw);
+			vertices[0] = new Vertex(x+0.5f, y-0.5f, z-0.499f); uv[0] = new UV(1,0);
+			vertices[1] = new Vertex(x-0.5f, y-0.5f, z-0.499f); uv[1] = new UV(0,0);
+			vertices[2] = new Vertex(x-0.5f, y+h_nw, z-0.499f); uv[2] = new UV(0,0.5f+h_ne);
+			vertices[3] = new Vertex(x+0.5f, y+h_ne, z-0.499f); uv[3] = new UV(1,0.5f+h_nw);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[2])
 		{	// back
-			vertices[0] = new Vertex(x-0.5f, y-0.5f, z+0.5f); uv[0] = new UV(0,0);
-			vertices[1] = new Vertex(x+0.5f, y-0.5f, z+0.5f); uv[1] = new UV(1,0);
-			vertices[2] = new Vertex(x+0.5f, y+h_se, z+0.5f); uv[2] = new UV(1,0.5f+h_se);
-			vertices[3] = new Vertex(x-0.5f, y+h_sw, z+0.5f); uv[3] = new UV(0,0.5f+h_sw);
+			vertices[0] = new Vertex(x-0.5f, y-0.5f, z+0.499f); uv[0] = new UV(0,0);
+			vertices[1] = new Vertex(x+0.5f, y-0.5f, z+0.499f); uv[1] = new UV(1,0);
+			vertices[2] = new Vertex(x+0.5f, y+h_se, z+0.499f); uv[2] = new UV(1,0.5f+h_se);
+			vertices[3] = new Vertex(x-0.5f, y+h_sw, z+0.499f); uv[3] = new UV(0,0.5f+h_sw);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[3])
 		{	// left
-			vertices[0] = new Vertex(x-0.5f, y-0.5f, z-0.5f); uv[0] = new UV(0,0);
-			vertices[1] = new Vertex(x-0.5f, y-0.5f, z+0.5f); uv[1] = new UV(1,0);
-			vertices[2] = new Vertex(x-0.5f, y+h_sw, z+0.5f); uv[2] = new UV(1,0.5f+h_sw);
-			vertices[3] = new Vertex(x-0.5f, y+h_nw, z-0.5f); uv[3] = new UV(0,0.5f+h_nw);
+			vertices[0] = new Vertex(x-0.499f, y-0.5f, z-0.5f); uv[0] = new UV(0,0);
+			vertices[1] = new Vertex(x-0.499f, y-0.5f, z+0.5f); uv[1] = new UV(1,0);
+			vertices[2] = new Vertex(x-0.499f, y+h_sw, z+0.5f); uv[2] = new UV(1,0.5f+h_sw);
+			vertices[3] = new Vertex(x-0.499f, y+h_nw, z-0.5f); uv[3] = new UV(0,0.5f+h_nw);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[4])
 		{	// right
-			vertices[0] = new Vertex(x+0.5f, y-0.5f, z+0.5f); uv[0] = new UV(1,0);
-			vertices[1] = new Vertex(x+0.5f, y-0.5f, z-0.5f); uv[1] = new UV(0,0);
-			vertices[2] = new Vertex(x+0.5f, y+h_ne, z-0.5f); uv[2] = new UV(0,0.5f+h_se);
-			vertices[3] = new Vertex(x+0.5f, y+h_se, z+0.5f); uv[3] = new UV(1,0.5f+h_ne);
+			vertices[0] = new Vertex(x+0.499f, y-0.5f, z+0.5f); uv[0] = new UV(1,0);
+			vertices[1] = new Vertex(x+0.499f, y-0.5f, z-0.5f); uv[1] = new UV(0,0);
+			vertices[2] = new Vertex(x+0.499f, y+h_ne, z-0.5f); uv[2] = new UV(0,0.5f+h_se);
+			vertices[3] = new Vertex(x+0.499f, y+h_se, z+0.5f); uv[3] = new UV(1,0.5f+h_ne);
 			obj.addFace(vertices, uv, null, mtl);
 		}
 		if (drawSides[5])

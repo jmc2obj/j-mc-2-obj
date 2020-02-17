@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -13,9 +14,9 @@ public class PistonBase extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(byte data, byte biome)
+	protected String[] getMtlSides(BlockData data, int biome)
 	{
-		boolean open = (data & 8) != 0;
+		boolean open = data.get("extended").equals("true");
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
@@ -30,11 +31,10 @@ public class PistonBase extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean open = (data & 8) != 0;
-		int dir = (data & 7);
-
+		boolean open = data.get("extended").equals("true");
+		String dir = data.get("facing");
 
 		/*
 		  The model is rendered facing up, then rotated
@@ -45,11 +45,11 @@ public class PistonBase extends BlockModel
 
 		switch (dir)
 		{
-			case 0: rotate.rotate(180, 0, 0); break;
-			case 2: rotate.rotate(-90, 0, 0); break;
-			case 3: rotate.rotate(90, 0, 0); break;
-			case 4: rotate.rotate(0, 0, 90); break;
-			case 5: rotate.rotate(0, 0, -90); break;
+			case "down": rotate.rotate(180, 0, 0); break;
+			case "north": rotate.rotate(-90, 0, 0); break;
+			case "south": rotate.rotate(90, 0, 0); break;
+			case "west": rotate.rotate(0, 0, 90); break;
+			case "east": rotate.rotate(0, 0, -90); break;
 		}
 		translate.translate(x, y, z);		
 		rt = translate.multiply(rotate);

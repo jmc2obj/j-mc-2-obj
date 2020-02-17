@@ -21,15 +21,15 @@ public class BlockInfo
 		TRANSPARENT,
 		/** The top face of the block below is not drawn */
 		BOTTOM,
-		/** Special rules for snow */
-		SNOW,
+		/** Special rules from model */
+		CUSTOM,
 		/** A closed transparent volume */
 		VOLUME
 	}
 
 	
 	/** Block id */
-	protected int id;
+	protected String id;
 	
 	/** Block name */
 	protected String name;
@@ -45,7 +45,7 @@ public class BlockInfo
 	
 
 	/** @return Block id */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -71,9 +71,9 @@ public class BlockInfo
 
 	
 	/** Convenience constructor */
-	BlockInfo(int id, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
+	BlockInfo(String id2, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
 	{
-		this.id = id;
+		this.id = id2;
 		this.name = name;
 		this.materials = materials;
 		this.occlusion = occlusion;
@@ -85,15 +85,15 @@ public class BlockInfo
 	 * Convenience method to get the color to use for this block in the map preview.
 	 * The color is taken from the first material in the block's material list.
 	 *  
-	 * @param data Block data
+	 * @param blockData Block data
 	 * @return Block color
 	 */
-	public Color getPreviewColor(byte data, byte biome)
+	public Color getPreviewColor(BlockData blockData, int biome)
 	{
-		String[] mtlNames = getMaterials().get(data,biome);
+		String[] mtlNames = getMaterials().get(blockData,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
-			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+data);
+			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);
 			return Materials.getColor("unknown");
 		}
 		return Materials.getColor(mtlNames[0]);

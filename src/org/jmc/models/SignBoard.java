@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -13,7 +14,7 @@ public class SignBoard extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtlSides = getMtlSides(data,biome);
 		boolean[] drawSides = new boolean[] { true, true, false, true, true, true };
@@ -21,21 +22,21 @@ public class SignBoard extends BlockModel
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform rt;
-
-		switch (data)
+		
+		switch (data.get("facing"))
 		{
-			case 2:
+			case "north":
 				rotate.rotate(0, 0, 0);
 				break;
-			case 3:
+			case "west":
+			  	rotate.rotate(0, -90, 0);
+				break;
+			case "south":
 				rotate.rotate(0, 180, 0);
 				break;
-			case 4:
-				rotate.rotate(0, -90, 0);
-				break;
-			case 5:
+			case "east":
 				rotate.rotate(0, 90, 0);
-				break;
+				break;		  
 		}
 		translate.translate(x, y, z);		
 			

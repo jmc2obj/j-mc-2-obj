@@ -172,10 +172,14 @@ public class MainPanel extends JPanel {
 		pPath.setLayout(new BoxLayout(pPath, BoxLayout.LINE_AXIS));
 		cbPath = new JComboBox();
 		cbPath.setEditable(true);
+		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
+		bLoad.setEnabled(false);
+		// bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		cbDimension = new JComboBox();
 		JButton bPath = new JButton("...");
 		pPath.add(bPath);
 		pPath.add(cbPath);
+		pPath.add(bLoad);
 		pPath.add(cbDimension);
 
 		(new PopulateLoadListThread()).start();
@@ -190,9 +194,6 @@ public class MainPanel extends JPanel {
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		pButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
-		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
-		bLoad.setEnabled(false);
-		// bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		bGoto = new JButton(Messages.getString("MainPanel.GOTO_BUTTON"));
 		bGoto.setEnabled(false);
 		bExport = new JButton(Messages.getString("MainPanel.EXPORT_BUTTON"));
@@ -203,7 +204,6 @@ public class MainPanel extends JPanel {
 		bAbout.setForeground(Color.red);
 		bAbout.setFont(new Font(bAbout.getFont().getFamily(), Font.BOLD, bAbout.getFont().getSize()));
 
-		pButtons.add(bLoad);
 		pButtons.add(bGoto);
 		pButtons.add(bExport);
 		pButtons.add(bSettings);
@@ -242,7 +242,7 @@ public class MainPanel extends JPanel {
 
 				chunk_loader = new ViewChunkLoaderThread(preview);
 				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				(new Thread(chunk_loader)).start();
+				(new Thread(chunk_loader, "ViewChunkLoader")).start();
 
 			}
 		});
@@ -514,6 +514,8 @@ public class MainPanel extends JPanel {
 					return;
 				}
 				Options.dimension = (Integer) cbDimension.getSelectedItem();
+				
+				Log.info("Loading " + Options.worldDir.getName() + "...");
 
 				LevelDat levelDat = new LevelDat(Options.worldDir);
 
@@ -522,7 +524,7 @@ public class MainPanel extends JPanel {
 					return;
 				}
 
-				Log.info(levelDat.toString());
+				Log.debug(levelDat.toString());
 
 				int player_x = 0;
 				int player_z = 0;
@@ -546,7 +548,7 @@ public class MainPanel extends JPanel {
 				// chunk_loader=new FullChunkLoaderThread(preview);
 				chunk_loader = new ViewChunkLoaderThread(preview);
 				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				(new Thread(chunk_loader)).start();
+				(new Thread(chunk_loader, "ViewChunkLoader")).start();
 
 				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
 				MainWindow.export.mapLoaded();
@@ -632,7 +634,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		(new Thread(memory_monitor)).start();
+		(new Thread(memory_monitor, "MemoryMonitor")).start();
 
 	}
 

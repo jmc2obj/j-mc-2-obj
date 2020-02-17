@@ -13,7 +13,7 @@ public class Painting extends EntityModel
 	@Override
 	public void addEntity(ChunkProcessor obj, Transform transform) 
 	{
-		addObject(obj, transform, materials.get((byte) -1, (byte) -1)[0]);		
+		addObject(obj, transform, materials.get(null, -1)[0]);		
 	}
 	
 	private void addObject(ChunkProcessor obj, Transform transform, String mat)

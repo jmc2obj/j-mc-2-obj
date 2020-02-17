@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -13,7 +14,7 @@ public class Button extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtlSides = getMtlSides(data, biome);
 		
@@ -21,24 +22,41 @@ public class Button extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 
-		switch (data & 7)
+		String face = data.get("face");
+		String dir = data.get("facing");
+		
+		switch (dir)
 		{
-			case 1:
-				rotate.rotate(0, -90, 0);
-				break;
-			case 2:
-				rotate.rotate(0, 90, 0);
-				break;
-			case 3:
-				rotate.rotate(0, 0, 0);
-				break;
-			case 4:
+			case "north":
 				rotate.rotate(0, 180, 0);
 				break;
-			case 5: // button on the ground
-				rotate.rotate(-90, 0, 90);
+			case "south":
+				rotate.rotate(0, 0, 0);
+				break;
+			case "west":
+				rotate.rotate(0, 90, 0);
+				break;
+			case "east":
+				rotate.rotate(0, -90, 0);
 				break;
 		}
+		
+
+		 if (face.equals("floor"))
+		 {
+			 if (dir.equals("west") || dir.equals("east")) {
+				 rotate.rotate(-90, 0, 90); }
+			 else
+				 rotate.rotate(-90, 0, 0);
+		 }
+		 else if (face.equals("ceiling"))
+		 {
+			 if (dir.equals("west") || dir.equals("east")) {
+				 rotate.rotate(90, 0, 90); }
+			 else
+				 rotate.rotate(90, 0, 0);
+		 }
+		
 		translate.translate(x, y, z);		
 			
 		rt = translate.multiply(rotate);

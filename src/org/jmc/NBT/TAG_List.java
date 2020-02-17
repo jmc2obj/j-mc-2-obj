@@ -101,6 +101,12 @@ public class TAG_List extends NBT_Tag {
 			case 10:
 				elements[i]=new TAG_Compound("");
 				break;
+			case 11:
+				elements[i]=new TAG_Int_Array("");
+				break;
+			case 12:
+				elements[i]=new TAG_Long_Array("");
+				break;
 			default:
 				throw new Exception("Unkown NBT type in list: "+type);
 			}

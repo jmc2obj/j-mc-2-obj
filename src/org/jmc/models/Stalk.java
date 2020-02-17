@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -13,28 +14,34 @@ public class Stalk extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean n,s,e,w;
+		n=s=e=w=false;
 		
-		if (blockId == 104)
+		if (data.containsKey("facing")) 
 		{
-			// we're a pumpkin stalk, look for pumpkins around
-			n = chunks.getBlockID(x, y, z-1) == 86;
-			s = chunks.getBlockID(x, y, z+1) == 86;
-			e = chunks.getBlockID(x+1, y, z) == 86;
-			w = chunks.getBlockID(x-1, y, z) == 86;
+			switch (data.get("facing")) {
+			case "north":
+				n = true;
+				break;
+			case "south":
+				s = true;
+				break;
+			case "west":
+				w = true;
+				break;
+			case "east":
+				e = true;
+				break;				
+			default:
+				n = true;
+				break;
+			}
 		}
-		else
-		{
-			// we're a melon stalk, look for melons around 
-			n = chunks.getBlockID(x, y, z-1) == 103;
-			s = chunks.getBlockID(x, y, z+1) == 103;
-			e = chunks.getBlockID(x+1, y, z) == 103;
-			w = chunks.getBlockID(x-1, y, z) == 103;
-		}
+
 		
-		if (data == 7 && (n||s||e||w))
+		if (blockId.equals("minecraft:attached_pumpkin_stem") || blockId.equals("minecraft:attached_melon_stem") && (n||s||e||w))
 		{
 			// bent stalk
 			Transform translate = new Transform();

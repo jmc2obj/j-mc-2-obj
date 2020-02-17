@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jmc.BlockData;
 import org.jmc.Chunk;
 import org.jmc.Chunk.Blocks;
 import org.jmc.ChunkDataBuffer;
@@ -59,59 +60,64 @@ public class ThreadChunkDeligate {
 				return blks;
 			}
 		}
-
+		
 		return cached_chunkb;
 	}
 	
-	public short getBlockID(int x, int y, int z)
+	public String getBlockID(int x, int y, int z)
 	{
-		if(y<0) return 0;
+		if(y<0) return "minecraft:air";
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return 0;
+		if(blocks==null) return "minecraft:air";
 		
 		int rx=x-(chunk_p.x*16);
-		int rz=z-(chunk_p.y*16);		
-					
+		int rz=z-(chunk_p.y*16);
+		
+		String id;
+		
 		if(isAnvil)
-		{			
-			if(y>=blocks.id.length/(16*16)) return 0;
-			return blocks.id[rx + (rz * 16) + (y * 16) * 16];			
+		{
+			if(y>=blocks.id.length/(16*16)) return "minecraft:air";
+			id = blocks.id[rx + (rz * 16) + (y * 16) * 16];
+			return id != null ? id : "minecraft:air";
 		}
 		else
 		{
-			if(y>=128) return 0;
-			return blocks.id[y + (rz * 128) + (rx * 128) * 16];			
+			if(y>=128) return "minecraft:air";
+			id = blocks.id[y + (rz * 128) + (rx * 128) * 16];
+			return id != null ? id : "minecraft:air";
 		}
 	}
 	
-	public byte getBlockData(int x, int y, int z)
+	public BlockData getBlockData(int x, int y, int z)
 	{
-		if(y<0) return 0;
+		String id = getBlockID(x,y,z);
+		if(y<0) return new BlockData(id);
 		
-		Point chunk_p=Chunk.getChunkPos(x, z);		
+		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return 0;
+		if(blocks==null) return new BlockData(id);
 		
 		int rx=x-(chunk_p.x*16);
-		int rz=z-(chunk_p.y*16);				
-				
+		int rz=z-(chunk_p.y*16);
+		
 		if(isAnvil)
-		{						
-			if(y>=blocks.id.length/(16*16)) return 0;
-			return blocks.data[rx + (rz * 16) + (y * 16) * 16];			
+		{
+			if(y>=blocks.id.length/(16*16)) return new BlockData(id);
+			return blocks.data.get(rx + (rz * 16) + (y * 16) * 16);
 		}
 		else
 		{
-			if(y>=128) return 0;
-			return blocks.data[y + (rz * 128) + (rx * 128) * 16];			
+			if(y>=128) return new BlockData(id);
+			return blocks.data.get(y + (rz * 128) + (rx * 128) * 16);
 		}
 	}
 	
-	public byte getBlockBiome(int x, int z)
+	public int getBlockBiome(int x, int z)
 	{
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
@@ -119,8 +125,8 @@ public class ThreadChunkDeligate {
 		if(blocks==null) return (byte)255;
 		
 		int rx=x-(chunk_p.x*16);
-		int rz=z-(chunk_p.y*16);		
-					
+		int rz=z-(chunk_p.y*16);
+		
 		return blocks.biome[rx*16+rz];
 	}
 	
@@ -137,7 +143,7 @@ public class ThreadChunkDeligate {
 	public List<TAG_Compound> getTileEntities(int cx, int cz)
 	{
 		Blocks blocks=getBlocks(new Point(cx, cz));
-
+		
 		if(blocks==null)
 			return new EmptyList<TAG_Compound>();
 		

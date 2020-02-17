@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
+import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -10,16 +12,34 @@ import org.jmc.threading.ThreadChunkDeligate;
  */
 public class Snow extends BlockModel
 {
-
+	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
+		int layers = data.getInt("layers");
+		if (side == Direction.DOWN || layers >= 8) {
+			return true;
+		}
+		
+		Integer neighbourLayers = neighbourData.getInt("layers");
+		if (data.id.equals(neighbourData.id) && neighbourLayers != null && neighbourLayers <= layers) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
-		drawSides[0] = true;
+		int layers = data.getInt("layers", 0);
 		
-		if (data > 8)
-			data -= 8;
-		float height = (data+1) / 8.0f;
+		if (layers < 8) 
+			drawSides[0] = true;
+		
+		if (layers > 8)
+			layers = 8;
+		float height = (layers) / 8.0f;
 
 		UV[] uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,height), new UV(0,height) };
 		UV[][] uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };

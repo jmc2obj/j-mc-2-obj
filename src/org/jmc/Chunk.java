@@ -12,16 +12,24 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jmc.BlockInfo.Occlusion;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
+import org.jmc.NBT.TAG_Int_Array;
 import org.jmc.NBT.TAG_List;
+import org.jmc.NBT.TAG_Long_Array;
+import org.jmc.NBT.TAG_String;
+import org.jmc.models.None;
+import org.jmc.util.Log;
 /**
  * Class describing a chunk. A chunk is a 16x16 group of blocks of 
  * varying heights (in Anvil) or 128 (in Region).
@@ -66,7 +74,7 @@ public class Chunk {
 	{
 		this.is_anvil=is_anvil;
 
-		root=(TAG_Compound) NBT_Tag.make(is);		
+		root=(TAG_Compound) NBT_Tag.make(is);
 		is.close();
 
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
@@ -130,9 +138,11 @@ public class Chunk {
 		 */
 		public Blocks(int block_num, int biome_num)
 		{
-			id=new short[block_num];
-			data=new byte[block_num];
-			biome=new byte[biome_num];
+			id=new String[block_num];
+			data=new ArrayList<BlockData>(block_num);
+			for (int i = 0; i < block_num; i++) 
+				data.add(new BlockData());
+			biome=new int[biome_num];
 			Arrays.fill(biome, (byte)255);
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
@@ -140,16 +150,16 @@ public class Chunk {
 		/**
 		 * Block IDs.
 		 */
-		public short [] id;
+		public String [] id;
 		/**
 		 * Block meta-data.
 		 */
-		public byte [] data;
+		public ArrayList<BlockData> data;
 
 		/**
 		 * Biome IDSs (only XZ axes).
 		 */
-		public byte [] biome;
+		public int [] biome;
 
 		/**
 		 * Entities.
@@ -167,19 +177,24 @@ public class Chunk {
 	 * @return block data as a byte array
 	 */
 	public Blocks getBlocks()
-	{		
-		Blocks ret=null;		
+	{
+		Blocks ret=null;
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 
 		if(is_anvil)
 		{
-			int ymax=0;			
+			int ymax=0;
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			for(NBT_Tag section: sections.elements)
 			{
-				TAG_Compound c_section = (TAG_Compound) section;					
+				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 				if(yval.value>ymax) ymax=yval.value;
+			}
+			
+			int chunkVer = 0;
+			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
+				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
 			}
 
 			ymax=(ymax+1)*16;
@@ -189,34 +204,94 @@ public class Chunk {
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
-				TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
-				TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-				TAG_Byte_Array tagBiomes = (TAG_Byte_Array) level.getElement("Biomes");
-				TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-
-				int base=yval.value*16*16*16;
-				for(int i=0; i<tagBlocks.data.length; i++)
-					ret.id[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
-
-				if(tagAdd!=null)
-				{
-					for(int i=0; i<tagAdd.data.length; i++)
-					{
-						short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
-						short add1 = (short)(add&0x0f);
-						short add2 = (short)(add>>4);
-						ret.id[base+2*i] += (add1<<8);
-						ret.id[base+2*i+1] += (add2<<8);
+				TAG_Int_Array tagBiomes;
+				if (chunkVer <= 1464) {
+					TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
+					int[] biomes = new int[tagByteBiomes.data.length];
+					for (int i = 0; i < tagByteBiomes.data.length; i++) {
+						biomes[i] = tagByteBiomes.data[i];
 					}
+					tagBiomes = new TAG_Int_Array("Biomes", biomes);
 				}
+				else {
+					tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
+				}
+				
+				int base=yval.value*16*16*16;
+				
+				if (chunkVer <= 1450) {// <= 1.12
+					short[] oldIDs = new short[ret.id.length];
+					byte[] oldData = new byte[ret.data.size()];
+					TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
+					TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
+					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
+					for(int i=0; i<tagBlocks.data.length; i++)
+						oldIDs[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
 
-				for(int i=0; i<tagData.data.length; i++)
-				{
-					byte add1=(byte)(tagData.data[i]&0x0f);
-					byte add2=(byte)(tagData.data[i]>>4);
-					ret.data[base+2*i]=add1;
-					ret.data[base+2*i+1]=add2;
+					if(tagAdd!=null)
+					{
+						for(int i=0; i<tagAdd.data.length; i++)
+						{
+							short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
+							short add1 = (short)(add&0x0f);
+							short add2 = (short)(add>>4);
+							oldIDs[base+2*i] += (add1<<8);
+							oldIDs[base+2*i+1] += (add2<<8);
+						}
+					}
+
+					for(int i=0; i<tagData.data.length; i++)
+					{
+						byte add1=(byte)(tagData.data[i]&0x0f);
+						byte add2=(byte)(tagData.data[i]>>4);
+						oldData[base+2*i]=add1;
+						oldData[base+2*i+1]=add2;
+					}
+					
+					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
+					break;
+					
+				} else if (chunkVer >= 1451) {// >= 1.13
+					TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
+					TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
+					
+					if (tagPalette == null || tagBlockStates == null) {
+						continue;
+					}
+					
+					int blockBits = Math.max((tagBlockStates.data.length * 64) / 4096, 4); // Minimum of 4 bits.
+					BitSet blockStates = BitSet.valueOf(tagBlockStates.data);
+					for (int i = 0; i < 4096; i++) {
+						long blockPid;
+						BitSet blockBitArr = blockStates.get(i*blockBits, (i+1)*blockBits);
+						if (blockBitArr.length() < 1) {
+							blockPid = 0;
+						} else {
+							blockPid = blockBitArr.toLongArray()[0];
+						}
+						
+						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
+						TAG_String blockName = (TAG_String)blockTag.getElement("Name");
+						
+						ret.id[base+i] = blockName.value;
+						
+						BlockData data = new BlockData(blockName.value);
+						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
+						if (propertiesTag != null) {
+							for (NBT_Tag tag : propertiesTag.elements) {
+								TAG_String propTag = (TAG_String)tag;
+								data.put(propTag.getName(), propTag.value);
+							}
+						}
+						
+						if (blockName.value.contains("kelp") || blockName.value.endsWith("seagrass") ||
+								blockName.value.contains("_coral") || blockName.value.contains("sea_pickle")) {
+							data.putIfAbsent("waterlogged", "true");
+						}
+						
+						ret.data.set(base+i, data);
+					}
 				}
 
 				if(tagBiomes!=null)
@@ -238,19 +313,22 @@ public class Chunk {
 
 			byte add1,add2;
 			ret=new Blocks(blocks.data.length,256);
+			short[] oldIDs = new short[ret.id.length];
+			byte[] oldData = new byte[ret.data.size()];
 
 			for(int i=0; i<blocks.data.length; i++)
-				ret.id[i]=blocks.data[i];
+				oldIDs[i] = blocks.data[i];
 
 			for(int i=0; i<data.data.length; i++)
 			{
 				add1=(byte) (data.data[i]&0x0f);
 				add2=(byte) (data.data[i]>>4);
-				ret.data[2*i]=add1;
-				ret.data[2*i+1]=add2;
+				oldData[2*i]=add1;
+				oldData[2*i+1]=add2;
+				//TODO old format conversion
 			}
-
-
+			Log.info("Chunk is very old version, skipping! " + pos_x + " " + pos_z);
+			
 		}
 
 		TAG_List entities = (TAG_List) level.getElement("Entities");
@@ -273,7 +351,7 @@ public class Chunk {
 		}
 
 		return ret;
-	}	
+	}
 
 	/**
 	 * Renders the block and height images.
@@ -298,11 +376,11 @@ public class Chunk {
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
-		short blockID=0;
-		byte blockData=0;
-		byte blockBiome=0;
+		String blockID="minecraft:air";
+		BlockData blockData=new BlockData(blockID);
+		int blockBiome=0;
 		Color c;
-		Blocks bd=getBlocks();		
+		Blocks bd=getBlocks();
 
 		int ymax=0;
 		if(is_anvil)
@@ -320,9 +398,11 @@ public class Chunk {
 			floor=ceiling-1;
 
 
-		short ids[]=new short[16*16];
-		byte data[]=new byte[16*16];
-		byte biome[]=new byte[16*16];
+		String ids[]=new String[16*16];
+		List<BlockData> data=new ArrayList<BlockData>(16*16);
+		for (int i = 0; i < 16*16; i++)
+			data.add(i, new BlockData(blockID));
+		int biome[]=new int[16*16];
 		int himage[]=null;
 		if(!fastmode)
 			himage=new int[16*16];
@@ -332,7 +412,7 @@ public class Chunk {
 		{
 			for(x = 0; x < 16; x++)
 			{
-				ids[z*16+x]=0;
+				ids[z*16+x]="minecraft:air";
 
 				for(y = floor; y < ceiling; y++)
 				{
@@ -341,18 +421,18 @@ public class Chunk {
 					if(is_anvil)
 					{
 						blockID = bd.id[x + (z * 16) + (y * 16) * 16];
-						blockData = bd.data[x + (z * 16) + (y * 16) * 16];
+						blockData = bd.data.get(x + (z * 16) + (y * 16) * 16);
 					}
 					else
 					{
 						blockID = bd.id[y + (z * 128) + (x * 128) * 16];
-						blockData = bd.data[y + (z * 128) + (x * 128) * 16];
+						blockData = bd.data.get(y + (z * 128) + (x * 128) * 16);
 					}
 
-					if(blockID != 0)
+					if(blockID != null && !BlockTypes.get(blockID).getOcclusion().equals(Occlusion.NONE))
 					{
 						ids[z*16+x]=blockID;
-						data[z*16+x]=blockData;
+						data.set(z*16+x, blockData);
 						biome[z*16+x]=blockBiome;
 						if(!fastmode)
 							himage[z*16+x]=y;
@@ -367,9 +447,10 @@ public class Chunk {
 			for(x = 0; x < 16; x++)
 			{
 				blockID = ids[z*16+x];
-				blockData = data[z*16+x];
+				blockData = data.get(z*16+x);
 				blockBiome = biome[z*16+x];
-				if(blockID != 0)
+				
+				if(blockID != null && BlockTypes.get(blockID).getModel().getClass() != None.class)
 				{
 					c = BlockTypes.get(blockID).getPreviewColor(blockData,blockBiome);
 					if(c!=null)
@@ -386,10 +467,10 @@ public class Chunk {
 			for(z = 0; z < 16; z++)
 			{
 				for(x = 0; x < 16; x++)
-				{				
+				{
 					h=himage[z*16+x]%256;
 					gh.setColor(new Color(h,h,h));
-					gh.fillRect(x*4, z*4, 4, 4);				
+					gh.fillRect(x*4, z*4, 4, 4);
 				}
 			}
 		}

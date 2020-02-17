@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -13,7 +14,7 @@ public class PressurePlate extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtlSides = getMtlSides(data,biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);

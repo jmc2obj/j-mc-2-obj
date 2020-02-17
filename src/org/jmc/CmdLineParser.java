@@ -91,26 +91,53 @@ public class CmdLineParser
 					Options.dimension = Integer.parseInt(a.substring(12));
 				}
 				else if (a.equals("-e")) {
+					Options.exportWorld = true;
 					Options.exportObj = false;
 					Options.exportMtl = false;
-					Options.exportTex = false;
 					for (String part : args[i+1].split(",")) {
 						if (part.equals("obj")) Options.exportObj = true;
 						else if (part.equals("mtl")) Options.exportMtl = true;
-						else if (part.equals("tex")) Options.exportTex = true;
 						else throw new CmdLineException("Invalid argument to option -e: " + part);
 					}
 					i++;
 				}
 				else if (a.startsWith("--export=")) {
+					Options.exportWorld = true;
 					Options.exportObj = false;
 					Options.exportMtl = false;
-					Options.exportTex = false;
 					for (String part : a.substring(9).split(",")) {
 						if (part.equals("obj")) Options.exportObj = true;
 						else if (part.equals("mtl")) Options.exportMtl = true;
-						else if (part.equals("tex")) Options.exportTex = true;
 						else throw new CmdLineException("Invalid argument to option --export: " + part);
+					}
+				}
+				else if (a.startsWith("-t")) {
+					Options.exportTex = true;
+					Options.textureDiffuse = false;
+					Options.textureAlpha = false;
+					Options.textureNormal = false;
+					Options.textureSpecular = false;
+					for (String part : args[i+1].split(",")) {
+						if (part.equals("base")) Options.textureDiffuse = true;
+						else if (part.equals("alpha")) Options.textureAlpha = true;
+						else if (part.equals("norm")) Options.textureNormal = true;
+						else if (part.equals("spec")) Options.textureSpecular = true;
+						else throw new CmdLineException("Invalid argument to option -t: " + part);
+					}
+					i++;
+				}
+				else if (a.startsWith("--tex_export=")) {
+					Options.exportTex = true;
+					Options.textureDiffuse = false;
+					Options.textureAlpha = false;
+					Options.textureNormal = false;
+					Options.textureSpecular = false;
+					for (String part : a.substring(13).split(",")) {
+						if (part.equals("base")) Options.textureDiffuse = true;
+						else if (part.equals("alpha")) Options.textureAlpha = true;
+						else if (part.equals("norm")) Options.textureNormal = true;
+						else if (part.equals("spec")) Options.textureSpecular = true;
+						else throw new CmdLineException("Invalid argument to option --tex_export: " + part);
 					}
 				}
 				else if (a.startsWith("--texturepack=")) {
@@ -181,6 +208,7 @@ public class CmdLineParser
 					throw new CmdLineException("Unrecognized option: " + a);
 				}
 				else {
+					Options.exportWorld = true;
 					if (Options.worldDir == null)
 						Options.worldDir = new File(a);
 					else
@@ -199,9 +227,7 @@ public class CmdLineParser
 		}
 
 		// basic validations
-		if (Options.worldDir == null)
-			throw new CmdLineException("Must specify the world directory.");
-		if (!Options.worldDir.isDirectory())
+		if (Options.worldDir != null && !Options.worldDir.isDirectory())
 			throw new CmdLineException(Options.worldDir + " is not a valid directory.");
 		if (!Options.outputDir.isDirectory())
 			throw new CmdLineException(Options.outputDir + " is not a valid directory.");
@@ -233,10 +259,13 @@ public class CmdLineParser
 			"                                    are: 0 - Overworld; -1 - Nether; 1 - The\n" +
 			"                                    End. Mods may add more dimensions. Default\n" +
 			"                                    is 0.\n" +
-			"  -e --export=obj[,mtl[,tex]]       What files to export (any combination is\n" +
+			"  -e --export=obj[,mtl]             What files to export (any combination is\n" +
 			"                                    valid): obj - geometry file (.obj); mtl -\n" +
-			"                                    materials file (.mtl); tex - textures\n" +
-			"                                    directory. Default is obj,mtl.\n" +
+			"                                    materials file (.mtl). Default is obj,mtl.\n" +
+			"  -t --tex_export=base[,alpha][,norm][,spec]\n" +
+			"                                    What textures to export (any combination is\n" +
+			"                                    valid): base - base textures; alpha -\n" +
+			"                                    seperate alphas; norm - normal maps.\n" +
 			"     --texturepack=FILE             When exporting textures, use this texture\n" +
 			"                                    pack. If omitted will export the default\n" +
 			"                                    Minecraft textures.\n" +

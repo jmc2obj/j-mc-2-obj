@@ -182,26 +182,26 @@ public class FaceUtils {
 	 * @param sides
 	 * @return
 	 */
-	public static Face getOuterBlockFace(Side side) {
+	public static Face getOuterBlockFace(Direction side) {
 		Face ret = new Face();
 		ret.uvs = new UV[] { OU[ouBL], OU[ouTL], OU[ouTR], OU[ouBR] };
 		switch (side) {
-		case TOP:
+		case UP:
 			ret.vertices = OBF[0];
 			break;
-		case BOTTOM:
+		case DOWN:
 			ret.vertices = OBF[1];
 			break;
-		case FRONT:
+		case NORTH:
 			ret.vertices = OBF[2];
 			break;
-		case BACK:
+		case SOUTH:
 			ret.vertices = OBF[3];
 			break;
-		case LEFT:
+		case WEST:
 			ret.vertices = OBF[4];
 			break;
-		case RIGHT:
+		case EAST:
 		default:
 			ret.vertices = OBF[5];
 			break;

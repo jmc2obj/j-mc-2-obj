@@ -18,15 +18,13 @@ import org.w3c.dom.Document;
  */
 public class Version
 {
-	public static final String VERSION = "0.2-dev";
-
 	private static final Object syncobj=new Object();
 
 	private static void initialize()
 	{	
 		synchronized(syncobj)
 		{
-			if(revstr!=null && dateval!=null) return;
+			if(rev!=null && dateval!=null) return;
 
 			try{
 				SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
@@ -39,7 +37,7 @@ public class Version
 					Document doc = Xml.loadDocument(stream);
 					XPath xpath = XPathFactory.newInstance().newXPath();            
 
-					revstr=(String) xpath.evaluate("version/revision", doc, XPathConstants.STRING);
+					rev=Integer.valueOf((String) xpath.evaluate("version/revision", doc, XPathConstants.STRING));
 					String datestr=(String) xpath.evaluate("version/date", doc, XPathConstants.STRING);
 
 					if(datestr==null) datestr="";
@@ -49,25 +47,25 @@ public class Version
 				else
 				{
 					dateval=new Date(0);
-					revstr="r0";
+					rev=0;
 				}
 
 			} catch (Exception e) {
 
 				Log.error("Cannot load program version 2", e, false);
 				dateval=new Date(0);
-				revstr="r0";
+				rev=0;
 
 			}
 		}
 	}
 
 
-	private static String revstr=null;
-	public static String REVISION()
+	private static Integer rev=null;
+	public static int VERSION()
 	{
 		initialize();
-		return revstr;
+		return rev;
 	}
 
 	private static Date dateval=null;
@@ -75,16 +73,5 @@ public class Version
 	{
 		initialize();
 		return dateval;
-	}
-
-	public static int compareRevisions(String a, String b)
-	{
-		if(a.isEmpty() || !a.matches("r[0-9]+")) a="r0";
-		if(b.isEmpty() || !b.matches("r[0-9]+")) b="r0";
-
-		int arev=Integer.parseInt(a.substring(1));
-		int brev=Integer.parseInt(b.substring(1));
-
-		return arev-brev;
 	}
 }

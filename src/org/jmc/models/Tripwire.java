@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -12,18 +13,22 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Tripwire extends BlockModel
 {
 
-	private boolean isConnectable(int otherBlockId)
+	private boolean isConnectable(String otherBlockId)
 	{
-		return otherBlockId == blockId || otherBlockId == 131;
+		return otherBlockId.equals(blockId) || otherBlockId.equals("minecraft:tripwire_hook");
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String mtl = materials.get(data,biome)[0];
 		
-		boolean active = (data & 4) != 0;
+		boolean active = data.get("powered").equals("true");
 		
+		
+		/////////////////////
+		// For some reason none of these seem to be working! Need to look at them some more
+		/////////////////////
 		boolean conn_n = isConnectable(chunks.getBlockID(x, y, z-1));
 		boolean conn_s = isConnectable(chunks.getBlockID(x, y, z+1));
 		boolean conn_w = isConnectable(chunks.getBlockID(x-1, y, z));

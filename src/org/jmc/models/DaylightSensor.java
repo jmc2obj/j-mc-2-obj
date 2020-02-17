@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -13,13 +14,15 @@ public class DaylightSensor extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtlSides = getMtlSides(data,biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 
 		Vertex[] vertices = new Vertex[4];
 
+		int inverted = data.get("inverted").equals("true") ? 1 : 0;
+		
 		UV[] uvTop = new UV[] {
 				new UV(0, 0),
 				new UV(1, 0),
@@ -38,7 +41,7 @@ public class DaylightSensor extends BlockModel
 		vertices[1] = new Vertex(x+0.5f, y-0.125f, z+0.5f);
 		vertices[2] = new Vertex(x+0.5f, y-0.125f, z-0.5f);
 		vertices[3] = new Vertex(x-0.5f, y-0.125f, z-0.5f);
-		obj.addFace(vertices, uvTop, null, mtlSides[0]);
+		obj.addFace(vertices, uvTop, null, mtlSides[inverted]);
 		// front
 		if (drawSides[1])
 		{
@@ -46,7 +49,7 @@ public class DaylightSensor extends BlockModel
 			vertices[1] = new Vertex(x-0.5f, y-0.5f, z-0.5f);
 			vertices[2] = new Vertex(x-0.5f, y-0.125f, z-0.5f);
 			vertices[3] = new Vertex(x+0.5f, y-0.125f, z-0.5f);
-			obj.addFace(vertices, uvSide, null, mtlSides[1]);
+			obj.addFace(vertices, uvSide, null, mtlSides[2]);
 		}
 		// back
 		if (drawSides[2])
@@ -64,7 +67,7 @@ public class DaylightSensor extends BlockModel
 			vertices[1] = new Vertex(x-0.5f, y-0.5f, z+0.5f);
 			vertices[2] = new Vertex(x-0.5f, y-0.125f, z+0.5f);
 			vertices[3] = new Vertex(x-0.5f, y-0.125f, z-0.5f);
-			obj.addFace(vertices, uvSide, null, mtlSides[3]);
+			obj.addFace(vertices, uvSide, null, mtlSides[2]);
 		}
 		// right
 		if (drawSides[4])
@@ -73,7 +76,7 @@ public class DaylightSensor extends BlockModel
 			vertices[1] = new Vertex(x+0.5f, y-0.5f, z+0.5f);
 			vertices[2] = new Vertex(x+0.5f, y-0.125f, z+0.5f);
 			vertices[3] = new Vertex(x+0.5f, y-0.125f, z-0.5f);
-			obj.addFace(vertices, uvSide, null, mtlSides[4]);
+			obj.addFace(vertices, uvSide, null, mtlSides[2]);
 		}
 		// bottom
 		if (drawSides[5])
@@ -82,7 +85,7 @@ public class DaylightSensor extends BlockModel
 			vertices[1] = new Vertex(x-0.5f, y-0.5f, z+0.5f);
 			vertices[2] = new Vertex(x-0.5f, y-0.5f, z-0.5f);
 			vertices[3] = new Vertex(x+0.5f, y-0.5f, z-0.5f);
-			obj.addFace(vertices, uvTop, null, mtlSides[5]);
+			obj.addFace(vertices, uvTop, null, mtlSides[2]);
 		}
 	}
 

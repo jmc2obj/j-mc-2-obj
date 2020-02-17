@@ -8,16 +8,19 @@ import java.awt.image.ImagingOpException;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
@@ -37,6 +40,7 @@ import org.w3c.dom.NodeList;
  * packs.
  */
 public class TextureExporter {
+	private static final int FORMAT_1_13 = 4; // 1.13 resource pack
 	private static final int FORMAT_1_6 = 3; // 1.6 resource pack
 	private static final int FORMAT_1_5 = 2; // 1.5 texture pack
 	private static final int FORMAT_PRE_1_5 = 1; // pre-1.5 texture pack
@@ -63,24 +67,42 @@ public class TextureExporter {
 		return ImageIO.read(file);
 	}
 
-	private static BufferedImage loadImageFromZip(File zipfile, String imagePath) throws IOException {
+	private static List<String> loadImageListFromZip(File zipfile) throws IOException {
 		ZipInputStream zis = null;
+		ZipEntry entry = null;
+		Log.debug("\tStarted zip LIST stream");
+		List<String> texlist = new ArrayList<String>();
 		try {
 			zis = new ZipInputStream(new FileInputStream(zipfile));
-
-			ZipEntry entry = null;
 			while ((entry = zis.getNextEntry()) != null)
-				if (!entry.isDirectory() && entry.getName().equals(imagePath))
-					break;
-
-			if (entry == null)
-				throw new IOException("Couldn't find " + imagePath + " in " + zipfile.getName());
-
-			BufferedImage result = ImageIO.read(zis);
-			return result;
+				if (!entry.isDirectory()){
+					texlist.add(entry.getName());
+				}
 		} finally {
 			if (zis != null)
 				zis.close();
+		}
+		return texlist;
+	}
+
+	private static BufferedImage loadImageFromZip(File zipfile, String imagePath) throws IOException {
+		InputStream zis = null;
+		ZipFile zf = null;
+		BufferedImage result = null;
+		try {
+			zf = new ZipFile(zipfile);
+			ZipEntry entry = null;
+			entry = zf.getEntry(imagePath);
+			if (entry.getName() == null)
+				throw new IOException("Couldn't find " + imagePath + " in " + zipfile.getName());
+			zis = zf.getInputStream(entry);
+			result = ImageIO.read(zis);
+		} finally {
+			if (zf != null)
+				zf.close();
+			if (zis != null)
+				zis.close();
+			return result;
 		}
 	}
 
@@ -176,7 +198,7 @@ public class TextureExporter {
 	/**
 	 * Looks inside the given zip file to determine the format of the texture
 	 * pack.
-	 * 
+	 *
 	 * @param zipfile
 	 * @return Constant indicating texture pack format.
 	 * @throws IOException
@@ -186,23 +208,27 @@ public class TextureExporter {
 		try {
 			zis = new ZipInputStream(new FileInputStream(zipfile));
 
-			boolean foundAssetsDir = false;
+			boolean found1_13AssetsDir = false;
+			boolean found1_6AssetsDir = false;
 			boolean foundBlocksDir = false;
 			boolean foundTerrainPng = false;
 
 			ZipEntry entry = null;
 			while ((entry = zis.getNextEntry()) != null) {
 				String entryName = entry.getName();
-				if (entryName.startsWith("assets/minecraft/"))
-					foundAssetsDir = true;
+				if (entryName.startsWith("assets/minecraft/textures/block"))
+					found1_13AssetsDir = true;
+				else if (entryName.startsWith("assets/minecraft/textures/blocks"))
+					found1_6AssetsDir = true;
 				else if (entryName.startsWith("textures/blocks/"))
 					foundBlocksDir = true;
 				else if (entryName.equals("terrain.png"))
 					foundTerrainPng = true;
 			}
 
-			return	foundAssetsDir ? FORMAT_1_6 : 
-					foundBlocksDir ? FORMAT_1_5 : 
+			return	found1_13AssetsDir ? FORMAT_1_13 :
+					found1_6AssetsDir ? FORMAT_1_6 :
+					foundBlocksDir ? FORMAT_1_5 :
 					foundTerrainPng ? FORMAT_PRE_1_5 :
 					FORMAT_INVALID;
 		} finally {
@@ -215,16 +241,20 @@ public class TextureExporter {
 	 * Reads the configuration file "texsplit.conf". Private method to retrieve
 	 * textures from a texturepack in a list. This was extracted into a separate
 	 * method so it can be reused between the split and merge methods.
-	 * 
+	 *
 	 * @param texturePack
 	 * @param scale
 	 * @param progress
+	 * @param diffuse
+	 * @param alphas
+	 * @param merging
+	 * @param exportNormal
+	 * @param exportSpecular
 	 * @return
 	 * @throws Exception
 	 */
-//	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress)
-	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean alphas, boolean merging, File destination)
-			throws Exception {
+	private static List<Texture> getTextures(File texturePack, double scale, ProgressCallback progress, boolean diffuse, boolean alphas,
+			boolean merging, boolean exportNormal, boolean exportSpecular, File destination) throws Exception {
 		List<Texture> ret = new LinkedList<Texture>();
 		Set<String> texnameset = new HashSet<String>();
 
@@ -238,8 +268,12 @@ public class TextureExporter {
 
 		String confFilePath;
 		switch (detectTexturePackFormat(zipfile)) {
+		case FORMAT_1_13:
+			Log.info("Found resource pack (Minecraft 1.13 or later)");
+			confFilePath = "conf/texsplit_1.13.conf";
+			break;
 		case FORMAT_1_6:
-			Log.info("Found resource pack (Minecraft 1.6 or later)");
+			Log.info("Found resource pack (Minecraft 1.6 - 1.12)");
 			confFilePath = "conf/texsplit_1.6.conf";
 			break;
 		case FORMAT_1_5:
@@ -262,6 +296,9 @@ public class TextureExporter {
 		Document doc = Xml.loadDocument(confFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
+		// create a memory copy of zip file names, to avoid duplicate zipstreams
+		List<String> texlist = loadImageListFromZip(zipfile);
+
 		NodeList fileNodes = (NodeList) xpath.evaluate("/texsplit/file", doc, XPathConstants.NODESET);
 		for (int i = 0; i < fileNodes.getLength(); i++) {
 			Node fileNode = fileNodes.item(i);
@@ -273,22 +310,13 @@ public class TextureExporter {
 			if (fileName == null || fileName.length() == 0)
 				throw new Exception("In " + confFilePath + ": 'file' tag is missing required attribute 'name'.");
 
-			BufferedImage image;
-			
+			BufferedImage image = null;
 			try {
-				if (source.equalsIgnoreCase("texturepack"))
-					image = loadImageFromZip(zipfile, fileName);
-				else if (source.equalsIgnoreCase("distr"))
-					image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
-				else
-					image = loadImageFromFile(new File(fileName));
+				image = loadImage(zipfile, source, fileName);
 			} catch (Exception e) {
-				Log.info("Error loading image: " + e.getMessage());
+				Log.info("Error loading image (" + fileName + "): "+ e.getMessage());
 				continue;
 			}
-
-			if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-				image = convertImageType(image);
 
 			int width = image.getWidth() / Integer.parseInt(cols, 10);
 			int height = rows.equals("*") ? width : (image.getHeight() / Integer.parseInt(rows, 10));
@@ -303,7 +331,7 @@ public class TextureExporter {
 				String repeating_str = Xml.getAttribute(texNode, "repeating");
 				if (repeating_str != null)
 					repeating = repeating_str.toLowerCase().equals("true");
-				
+
 				boolean luma = false;
 				String luma_str = Xml.getAttribute(texNode, "luma");
 				if (luma_str != null)
@@ -325,7 +353,7 @@ public class TextureExporter {
 				int rowPos = Integer.parseInt(parts[0], 10) - 1;
 				int colPos = Integer.parseInt(parts[1], 10) - 1;
 
-				Log.info("Creating Buffer Image");
+				Log.debug("Creating Buffer Image");
 				BufferedImage texture = new BufferedImage(width, height, image.getType());
 				image.getSubimage(colPos * width, rowPos * height, width, height).copyData(texture.getRaster());
 
@@ -348,93 +376,78 @@ public class TextureExporter {
 				if(merging){
 					ret.add(new Texture(texName, texture, repeating, luma));
 				}
-				else{
-				
-					Log.info("Creating Texture File");
+				else {
+					Log.debug("Creating Texture for: " + texName);
 					Texture texture2 = new Texture(texName, texture, repeating, luma);
-					Log.info("Writing Texture File");
-					ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
-					
-					try {
-						Log.info("Trying normal map");
-						BufferedImage imageN;
-						
-						Log.info("Searching for normal");
-						if (source.equalsIgnoreCase("texturepack"))
-							imageN = loadImageFromZip(zipfile, fileName.replace(".png", "_n.png"));
-						else if (source.equalsIgnoreCase("distr"))
-							imageN = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_n.png")));
-						else
-							imageN = loadImageFromFile(new File(fileName.replace(".png", "_n.png")));
-						
-						if (imageN.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-							imageN = convertImageType(imageN);
-						
-						Log.info("Found Normal. Creating Buffered Texture.");
-						BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
-						imageN.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureN.getRaster());
-						if (scale != 1.0) {
-							try {
-								textureN = scaleImage(textureN, scale);
-							} catch (Exception e) {
-								Log.info("Cannot scale image: " + texName + "_n (" + e.getMessage() + ")");
-							}
-						}
-						
-						Log.info("Creating Texture.");
-						Texture texture2N = new Texture(texName + "_n", textureN, repeating, false);
-						Log.info("Writing Texture.");
-						ImageIO.write(texture2N.image, "png", new File(destination, texture2N.name + ".png"));
-						
-					} catch (Exception e) {
-						Log.info("Error loading image: " + e.getMessage());
-						continue;
+
+					if (diffuse) {
+						Log.debug("Writing Diffuse Texture: " + texName);
+						ImageIO.write(texture2.image, "png", new File(destination, texture2.name + ".png"));
 					}
 
-					try {
-						
-						Log.info("Trying specular map");
-						BufferedImage imageS;
-						Log.info("Searching for spec");
-						if (source.equalsIgnoreCase("texturepack"))
-							imageS = loadImageFromZip(zipfile, fileName.replace(".png", "_s.png"));
-						else if (source.equalsIgnoreCase("distr"))
-							imageS = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName.replace(".png", "_s.png")));
-						else
-							imageS = loadImageFromFile(new File(fileName.replace(".png", "_s.png")));
-						
-						if (imageS.getType() != BufferedImage.TYPE_4BYTE_ABGR)
-							imageS = convertImageType(imageS);
-						
-						Log.info("Found Specular. Creating Buffered Texture.");
-						BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
-						imageS.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureS.getRaster());
-						if (scale != 1.0) {
-							try {
-								textureS = scaleImage(textureS, scale);
-							} catch (Exception e) {
-								Log.info("Cannot scale image: " + texName + "_s (" + e.getMessage() + ")");
-							}
-						}
-						Log.info("Creating Texture.");
-						Texture texture2S = new Texture(texName + "_s", textureS, repeating, false);
-						Log.info("Writing Texture.");
-						ImageIO.write(texture2S.image, "png", new File(destination, texture2S.name + ".png"));
-						
-					} catch (Exception e) {
-						Log.info("Error loading image: " + e.getMessage());
-						continue;
-					}
-	
-					if (alphas) {
+					if (alphas){
 						try {
 							convertToAlpha(texture2.image);
+							Log.debug("Writing Alpha Texture: " + texture2.name + "_a.png");
 							ImageIO.write(texture2.image, "png", new File(destination, texture2.name + "_a.png"));
 						} catch (Exception e) {
 							Log.info("Cannot save alpha for: " + texture2.name + " (" + e.getMessage() + ")");
 						}
 					}
-					
+
+					if (exportNormal && texlist.contains(fileName.replace(".png", "_n.png"))) {
+						try {
+							Log.debug("Trying normal map");
+
+							BufferedImage imageN = loadImage(zipfile, source, fileName.replace(".png", "_n.png"));
+
+							Log.debug("Found Normal. Creating Buffered Texture.");
+							BufferedImage textureN = new BufferedImage(width, height, imageN.getType());
+							imageN.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureN.getRaster());
+							if (scale != 1.0) {
+								try {
+									textureN = scaleImage(textureN, scale);
+								} catch (Exception e) {
+									Log.info("Cannot scale image: " + texName + "_n (" + e.getMessage() + ")");
+								}
+							}
+
+							Log.debug("Creating Normal Texture. " + texName + "_n");
+							Texture texture2N = new Texture(texName + "_n", textureN, repeating, false);
+							Log.debug("Writing Normal Texture. " + texture2N.name);
+							ImageIO.write(texture2N.image, "png", new File(destination, texture2N.name + ".png"));
+
+						} catch (Exception e) {
+							Log.info("Error loading normal texture: " + e.getMessage());
+						}
+					}
+
+					if (exportSpecular && texlist.contains(fileName.replace(".png", "_s.png"))) {
+						try {
+							Log.debug("Trying specular map");
+
+							BufferedImage imageS = loadImage(zipfile, source, fileName.replace(".png", "_s.png"));
+
+							Log.debug("Found Specular. Creating Buffered Texture.");
+							BufferedImage textureS = new BufferedImage(width, height, imageS.getType());
+							imageS.getSubimage(colPos * width, rowPos * height, width, height).copyData(textureS.getRaster());
+							if (scale != 1.0) {
+								try {
+									textureS = scaleImage(textureS, scale);
+								} catch (Exception e) {
+									Log.info("Cannot scale image: " + texName + "_s (" + e.getMessage() + ")");
+								}
+							}
+							Log.debug("Creating Specular Texture. " + texName + "_s");
+							Texture texture2S = new Texture(texName + "_s", textureS, repeating, false);
+							Log.debug("Writing Specular Texture. " + texture2S.name);
+							ImageIO.write(texture2S.image, "png", new File(destination, texture2S.name + ".png"));
+
+						} catch (Exception e) {
+							Log.info("Error loading specular image: " + e.getMessage());
+						}
+					}
+
 				}
 
 			}
@@ -442,17 +455,32 @@ public class TextureExporter {
 			if (progress != null)
 				progress.setProgress((i + 1) / (float) fileNodes.getLength());
 		}
-		
+
 		if(merging)
 			return ret;
 		else
 			return null;
 	}
 
+	private static BufferedImage loadImage(File zipfile, String source, String fileName) throws IOException {
+		BufferedImage image;
+		if (source.equalsIgnoreCase("texturepack"))
+			image = loadImageFromZip(zipfile, fileName);
+		else if (source.equalsIgnoreCase("distr"))
+			image = loadImageFromFile(new File(Filesystem.getDatafilesDir(), fileName));
+		else
+			image = loadImageFromFile(new File(fileName));
+
+		if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+			image = convertImageType(image);
+
+		return image;
+	}
+
 	/**
 	 * Reads a Minecraft texture pack and splits the individual block textures
 	 * into .png images.
-	 * 
+	 *
 	 * @param destination
 	 *            Directory to place the output files.
 	 * @param texturePack
@@ -460,16 +488,21 @@ public class TextureExporter {
 	 *            default textures.
 	 * @param scale
 	 *            Scaling to apply to textures.
+	 * @param diffuse TODO
 	 * @param alphas
 	 *            Whether to export separate alpha masks.
+	 * @param normals
+	 *            Whether to export separate normal maps.
+	 * @param specular
+	 *            Whether to export separate specular maps.
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
 	 * @throws Exception
 	 *             if there is an error.
 	 */
-	public static void splitTextures(File destination, File texturePack, double scale, boolean alphas,
-			ProgressCallback progress) throws Exception {
+	public static void splitTextures(File destination, File texturePack, double scale, boolean diffuse,
+			boolean alphas, boolean normals, boolean specular, ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
@@ -481,7 +514,8 @@ public class TextureExporter {
 				throw new RuntimeException("Cannot create texture directory!");
 		}
 
-/*		List<Texture> textures = */getTextures(texturePack, scale, progress, alphas, false, destination);
+/*		List<Texture> textures = */
+		getTextures(texturePack, scale, progress, diffuse, alphas, false, normals, specular, destination);
 
 //		float texnum = textures.size();
 //		float count = 0;
@@ -508,7 +542,7 @@ public class TextureExporter {
 	 * Reads a Minecraft texture pack and splits the individual block textures
 	 * into separate images then merges them into a single file containing all
 	 * the textures.
-	 * 
+	 *
 	 * @param destination
 	 *            Directory to place the output files. They will be called
 	 *            "texture.png" and "texture_a.png"
@@ -517,16 +551,22 @@ public class TextureExporter {
 	 *            default textures.
 	 * @param scale
 	 *            Scaling to apply to textures.
+	 * @param diffuse
+	 *            Whether to export separate diffuse maps.
 	 * @param alphas
 	 *            Whether to export separate alpha masks.
+	 * @param normals
+	 *            Whether to export separate normal maps.
+	 * @param specular
+	 *            Whether to export separate specular maps.
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
 	 * @throws Exception
 	 *             if there is an error.
 	 */
-	public static void mergeTextures(File destination, File texturePack, double scale, boolean alphas, boolean lumas,
-			ProgressCallback progress) throws Exception {
+	public static void mergeTextures(File destination, File texturePack, double scale, boolean diffuse, boolean alphas,
+			boolean lumas, boolean normals, boolean specular, ProgressCallback progress) throws Exception {
 		if (destination == null)
 			throw new IllegalArgumentException("destination cannot be null");
 
@@ -540,7 +580,7 @@ public class TextureExporter {
 
 		Map<String, Rectangle> ret = new HashMap<String, Rectangle>();
 
-		List<Texture> textures = getTextures(texturePack, scale, progress, alphas, true, destination);
+		List<Texture> textures = getTextures(texturePack, scale, progress, diffuse, alphas, true, normals, specular, destination);
 
 		// calculate maxwidth so to keep the size of the final file more or less
 		// square
@@ -614,7 +654,7 @@ public class TextureExporter {
 
 		BufferedImage textureimage = new BufferedImage(wmax, hmax, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D gtex = textureimage.createGraphics();
-		
+
 		BufferedImage lumaimage = new BufferedImage(wmax, hmax, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D gtexluma = lumaimage.createGraphics();
 
@@ -631,7 +671,7 @@ public class TextureExporter {
 						int sy = rect.y + y * rect.height;
 						gtex.drawImage(texture.image, sx, sy, sx + rect.width, sy + rect.height, 0, 0, rect.width,
 								rect.height, null);
-						
+
 						if(lumas)
 							if(texture.luma)
 								gtexluma.drawImage(texture.image, sx, sy, sx + rect.width, sy + rect.height, 0, 0, rect.width,
@@ -653,7 +693,7 @@ public class TextureExporter {
 		ImageIO.write(textureimage, "png", new File(destination, "texture.png"));
 		if(lumas)
 			ImageIO.write(lumaimage, "png", new File(destination, "texture_luma.png"));
-		
+
 		if (alphas) {
 			try {
 				convertToAlpha(textureimage);

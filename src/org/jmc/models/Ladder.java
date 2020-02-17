@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
@@ -13,22 +14,28 @@ public class Ladder extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
 		Transform rt;
 		
-		switch (data)
+		switch (data.get("facing"))
 		{
-			case 2:
+			case "north":
 				rotate.rotate(0, 180, 0);
 				break;
-			case 4:
+			case "east":
+				rotate.rotate(0, -90, 0);
+				break;
+			case "south":
+				//rotate.rotate(0, 0, 0);
+				break;
+			case "west":
 				rotate.rotate(0, 90, 0);
 				break;
-			case 5:
-				rotate.rotate(0, -90, 0);
+			default:
+				
 				break;
 		}
 		translate.translate(x, y, z);		

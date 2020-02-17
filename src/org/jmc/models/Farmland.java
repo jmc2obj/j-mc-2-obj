@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
@@ -12,12 +13,12 @@ public class Farmland extends BlockModel
 {
 	
 	@Override
-	protected String[] getMtlSides(byte data, byte biome)
+	protected String[] getMtlSides(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
-		mtlSides[0] = data == 0 ? abbrMtls[0] : abbrMtls[1];
+		mtlSides[0] = data.get("moisture").equals("7") ? abbrMtls[0] : abbrMtls[1];
 		mtlSides[1] = abbrMtls[2];
 		mtlSides[2] = abbrMtls[2];
 		mtlSides[3] = abbrMtls[2];
@@ -28,7 +29,7 @@ public class Farmland extends BlockModel
 	
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, byte data, byte biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 		

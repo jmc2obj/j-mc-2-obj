@@ -1,5 +1,7 @@
 package org.jmc.geom;
 
+import java.util.Arrays;
+
 import org.jmc.geom.FaceUtils.Face;
 
 /**
@@ -9,10 +11,10 @@ import org.jmc.geom.FaceUtils.Face;
  * 
  */
 public class Transform {
-	float matrix[][];
+	double matrix[][];
 
 	public Transform() {
-		matrix = new float[4][4];
+		matrix = new double[4][4];
 		identity();
 	}
 
@@ -42,9 +44,9 @@ public class Transform {
 			throw new RuntimeException("matrix multiply error: last row doesn't add to 1");
 
 		Vertex ret = new Vertex(0, 0, 0);
-		ret.x = vertex.x * matrix[0][0] + vertex.y * matrix[0][1] + vertex.z * matrix[0][2] + matrix[0][3];
-		ret.y = vertex.x * matrix[1][0] + vertex.y * matrix[1][1] + vertex.z * matrix[1][2] + matrix[1][3];
-		ret.z = vertex.x * matrix[2][0] + vertex.y * matrix[2][1] + vertex.z * matrix[2][2] + matrix[2][3];
+		ret.x = (float) (vertex.x * matrix[0][0] + vertex.y * matrix[0][1] + vertex.z * matrix[0][2] + matrix[0][3]);
+		ret.y = (float) (vertex.x * matrix[1][0] + vertex.y * matrix[1][1] + vertex.z * matrix[1][2] + matrix[1][3]);
+		ret.z = (float) (vertex.x * matrix[2][0] + vertex.y * matrix[2][1] + vertex.z * matrix[2][2] + matrix[2][3]);
 		return ret;
 	}
 
@@ -62,19 +64,19 @@ public class Transform {
 	}
 
 	public Vertex applyToNormal(Vertex norm) {
-		float[][] invt = new float[3][3]; // inverse transpose
+		double[][] invt = new double[3][3]; // inverse transpose
 
-		float a = matrix[0][0];
-		float b = matrix[0][1];
-		float c = matrix[0][2];
-		float d = matrix[1][0];
-		float e = matrix[1][1];
-		float f = matrix[1][2];
-		float g = matrix[2][0];
-		float h = matrix[2][1];
-		float k = matrix[2][2];
+		double a = matrix[0][0];
+		double b = matrix[0][1];
+		double c = matrix[0][2];
+		double d = matrix[1][0];
+		double e = matrix[1][1];
+		double f = matrix[1][2];
+		double g = matrix[2][0];
+		double h = matrix[2][1];
+		double k = matrix[2][2];
 
-		float det = a * (e * k - f * h) + b * (f * g - d * k) + c * (d * h - e * g);
+		double det = a * (e * k - f * h) + b * (f * g - d * k) + c * (d * h - e * g);
 
 		invt[0][0] = (e * k - f * h) / det;
 		invt[0][1] = (f * g - d * k) / det;
@@ -86,8 +88,8 @@ public class Transform {
 		invt[2][1] = (c * d - a * f) / det;
 		invt[2][2] = (a * e - b * d) / det;
 
-		return new Vertex(norm.x * invt[0][0] + norm.y * invt[0][1] + norm.z * invt[0][2], norm.x * invt[1][0] + norm.y
-				* invt[1][1] + norm.z * invt[1][2], norm.x * invt[2][0] + norm.y * invt[2][1] + norm.z * invt[2][2]);
+		return new Vertex((float) (norm.x * invt[0][0] + norm.y * invt[0][1] + norm.z * invt[0][2]),(float) (norm.x * invt[1][0] + norm.y
+				* invt[1][1] + norm.z * invt[1][2]),(float) (norm.x * invt[2][0] + norm.y * invt[2][1] + norm.z * invt[2][2]));
 	}
 
 	public void translate(float x, float y, float z) {
@@ -106,77 +108,98 @@ public class Transform {
 		matrix[2][2] = z;
 	}
 
-	public void rotate(float a, float b, float g) {
+	public void rotate(double a, double b, double g) {
 		// convert to rad
-		a = (float) (a * Math.PI / 180.0);
-		b = (float) (b * Math.PI / 180.0);
-		g = (float) (g * Math.PI / 180.0);
+		a = Math.toRadians(a);
+		b = Math.toRadians(b);
+		g = Math.toRadians(g);
 
 		identity();
 		Transform ret;
 		Transform trans = new Transform();
 
-		trans.matrix[1][1] = (float) Math.cos(a);
-		trans.matrix[1][2] = (float) -Math.sin(a);
-		trans.matrix[2][1] = (float) Math.sin(a);
-		trans.matrix[2][2] = (float) Math.cos(a);
+		trans.matrix[1][1] = Math.cos(a);
+		trans.matrix[1][2] = -Math.sin(a);
+		trans.matrix[2][1] = Math.sin(a);
+		trans.matrix[2][2] = Math.cos(a);
 
 		ret = multiply(trans);
 		matrix = ret.matrix;
 
 		trans.identity();
-		trans.matrix[0][0] = (float) Math.cos(b);
-		trans.matrix[0][2] = (float) -Math.sin(b);
-		trans.matrix[2][0] = (float) Math.sin(b);
-		trans.matrix[2][2] = (float) Math.cos(b);
+		trans.matrix[0][0] = Math.cos(b);
+		trans.matrix[0][2] = -Math.sin(b);
+		trans.matrix[2][0] = Math.sin(b);
+		trans.matrix[2][2] = Math.cos(b);
 
 		ret = multiply(trans);
 		matrix = ret.matrix;
 
 		trans.identity();
-		trans.matrix[0][0] = (float) Math.cos(g);
-		trans.matrix[0][1] = (float) -Math.sin(g);
-		trans.matrix[1][0] = (float) Math.sin(g);
-		trans.matrix[1][1] = (float) Math.cos(g);
+		trans.matrix[0][0] = Math.cos(g);
+		trans.matrix[0][1] = -Math.sin(g);
+		trans.matrix[1][0] = Math.sin(g);
+		trans.matrix[1][1] = Math.cos(g);
 
 		ret = multiply(trans);
 		matrix = ret.matrix;
 	}
+	
+	/*
+	 * Rotates based on direction, assumes front facing NORTH
+	 */
+	public void rotate(Direction dir) {
+		switch (dir)
+		{
+			default:
+			case NORTH: rotate(0, 0, 0); break;
+			case SOUTH: rotate(0, 180, 0); break;
+			case EAST: 	rotate(0, 90, 0); break;
+			case WEST: 	rotate(0, -90, 0); break;
+			case UP: 	rotate(90, 0, 0); break;
+			case DOWN: 	rotate(-90, 0, 0); break;
+		}
+	}
 
-	public void rotate2(float yaw, float pitch, float roll) {
+	public void rotate2(double yaw, double pitch, double roll) {
 		// TODO: check if this works correctly
 		// convert to rad
-		roll = (float) (roll * Math.PI / 180.0);
-		pitch = (float) (pitch * Math.PI / 180.0);
-		yaw = (float) (yaw * Math.PI / 180.0);
+		roll = Math.toRadians(roll);
+		pitch = Math.toRadians(pitch);
+		yaw = Math.toRadians(yaw);
 
 		identity();
 		Transform ret;
 		Transform trans = new Transform();
 
-		trans.matrix[0][0] = (float) Math.cos(yaw);
-		trans.matrix[0][2] = (float) -Math.sin(yaw);
-		trans.matrix[2][0] = (float) Math.sin(yaw);
-		trans.matrix[2][2] = (float) Math.cos(yaw);
+		trans.matrix[0][0] = Math.cos(yaw);
+		trans.matrix[0][2] = -Math.sin(yaw);
+		trans.matrix[2][0] = Math.sin(yaw);
+		trans.matrix[2][2] = Math.cos(yaw);
 		ret = multiply(trans);
 		matrix = ret.matrix;
 
 		trans.identity();
-		trans.matrix[1][1] = (float) Math.cos(pitch);
-		trans.matrix[1][2] = (float) -Math.sin(pitch);
-		trans.matrix[2][1] = (float) Math.sin(pitch);
-		trans.matrix[2][2] = (float) Math.cos(pitch);
+		trans.matrix[1][1] = Math.cos(pitch);
+		trans.matrix[1][2] = -Math.sin(pitch);
+		trans.matrix[2][1] = Math.sin(pitch);
+		trans.matrix[2][2] = Math.cos(pitch);
 
 		ret = multiply(trans);
 		matrix = ret.matrix;
 
 		trans.identity();
-		trans.matrix[0][0] = (float) Math.cos(roll);
-		trans.matrix[0][1] = (float) -Math.sin(roll);
-		trans.matrix[1][0] = (float) Math.sin(roll);
-		trans.matrix[1][1] = (float) Math.cos(roll);
+		trans.matrix[0][0] = Math.cos(roll);
+		trans.matrix[0][1] = -Math.sin(roll);
+		trans.matrix[1][0] = Math.sin(roll);
+		trans.matrix[1][1] = Math.cos(roll);
 
 		ret = multiply(trans);
 		matrix = ret.matrix;
+	}
+	
+	@Override
+	public String toString() {
+		return Arrays.deepToString(matrix);
 	}
 }

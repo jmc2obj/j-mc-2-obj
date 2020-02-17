@@ -44,11 +44,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Maximum width of the panel.
 	 */
-	private final int MAX_WIDTH=1920;
+	private final int MAX_WIDTH=3840;
 	/**
 	 * Maximum height of the panel.
 	 */
-	private final int MAX_HEIGHT=1080;
+	private final int MAX_HEIGHT=2160;
 
 	/**
 	 * Selection boundaries.

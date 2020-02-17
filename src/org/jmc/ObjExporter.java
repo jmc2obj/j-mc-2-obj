@@ -49,7 +49,7 @@ public class ObjExporter {
 	 * <li>Add the geometry to the OBJ, one chunk at a time.
 	 * <li>The ChunkDataBuffer holds a collection of chunks in the range of 
 	 * x-1..x+1 and z-1..z+1 around the chunk that is being processed. This
-	 * is so that neighboring block information exists for blocks that are at
+	 * is so that neighbouring block information exists for blocks that are at
 	 * the edge of the chunk.
 	 * <li>By holding only 9 chunks at a time, we can export arbitrarily large
 	 * maps in constant memory.
@@ -88,11 +88,6 @@ public class ObjExporter {
 		}
 
 		try {
-			if (writeMtl) {
-				Materials.copyMTLFile(mtlfile);
-				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
-			}
-
 			if (writeObj) {
 				if (Options.maxX - Options.minX == 0 || Options.maxY - Options.minY == 0
 						|| Options.maxZ - Options.minZ == 0) {
@@ -189,7 +184,7 @@ public class ObjExporter {
 					}
 				}
 				
-				Log.info("Adding to queue:" + (System.nanoTime() - timer)/1000000000d);
+				Log.debug("Adding to queue:" + (System.nanoTime() - timer)/1000000000d);
 				
 				inputQueue.finish();
 				
@@ -198,13 +193,13 @@ public class ObjExporter {
 				for (Thread thread : threads){
 					thread.join();
 				}
-				Log.info("Reading Chunks:" + (System.nanoTime() - timer)/1000000000d);
+				Log.debug("Reading Chunks:" + (System.nanoTime() - timer)/1000000000d);
 				timer = System.nanoTime();
 				
 				outputQueue.finish();
 				writeThread.join();
 				
-				Log.info("Writing File:" + (System.nanoTime() - timer)/1000000000d);
+				Log.debug("Writing File:" + (System.nanoTime() - timer)/1000000000d);
 				Log.info("Total:" + (System.nanoTime() - timer2)/1000000000d);
 				
 				chunk_buffer.removeAllChunks();
@@ -376,6 +371,11 @@ public class ObjExporter {
 						Log.error("Failed to erase temp dir: " + tmpdir.getAbsolutePath()
 								+ "\nPlease remove it yourself!", null);
 				}
+			}
+			
+			if (writeMtl) {
+				Materials.copyMTLFile(mtlfile);
+				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
 			}
 
 			Log.info("Done!");

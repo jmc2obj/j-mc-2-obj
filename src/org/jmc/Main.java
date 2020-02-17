@@ -39,7 +39,7 @@ public class Main
 			Locale.setDefault(Locale.ENGLISH);			
 		}
 		
-		System.out.println("jmc2obj "+Version.VERSION+" ("+Version.REVISION()+")");
+		System.out.println("jmc2obj "+Version.VERSION());
 
 		if (args.length == 0) {
 			Options.uiMode = UIMode.GUI;
@@ -101,18 +101,21 @@ public class Main
 			System.exit(-2);
 		}
 		
-		ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
-
 		if (Options.exportTex) {
-			System.out.println("Exporting textures...");
+			Log.info("Exporting textures...");
 			try {
 				TextureExporter.splitTextures(
 						new File(Options.outputDir, "tex"), 
-						Options.texturePack, Options.textureScale, true, new ConsoleProgress());
+						Options.texturePack, Options.textureScale, Options.textureDiffuse, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, new ConsoleProgress());
 			}
 			catch (Exception e) {
 				Log.error("Error saving textures:", e);
 			}
+			Log.info("Texture export complete.");
+		}
+		
+		if (Options.exportWorld) {
+			ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
 		}
 	}
 
