@@ -878,6 +878,7 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 							btnForceStop.setEnabled(false);
 						}
 					});
+					t.setName("ExportThread");
 					t.start();
 
 				} else {

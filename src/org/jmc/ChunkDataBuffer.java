@@ -25,22 +25,25 @@ public class ChunkDataBuffer {
 		chunkUsers=new HashMap<Point, Integer>();
 	}
 	
-	public synchronized void addChunk(Chunk chunk)
+	public void addChunk(Chunk chunk)
 	{
 		
 		Point p=new Point();
 		p.x=chunk.getPosX();
 		p.y=chunk.getPosZ();
-		chunks.put(p, chunk.getBlocks());
-		Integer currUsers = chunkUsers.get(p);
-		if (currUsers != null) {
-			currUsers++;
-		} else {
-			currUsers = 1;
+		Blocks blocks = chunk.getBlocks();
+		synchronized (this) {
+			chunks.put(p, blocks);
+			Integer currUsers = chunkUsers.get(p);
+			if (currUsers != null) {
+				currUsers++;
+			} else {
+				currUsers = 1;
+			}
+			chunkUsers.put(p, currUsers);
+			
+			is_anvil=chunk.isAnvil();
 		}
-		chunkUsers.put(p, currUsers);
-		
-		is_anvil=chunk.isAnvil();
 	}
 	
 	public synchronized void removeChunk(int x, int z)

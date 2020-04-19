@@ -283,6 +283,7 @@ public class Banner extends BlockModel {
 	                }
 	                catch (IOException e) {
 	                    Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
+	                    return;
 	                }
 	
 	                // pattern source image
@@ -292,6 +293,7 @@ public class Banner extends BlockModel {
 	                }
 	                catch (IOException e) {
 	                    Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
+	                    return;
 	                }
 	
 	

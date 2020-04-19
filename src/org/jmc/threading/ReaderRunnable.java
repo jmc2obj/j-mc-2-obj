@@ -93,8 +93,8 @@ public class ReaderRunnable implements Runnable {
 	}
 	
 	private static boolean addChunkIfExists(ChunkDataBuffer chunk_buffer, int x, int z) {
-//		if (chunk_buffer.hasChunk(x, z))
-//			return true;
+		if (chunk_buffer.hasChunk(x, z))
+			return true;
 
 		try {
 			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);

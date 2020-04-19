@@ -25,22 +25,6 @@ import org.jmc.util.Messages;
  * .MTL file)
  */
 public class ObjExporter {
-	private static boolean chunkExists(int x, int z) {
-		try {
-			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);
-			if (region == null)
-				return false;
-
-			Chunk chunk = region.getChunk(x, z);
-			if (chunk == null)
-				return false;
-			
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	/**
 	 * Do the export. Export settings are taken from the global Options.
 	 * <p>
@@ -178,13 +162,9 @@ public class ObjExporter {
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
 					for (int cz = cs.y; cz <= ce.y; cz++) {
-						if (chunkExists(cx, cz)){
-							inputQueue.add(cx, cz);
-						}
+						inputQueue.add(cx, cz);
 					}
 				}
-				
-				Log.debug("Adding to queue:" + (System.nanoTime() - timer)/1000000000d);
 				
 				inputQueue.finish();
 				
@@ -200,7 +180,7 @@ public class ObjExporter {
 				writeThread.join();
 				
 				Log.debug("Writing File:" + (System.nanoTime() - timer)/1000000000d);
-				Log.info("Total:" + (System.nanoTime() - timer2)/1000000000d);
+				Log.info("Time:" + (System.nanoTime() - timer2)/1000000000d);
 				
 				chunk_buffer.removeAllChunks();
 
