@@ -136,14 +136,14 @@ public class Chunk {
 		 * Main constructor.
 		 * @param num number of blocks to allocate
 		 */
-		public Blocks(int block_num, int biome_num)
+		public Blocks(int block_num)
 		{
 			id=new String[block_num];
 			data=new ArrayList<BlockData>(block_num);
 			for (int i = 0; i < block_num; i++) 
 				data.add(new BlockData());
-			biome=new int[biome_num];
-			Arrays.fill(biome, (byte)255);
+			biome=new int[block_num];
+			Arrays.fill(biome, 1);//default to plains
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
 		}
@@ -183,40 +183,43 @@ public class Chunk {
 
 		if(is_anvil)
 		{
+			int chunkVer = 0;
+			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
+				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
+			}
+			
 			int ymax=0;
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-				if(yval.value>ymax) ymax=yval.value;
+				if (c_section.getElement("BlockStates") != null) {
+					ymax= Math.max(ymax, yval.value);
+				}
 			}
 			
-			int chunkVer = 0;
-			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
-				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
-			}
-
 			ymax=(ymax+1)*16;
 
-			ret=new Blocks(16*16*ymax,16*16);
+			ret=new Blocks(16*16*ymax);
+			
+			TAG_Int_Array tagBiomes;
+			if (chunkVer <= 1464) {
+				TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
+				int[] biomes = new int[tagByteBiomes.data.length];
+				for (int i = 0; i < tagByteBiomes.data.length; i++) {
+					biomes[i] = tagByteBiomes.data[i];
+				}
+				tagBiomes = new TAG_Int_Array("Biomes", biomes);
+			}
+			else {
+				tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
+			}
 
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-				TAG_Int_Array tagBiomes;
-				if (chunkVer <= 1464) {
-					TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
-					int[] biomes = new int[tagByteBiomes.data.length];
-					for (int i = 0; i < tagByteBiomes.data.length; i++) {
-						biomes[i] = tagByteBiomes.data[i];
-					}
-					tagBiomes = new TAG_Int_Array("Biomes", biomes);
-				}
-				else {
-					tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
-				}
 				
 				int base=yval.value*16*16*16;
 				
@@ -247,6 +250,7 @@ public class Chunk {
 						byte add2=(byte)(tagData.data[i]>>4);
 						oldData[base+2*i]=add1;
 						oldData[base+2*i+1]=add2;
+						//TODO old format conversion
 					}
 					
 					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
@@ -294,15 +298,20 @@ public class Chunk {
 					}
 				}
 
-				if(tagBiomes!=null)
-				{
-					for(int i=0; i<tagBiomes.data.length; i++)
-						ret.biome[i]=tagBiomes.data[i];
-				}
-				else
-				{
-					for(int i=0; i<ret.biome.length; i++)
-						ret.biome[i]=1; //if biomes are missing set everything to plains
+				if(tagBiomes!=null) {
+					for(int x = 0; x < 16; x++) {
+						for (int z = 0; z < 16; z++) {
+							for (int y = 0; y < ymax; y++) {
+								int biome;
+								if (chunkVer <= 2201) {
+									biome = tagBiomes.data[x+z*16];
+								} else {
+									biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
+								}
+								ret.biome[x + z*16 + y*16*16] = biome;
+							}
+						}
+					}
 				}
 			}			
 		}
@@ -312,7 +321,7 @@ public class Chunk {
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 
 			byte add1,add2;
-			ret=new Blocks(blocks.data.length,256);
+			ret=new Blocks(blocks.data.length);
 			short[] oldIDs = new short[ret.id.length];
 			byte[] oldData = new byte[ret.data.size()];
 
@@ -416,7 +425,7 @@ public class Chunk {
 
 				for(y = floor; y < ceiling; y++)
 				{
-					blockBiome = bd.biome[x*16+z]; 
+					blockBiome = bd.biome[x + z*16 + y*16*16];
 
 					if(is_anvil)
 					{

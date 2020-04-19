@@ -117,17 +117,18 @@ public class ThreadChunkDeligate {
 		}
 	}
 	
-	public int getBlockBiome(int x, int z)
+	public int getBlockBiome(int x, int y, int z)
 	{
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return (byte)255;
+		if(blocks==null) return 255;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);
 		
-		return blocks.biome[rx*16+rz];
+		if(y>=blocks.id.length/(16*16)) return 1;
+		return blocks.biome[rx + (rz * 16) + (y * 16) * 16];
 	}
 	
 	public List<TAG_Compound> getEntities(int cx, int cz)

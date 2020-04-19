@@ -132,7 +132,7 @@ public class ChunkProcessor
 				{
 					String blockID=chunk.getBlockID(x, y, z);
 					BlockData blockData=chunk.getBlockData(x, y, z);
-					int blockBiome=chunk.getBlockBiome(x, z);
+					int blockBiome=chunk.getBlockBiome(x, y, z);
 					
 					if(blockID.endsWith("air"))
 						continue;
