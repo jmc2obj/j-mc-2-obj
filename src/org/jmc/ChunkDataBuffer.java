@@ -25,24 +25,37 @@ public class ChunkDataBuffer {
 		chunkUsers=new HashMap<Point, Integer>();
 	}
 	
-	public void addChunk(Chunk chunk)
+	public boolean addChunk(int x, int z)
 	{
+		Point p=new Point(x, z);
 		
-		Point p=new Point();
-		p.x=chunk.getPosX();
-		p.y=chunk.getPosZ();
+		synchronized (this) {
+			if (chunks.containsKey(p)) {
+				addChunkUser(p);
+				return true;
+			}
+		}
+		
+		Chunk chunk;
+		try {// if chunk exists
+			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);
+			if (region == null)
+				return false;
+	
+			chunk = region.getChunk(x, z);
+			if (chunk == null)
+				return false;
+		} catch (Exception e) {
+			return false;
+		}
+		
 		Blocks blocks = chunk.getBlocks();
 		synchronized (this) {
 			chunks.put(p, blocks);
-			Integer currUsers = chunkUsers.get(p);
-			if (currUsers != null) {
-				currUsers++;
-			} else {
-				currUsers = 1;
-			}
-			chunkUsers.put(p, currUsers);
+			addChunkUser(p);
 			
 			is_anvil=chunk.isAnvil();
+			return true;
 		}
 	}
 	
@@ -61,6 +74,18 @@ public class ChunkDataBuffer {
 		}
 	}
 	
+	private synchronized int addChunkUser(Point p)
+	{
+		Integer currUsers = chunkUsers.get(p);
+		if (currUsers != null) {
+			currUsers++;
+		} else {
+			currUsers = 1;
+		}
+		chunkUsers.put(p, currUsers);
+		return currUsers;
+	}
+	
 	public synchronized void removeAllChunks()
 	{
 		chunks.clear();
@@ -70,12 +95,6 @@ public class ChunkDataBuffer {
 	public synchronized int getChunkCount()
 	{
 		return chunks.size();
-	}
-	
-	public synchronized boolean hasChunk(int x, int z)
-	{
-		Point p=new Point(x, z);
-		return chunks.containsKey(p);
 	}
 
 	public synchronized Blocks getBlocks(Point p)

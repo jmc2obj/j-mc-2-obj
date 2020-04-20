@@ -59,7 +59,7 @@ public class ReaderRunnable implements Runnable {
 		int chunkZ = chunkCoord.y;
 
 		// load chunk being processed to the buffer
-		if (!addChunkIfExists(chunkBuffer, chunkX, chunkZ))
+		if (!chunkBuffer.addChunk(chunkX, chunkZ))
 			return null;
 
 		// also load chunks from x-1 to x+1 and z-1 to z+1
@@ -71,7 +71,7 @@ public class ReaderRunnable implements Runnable {
 				if (lx == chunkX && lz == chunkZ)
 					continue;
 
-				addChunkIfExists(chunkBuffer, lx, lz);
+				chunkBuffer.addChunk(lx, lz);
 			}
 		}
 		
@@ -90,25 +90,5 @@ public class ReaderRunnable implements Runnable {
 		
 		ChunkOutput output = new ChunkOutput(chunkCoord, faces);
 		return output;
-	}
-	
-	private static boolean addChunkIfExists(ChunkDataBuffer chunk_buffer, int x, int z) {
-		if (chunk_buffer.hasChunk(x, z))
-			return true;
-
-		try {
-			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);
-			if (region == null)
-				return false;
-
-			Chunk chunk = region.getChunk(x, z);
-			if (chunk == null)
-				return false;
-
-			chunk_buffer.addChunk(chunk);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 }
