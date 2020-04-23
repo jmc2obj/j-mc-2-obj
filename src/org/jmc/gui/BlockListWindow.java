@@ -23,7 +23,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -43,7 +42,7 @@ import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
-public class BlockListWindow extends JFrame {
+public class BlockListWindow extends JmcFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel mainPanel = new JPanel();

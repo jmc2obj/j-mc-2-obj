@@ -21,7 +21,7 @@ import org.jmc.util.Log;
  * Main program window.
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame
+public class MainWindow extends JmcFrame
 {
 	/**
 	 * Panel containing the window's content.
@@ -73,7 +73,7 @@ public class MainWindow extends JFrame
 		setLocationRelativeTo(null);
 		
 		panel = new MainPanel();		
-		add(panel);
+		getContentPane().add(panel);
 		
 		setVisible(true);
 	}

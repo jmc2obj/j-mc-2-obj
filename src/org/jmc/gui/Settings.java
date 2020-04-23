@@ -21,7 +21,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,7 +38,7 @@ import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Settings extends JFrame implements WindowListener, ChangeListener {
+public class Settings extends JmcFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
 

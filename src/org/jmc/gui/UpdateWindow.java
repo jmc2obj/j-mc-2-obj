@@ -4,8 +4,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.AbstractAction;
@@ -13,7 +11,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,12 +18,10 @@ import javax.swing.JTextField;
 
 import org.jmc.CheckUpdate;
 import org.jmc.Version;
-import org.jmc.util.Filesystem;
-import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
 @SuppressWarnings("serial")
-public class UpdateWindow extends JFrame{
+public class UpdateWindow extends JmcFrame{
 
 	private JTextField tfCurrent,tfNew;
 	private JLabel lStatus;

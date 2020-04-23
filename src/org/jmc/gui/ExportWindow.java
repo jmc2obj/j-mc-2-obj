@@ -18,7 +18,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,7 +49,7 @@ import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
 @SuppressWarnings("serial")
-public class ExportWindow extends JFrame implements ProgressCallback {
+public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 	private Preferences prefs;
 
