@@ -3,10 +3,7 @@ package org.jmc.threading;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import org.jmc.Chunk;
 import org.jmc.ChunkDataBuffer;
-import org.jmc.Options;
-import org.jmc.Region;
 import org.jmc.StopCallback;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;

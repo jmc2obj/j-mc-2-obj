@@ -461,7 +461,7 @@ public class ExportWindow extends JFrame implements ProgressCallback {
 		pExportOptions.add(holderThreads);
 		holderThreads.setLayout(new FlowLayout(FlowLayout.LEFT));
 		
-		SpinnerNumberModel threadSpinnerModel = new SpinnerNumberModel(8, 1, 64, 1);
+		SpinnerNumberModel threadSpinnerModel = new SpinnerNumberModel(8, 1, 512, 1);
 		spinnerThreads = new JSpinner(threadSpinnerModel);
 		holderThreads.add(spinnerThreads);
 		

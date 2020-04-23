@@ -119,4 +119,8 @@ public class MainWindow extends JFrame
 	{
 		if(main!=null) main.panel.updateSelectionOptions();
 	}
+
+	public void reloadPreviewLoader() {
+		panel.reloadPreviewLoader();
+	}
 }

@@ -162,7 +162,7 @@ public class ObjExporter {
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
 					for (int cz = cs.y; cz <= ce.y; cz++) {
-						inputQueue.add(cx, cz);
+						inputQueue.add(new Point(cx, cz));
 					}
 				}
 				

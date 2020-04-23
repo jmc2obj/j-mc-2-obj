@@ -1,10 +1,11 @@
 package org.jmc.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -24,7 +25,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -45,6 +48,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 	JComboBox cbMove, cbSelect, cbLang;
 	JTextArea taRestart;
 	JCheckBox chckbxUseSystemBrowser;
+	JSpinner spPrevThreads;
 
 	@SuppressWarnings("serial")
 	public Settings() {
@@ -57,7 +61,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		setSize(400, 300);
 
 		JPanel mp = new JPanel();
-		add(mp);
+		getContentPane().add(mp);
 
 		mp.setLayout(new BoxLayout(mp, BoxLayout.PAGE_AXIS));
 
@@ -93,8 +97,6 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbLang = new JComboBox(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
-
-		chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USESYSBROWSER"));
 
 		JPanel pRestart = new JPanel();
 		pRestart.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
@@ -148,7 +150,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 			}
 		});
 
-		ActionListener saveAction = new AbstractAction() {
+		AbstractAction saveAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (cbMove.getSelectedIndex() == cbSelect.getSelectedIndex()) {
@@ -171,7 +173,28 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		mp.add(pMove);
 		mp.add(pSelect);
 		mp.add(pLang);
-		mp.add(chckbxUseSystemBrowser);
+		
+		JPanel pUseSystemBrowser = new JPanel();
+		pUseSystemBrowser.setMaximumSize(new Dimension(32767, 50));
+		mp.add(pUseSystemBrowser);
+				pUseSystemBrowser.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		
+				chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USESYSBROWSER"));
+				chckbxUseSystemBrowser.setAlignmentX(Component.CENTER_ALIGNMENT);
+				pUseSystemBrowser.add(chckbxUseSystemBrowser);
+				chckbxUseSystemBrowser.addActionListener(saveAction);
+		
+		JPanel pPrevThreads = new JPanel();
+		pPrevThreads.setMaximumSize(new Dimension(32767, 50));
+		mp.add(pPrevThreads);
+		pPrevThreads.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		
+		JLabel lPrevThreads = new JLabel(Messages.getString("Settings.PREVIEW_THREADS"));
+		pPrevThreads.add(lPrevThreads);
+		
+		spPrevThreads = new JSpinner();
+		spPrevThreads.setModel(new SpinnerNumberModel(8, 1, 512, 1));
+		pPrevThreads.add(spPrevThreads);
 		mp.add(Box.createVerticalGlue());
 		mp.add(pRestart);
 		mp.add(pButtons);
@@ -184,7 +207,14 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbMove.addActionListener(saveAction);
 		cbSelect.addActionListener(saveAction);
 		cbLang.addActionListener(saveAction);
-		chckbxUseSystemBrowser.addActionListener(saveAction);
+		spPrevThreads.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				saveSettings();
+				MainWindow.main.reloadPreviewLoader();
+			}
+		});
 	}
 
 	public Preferences getPreferences() {
@@ -244,6 +274,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
 		cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
 		chckbxUseSystemBrowser.setSelected(prefs.getBoolean("USE_SYSTEM_BROWSER", true));
+		spPrevThreads.setValue(prefs.getInt("PREVIEW_THREADS", 8));
 	}
 
 	private void saveSettings() {
@@ -252,6 +283,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex());
 		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex());
 		prefs.putBoolean("USE_SYSTEM_BROWSER", chckbxUseSystemBrowser.isSelected());
+		prefs.putInt("PREVIEW_THREADS", (Integer) spPrevThreads.getValue());
 		int l = prefs.getInt("LANGUAGE", 0);
 		if (cbLang.getSelectedIndex() != l) {
 			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex());
@@ -266,6 +298,7 @@ public class Settings extends JFrame implements WindowListener, ChangeListener {
 			cbMove.setSelectedIndex(1);
 			cbSelect.setSelectedIndex(0);
 			cbLang.setSelectedIndex(0);
+			spPrevThreads.setValue(8);
 		} catch (BackingStoreException e) {
 		}
 		loadSettings();

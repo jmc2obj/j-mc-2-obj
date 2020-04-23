@@ -8,8 +8,8 @@ public class ThreadInputQueue {
 	private Queue<Point> inputQueue = new LinkedList<Point>();
 	private boolean finished = false;
 	
-	public synchronized void add(int cx, int cz){
-		inputQueue.add(new Point(cx, cz));
+	public synchronized void add(Point p){
+		inputQueue.add(p);
 		notify();
 	}
 
@@ -22,6 +22,14 @@ public class ThreadInputQueue {
 			}
 			wait();
 		}
+	}
+	
+	public synchronized void clear() {
+		inputQueue.clear();
+	}
+	
+	public synchronized int size() {
+		return inputQueue.size();
 	}
 	
 	public synchronized void finish(){

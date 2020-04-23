@@ -236,14 +236,7 @@ public class MainPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				preview.fastrendermode = chckbxFastRender.isSelected();
-				preview.clearChunks();
-				if (chunk_loader != null && chunk_loader.isRunning())
-					chunk_loader.stopRunning();
-
-				chunk_loader = new ViewChunkLoaderThread(preview);
-				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				(new Thread(chunk_loader, "ViewChunkLoader")).start();
-
+				reloadPreviewLoader();
 			}
 		});
 
@@ -542,13 +535,7 @@ public class MainPanel extends JPanel {
 				preview.addMarker(player_x, player_z, Color.red);
 				preview.addMarker(spawn_x, spawn_z, Color.green);
 
-				if (chunk_loader != null && chunk_loader.isRunning())
-					chunk_loader.stopRunning();
-
-				// chunk_loader=new FullChunkLoaderThread(preview);
-				chunk_loader = new ViewChunkLoaderThread(preview);
-				chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				(new Thread(chunk_loader, "ViewChunkLoader")).start();
+				reloadPreviewLoader();
 
 				MainWindow.settings.setLastLoadedMap(Options.worldDir.toString());
 				MainWindow.export.mapLoaded();
@@ -709,6 +696,16 @@ public class MainPanel extends JPanel {
 			Options.maxY = sCeil.getValue();
 		}
 
+	}
+
+	void reloadPreviewLoader() {
+		preview.clearChunks();
+		if (chunk_loader != null && chunk_loader.isRunning())
+			chunk_loader.stopRunning();
+
+		chunk_loader = new ViewChunkLoaderThread(preview);
+		chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+		(new Thread(chunk_loader, "ViewChunkLoader")).start();
 	}
 
 }

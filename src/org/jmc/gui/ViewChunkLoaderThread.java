@@ -7,19 +7,26 @@
  ******************************************************************************/
 package org.jmc.gui;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jmc.Chunk;
 import org.jmc.ChunkLoaderThread;
 import org.jmc.Options;
 import org.jmc.Region;
 import org.jmc.gui.PreviewPanel.ChunkImage;
+import org.jmc.threading.ThreadInputQueue;
+import org.jmc.util.Hilbert;
 
 /**
  * Chunk loader that loads only the chunks visible on the screen and
@@ -49,7 +56,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	/**
 	 * Collection of chunk images from the preview panel.
 	 */
-	private Vector<ChunkImage> chunk_images;
+	private Vector<ChunkImage> chunkImages;
 
 	/**
 	 * Frequency of repainting in ms.
@@ -57,21 +64,21 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	private final int REPAINT_FREQUENCY=100;
 
 	/**
-	 * Maximum number of chunks loaded.
-	 */
-	public final int MAX_CHUNK_NUM=32768;
-
-	/**
 	 * A collection of loaded chunk IDs.
 	 */
-	Set<Integer> loaded_chunks;
+	Set<Point> loadedChunks;
+	
+	// Chunks that we checked do not exist in this world.
+	Set<Point> emptyChunks;
+	
+	private ThreadInputQueue chunkQueue;
+	private AtomicInteger chunksToDo;
 
 	/**
 	 * Variables defining the Y-axis boundaries of the current preview. 
 	 */
 	private int floor, ceiling;
-	private boolean y_bounds_changed;
-	private Object y_bounds_sync;
+	private boolean yBoundsChanged;
 
 	/**
 	 * Main constructor.
@@ -80,145 +87,143 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 * @param dimension Dimension to load chunks from.
 	 */
 	public ViewChunkLoaderThread(PreviewPanel preview) {
-		this.preview=preview;
-		this.worldPath=Options.worldDir;
-		this.dimension=Options.dimension;
-
-		chunk_images=preview.getChunkImages();
+		this.preview = preview;
+		this.worldPath = Options.worldDir;
+		this.dimension = Options.dimension;
 		
-		loaded_chunks=new HashSet<Integer>();
-		floor=0;
-		ceiling=Integer.MAX_VALUE;
-		y_bounds_changed=false;
-		y_bounds_sync=new Object();
+		chunkImages = preview.getChunkImages();
+		
+		loadedChunks = Collections.synchronizedSet(new HashSet<Point>());
+		emptyChunks = Collections.synchronizedSet(new HashSet<Point>());
+		chunkQueue = new ThreadInputQueue();
+		chunksToDo = new AtomicInteger();
+		
+		floor = 0;
+		ceiling = Integer.MAX_VALUE;
+		yBoundsChanged = false;
 	}
 
 	/**
 	 * Main thread method.
 	 */
 	@Override
-	public void run() {		
+	public void run() {
 
-		running=true;
+		running = true;
 
-		Region region=null;
-		Chunk chunk=null;
+		Rectangle prevBounds = new Rectangle();
 
-		Rectangle prev_bounds=new Rectangle();
+		loadedChunks.clear();
+		emptyChunks.clear();
+		
+		int threads = MainWindow.settings.getPreferences().getInt("PREVIEW_THREADS", 8);
+		for (int i = 0; i < threads; i++) {
+			Thread t = new Thread(new ChunkImager(chunkQueue));
+			t.setName("ChunkImager - " + i);
+			t.setPriority(Thread.MIN_PRIORITY);
+			t.start();
+		}
 
-		long last_time=System.currentTimeMillis(),this_time;
-
-		loaded_chunks.clear();
-
-		while(running)
+		while (running)
 		{
-			Rectangle bounds=preview.getChunkBounds();
-			int floor,ceiling;
-			synchronized (y_bounds_sync) {
-				floor=this.floor;
-				ceiling=this.ceiling;				
+			
+			boolean drawn = false;
+			while (prevBounds.equals(preview.getChunkBounds()) && !yBoundsChanged) {
+				if (!running) {
+					return;
+				}
+				if (chunksToDo.get() == 0 && !drawn) {
+					preview.redraw(preview.fastrendermode);
+					drawn = true;
+				}
+				preview.repaint();
+				try {
+					Thread.sleep(REPAINT_FREQUENCY);
+				} catch (InterruptedException e) {}
 			}
 
-			boolean stop_iter=false;
-			if(!bounds.equals(prev_bounds) || y_bounds_changed)
+			Rectangle bounds = preview.getChunkBounds();
+			boolean stopIter = false;
+			chunkQueue.clear();
+			chunksToDo = new AtomicInteger();
+			
+			int cxs = bounds.x;
+			int czs = bounds.y;
+			int cxe = bounds.x + bounds.width;
+			int cze = bounds.y + bounds.height;
+
+			if (yBoundsChanged)
 			{
-				int cxs=bounds.x;
-				int czs=bounds.y;
-				int cxe=bounds.x+bounds.width;
-				int cze=bounds.y+bounds.height;
+				yBoundsChanged = false;
+				loadedChunks.clear();
+				chunkImages.clear();
+			}
 
-				if(y_bounds_changed)
+			synchronized (chunkImages) {
+				Iterator<ChunkImage> iter = chunkImages.iterator();
+				while (iter.hasNext())
 				{
-					y_bounds_changed=false;
-					loaded_chunks.clear();
-					chunk_images.clear();
-				}
+					ChunkImage chunk_image = iter.next();
 
-				Iterator<ChunkImage> iter=chunk_images.iterator();
-				while(iter.hasNext())
-				{
-					ChunkImage chunk_image=iter.next();
+					int cx = chunk_image.x/64;
+					int cz = chunk_image.y/64;
 
-					int cx=chunk_image.x/64;
-					int cz=chunk_image.y/64;
-
-					if(cx<cxs || cx>cxe || cz<czs || cz>cze)
+					if (cx<cxs || cx>cxe || cz<czs || cz>cze)
 					{
-						loaded_chunks.remove(cx*MAX_CHUNK_NUM+cz);
+						loadedChunks.remove(new Point(cx,cz));
 						iter.remove();
 					}
 
-					Rectangle new_bounds=preview.getChunkBounds();
-					if(!bounds.equals(new_bounds) || y_bounds_changed)
-					{						
-						stop_iter=true;
+					Rectangle new_bounds = preview.getChunkBounds();
+					if (!bounds.equals(new_bounds) || yBoundsChanged)
+					{
+						stopIter = true;
 						break;
 					}
 
-					if(!running) return;
-				}	
-
-				preview.redraw(true);			
-
-				for(int cx=cxs; cx<=cxe && !stop_iter; cx++)
-				{
-					for(int cz=czs; cz<=cze && !stop_iter; cz++)
-					{										
-						if(loaded_chunks.contains(cx*MAX_CHUNK_NUM+cz)) continue;
-
-						try {
-							region=Region.findRegion(worldPath, dimension, cx, cz);
-							chunk=region.getChunk(cx, cz);
-						} catch (Exception e) {
-							continue;
-						}
-
-						if(chunk==null) continue;					
-
-
-						int ix=chunk.getPosX();
-						int iy=chunk.getPosZ();
-
-						chunk.renderImages(floor,ceiling,preview.fastrendermode);
-						BufferedImage height_img=null;
-						if(!preview.fastrendermode)
-							height_img=chunk.getHeightImage();
-						BufferedImage img=chunk.getBlockImage();											
-
-						preview.addImage(img, height_img, ix*64, iy*64);
-						loaded_chunks.add(cx*MAX_CHUNK_NUM+cz);			
-
-
-						this_time=System.currentTimeMillis();
-						if(this_time-last_time>REPAINT_FREQUENCY)
-						{
-							preview.repaint();
-							last_time=this_time;
-						}
-
-						Rectangle new_bounds=preview.getChunkBounds();
-						if(!bounds.equals(new_bounds) || y_bounds_changed)
-							stop_iter=true;
-
-						if(!running) return;
-					}
-				}			
-
-				if(!preview.fastrendermode)
-					preview.redraw(false);
-				else
-					preview.redraw(true);
-				preview.repaint();
+					if (!running) return;
+				}
 			}
 
-			prev_bounds=bounds;
+			preview.redraw(true);
+			preview.repaint();
+			
 
-			if(!stop_iter)
+			ArrayList<Point> chunkList = new ArrayList<Point>();
+			for (int cx=cxs; cx<=cxe && !stopIter; cx++)
 			{
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {}
+				for (int cz=czs; cz<=cze && !stopIter; cz++)
+				{
+					Point p = new Point(cx, cz);
+
+					if (loadedChunks.contains(p) || emptyChunks.contains(p))
+						continue;
+					chunkList.add(p);
+				}
 			}
+			
+			chunkList.sort(new Comparator<Point>() {
+				@Override
+				public int compare(Point a, Point b) {
+					int hil = Long.compare(Hilbert.pointToIndex(8, a), Hilbert.pointToIndex(8, b));
+					return hil;
+				}
+			});
+			
+			for (Point p : chunkList) {
+				Rectangle new_bounds=preview.getChunkBounds();
+				if (!bounds.equals(new_bounds) || yBoundsChanged)
+					stopIter = true;
+				
+				if (stopIter) break;
+				
+				chunksToDo.addAndGet(1);
+				chunkQueue.add(p);
+			
+				if (!running) return;
+			}
+
+			prevBounds = bounds;
 		}
 
 	}
@@ -236,8 +241,8 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 */
 	@Override
 	public void stopRunning() {
+		chunkQueue.finish();
 		running=false;
-
 	}
 
 	/**
@@ -247,12 +252,60 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 */
 	public void setYBounds(int floor, int ceiling)
 	{
-		synchronized (y_bounds_sync) 
-		{
-			this.floor=floor;
-			this.ceiling=ceiling;	
-			y_bounds_changed=true;
-		}		
+		this.floor=floor;
+		this.ceiling=ceiling;
+		yBoundsChanged=true;
+	}
+	
+	private class ChunkImager implements Runnable {
+		private ThreadInputQueue queue;
+		
+		ChunkImager(ThreadInputQueue chunkQueue) {
+			this.queue = chunkQueue;
+		}
+		
+		@Override
+		public void run() {
+			while (running) {
+				Point p;
+				AtomicInteger ctd;
+				try {
+					p = queue.getNext();
+					ctd = chunksToDo;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					break;
+				}
+				if (p == null)
+					break;
+				loadedChunks.add(p);
+				Chunk chunk;
+				Region region;
+				try {
+					region = Region.findRegion(worldPath, dimension, p.x, p.y);
+					chunk = region.getChunk(p.x, p.y);
+				} catch (Exception e) {
+					emptyChunks.add(p);
+					ctd.addAndGet(-1);
+					continue;
+				}
+			
+				if (chunk == null) {
+					ctd.addAndGet(-1);
+					continue;
+				}
+				
+				chunk.renderImages(floor,ceiling,preview.fastrendermode);
+				BufferedImage heightImg = null;
+				if (!preview.fastrendermode)
+					heightImg=chunk.getHeightImage();
+				BufferedImage img=chunk.getBlockImage();
+			
+				preview.addImage(img, heightImg, p.x*64, p.y*64);
+				ctd.addAndGet(-1);
+			}
+		}
+		
 	}
 
 }
