@@ -1,8 +1,10 @@
 package org.jmc.util;
 
 import java.awt.Point;
+import java.util.Comparator;
 
 public class Hilbert {
+
 	// Adapted from https://en.wikipedia.org/wiki/Hilbert_curve#Applications_and_mapping_algorithms
 	//convert (x,y) to d
 	public static long pointToIndex (int size, Point pt) {
@@ -46,5 +48,20 @@ public class Hilbert {
 	        p.x = p.y;
 	        p.y = t;
 	    }
+	}
+
+	public static class HilbertComparator implements Comparator<Point> {
+		private int size = 8;
+		
+		public HilbertComparator(int size) {
+			this.size = (int) Math.pow(2, Math.ceil(Math.log(size)/Math.log(2)));
+		}
+		
+		@Override
+		public int compare(Point a, Point b) {
+			int hil = Long.compare(Hilbert.pointToIndex(size, a), Hilbert.pointToIndex(size, b));
+			return hil;
+		}
+
 	}
 }

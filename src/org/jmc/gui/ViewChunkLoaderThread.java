@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,7 +25,7 @@ import org.jmc.Options;
 import org.jmc.Region;
 import org.jmc.gui.PreviewPanel.ChunkImage;
 import org.jmc.threading.ThreadInputQueue;
-import org.jmc.util.Hilbert;
+import org.jmc.util.Hilbert.HilbertComparator;
 
 /**
  * Chunk loader that loads only the chunks visible on the screen and
@@ -202,13 +201,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 				}
 			}
 			
-			chunkList.sort(new Comparator<Point>() {
-				@Override
-				public int compare(Point a, Point b) {
-					int hil = Long.compare(Hilbert.pointToIndex(8, a), Hilbert.pointToIndex(8, b));
-					return hil;
-				}
-			});
+			chunkList.sort(new HilbertComparator(8));
 			
 			for (Point p : chunkList) {
 				Rectangle new_bounds=preview.getChunkBounds();

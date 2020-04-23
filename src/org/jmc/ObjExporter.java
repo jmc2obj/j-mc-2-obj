@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.jmc.threading.ThreadInputQueue;
 import org.jmc.threading.ThreadOutputQueue;
 import org.jmc.threading.WriterRunnable;
 import org.jmc.util.Filesystem;
+import org.jmc.util.Hilbert.HilbertComparator;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -158,12 +160,20 @@ public class ObjExporter {
 				
 				long timer = System.nanoTime();
 				long timer2 = System.nanoTime();
-
+				
+				ArrayList<Point> chunkList = new ArrayList<Point>();
+				
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
 					for (int cz = cs.y; cz <= ce.y; cz++) {
-						inputQueue.add(new Point(cx, cz));
+						chunkList.add(new Point(cx, cz));
 					}
+				}
+				
+				chunkList.sort(new HilbertComparator(Math.max(ce.x - cs.x, ce.y - cs.y)));
+				
+				for (Point chunk : chunkList) {
+					inputQueue.add(chunk);
 				}
 				
 				inputQueue.finish();
