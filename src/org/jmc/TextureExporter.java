@@ -102,8 +102,8 @@ public class TextureExporter {
 				zf.close();
 			if (zis != null)
 				zis.close();
-			return result;
 		}
+		return result;
 	}
 
 	private static BufferedImage convertImageType(BufferedImage image) {
