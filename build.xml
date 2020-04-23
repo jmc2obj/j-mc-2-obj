@@ -7,9 +7,6 @@
             <copy todir="bin">
                     <fileset dir="resources" />
             </copy>
-            <copy todir="bin/org/jmc/gui">
-                    <file file="src/org/jmc/gui/logo.png" />
-            </copy>
             <copy todir="bin/conf">
                     <fileset dir="conf" includes="**" />
             </copy>
