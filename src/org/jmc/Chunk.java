@@ -253,7 +253,7 @@ public class Chunk {
 						//TODO old format conversion
 					}
 					
-					Log.info("Chunk is old version, skipping! " + pos_x + " " + pos_z);
+					Log.info("Chunk is old version (pre 1.13), skipping! " + pos_x + " " + pos_z);
 					break;
 					
 				} else if (chunkVer >= 1451) {// >= 1.13
@@ -265,14 +265,23 @@ public class Chunk {
 					}
 					
 					int blockBits = Math.max((tagBlockStates.data.length * 64) / 4096, 4); // Minimum of 4 bits.
-					BitSet blockStates = BitSet.valueOf(tagBlockStates.data);
 					for (int i = 0; i < 4096; i++) {
 						long blockPid;
-						BitSet blockBitArr = blockStates.get(i*blockBits, (i+1)*blockBits);
-						if (blockBitArr.length() < 1) {
-							blockPid = 0;
-						} else {
-							blockPid = blockBitArr.toLongArray()[0];
+						if (chunkVer >= 2529) {// >= 20w17a
+							int perLong = 64/blockBits;
+							int longInd = i/perLong;
+							int longSubInd = i%perLong;
+							long lvalue = tagBlockStates.data[longInd];
+							long shifted = lvalue >>> (longSubInd * blockBits);
+							blockPid = shifted & (-1l >>> (64 - blockBits));
+						}
+						else {
+							BitSet blockBitArr = BitSet.valueOf(tagBlockStates.data).get(i*blockBits, (i+1)*blockBits);
+							if (blockBitArr.length() < 1) {
+								blockPid = 0;
+							} else {
+								blockPid = blockBitArr.toLongArray()[0];
+							}
 						}
 						
 						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
@@ -313,7 +322,7 @@ public class Chunk {
 						}
 					}
 				}
-			}			
+			}
 		}
 		else
 		{
@@ -336,7 +345,7 @@ public class Chunk {
 				oldData[2*i+1]=add2;
 				//TODO old format conversion
 			}
-			Log.info("Chunk is very old version, skipping! " + pos_x + " " + pos_z);
+			Log.info("Chunk is old version (pre 1.2.1), skipping! " + pos_x + " " + pos_z);
 			
 		}
 
