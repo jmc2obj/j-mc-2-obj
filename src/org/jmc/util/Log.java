@@ -21,7 +21,7 @@ public class Log
 	 * 
 	 * @param msg string to be logged
 	 */
-	public static void debug(String msg)
+	public static synchronized void debug(String msg)
 	{
 		System.out.println(msg);//TODO add debug checkbox to message window?
 	}
@@ -32,7 +32,7 @@ public class Log
 	 * 
 	 * @param msg string to be logged
 	 */
-	public static void info(String msg)
+	public static synchronized void info(String msg)
 	{
 		System.out.println(msg);
 		if (Options.uiMode == UIMode.GUI)
@@ -48,7 +48,7 @@ public class Log
 	 * @param ex (optional) exception that caused the error
 	 * @param popup pop a message
 	 */
-	public static void error(String msg, Throwable ex, boolean popup)
+	public static synchronized void error(String msg, Throwable ex, boolean popup)
 	{
 		System.err.println(msg);
 		if (ex != null)
