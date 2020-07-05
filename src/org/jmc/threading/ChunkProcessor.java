@@ -151,7 +151,7 @@ public class ChunkProcessor
 					
 					try {
 						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
-						if (Boolean.parseBoolean(blockData.get("waterlogged")) || BlockTypes.get(blockID).getActWaterlogged()) {
+						if (Boolean.parseBoolean(blockData.get("waterlogged"))) {
 							BlockTypes.get("minecraft:water").getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
 						}
 					}
