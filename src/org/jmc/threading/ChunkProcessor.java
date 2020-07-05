@@ -130,11 +130,11 @@ public class ChunkProcessor
 			{
 				for(int y = ymin; y < ymax; y++)
 				{
-					String blockID=chunk.getBlockID(x, y, z);
 					BlockData blockData=chunk.getBlockData(x, y, z);
+					String blockID=blockData.id;
 					int blockBiome=chunk.getBlockBiome(x, y, z);
 					
-					if(blockID.endsWith("air"))
+					if(blockID.isEmpty())
 						continue;
 					
 					if(Options.excludeBlocks.contains(blockID))
@@ -146,11 +146,12 @@ public class ChunkProcessor
 						}
 					}
 					
-					if(Options.objectPerBlock) chunk_idx_count++;
+					if(Options.objectPerBlock)
+						chunk_idx_count++;
 					
 					try {
 						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
-						if (Boolean.parseBoolean(blockData.get("waterlogged"))) {
+						if (Boolean.parseBoolean(blockData.get("waterlogged")) || BlockTypes.get(blockID).getActWaterlogged()) {
 							BlockTypes.get("minecraft:water").getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
 						}
 					}

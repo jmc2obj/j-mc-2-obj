@@ -77,6 +77,11 @@ public class BlockTypes
 					Log.info("Block " + id + " has invalid occlusion. Using default.");
 				}
 			}
+			
+			Boolean waterlogged = (Boolean)xpath.evaluate("waterlogged", blockNode, XPathConstants.BOOLEAN);
+			if (waterlogged == null) {
+				waterlogged = false;
+			}
 
 			boolean hasMtl = false;
 			NodeList matNodes = (NodeList)xpath.evaluate("materials", blockNode, XPathConstants.NODESET);
@@ -196,7 +201,7 @@ public class BlockTypes
 				mesh.propagateMaterials();
 			}
 
-			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model)); 
+			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged)); 
 		}
 	}
 

@@ -298,11 +298,6 @@ public class Chunk {
 							}
 						}
 						
-						if (blockName.value.contains("kelp") || blockName.value.endsWith("seagrass") ||
-								blockName.value.contains("_coral") || blockName.value.contains("sea_pickle")) {
-							data.putIfAbsent("waterlogged", "true");
-						}
-						
 						ret.data.set(base+i, data);
 					}
 				}

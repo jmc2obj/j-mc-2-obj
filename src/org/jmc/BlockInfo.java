@@ -43,6 +43,9 @@ public class BlockInfo
 	/** 3D model handler for this block */
 	protected BlockModel model;
 	
+	/** Force this block to always have the waterlogged tag set*/
+	protected boolean actWaterlogged;
+	
 
 	/** @return Block id */
 	public String getId() {
@@ -69,15 +72,20 @@ public class BlockInfo
 		return model;
 	}
 
+	public boolean getActWaterlogged() {
+		return actWaterlogged;
+	}
+
 	
 	/** Convenience constructor */
-	BlockInfo(String id2, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model)
+	BlockInfo(String id2, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model, boolean alwaysWaterlogged)
 	{
 		this.id = id2;
 		this.name = name;
 		this.materials = materials;
 		this.occlusion = occlusion;
 		this.model = model;
+		this.actWaterlogged = alwaysWaterlogged;
 	}
 	
 

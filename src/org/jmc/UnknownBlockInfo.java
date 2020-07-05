@@ -17,7 +17,7 @@ public class UnknownBlockInfo extends BlockInfo
 
 	UnknownBlockInfo()
 	{
-		super("", "unknown", null, Occlusion.NONE, null);
+		super("", "unknown", null, Occlusion.NONE, null, false);
 
 		materials = new BlockMaterial("");
 		materials.put(new String[] { "unknown" });
