@@ -573,10 +573,30 @@ Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/chest.png
 
+newmtl chest_left
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chest_left.png
+
+newmtl chest_right
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chest_right.png
+
 newmtl chest_trapped
 Kd 0.5137 0.3686 0.1451
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/chest_trapped.png
+
+newmtl chest_trapped_left
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chest_trapped_left.png
+
+newmtl chest_trapped_right
+Kd 0.5137 0.3686 0.1451
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/chest_trapped_right.png
 
 newmtl chorus_flower
 Kd 0.3437 0.1886 0.3451
