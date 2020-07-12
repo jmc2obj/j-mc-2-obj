@@ -25,6 +25,9 @@ public class UVRecalculate {
 	{
 		uv_map=new HashMap<String, Rectangle>();
 		
+		if (!(uvFile.isFile() && uvFile.exists()))
+			throw new Exception("Selected UV file does not exist!");
+		
 		Document doc = Xml.loadDocument(uvFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		
@@ -33,7 +36,7 @@ public class UVRecalculate {
 		
 		Element root=(Element)xpath.evaluate("/textures", doc, XPathConstants.NODE);
 		width=Integer.parseInt(root.getAttribute("width"));
-		height=Integer.parseInt(root.getAttribute("width"));
+		height=Integer.parseInt(root.getAttribute("height"));
 		
 		NodeList textures = (NodeList)xpath.evaluate("/textures/texture", doc, XPathConstants.NODESET);
 		for(int i=0; i<textures.getLength(); i++)
