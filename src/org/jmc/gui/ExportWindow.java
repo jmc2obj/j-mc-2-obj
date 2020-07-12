@@ -71,7 +71,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JCheckBox chckbxSeparateMatOccl;
 	private JCheckBox chckbxSeparateChunk;
 	private JCheckBox chckbxSeparateBlock;
-	private JCheckBox chckbxGeoOpt;
+	private JCheckBox chckbxOptimiseGeo;
 	private JCheckBox chckbxConvertOreTo;
 	private JCheckBox chckbxMergeVerticies;
 	private JCheckBox chckbxSingleMat;
@@ -102,7 +102,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JPanel holderTexExport;
 	private JPanel holderMapScale;
 	private JPanel holderSepBlock;
-	private JPanel holderOneMat;
 	private JPanel holderSingleTex;
 	private JPanel holderUV;
 	private JPanel holderExportPanel;
@@ -122,6 +121,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JLabel lblExtraMaps;
 	private JLabel lblExtraMapsHelp;
 	private JPanel holderExtraMapsText;
+	private JPanel holderSingleTexOpts;
+	private JLabel lblUVFile;
 
 
 	/**
@@ -390,40 +391,29 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		lblSepBlockWarn.setForeground(Color.RED);
 
 		//##########################################################################################################
-		//OptGeo
+		//OptimizeGeo
 		//##########################################################################################################
-		chckbxGeoOpt = new JCheckBox(Messages.getString("OBJExportOptions.OPTIMIZE_MESH"));
-		pExportOptions.add(chckbxGeoOpt);
+		chckbxOptimiseGeo = new JCheckBox(Messages.getString("OBJExportOptions.OPTIMIZE_MESH"));
+		pExportOptions.add(chckbxOptimiseGeo);
 
 		//##########################################################################################################
 		//MergeVerts
 		//##########################################################################################################
 		chckbxMergeVerticies = new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
 		pExportOptions.add(chckbxMergeVerticies);
-
-		//##########################################################################################################
-		//SingleMat
-		//##########################################################################################################
-		holderOneMat = new JPanel();
-		holderOneMat.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pExportOptions.add(holderOneMat);
-		holderOneMat.setLayout(new BoxLayout(holderOneMat, BoxLayout.X_AXIS));
-
-		chckbxSingleMat = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_MTL"));
-		holderOneMat.add(chckbxSingleMat);
-
-		JLabel lblOneMatHelp = new JLabel("???");
-		holderOneMat.add(lblOneMatHelp);
-		lblOneMatHelp.setToolTipText(Messages.getString("OBJExportOptions.SINGLE_MTL_HELP"));
-		lblOneMatHelp.setForeground(Color.RED);
-		lblOneMatHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
+		
+		holderSingleTexOpts = new JPanel();
+		holderSingleTexOpts.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		holderSingleTexOpts.setAlignmentX(Component.LEFT_ALIGNMENT);
+		pExportOptions.add(holderSingleTexOpts);
+		holderSingleTexOpts.setLayout(new BoxLayout(holderSingleTexOpts, BoxLayout.Y_AXIS));
 
 		//##########################################################################################################
 		//SingleTexFile
 		//##########################################################################################################
 		holderSingleTex = new JPanel();
+		holderSingleTexOpts.add(holderSingleTex);
 		holderSingleTex.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pExportOptions.add(holderSingleTex);
 		holderSingleTex.setLayout(new BoxLayout(holderSingleTex, BoxLayout.X_AXIS));
 
 		chckbxSingleTexture = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_TEX"));
@@ -440,8 +430,11 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//##########################################################################################################
 		holderUV = new JPanel();
 		holderUV.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pExportOptions.add(holderUV);
+		holderSingleTexOpts.add(holderUV);
 		holderUV.setLayout(new BoxLayout(holderUV, BoxLayout.X_AXIS));
+		
+		lblUVFile = new JLabel(Messages.getString("OBJExportOptions.SINGLE_TEX_UV_FILE"));
+		holderUV.add(lblUVFile);
 
 		textFieldSingleTexUV = new JTextField();
 		textFieldSingleTexUV.setColumns(24);
@@ -451,6 +444,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		btnBrowseUV = new JButton(Messages.getString("OBJExportPanel.BROWSE"));
 		holderUV.add(btnBrowseUV);
+		
+		chckbxSingleMat = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_MTL"));
+		holderSingleTexOpts.add(chckbxSingleMat);
 
 		//##########################################################################################################
 		//ExportThreads
@@ -917,7 +913,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateChunk.addActionListener(genericSaveAction);
 		chckbxSeparateBlock.addActionListener(genericSaveAction);
 
-		chckbxGeoOpt.addActionListener(genericSaveAction);
+		chckbxOptimiseGeo.addActionListener(genericSaveAction);
 		chckbxMergeVerticies.addActionListener(genericSaveAction);
 
 		chckbxSingleMat.addActionListener(genericSaveAction);
@@ -985,7 +981,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateMatOccl.setSelected(prefs.getBoolean("OBJ_PER_MTL_OCCL", true));
 		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", true));
 		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", true));
-		chckbxGeoOpt.setSelected(prefs.getBoolean("OPTIMISE_GEO", false));
+		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", false));
 		chckbxConvertOreTo.setSelected(prefs.getBoolean("CONVERT_ORES", true));
 		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", true));
@@ -1000,26 +996,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxCombineAllTextures.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
 		
 		spinnerThreads.setValue(prefs.getInt("EXPORT_THREADS", 8));
-
-		if (!chckbxSingleTexture.isSelected()) {
-			textFieldSingleTexUV.setEnabled(false);
-			btnBrowseUV.setEnabled(false);
-		} else {
-			textFieldSingleTexUV.setEnabled(true);
-			btnBrowseUV.setEnabled(true);
-		}
-
-		if (chckbxCombineAllTextures.isSelected()) {
-			chckbxExportSeparateLight.setEnabled(true);
-		} else {
-			chckbxExportSeparateLight.setEnabled(false);
-		}
-
-		if (chckbxSeparateMat.isSelected()) {
-			chckbxSeparateMatOccl.setEnabled(true);
-		} else {
-			chckbxSeparateMatOccl.setEnabled(false);
-		}
+		
+		updateEnabledSettings();
 
 		updateOptions();
 
@@ -1028,8 +1006,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private void saveSettings() {
 
 		Log.info("Saving Options");
-
-		updateOptions();
 
 		prefs.putFloat("DEFAULT_SCALE", Options.scale);
 		prefs.putInt("OFFSET_X", Options.offsetX);
@@ -1070,26 +1046,10 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			prefs.putInt("MTL_OVERWRITE", 2);
 			break;
 		}
+		
+		updateEnabledSettings();
 
-		if (!chckbxSingleTexture.isSelected()) {
-			textFieldSingleTexUV.setEnabled(false);
-			btnBrowseUV.setEnabled(false);
-		} else {
-			textFieldSingleTexUV.setEnabled(true);
-			btnBrowseUV.setEnabled(true);
-		}
-
-		if (chckbxCombineAllTextures.isSelected()) {
-			chckbxExportSeparateLight.setEnabled(true);
-		} else {
-			chckbxExportSeparateLight.setEnabled(false);
-		}
-
-		if (chckbxSeparateMat.isSelected()) {
-			chckbxSeparateMatOccl.setEnabled(true);
-		} else {
-			chckbxSeparateMatOccl.setEnabled(false);
-		}
+		updateOptions();
 
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
 		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
@@ -1115,6 +1075,32 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("TEXTURE_MERGE", Options.textureMerge);
 		
 		prefs.putInt("EXPORT_THREADS", Options.exportThreads);
+	}
+
+	private void updateEnabledSettings() {
+		if (chckbxSingleTexture.isSelected() && chckbxSingleTexture.isEnabled()) {
+			chckbxSingleMat.setEnabled(true);
+			textFieldSingleTexUV.setEnabled(true);
+			btnBrowseUV.setEnabled(true);
+			chckbxOptimiseGeo.setEnabled(false);
+		} else {
+			chckbxSingleMat.setEnabled(false);
+			textFieldSingleTexUV.setEnabled(false);
+			btnBrowseUV.setEnabled(false);
+			chckbxOptimiseGeo.setEnabled(true);
+		}
+
+		if (chckbxCombineAllTextures.isSelected()) {
+			chckbxExportSeparateLight.setEnabled(true);
+		} else {
+			chckbxExportSeparateLight.setEnabled(false);
+		}
+
+		if (chckbxSeparateMat.isSelected()) {
+			chckbxSeparateMatOccl.setEnabled(true);
+		} else {
+			chckbxSeparateMatOccl.setEnabled(false);
+		}
 	}
 
 	private void updateOptions() {
@@ -1153,13 +1139,13 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.objectPerMaterialOcclusionBarrier = chckbxSeparateMatOccl.isSelected();
 		Options.objectPerChunk = chckbxSeparateChunk.isSelected();
 		Options.objectPerBlock = chckbxSeparateBlock.isSelected();
-		Options.optimiseGeometry = chckbxGeoOpt.isSelected();
+		Options.optimiseGeometry = chckbxOptimiseGeo.isSelected() && chckbxOptimiseGeo.isEnabled();
 		Options.convertOres = chckbxConvertOreTo.isSelected();
-		Options.singleMaterial = chckbxSingleMat.isSelected();
 		Options.removeDuplicates = chckbxMergeVerticies.isSelected();
 		Options.useUVFile = chckbxSingleTexture.isSelected();
-		Options.useLastSaveLoc = chckbxUseLastSaveLoc.isSelected();
 		Options.UVFile = new File(textFieldSingleTexUV.getText());
+		Options.singleMaterial = chckbxSingleMat.isSelected() && chckbxSingleMat.isEnabled();
+		Options.useLastSaveLoc = chckbxUseLastSaveLoc.isSelected();
 
 		String txt = cboxTexScale.getSelectedItem().toString();
 		if (!txt.isEmpty()) {
