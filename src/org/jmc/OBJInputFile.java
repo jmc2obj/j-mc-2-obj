@@ -48,6 +48,15 @@ public class OBJInputFile
 			faces=new LinkedList<OBJFace>();
 		}
 		public List<OBJFace> faces;
+		
+		public OBJGroup clone() {
+			OBJGroup ret = new OBJGroup();
+			ret.faces = new LinkedList<OBJFace>();
+			for (OBJFace face:faces) {
+				ret.faces.add(new OBJFace(face));
+			}
+			return ret;
+		}
 	}
 	
 	Map<String,OBJGroup> objects;
@@ -281,11 +290,13 @@ public class OBJInputFile
 	}
 	
 	
-	public void overwriteMaterial(OBJGroup group, String material) {
-		for(OBJFace f:group.faces)
+	public OBJGroup overwriteMaterial(OBJGroup group, String material) {
+		OBJGroup ret = group.clone();
+		for(OBJFace f:ret.faces)
 		{
 			f.mtl = material;
 		}
+		return ret;
 	}
 
 	public void addObjectToOutput(OBJGroup group, Transform trans, ChunkProcessor out)

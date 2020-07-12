@@ -61,7 +61,6 @@ public class Mesh extends BlockModel
 
 	}
 
-	//@SuppressWarnings("unused")
 	private String obj_str;
 	private OBJInputFile objin_file;
 	private OBJGroup group;
@@ -151,13 +150,14 @@ public class Mesh extends BlockModel
 
 			if(group!=null && objin_file!=null)
 			{
+				OBJGroup group_mod = group;
 				if (materials != null) {
 					String[] mats = materials.get(data, biome);
 					if (mats != null) {
-						objin_file.overwriteMaterial(group, mats[0]);
+						group_mod = objin_file.overwriteMaterial(group, mats[0]);
 					}
 				}
-				objin_file.addObjectToOutput(group, trans, obj);
+				objin_file.addObjectToOutput(group_mod, trans, obj);
 			}
 		}
 

@@ -132,6 +132,14 @@ public class FaceUtils {
 			uv=new int[sides];
 		}
 		
+		public OBJFace(OBJFace f) {
+			obj_idx = f.obj_idx;
+			vertices = f.vertices.clone();
+			normals = f.normals.clone();
+			uv = f.uv.clone();
+			mtl = f.mtl;
+		}
+		
 		@Override
 		public int compareTo(OBJFace o) {
 			if(this.obj_idx!=o.obj_idx)
