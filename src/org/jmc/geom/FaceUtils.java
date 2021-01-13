@@ -135,8 +135,8 @@ public class FaceUtils {
 		public OBJFace(OBJFace f) {
 			obj_idx = f.obj_idx;
 			vertices = f.vertices.clone();
-			normals = f.normals.clone();
-			uv = f.uv.clone();
+			normals = f.normals != null ? f.normals.clone() : null;
+			uv = f.uv != null ? f.uv.clone() : null;
 			mtl = f.mtl;
 		}
 		
