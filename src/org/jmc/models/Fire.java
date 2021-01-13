@@ -21,11 +21,11 @@ public class Fire extends BlockModel
 		Transform t = new Transform();
 		t.translate(x, y, z);
 		
-		boolean north = data.getBool("north");
-		boolean south = data.getBool("south");
-		boolean east = data.getBool("east");
-		boolean west = data.getBool("west");
-		boolean up = data.getBool("up");
+		boolean north = data.getBool("north", false);
+		boolean south = data.getBool("south", false);
+		boolean east = data.getBool("east", false);
+		boolean west = data.getBool("west", false);
+		boolean up = data.getBool("up", false);
 		boolean none = !(north || south || east || west || up);
 		
 		if (none) {
