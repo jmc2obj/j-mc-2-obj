@@ -285,6 +285,51 @@ public abstract class BlockModel {
 	}
 
 	/**
+	 * Helper method to add a box to given OBJFile.
+	 * 
+	 * @param obj
+	 *            OBJFile to add to
+	 * @param x
+	 *            Block x coordinate
+	 * @param y
+	 *            Block y coordinate
+	 * @param z
+	 *            Block z coordinate
+	 * @param xs
+	 *            Start x coordinate
+	 * @param ys
+	 *            Start y coordinate
+	 * @param zs
+	 *            Start z coordinate
+	 * @param xe
+	 *            End x coordinate
+	 * @param ye
+	 *            End y coordinate
+	 * @param ze
+	 *            End z coordinate
+	 * @param trans
+	 *            Transform to apply to the vertex coordinates. If null, no
+	 *            transform is applied
+	 * @param mtlSides
+	 *            Material for each side, in order UP, NORTH, SOUTH, WEST,
+	 *         EAST, DOWN
+	 * @param drawSides
+	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
+	 *            EAST, DOWN. If null, draws all sides.
+	 */
+	protected void addBoxCubeUV(ChunkProcessor obj, int x, int y, int z, float xs, float ys, float zs, float xe, float ye, float ze,
+			Transform trans, String[] mtlSides, boolean[] drawSides) {
+		UV[] uvU = new UV[] { new UV(xs+0.5f, -ze+0.5f), new UV(xe+0.5f, -ze+0.5f), new UV(xe+0.5f, -zs+0.5f), new UV(xs+0.5f, -zs+0.5f) };
+		UV[] uvN = new UV[] { new UV(-xe+0.5f, ys+0.5f), new UV(-xs+0.5f, ys+0.5f), new UV(-xs+0.5f, ye+0.5f), new UV(-xe+0.5f, ye+0.5f) };
+		UV[] uvS = new UV[] { new UV(xs+0.5f, ys+0.5f), new UV(xe+0.5f, ys+0.5f), new UV(xe+0.5f, ye+0.5f), new UV(xs+0.5f, ye+0.5f) };
+		UV[] uvW = new UV[] { new UV(zs+0.5f, ys+0.5f), new UV(ze+0.5f, ys+0.5f), new UV(ze+0.5f, ye+0.5f), new UV(zs+0.5f, ye+0.5f) };
+		UV[] uvE = new UV[] { new UV(-ze+0.5f, ys+0.5f), new UV(-zs+0.5f, ys+0.5f), new UV(-zs+0.5f, ye+0.5f), new UV(-ze+0.5f, ye+0.5f) };
+		UV[] uvD = new UV[] { new UV(xe+0.5f, ze+0.5f), new UV(xs+0.5f, ze+0.5f), new UV(xs+0.5f, zs+0.5f), new UV(xe+0.5f, zs+0.5f) };
+		UV[][] uvSides = new UV[][] { uvU, uvN, uvS, uvW, uvE, uvD };
+		addBox(obj, x+xs, y+ys, z+zs, x+xe, y+ye, z+ze, trans, mtlSides, uvSides, drawSides);
+	}
+
+	/**
 	 * Adds the block to the given OBJFile.
 	 * 
 	 * @param obj

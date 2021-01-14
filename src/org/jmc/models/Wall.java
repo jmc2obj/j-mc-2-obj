@@ -1,65 +1,76 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
-import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
 public class Wall extends BlockModel
 {
+	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtls = getMtlSides(data, biome);
-		UV[] uvTop, uvSide;
-		UV[][] uvSides;
+		
+		String north, south, east, west;
+		
+		north = data.get("north");
+		if (north == null || north.equals("false")) {
+			north = "none";
+		}
+		if (north.equals("false")) {
+			north = "low";
+		}
 
-		boolean conn_n = data.get("north").equals("true");
-		boolean conn_s = data.get("south").equals("true");
-		boolean conn_e = data.get("east").equals("true");
-		boolean conn_w = data.get("west").equals("true");
-		boolean conn_u = data.get("up").equals("true");
-				
+		south = data.get("south");
+		if (south == null || south.equals("false")) {
+			south = "none";
+		}
+		if (south.equals("false")) {
+			south = "low";
+		}
+
+		east = data.get("east");
+		if (east == null || east.equals("false")) {
+			east = "none";
+		}
+		if (east.equals("false")) {
+			east = "low";
+		}
+
+		west = data.get("west");
+		if (west == null || west.equals("false")) {
+			west = "none";
+		}
+		else if (west.equals("false")) {
+			west = "low";
+		}
+		
+		boolean up = data.getBool("up", true);
+		
 		// center column
-		if (!(conn_n && conn_s && !conn_e && !conn_w) && !(!conn_n && !conn_s && conn_e && conn_w) || conn_u)
-		{
-			uvTop = new UV[] { new UV(4/16f, 4/16f), new UV(12/16f, 4/16f), new UV(12/16f, 12/16f), new UV(4/16f, 12/16f) };
-			uvSide = new UV[] { new UV(4/16f, 0), new UV(12/16f, 0), new UV(12/16f, 1), new UV(4/16f, 1) };
-			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-			addBox(obj, x-0.25f, y-0.5f, z-0.25f, x+0.25f, y+0.5f, z+0.25f, null, mtls, uvSides, null);
+		if (up) {
+			addBoxCubeUV(obj, x, y, z, -4/16f, -8/16f, -4/16f, 4/16f, 8/16f, 4/16f, null, mtls, null);
 		}
 		// north wall
-		if (conn_n)
-		{
-			uvTop = new UV[] { new UV(5/16f, 8/16f), new UV(11/16f, 8/16f), new UV(11/16f, 1), new UV(5/16f, 1) };
-			uvSide = new UV[] { new UV(8/16f, 0), new UV(1, 0), new UV(1, 13/16f), new UV(8/16f, 13/16f) };
-			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-			addBox(obj, x-0.1875f, y-0.5f, z-0.5f, x+0.1875f, y+0.3125f, z, null, mtls, uvSides, null);
+		if (north.equals("low") || north.equals("tall")) {
+			int height = north.equals("tall") ? 16 : 14;
+			addBoxCubeUV(obj, x, y, z, -3/16f, -8/16f, -8/16f, 3/16f, (height-8)/16f, 0, null, mtls, null);
 		}
 		// south wall
-		if (conn_s)
-		{
-			uvTop = new UV[] { new UV(5/16f, 0), new UV(11/16f, 0), new UV(11/16f, 8/16f), new UV(5/16f, 8/16f) };
-			uvSide = new UV[] { new UV(0, 0), new UV(8/16f, 0), new UV(8/16f, 13/16f), new UV(0, 13/16f) };
-			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-			addBox(obj, x-0.1875f, y-0.5f, z, x+0.1875f, y+0.3125f, z+0.5f, null, mtls, uvSides, null);
+		if (south.equals("low") || south.equals("tall")) {
+			int height = south.equals("tall") ? 16 : 14;
+			addBoxCubeUV(obj, x, y, z, -3/16f, -8/16f, 0, 3/16f, (height-8)/16f, 8/16f, null, mtls, null);
 		}
 		// west wall
-		if (conn_w)
-		{
-			uvTop = new UV[] { new UV(8/16f, 5/16f), new UV(1, 5/16f), new UV(1, 11/16f), new UV(8/16f, 11/16f) };
-			uvSide = new UV[] { new UV(8/16f, 0), new UV(1, 0), new UV(1, 13/16f), new UV(8/16f, 13/16f) };
-			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-			addBox(obj, x-0.5f, y-0.5f, z-0.1875f, x, y+0.3125f, z+0.1875f, null, mtls, uvSides, null);
+		if (west.equals("low") || west.equals("tall")) {
+			int height = west.equals("tall") ? 16 : 14;
+			addBoxCubeUV(obj, x, y, z, -8/16f, -8/16f, -3/16f, 0, (height-8)/16f, 3/16f, null, mtls, null);
 		}
 		// east wall
-		if (conn_e)
-		{
-			uvTop = new UV[] { new UV(0, 5/16f), new UV(8/16f, 5/16f), new UV(8/16f, 11/16f), new UV(0, 11/16f) };
-			uvSide = new UV[] { new UV(0, 0), new UV(8/16f, 0), new UV(8/16f, 13/16f), new UV(0, 13/16f) };
-			uvSides = new UV[][] { uvTop, uvSide, uvSide, uvSide, uvSide, uvTop };
-			addBox(obj, x, y-0.5f, z-0.1875f, x+0.5f, y+0.3125f, z+0.1875f, null, mtls, uvSides, null);
+		if (east.equals("low") || east.equals("tall")) {
+			int height = east.equals("tall") ? 16 : 14;
+			addBoxCubeUV(obj, x, y, z, 0, -8/16f, -3/16f, 8/16f, (height-8)/16f, 3/16f, null, mtls, null);
 		}
 	}
-
 }
