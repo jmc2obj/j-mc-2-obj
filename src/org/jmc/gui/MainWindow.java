@@ -93,6 +93,7 @@ public class MainWindow extends JmcFrame
 	 * Global logging method called by using MainWindow.log("test")
 	 * 
 	 * @param msg string to be logged
+	 * @param isError is this an error log, shows error pop-up.
 	 */
 	public static void log(String msg, boolean isError)
 	{
@@ -109,7 +110,18 @@ public class MainWindow extends JmcFrame
 				Log.error("Error erroring!", e);
 			}
 		}
-		consoleLog.log(msg, isError);
+		consoleLog.log(msg, isError, false);
+	}
+	
+	/**
+	 * Global logging method called by using MainWindow.log("test")
+	 * 
+	 * @param msg string to be logged
+	 */
+	public static void logDebug(String msg)
+	{
+		if (settings.getPreferences().getBoolean("SHOW_DEBUG_LOG", false))
+			consoleLog.log(msg, false, true);
 	}
 	
 	/**

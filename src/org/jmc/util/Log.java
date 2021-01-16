@@ -24,6 +24,8 @@ public class Log
 	public static synchronized void debug(String msg)
 	{
 		System.out.println(msg);//TODO add debug checkbox to message window?
+		if (Options.uiMode == UIMode.GUI)
+			MainWindow.logDebug(msg);
 	}
 
 	/**

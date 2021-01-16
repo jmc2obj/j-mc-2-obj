@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,7 +22,7 @@ public class GUIConsoleLog extends JmcFrame{
 	private JTextPane taLog;
 
 	public GUIConsoleLog(){
-		setLayout(new BorderLayout());
+		getContentPane().setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		setSize(600, 300);
 		
@@ -41,6 +42,11 @@ public class GUIConsoleLog extends JmcFrame{
 		
 		contentPane.add(spPane);
 		
+		JPanel optionPanel = new JPanel();
+		optionPanel.setBackground(Color.BLACK);
+		optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
+		contentPane.add(optionPanel, BorderLayout.SOUTH);
+		
 		final JCheckBox openOnStart = new JCheckBox("Open Console On Startup", MainWindow.settings.getPreferences().getBoolean("OPEN_CONSOLE_ON_START", true));
 		openOnStart.setForeground(Color.WHITE);
 		openOnStart.setBackground(Color.BLACK);
@@ -51,7 +57,18 @@ public class GUIConsoleLog extends JmcFrame{
 			}
 		});
 		
-		contentPane.add(openOnStart, BorderLayout.SOUTH);
+		optionPanel.add(openOnStart);
+		
+		final JCheckBox showDebug = new JCheckBox("Show debug", MainWindow.settings.getPreferences().getBoolean("SHOW_DEBUG_LOG", false));
+		showDebug.setForeground(Color.WHITE);
+		showDebug.setBackground(Color.BLACK);
+		showDebug.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.settings.getPreferences().putBoolean("SHOW_DEBUG_LOG", showDebug.isSelected());
+			}
+		});
+		optionPanel.add(showDebug);
 	}
 	
 	/**
@@ -60,10 +77,10 @@ public class GUIConsoleLog extends JmcFrame{
 	 * @param msg
 	 *            line to be added to the log
 	 */
-	public void log(String msg, boolean isError) {		
+	public void log(String msg, boolean isError, boolean isDebug) {
 		try {
 			Style color = taLog.addStyle("color", null);
-			StyleConstants.setForeground(color, isError ? Color.RED : Color.WHITE);
+			StyleConstants.setForeground(color, isError ? Color.RED : isDebug ? Color.GRAY : Color.WHITE);
 			taLog.getStyledDocument().insertString(taLog.getDocument().getLength(), msg + "\n", color);
 			taLog.setCaretPosition(taLog.getDocument().getLength());
 		} catch (BadLocationException e) { /* don't care */	}
