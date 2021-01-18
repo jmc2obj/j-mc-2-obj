@@ -45,5 +45,5 @@ f 7/2 6/1 11/11 9/9
 f 5/4 8/3 10/10 12/12
 f 6/1 5/4 12/12 11/11
 
-usemtl cauldron_inside
+usemtl cauldron_inner
 f 14/11 15/12 16/10 13/9
