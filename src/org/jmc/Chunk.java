@@ -256,7 +256,7 @@ public class Chunk {
 					Log.info("Chunk is old version (pre 1.13), skipping! " + pos_x + " " + pos_z);
 					break;
 					
-				} else if (chunkVer >= 1451) {// >= 1.13
+				} else {// >= 1.13
 					TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
 					TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
 					
@@ -312,7 +312,7 @@ public class Chunk {
 						for (int z = 0; z < 16; z++) {
 							for (int y = 0; y < ymax; y++) {
 								int biome;
-								if (chunkVer <= 2201) {
+								if (chunkVer <= 2201) {// <= 19w35a
 									biome = tagBiomes.data[x+z*16];
 								} else {
 									biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
