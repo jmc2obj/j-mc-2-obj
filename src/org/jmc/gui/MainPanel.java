@@ -55,6 +55,7 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Main Panel containing all the content of the window.
@@ -175,12 +176,20 @@ public class MainPanel extends JPanel {
 		bLoad = new JButton(Messages.getString("MainPanel.LOAD_BUTTON"));
 		bLoad.setEnabled(false);
 		// bLoad.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		cbDimension = new JComboBox();
 		JButton bPath = new JButton("...");
 		pPath.add(bPath);
 		pPath.add(cbPath);
 		pPath.add(bLoad);
-		pPath.add(cbDimension);
+		
+		JPanel pDimension = new JPanel();
+		pPath.add(pDimension);
+		pDimension.setLayout(new BoxLayout(pDimension, BoxLayout.X_AXIS));
+		
+		JLabel lblDimension = new JLabel(Messages.getString("MainPanel.DIMENSION"));
+		lblDimension.setBorder(new EmptyBorder(0, 2, 0, 5));
+		pDimension.add(lblDimension);
+		cbDimension = new JComboBox();
+		pDimension.add(cbDimension);
 
 		(new PopulateLoadListThread()).start();
 
