@@ -4016,3 +4016,23 @@ newmtl quartz_bricks
 Kd 0.5 0.5 0.5
 Ks 0.0000 0.0000 0.0000
 map_Kd tex/quartz_bricks.png
+
+newmtl jigsaw_top
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jigsaw_top.png
+
+newmtl jigsaw_side
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jigsaw_side.png
+
+newmtl jigsaw_lock
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jigsaw_lock.png
+
+newmtl jigsaw_bottom
+Kd 0.5 0.5 0.5
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/jigsaw_bottom.png
