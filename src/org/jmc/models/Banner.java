@@ -32,9 +32,8 @@ public class Banner extends BlockModel {
     /**
      * Pattern Layer List
      * */
-    ArrayList<BannerPattern> PatternList = new ArrayList<BannerPattern>();
 
-    private Set<String> exportedMaterials = new HashSet<String>();
+    private static Set<String> exportedMaterials = new HashSet<String>();
 
 	private static boolean firstBaseReadError = true;
     /**
@@ -70,16 +69,14 @@ public class Banner extends BlockModel {
      * Creates a uniq string for combination of patterns
      * @return
      */
-    private String createPatternHash(int baseColorIndex) {
-        String hashSource = "" + baseColorIndex + "";
+    private String createPatternHash(int baseColorIndex, ArrayList<BannerPattern> patternList) {
+        String hashSource = "";// + baseColorIndex + "";
         int count = 0;
-        synchronized (PatternList) {
-	        for (BannerPattern bp : PatternList) {
-	            if (count++ != 0) {
-	                hashSource += "-";
-	            }
-	            hashSource += bp.toString();
-	        }
+        for (BannerPattern bp : patternList) {
+            if (count++ != 0) {
+                hashSource += "-";
+            }
+            hashSource += bp.toString();
         }
         return hashSource;
     }
@@ -144,85 +141,82 @@ public class Banner extends BlockModel {
         };
 
         int baseColorIndex = -1;
-        synchronized (PatternList) {
-	        PatternList.clear();
-	        // get banner layer information
-	        TAG_Compound tag = chunks.getTileEntity(x, y, z);
-	        if (tag != null) {
-	            //baseColorIndex = ((TAG_Int) tag.getElement("Base")).value;
-	        	String bid = chunks.getBlockID(x, y, z);
-	        	if (bid.contains("white"))
-	        		baseColorIndex = 0;
-	        	else if (bid.contains("orange"))
-	        		baseColorIndex = 1;
-	        	else if (bid.contains("magenta"))
-	        		baseColorIndex = 2;
-	        	else if (bid.contains("light_blue"))
-	        		baseColorIndex = 3;
-	        	else if (bid.contains("yellow"))
-	        		baseColorIndex = 4;
-	        	else if (bid.contains("lime"))
-	        		baseColorIndex = 5;
-	        	else if (bid.contains("pink"))
-	        		baseColorIndex = 6;
-	        	else if (bid.contains("gray"))
-	        		baseColorIndex = 7;
-	        	else if (bid.contains("light_gray"))
-	        		baseColorIndex = 8;
-	        	else if (bid.contains("cyan"))
-	        		baseColorIndex = 9;
-	        	else if (bid.contains("purple"))
-	        		baseColorIndex = 10;
-	        	else if (bid.contains("blue"))
-	        		baseColorIndex = 11;
-	        	else if (bid.contains("brown"))
-	        		baseColorIndex = 12;
-	        	else if (bid.contains("green"))
-	        		baseColorIndex = 13;
-	        	else if (bid.contains("red"))
-	        		baseColorIndex = 14;
-	        	else if (bid.contains("black"))
-	        		baseColorIndex = 15;
-	
-	            // base Color
-	            BannerPattern bpBase = new BannerPattern();
-	            bpBase.setColor(baseColorIndex);
-	            bpBase.setPattern("base");
-	            PatternList.add(bpBase);
-	
-	            TAG_List patternList = (TAG_List) tag.getElement("Patterns");
-	
-	            if (patternList != null) {
-	                for (NBT_Tag pattern : patternList.elements) {
-	                    TAG_Compound c_pattern = (TAG_Compound) pattern;
-	                    BannerPattern bp = new BannerPattern();
-	                    bp.setColor((int) ((TAG_Int) c_pattern.getElement("Color")).value);
-	                    bp.setPattern((String) ((TAG_String) c_pattern.getElement("Pattern")).value);
-	                    PatternList.add(bp);
-	                }
-	            }
-	        }
+        ArrayList<BannerPattern> patternList = new ArrayList<BannerPattern>();
+        
+    	String bid = chunks.getBlockID(x, y, z);
+    	bid = bid.split(":", 2)[1];
+    	if (bid.startsWith("white"))
+    		baseColorIndex = 0;
+    	else if (bid.startsWith("orange"))
+    		baseColorIndex = 1;
+    	else if (bid.startsWith("magenta"))
+    		baseColorIndex = 2;
+    	else if (bid.startsWith("light_blue"))
+    		baseColorIndex = 3;
+    	else if (bid.startsWith("yellow"))
+    		baseColorIndex = 4;
+    	else if (bid.startsWith("lime"))
+    		baseColorIndex = 5;
+    	else if (bid.startsWith("pink"))
+    		baseColorIndex = 6;
+    	else if (bid.startsWith("gray"))
+    		baseColorIndex = 7;
+    	else if (bid.startsWith("light_gray"))
+    		baseColorIndex = 8;
+    	else if (bid.startsWith("cyan"))
+    		baseColorIndex = 9;
+    	else if (bid.startsWith("purple"))
+    		baseColorIndex = 10;
+    	else if (bid.startsWith("blue"))
+    		baseColorIndex = 11;
+    	else if (bid.startsWith("brown"))
+    		baseColorIndex = 12;
+    	else if (bid.startsWith("green"))
+    		baseColorIndex = 13;
+    	else if (bid.startsWith("red"))
+    		baseColorIndex = 14;
+    	else if (bid.startsWith("black"))
+    		baseColorIndex = 15;
+
+        // base Color
+        BannerPattern bpBase = new BannerPattern();
+        bpBase.setColor(baseColorIndex);
+        bpBase.setPattern("base");
+        patternList.add(bpBase);
+
+        // get banner layer information
+        TAG_Compound tag = chunks.getTileEntity(x, y, z);
+	    if (tag != null) {
+            TAG_List patternsTag = (TAG_List) tag.getElement("Patterns");
+
+            if (patternsTag != null) {
+                for (NBT_Tag pattern : patternsTag.elements) {
+                    TAG_Compound c_pattern = (TAG_Compound) pattern;
+                    BannerPattern bp = new BannerPattern();
+                    bp.setColor((int) ((TAG_Int) c_pattern.getElement("Color")).value);
+                    bp.setPattern((String) ((TAG_String) c_pattern.getElement("Pattern")).value);
+                    patternList.add(bp);
+                }
+            }
         }
 
         // use material hash (to generate unique material name and images)
-        String bannerMaterial = "banner_" + bannerType + "_";
+        String bannerMaterial = "banner_";
         if (baseColorIndex > -1) {
-            bannerMaterial+= createPatternHash(baseColorIndex);
+            bannerMaterial+= createPatternHash(baseColorIndex, patternList);
         }
 
 
 
         // add the Banner
-        addBanner("conf/models/banner_"+bannerType+".obj", bannerMaterial, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
+        addBanner(bannerType, bannerMaterial, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
 
         try {
         	synchronized (exportedMaterials) {
-	            boolean alreadyExported = exportedMaterials.contains(bannerMaterial);
 	            // already exported material?
-	            if (!alreadyExported) {
-	                exportedMaterials.add(bannerMaterial);
-	                generateBannerImage(bannerMaterial);
-	                exportBannerMaterial(bannerMaterial, baseColorIndex);
+	            if (exportedMaterials.add(bannerMaterial)) {
+	                generateBannerImage(bannerMaterial, patternList);
+	                addBannerMaterial(bannerMaterial, baseColorIndex);
 	            }
 			}
         }
@@ -240,7 +234,7 @@ public class Banner extends BlockModel {
      * @throws IOException
      */
     // TODO: user needs to export the textures first! - someone's might got a better idea for this!
-    private void generateBannerImage(String materialImageName) throws IOException {
+    private void generateBannerImage(String materialImageName, ArrayList<BannerPattern> patternList) throws IOException {
 
         // get the base material texture
         BufferedImage backgroundImage = null;
@@ -269,62 +263,60 @@ public class Banner extends BlockModel {
             Graphics combinedGraphics = combined.getGraphics();
             combinedGraphics.drawImage(backgroundImage, 0, 0, null);
             
-            synchronized (PatternList) {
-	            // each layer
-	            for (BannerPattern bp : PatternList) {
-	
-	                // target of one layer
-	                BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-	
-	                // pattern source image
-	                BufferedImage patternSource = null;
-	                try {
-	                    patternSource = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + ".png"));
-	                }
-	                catch (IOException e) {
-	                    Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
-	                    return;
-	                }
-	
-	                // pattern source image
-	                BufferedImage patternAlpha = null;
-	                try {
-	                    patternAlpha = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + "_a.png"));
-	                }
-	                catch (IOException e) {
-	                    Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
-	                    return;
-	                }
-	
-	
-	                // draw into layer..
-	                Color patternColor = getColorById(bp.getColor());
-	                
-	                
-	                for(int x=0; x<imageWidth; x++) {
-	                    for(int y=0; y<imageHeight; y++) {
-	                        Color maskColor = new Color(patternSource.getRGB(x, y));
-	                        Color mainMaskColor = new Color(patternAlpha.getRGB(x, y));
-	                        
-	                        
-	                        int alpha = maskColor.getRed();
-	                        // mask the mask with the mainmask :) YEAH
-	                        if (alpha > mainMaskColor.getRed()) {
-	                            alpha = alpha * (mainMaskColor.getRed()/255);
-	                        }
-	                        
-	                        Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
-	                        
-	                        //Log.debug(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
-	                        patternImage.setRGB(x, y, currentColor.getRGB());
-	                    }
-	                }
-	                
-	                // draw this layer into the main image
-	                combinedGraphics.drawImage(patternImage, 0, 0, null);
-	                
-	                Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
-	            }
+            // each layer
+            for (BannerPattern bp : patternList) {
+
+                // target of one layer
+                BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+
+                // pattern source image
+                BufferedImage patternSource = null;
+                try {
+                    patternSource = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + ".png"));
+                }
+                catch (IOException e) {
+                    Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
+                    return;
+                }
+
+                // pattern source image
+                BufferedImage patternAlpha = null;
+                try {
+                    patternAlpha = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + "_a.png"));
+                }
+                catch (IOException e) {
+                    Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
+                    return;
+                }
+
+
+                // draw into layer..
+                Color patternColor = getColorById(bp.getColor());
+                
+                
+                for(int x=0; x<imageWidth; x++) {
+                    for(int y=0; y<imageHeight; y++) {
+                        Color maskColor = new Color(patternSource.getRGB(x, y));
+                        Color mainMaskColor = new Color(patternAlpha.getRGB(x, y));
+                        
+                        
+                        int alpha = maskColor.getRed();
+                        // mask the mask with the mainmask :) YEAH
+                        if (alpha > mainMaskColor.getRed()) {
+                            alpha = alpha * (mainMaskColor.getRed()/255);
+                        }
+                        
+                        Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
+                        
+                        //Log.debug(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
+                        patternImage.setRGB(x, y, currentColor.getRGB());
+                    }
+                }
+                
+                // draw this layer into the main image
+                combinedGraphics.drawImage(patternImage, 0, 0, null);
+                
+                Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
             }
 
             if (!ImageIO.write(combined, "PNG", new File(Options.outputDir+"/tex", materialImageName+".png"))) {
@@ -369,7 +361,7 @@ public class Banner extends BlockModel {
      * Append the current texture to material file
      * @param materialName
      */
-    private void exportBannerMaterial(String materialName, int baseColorIndex) {
+    private void addBannerMaterial(String materialName, int baseColorIndex) {
     	
         Color baseColor = getColorById(baseColorIndex);
         
@@ -388,19 +380,20 @@ public class Banner extends BlockModel {
      * @param scale
      * @param rotation
      */
-    public void addBanner(String objFileName, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
-
+    public void addBanner(String bannerType, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
+    	String objFileName = "conf/models/banner_"+bannerType+".obj";
+    	
         OBJInputFile objFile = new OBJInputFile();
         File objMeshFile = new File(objFileName);
 
         try {
             objFile.loadFile(objMeshFile, material);
         } catch (IOException e) {
-            Log.error("Cant read Objectfile", e, true);
+            Log.error("Can't read banner obj file!", e, true);
         }
 
         OBJGroup myObjGroup = objFile.getDefaultObject();
-        objFile.overwriteMaterial(myObjGroup, material);
+        myObjGroup = objFile.overwriteMaterial(myObjGroup, material);
         // Log.info("myObjGroup: "+myObjGroup);
 
         // translate
@@ -415,7 +408,7 @@ public class Banner extends BlockModel {
 
         // rotate
         Transform tRotation = new Transform();
-        tRotation.rotate(0, (float) rotation, 0);
+        tRotation.rotate(0, rotation, 0);
 
         translate = translate.multiply(tRotation);
 

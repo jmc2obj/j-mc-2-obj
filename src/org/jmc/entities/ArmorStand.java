@@ -168,7 +168,7 @@ public class ArmorStand extends Entity {
 		
 				
 		OBJGroup myObjGroup = objFile.getDefaultObject();
-		objFile.overwriteMaterial(myObjGroup, material);
+		myObjGroup = objFile.overwriteMaterial(myObjGroup, material);
 		// Log.info("myObjGroup: "+myObjGroup);
 		Transform translate = getTranslate((float)x, (float)y, (float)z, (float)scale).multiply(getRotate((float) rotation));
 		
