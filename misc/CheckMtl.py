@@ -1,6 +1,8 @@
 import os
 from xml.dom import minidom
 
+EXPORT_DIR = "../../jmcTest/"
+
 def getText(nodelist):
 	rc = []
 	for node in nodelist:
@@ -69,7 +71,7 @@ for mtlMat in mtlMats.values():
 print("----------------------------------------")
 for mtlMat in mtlMats.values():
 	try:
-		if not os.path.exists("../../jmcTest/" + mtlMat["map_Kd"]):
+		if not os.path.exists(EXPORT_DIR + mtlMat["map_Kd"]):
 			print("'%s' tex not found. %s" % (mtlMat["name"], mtlMat["map_Kd"]))
 	except KeyError as e:
 		print("'%s' missing map_Kd" % mtlMat["name"])
