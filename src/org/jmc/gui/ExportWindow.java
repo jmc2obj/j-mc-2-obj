@@ -973,21 +973,24 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		txtX.setText("" + prefs.getInt("OFFSET_X", 0));
 		txtZ.setText("" + prefs.getInt("OFFSET_Z", 0));
 
-		chckbxRenderWorldSides.setSelected(prefs.getBoolean("RENDER_SIDES", true));
+		chckbxRenderUnknownBlocks.setSelected(prefs.getBoolean("RENDER_UNKNOWN", true));
+		chckbxRenderWorldSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
 		chckbxRenderBiomes.setSelected(prefs.getBoolean("RENDER_BIOMES", true));
 		chckbxRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", true));
-		chckbxRenderUnknownBlocks.setSelected(prefs.getBoolean("RENDER_UNKNOWN", true));
-		chckbxSeparateMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", true));
-		chckbxSeparateMatOccl.setSelected(prefs.getBoolean("OBJ_PER_MTL_OCCL", true));
-		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", true));
-		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", true));
-		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", false));
 		chckbxConvertOreTo.setSelected(prefs.getBoolean("CONVERT_ORES", true));
-		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", true));
+		chckbxSeparateMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
+		chckbxSeparateMatOccl.setSelected(prefs.getBoolean("OBJ_PER_MTL_OCCL", true));
+		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
+		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
+		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", true));
-		chckbxSingleTexture.setSelected(prefs.getBoolean("USE_UV_FILE", true));
+		
+		chckbxSingleTexture.setSelected(prefs.getBoolean("USE_UV_FILE", false));
 		textFieldSingleTexUV.setText(prefs.get("UV_FILE", ""));
-		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", true));
+		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", true));
+		
+		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", false));
+		
 		cboxTexScale.setSelectedItem("" + prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
 		chckbxSeparateAlphaTexture.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
 		chckbxExportNormalMaps.setSelected(prefs.getBoolean("TEXTURE_NORMAL", false));
