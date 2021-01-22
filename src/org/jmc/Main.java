@@ -26,7 +26,7 @@ public class Main
 			public void uncaughtException(Thread t, Throwable e) { 
 				Log.error("Uncaught exception in thread: "+t.getName(), e);
 			}
-		});		
+		});
 
 		try
 		{
@@ -36,7 +36,7 @@ public class Main
 		} catch(Exception e)
 		{
 			Log.info("WARNING: cannot change language on this system!");
-			Locale.setDefault(Locale.ENGLISH);			
+			Locale.setDefault(Locale.ENGLISH);
 		}
 		
 		System.out.println("jmc2obj "+Version.VERSION());

@@ -97,6 +97,9 @@ public class MainWindow extends JmcFrame
 	 */
 	public static void log(String msg, boolean isError)
 	{
+		if (consoleLog == null) {
+			return;
+		}
 		if(isError){
 			try {
 				SwingUtilities.invokeAndWait(new Runnable(){
@@ -120,6 +123,9 @@ public class MainWindow extends JmcFrame
 	 */
 	public static void logDebug(String msg)
 	{
+		if (consoleLog == null) {
+			return;
+		}
 		if (settings.getPreferences().getBoolean("SHOW_DEBUG_LOG", false))
 			consoleLog.log(msg, false, true);
 	}

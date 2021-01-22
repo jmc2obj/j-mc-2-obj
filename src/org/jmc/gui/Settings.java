@@ -269,11 +269,16 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	}
 
 	private void loadSettingsAfter() {
-		cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
-		cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
-		cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
-		chckbxUseSystemBrowser.setSelected(prefs.getBoolean("USE_SYSTEM_BROWSER", true));
-		spPrevThreads.setValue(prefs.getInt("PREVIEW_THREADS", 8));
+		try {
+			cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
+			cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
+			cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
+			chckbxUseSystemBrowser.setSelected(prefs.getBoolean("USE_SYSTEM_BROWSER", true));
+			spPrevThreads.setValue(prefs.getInt("PREVIEW_THREADS", 8));
+		} catch (IllegalArgumentException e) {
+			Log.error("Error loading settings! Resetting...", e);
+			resetSettings();
+		}
 	}
 
 	private void saveSettings() {
