@@ -50,6 +50,9 @@ for mtlName, mtlMat in sorted(mtlMats.items()):
 			mtlMat["map_d"] = mtlMat["map_Kd"]
 		print("%s: %s alpha: %s" % (mtlMat["name"], avg, hasAlpha))
 	
+	if mtlName == "water":
+		mtlMat["Kd"] = [0.0, 0.6, 1.0]
+	
 	newMtlLines.append("newmtl %s\n" % mtlMat["name"])
 	newMtlLines.append("Kd %6.4f %6.4f %6.4f\n" % tuple(mtlMat["Kd"]))
 	if "Ks" in mtlMat.keys():

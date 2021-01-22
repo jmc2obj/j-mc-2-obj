@@ -3905,7 +3905,7 @@ Ks 0.0000 0.0000 0.0000
 map_Kd tex/wasteland_painting.png
 
 newmtl water
-Kd 0.6942 0.6942 0.6942
+Kd 0.0000 0.6000 1.0000
 map_Kd tex/water.png
 map_d tex/water.png
 
