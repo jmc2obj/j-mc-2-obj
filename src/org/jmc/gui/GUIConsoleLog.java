@@ -22,6 +22,7 @@ public class GUIConsoleLog extends JmcFrame{
 	private JTextPane taLog;
 
 	public GUIConsoleLog(){
+		super("Console log");
 		getContentPane().setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		setSize(600, 300);
