@@ -137,9 +137,7 @@ public class ObjExporter {
 				if (Options.singleMaterial) {
 					obj_writer.println("usemtl minecraft_material");
 					obj_writer.println();
-
-					if (Options.objectPerBlock)
-						writeRunner.setPrintUseMTL(false);
+					writeRunner.setPrintUseMTL(false);
 				}
 				
 				Banner.resetReadError();
