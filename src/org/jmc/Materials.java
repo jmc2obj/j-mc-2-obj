@@ -32,6 +32,7 @@ public class Materials
 	private static ByteArrayOutputStream matBuffer;
 
 	private static HashMap<String, Color> mtlColors;
+	private static HashMap<String, String> mtlTextures = new HashMap<>();
 
 
 	private static void readConfig(HashMap<String, Color> mtlColors) throws Exception
@@ -46,12 +47,14 @@ public class Materials
 			String currMtl = null;
 			Pattern rxNewmtl = Pattern.compile("^\\s*newmtl\\s+(.*?)\\s*$");
 			Pattern rxKd = Pattern.compile("^\\s*Kd\\s+([0-9.]+)\\s+([0-9.]+)\\s+([0-9.]+)\\s*$");
+			Pattern rxMapKd = Pattern.compile("^\\s*map_Kd\\s+tex\\/(.*?)\\.png\\s*$");
 
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
 				Matcher mNewmtl = rxNewmtl.matcher(line);
 				Matcher mKd = rxKd.matcher(line);
+				Matcher mMapKd = rxMapKd.matcher(line);
 				if (mNewmtl.matches())
 				{
 					currMtl = mNewmtl.group(1);
@@ -63,6 +66,10 @@ public class Materials
 					float b = Float.parseFloat(mKd.group(3));
 
 					mtlColors.put(currMtl.toLowerCase(), new Color(r,g,b,1));
+				}
+				else if (mMapKd.matches() && currMtl != null)
+				{
+					mtlTextures.put(currMtl.toLowerCase(), mMapKd.group(1));
 				}
 			}
 		}
@@ -135,6 +142,18 @@ public class Materials
 	{
 		Color c = mtlColors.get(mtlName.toLowerCase());
 		return c != null ? c : new Color(0,0,0);
+	}
+	
+	/**
+	 * Gets the texture defined for a material.
+	 * If the material name is not found or it has no texture, returns null.
+	 * 
+	 * @param mtlName Material name
+	 * @return Material texture
+	 */
+	public static String getTexture(String mtlName)
+	{
+		return mtlTextures.get(mtlName.toLowerCase());
 	}
 	
 	public static void addMaterial(String matName, Color color, Color spec, String diffTex, String alphaTex) {

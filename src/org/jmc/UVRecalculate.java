@@ -68,34 +68,37 @@ public class UVRecalculate {
 	*/
 	
 	public static UV[] recalculate(UV[] uvs, String mtl_name)
-	{		
-		if(uv_map==null) return uvs;
-		
-		Rectangle rect=uv_map.get(mtl_name);
-				
-		if(rect==null)
-		{
-			Log.info("WARNING: cannot recalculate material: "+mtl_name);
+	{
+		if (uv_map == null)
 			return uvs;
+		
+		Rectangle rect = uv_map.get(mtl_name);
+		
+		if (rect == null) {
+			rect = uv_map.get(Materials.getTexture(mtl_name));
+			if (rect == null) {
+				Log.info("WARNING: cannot recalculate material: " + mtl_name);
+				return uvs;
+			}
 		}
 		
-		float sx=rect.x/(float)width;
-		float sy=1.0f-((rect.y+rect.height)/(float)height);
-		float sw=rect.width/(float)width;
-		float sh=rect.height/(float)height;
+		float sx = rect.x / (float) width;
+		float sy = 1.0f - ((rect.y + rect.height) / (float) height);
+		float sw = rect.width / (float) width;
+		float sh = rect.height / (float) height;
 		
-		UV[] ret=new UV[uvs.length];
+		UV[] ret = new UV[uvs.length];
 		
-		for(int i=0; i<uvs.length; i++)
-		{
-			UV uv=new UV(uvs[i]);
-			ret[i]=uv;
+		for (int i = 0; i < uvs.length; i++) {
+			UV uv = new UV(uvs[i]);
+			ret[i] = uv;
 			
-			if(uv.recalculated) continue;
-
-			uv.u=uv.u*sw+sx;
-			uv.v=uv.v*sh+sy;
-			uv.recalculated=true;
+			if (uv.recalculated)
+				continue;
+			
+			uv.u = uv.u * sw + sx;
+			uv.v = uv.v * sh + sy;
+			uv.recalculated = true;
 		}
 		
 		return ret;
