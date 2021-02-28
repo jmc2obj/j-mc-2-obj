@@ -394,14 +394,14 @@ public class FaceUtils {
 			if (N.x > 0) {
 				face.uvs = new UV[face.vertices.length];
 				for (int i = 0; i < face.uvs.length; i++) {
-					u = face.vertices[i].z + bounds;
+					u = bounds - face.vertices[i].z;
 					v = face.vertices[i].y + bounds;
 					face.uvs[i] = new UV(u, v);
 				}
 			} else {
 				face.uvs = new UV[face.vertices.length];
 				for (int i = 0; i < face.uvs.length; i++) {
-					u = bounds - face.vertices[i].z;
+					u = face.vertices[i].z + bounds;
 					v = face.vertices[i].y + bounds;
 					face.uvs[i] = new UV(u, v);
 				}
@@ -411,14 +411,14 @@ public class FaceUtils {
 				face.uvs = new UV[face.vertices.length];
 				for (int i = 0; i < face.uvs.length; i++) {
 					u = face.vertices[i].x + bounds;
-					v = face.vertices[i].z + bounds;
+					v = bounds - face.vertices[i].z;
 					face.uvs[i] = new UV(u, v);
 				}
 			} else {
 				face.uvs = new UV[face.vertices.length];
 				for (int i = 0; i < face.uvs.length; i++) {
 					u = bounds - face.vertices[i].x;
-					v = face.vertices[i].z + bounds;
+					v = bounds - face.vertices[i].z;
 					face.uvs[i] = new UV(u, v);
 				}
 			}
