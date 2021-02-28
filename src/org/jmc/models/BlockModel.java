@@ -317,7 +317,7 @@ public abstract class BlockModel {
 	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
-	protected void addBoxCubeUV(ChunkProcessor obj, int x, int y, int z, float xs, float ys, float zs, float xe, float ye, float ze,
+	protected void addBoxCubeUV(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
 			Transform trans, String[] mtlSides, boolean[] drawSides) {
 		UV[] uvU = new UV[] { new UV(xs+0.5f, -ze+0.5f), new UV(xe+0.5f, -ze+0.5f), new UV(xe+0.5f, -zs+0.5f), new UV(xs+0.5f, -zs+0.5f) };
 		UV[] uvN = new UV[] { new UV(-xe+0.5f, ys+0.5f), new UV(-xs+0.5f, ys+0.5f), new UV(-xs+0.5f, ye+0.5f), new UV(-xe+0.5f, ye+0.5f) };
@@ -326,7 +326,7 @@ public abstract class BlockModel {
 		UV[] uvE = new UV[] { new UV(-ze+0.5f, ys+0.5f), new UV(-zs+0.5f, ys+0.5f), new UV(-zs+0.5f, ye+0.5f), new UV(-ze+0.5f, ye+0.5f) };
 		UV[] uvD = new UV[] { new UV(xe+0.5f, ze+0.5f), new UV(xs+0.5f, ze+0.5f), new UV(xs+0.5f, zs+0.5f), new UV(xe+0.5f, zs+0.5f) };
 		UV[][] uvSides = new UV[][] { uvU, uvN, uvS, uvW, uvE, uvD };
-		addBox(obj, x+xs, y+ys, z+zs, x+xe, y+ye, z+ze, trans, mtlSides, uvSides, drawSides);
+		addBox(obj, xs, ys, zs, xe, ye, ze, trans, mtlSides, uvSides, drawSides);
 	}
 
 	/**

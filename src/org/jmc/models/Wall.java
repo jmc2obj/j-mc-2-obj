@@ -1,6 +1,7 @@
 package org.jmc.models;
 
 import org.jmc.BlockData;
+import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -10,6 +11,9 @@ public class Wall extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
+		Transform trans = new Transform();
+		trans.translate(x, y, z);
+		
 		String[] mtls = getMtlSides(data, biome);
 		
 		String north, south, east, west;
@@ -50,27 +54,27 @@ public class Wall extends BlockModel
 		
 		// center column
 		if (up) {
-			addBoxCubeUV(obj, x, y, z, -4/16f, -8/16f, -4/16f, 4/16f, 8/16f, 4/16f, null, mtls, null);
+			addBoxCubeUV(obj, -4/16f, -8/16f, -4/16f, 4/16f, 8/16f, 4/16f, trans, mtls, null);
 		}
 		// north wall
 		if (north.equals("low") || north.equals("tall")) {
 			int height = north.equals("tall") ? 16 : 14;
-			addBoxCubeUV(obj, x, y, z, -3/16f, -8/16f, -8/16f, 3/16f, (height-8)/16f, 0, null, mtls, null);
+			addBoxCubeUV(obj, -3/16f, -8/16f, -8/16f, 3/16f, (height-8)/16f, 0, trans, mtls, null);
 		}
 		// south wall
 		if (south.equals("low") || south.equals("tall")) {
 			int height = south.equals("tall") ? 16 : 14;
-			addBoxCubeUV(obj, x, y, z, -3/16f, -8/16f, 0, 3/16f, (height-8)/16f, 8/16f, null, mtls, null);
+			addBoxCubeUV(obj, -3/16f, -8/16f, 0, 3/16f, (height-8)/16f, 8/16f, trans, mtls, null);
 		}
 		// west wall
 		if (west.equals("low") || west.equals("tall")) {
 			int height = west.equals("tall") ? 16 : 14;
-			addBoxCubeUV(obj, x, y, z, -8/16f, -8/16f, -3/16f, 0, (height-8)/16f, 3/16f, null, mtls, null);
+			addBoxCubeUV(obj, -8/16f, -8/16f, -3/16f, 0, (height-8)/16f, 3/16f, trans, mtls, null);
 		}
 		// east wall
 		if (east.equals("low") || east.equals("tall")) {
 			int height = east.equals("tall") ? 16 : 14;
-			addBoxCubeUV(obj, x, y, z, 0, -8/16f, -3/16f, 8/16f, (height-8)/16f, 3/16f, null, mtls, null);
+			addBoxCubeUV(obj, 0, -8/16f, -3/16f, 8/16f, (height-8)/16f, 3/16f, trans, mtls, null);
 		}
 	}
 }
