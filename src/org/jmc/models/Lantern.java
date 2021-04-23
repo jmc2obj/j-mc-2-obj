@@ -35,6 +35,7 @@ public class Lantern extends BlockModel
 		addBox(obj, x-2/16f, y-1/16f+hangOffset, z-2/16f, x+2/16f, y+1/16f+hangOffset, z+2/16f, null, mtls, uvSides, null);		
 
 		// If hanging, draw full chain
+		final String material = materials.get(data, biome)[0];
 		if (hanging)
 		{
 			Transform move = new Transform();
@@ -46,14 +47,14 @@ public class Lantern extends BlockModel
 			vertices[1] = new Vertex(-1/16f,2/16f,1/16f);
 			vertices[2] = new Vertex(-1/16f,8/16f,1/16f);
 			vertices[3] = new Vertex(1/16f,8/16f,-1/16f);
-			obj.addFace(vertices, uvSide, move, materials.get(data,biome)[0]);
+			obj.addDoubledFace(vertices, uvSide, move, material);
             
 			uvSide = new UV[] { new UV(11/16f, 4/16f), new UV(14/16f, 4/16f), new UV(14/16f, 10/16f), new UV(11/16f, 10/16f) };			
 			vertices[0] = new Vertex(-1/16f,2/16f,-1/16f);
 			vertices[1] = new Vertex(1/16f,2/16f,1/16f);
 			vertices[2] = new Vertex(1/16f,8/16f,1/16f);
 			vertices[3] = new Vertex(-1/16f,8/16f,-1/16f);
-			obj.addFace(vertices, uvSide, move, materials.get(data,biome)[0]);
+			obj.addDoubledFace(vertices, uvSide, move, material);
 		}	
 		// Otherwise we'll just draw the small chain hook
 		else
@@ -67,13 +68,13 @@ public class Lantern extends BlockModel
 			vertices[1] = new Vertex(-1/16f,1/16f,1/16f);
 			vertices[2] = new Vertex(-1/16f,3/16f,1/16f);
 			vertices[3] = new Vertex(1/16f,3/16f,-1/16f);
-			obj.addFace(vertices, uvSide, move, materials.get(data,biome)[0]);
+			obj.addDoubledFace(vertices, uvSide, move, material);
             		
 			vertices[0] = new Vertex(-1/16f,1/16f,-1/16f);
 			vertices[1] = new Vertex(1/16f,1/16f,1/16f);
 			vertices[2] = new Vertex(1/16f,3/16f,1/16f);
 			vertices[3] = new Vertex(-1/16f,3/16f,-1/16f);
-			obj.addFace(vertices, uvSide, move, materials.get(data,biome)[0]);		 	
+			obj.addDoubledFace(vertices, uvSide, move, material);
 		}
 	}
 }

@@ -35,18 +35,19 @@ public class Plant extends BlockModel
         
         Transform t = new Transform();
         t.translate(x+randomX, y, z+randomZ);
+        final String material = materials.get(data, biome)[0];
  
         Vertex[] vertices = new Vertex[4];
         vertices[0] = new Vertex((+0.43f)*flipValue,-0.5f,(-0.43f)*flipValue);
         vertices[1] = new Vertex((-0.43f)*flipValue,-0.5f,(+0.43f)*flipValue);
         vertices[2] = new Vertex((-0.43f)*flipValue,+0.45f,(+0.43f)*flipValue);
         vertices[3] = new Vertex((+0.43f)*flipValue,+0.45f,(-0.43f)*flipValue);
-        obj.addFace(vertices, null, t, materials.get(data,biome)[0]);
+        obj.addDoubledFace(vertices, null, t, material);
        
         vertices[0] = new Vertex((-0.43f)*flipValue,-0.5f,(-0.43f)*flipValue);
         vertices[1] = new Vertex((+0.43f)*flipValue,-0.5f,(+0.43f)*flipValue);
         vertices[2] = new Vertex((+0.43f)*flipValue,+0.45f,(+0.43f)*flipValue);
         vertices[3] = new Vertex((-0.43f)*flipValue,+0.45f,(-0.43f)*flipValue);
-        obj.addFace(vertices, null, t, materials.get(data,biome)[0]);
+        obj.addDoubledFace(vertices, null, t, material);
     }
 }

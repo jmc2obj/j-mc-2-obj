@@ -42,6 +42,13 @@ public class ChunkProcessor
 	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
 		addFace(verts, null, uv, trans, mtl);
 	}
+
+	/**
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
+	 */
+	public void addDoubledFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
+		addDoubledFace(verts, null, uv, trans, mtl);
+	}
 	
 	/**
 	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String, boolean) addFace}
@@ -50,7 +57,20 @@ public class ChunkProcessor
 	{
 		addFace(verts, norms, uv, trans, mtl, true);
 	}
-	
+
+	public void addDoubledFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl) {
+		addFace(verts, norms, uv, trans, mtl);
+		addFace(reversed(verts), norms, uv, trans, mtl);
+	}
+
+	private static Vertex[] reversed(Vertex[] in) {
+		Vertex[] out = new Vertex[in.length];
+		for (int i = 0; i < in.length; i++) {
+			out[in.length - 1 - i] = in[i];
+		}
+		return out;
+	}
+
 	/**
 	 * Add a face with the given vertices to the chunk output.
 	 * 

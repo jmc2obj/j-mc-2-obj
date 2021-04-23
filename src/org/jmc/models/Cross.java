@@ -18,19 +18,21 @@ public class Cross extends BlockModel
 	{
 		Transform move = new Transform();
 		move.translate(x, y, z);
+
+		final String material = materials.get(data, biome)[0];
 		
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(+0.5f,-0.5f,-0.5f);
 		vertices[1] = new Vertex(-0.5f,-0.5f,+0.5f);
 		vertices[2] = new Vertex(-0.5f,+0.5f,+0.5f);
 		vertices[3] = new Vertex(+0.5f,+0.5f,-0.5f);
-		obj.addFace(vertices, null, move, materials.get(data,biome)[0]);
+		obj.addDoubledFace(vertices, null, move, material);
 		
 		vertices[0] = new Vertex(-0.5f,-0.5f,-0.5f);
 		vertices[1] = new Vertex(+0.5f,-0.5f,+0.5f);
 		vertices[2] = new Vertex(+0.5f,+0.5f,+0.5f);
 		vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
-		obj.addFace(vertices, null, move, materials.get(data,biome)[0]);
+		obj.addDoubledFace(vertices, null, move, material);
 	}
 
 }
