@@ -138,6 +138,11 @@ public class Options
 	public static boolean objectPerChunk = false;
 
 	/**
+	 * If true, will export a separate object for each chunk.
+	 */
+	public static boolean doubleStandaloneFaces = false;
+
+	/**
 	 * If true, will export a separate object for each block.
 	 */
 	public static boolean objectPerBlock = false;

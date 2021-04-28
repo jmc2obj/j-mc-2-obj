@@ -70,6 +70,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JCheckBox chckbxSeparateMat;
 	private JCheckBox chckbxSeparateMatOccl;
 	private JCheckBox chckbxSeparateChunk;
+	private JCheckBox chckbxDoubleStandaloneFaces;
 	private JCheckBox chckbxSeparateBlock;
 	private JCheckBox chckbxOptimiseGeo;
 	private JCheckBox chckbxConvertOreTo;
@@ -372,6 +373,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		chckbxSeparateChunk = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_CHUNK"));
 		pExportOptions.add(chckbxSeparateChunk);
+
+		chckbxDoubleStandaloneFaces = new JCheckBox(Messages.getString("OBJExportOptions.DOUBLE_STANDALONE_FACES"));
+		pExportOptions.add(chckbxDoubleStandaloneFaces);
 
 		//##########################################################################################################
 		//SeperateBlocks
@@ -911,6 +915,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateMat.addActionListener(genericSaveAction);
 		chckbxSeparateMatOccl.addActionListener(genericSaveAction);
 		chckbxSeparateChunk.addActionListener(genericSaveAction);
+		chckbxDoubleStandaloneFaces.addActionListener(genericSaveAction);
 		chckbxSeparateBlock.addActionListener(genericSaveAction);
 
 		chckbxOptimiseGeo.addActionListener(genericSaveAction);
@@ -981,6 +986,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateMat.setSelected(prefs.getBoolean("OBJ_PER_MTL", false));
 		chckbxSeparateMatOccl.setSelected(prefs.getBoolean("OBJ_PER_MTL_OCCL", true));
 		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
+		chckbxDoubleStandaloneFaces.setSelected(prefs.getBoolean("DOUBLE_SINGLE_FACES", false));
 		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
 		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", true));
@@ -1141,6 +1147,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.objectPerMaterial = chckbxSeparateMat.isSelected();
 		Options.objectPerMaterialOcclusionBarrier = chckbxSeparateMatOccl.isSelected();
 		Options.objectPerChunk = chckbxSeparateChunk.isSelected();
+		Options.doubleStandaloneFaces = chckbxDoubleStandaloneFaces.isSelected();
 		Options.objectPerBlock = chckbxSeparateBlock.isSelected();
 		Options.optimiseGeometry = chckbxOptimiseGeo.isSelected() && chckbxOptimiseGeo.isEnabled();
 		Options.convertOres = chckbxConvertOreTo.isSelected();

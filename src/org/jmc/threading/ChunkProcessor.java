@@ -8,6 +8,7 @@
 package org.jmc.threading;
 
 import java.awt.Rectangle;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +47,8 @@ public class ChunkProcessor
 	/**
 	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
 	 */
-	public void addDoubledFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
-		addDoubledFace(verts, null, uv, trans, mtl);
+	public void addStandaloneFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
+		addStandaloneFace(verts, null, uv, trans, mtl);
 	}
 	
 	/**
@@ -58,17 +59,35 @@ public class ChunkProcessor
 		addFace(verts, norms, uv, trans, mtl, true);
 	}
 
-	public void addDoubledFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl) {
+	public void addStandaloneFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl) {
 		addFace(verts, norms, uv, trans, mtl);
-		addFace(reversed(verts), norms, uv, trans, mtl);
+		if (Options.doubleStandaloneFaces) {
+			if (uv == null) {
+				uv = defaultUVs();
+			}
+			addFace(reversed(verts), norms, reversed(uv), trans, mtl);
+		}
 	}
 
-	private static Vertex[] reversed(Vertex[] in) {
-		Vertex[] out = new Vertex[in.length];
+	private static <T> T[] reversed(T[] in) {
+		if (in == null) {
+			return null;
+		}
+		@SuppressWarnings("unchecked")
+		T[] out = (T[]) Array.newInstance(in.getClass().getComponentType(), in.length);
 		for (int i = 0; i < in.length; i++) {
 			out[in.length - 1 - i] = in[i];
 		}
 		return out;
+	}
+
+	private static UV[] defaultUVs() {
+		return new UV[] {
+				new UV(0,0),
+				new UV(1,0),
+				new UV(1,1),
+				new UV(0,1)
+		};
 	}
 
 	/**
@@ -89,12 +108,7 @@ public class ChunkProcessor
 			if (verts.length != 4)
 				throw new IllegalArgumentException("Default texture coordinates are only defined for quads.");
 
-			uv = new UV[] {
-					new UV(0,0),
-					new UV(1,0), 
-					new UV(1,1), 
-					new UV(0,1) 
-			};
+			uv = defaultUVs();
 		}
 		Face face = new Face();
 		face.uvs = uv.clone();
