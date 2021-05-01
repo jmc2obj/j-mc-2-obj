@@ -138,9 +138,9 @@ public class Options
 	public static boolean objectPerChunk = false;
 
 	/**
-	 * If true, will export a separate object for each chunk.
+	 * If true, will add extra faces to backside of standalone faces.
 	 */
-	public static boolean doubleStandaloneFaces = false;
+	public static boolean doubleSidedFaces = false;
 
 	/**
 	 * If true, will export a separate object for each block.

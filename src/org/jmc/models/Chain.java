@@ -60,13 +60,13 @@ public class Chain extends BlockModel
 		vertices[1] = new Vertex(-1/16f,-0.5f,1/16f);
 		vertices[2] = new Vertex(-1/16f,+0.5f,1/16f);
 		vertices[3] = new Vertex(1/16f ,+0.5f,-1/16f);
-		obj.addStandaloneFace(vertices, aUV, transform, material);
+		obj.addDoubleSidedFace(vertices, aUV, transform, material);
 
 		vertices[0] = new Vertex(-1/16f,-0.5f,-1/16f);
 		vertices[1] = new Vertex(1/16f ,-0.5f,1/16f);
 		vertices[2] = new Vertex(1/16f ,+0.5f,1/16f);
 		vertices[3] = new Vertex(-1/16f,+0.5f,-1/16f);
-		obj.addStandaloneFace(vertices, bUV, transform, material);
+		obj.addDoubleSidedFace(vertices, bUV, transform, material);
 	}
 
 }

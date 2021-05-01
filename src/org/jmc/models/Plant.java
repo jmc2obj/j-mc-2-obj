@@ -42,12 +42,12 @@ public class Plant extends BlockModel
         vertices[1] = new Vertex((-0.43f)*flipValue,-0.5f,(+0.43f)*flipValue);
         vertices[2] = new Vertex((-0.43f)*flipValue,+0.45f,(+0.43f)*flipValue);
         vertices[3] = new Vertex((+0.43f)*flipValue,+0.45f,(-0.43f)*flipValue);
-        obj.addStandaloneFace(vertices, null, t, material);
+        obj.addDoubleSidedFace(vertices, null, t, material);
        
         vertices[0] = new Vertex((-0.43f)*flipValue,-0.5f,(-0.43f)*flipValue);
         vertices[1] = new Vertex((+0.43f)*flipValue,-0.5f,(+0.43f)*flipValue);
         vertices[2] = new Vertex((+0.43f)*flipValue,+0.45f,(+0.43f)*flipValue);
         vertices[3] = new Vertex((-0.43f)*flipValue,+0.45f,(-0.43f)*flipValue);
-        obj.addStandaloneFace(vertices, null, t, material);
+        obj.addDoubleSidedFace(vertices, null, t, material);
     }
 }

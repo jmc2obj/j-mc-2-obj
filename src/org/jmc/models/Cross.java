@@ -26,13 +26,13 @@ public class Cross extends BlockModel
 		vertices[1] = new Vertex(-0.5f,-0.5f,+0.5f);
 		vertices[2] = new Vertex(-0.5f,+0.5f,+0.5f);
 		vertices[3] = new Vertex(+0.5f,+0.5f,-0.5f);
-		obj.addStandaloneFace(vertices, null, move, material);
+		obj.addDoubleSidedFace(vertices, null, move, material);
 		
 		vertices[0] = new Vertex(-0.5f,-0.5f,-0.5f);
 		vertices[1] = new Vertex(+0.5f,-0.5f,+0.5f);
 		vertices[2] = new Vertex(+0.5f,+0.5f,+0.5f);
 		vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
-		obj.addStandaloneFace(vertices, null, move, material);
+		obj.addDoubleSidedFace(vertices, null, move, material);
 	}
 
 }

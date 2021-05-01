@@ -43,13 +43,6 @@ public class ChunkProcessor
 	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
 		addFace(verts, null, uv, trans, mtl);
 	}
-
-	/**
-	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
-	 */
-	public void addStandaloneFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
-		addStandaloneFace(verts, null, uv, trans, mtl);
-	}
 	
 	/**
 	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String, boolean) addFace}
@@ -59,9 +52,16 @@ public class ChunkProcessor
 		addFace(verts, norms, uv, trans, mtl, true);
 	}
 
-	public void addStandaloneFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl) {
+	/**
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
+	 */
+	public void addDoubleSidedFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
+		addDoubleSidedFace(verts, null, uv, trans, mtl);
+	}
+
+	public void addDoubleSidedFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl) {
 		addFace(verts, norms, uv, trans, mtl);
-		if (Options.doubleStandaloneFaces) {
+		if (Options.doubleSidedFaces) {
 			if (uv == null) {
 				uv = defaultUVs();
 			}
