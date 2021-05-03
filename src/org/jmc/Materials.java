@@ -156,7 +156,7 @@ public class Materials
 		return mtlTextures.get(mtlName.toLowerCase());
 	}
 	
-	public static void addMaterial(String matName, Color color, Color spec, String diffTex, String alphaTex) {
+	public synchronized static void addMaterial(String matName, Color color, Color spec, String diffTex, String alphaTex) {
 		if (color == null) 
 			color = Color.WHITE;
 		if (spec == null) 
