@@ -1,6 +1,5 @@
 package org.jmc.models;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +14,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 public class Mesh extends BlockModel
@@ -91,8 +91,8 @@ public class Mesh extends BlockModel
 		{
 			objin_file=new OBJInputFile();
 
-			try {
-				objin_file.loadFile(new File("conf",filename));
+			try (JmcConfFile objFile = new JmcConfFile("conf/"+filename)) {
+				objin_file.loadFile(objFile);
 			} catch (IOException e) {
 				Log.error("Cannot load mesh file!", e);
 				return;

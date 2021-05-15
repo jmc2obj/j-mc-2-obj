@@ -25,6 +25,7 @@ import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 public class Banner extends BlockModel {
@@ -384,10 +385,9 @@ public class Banner extends BlockModel {
     	String objFileName = "conf/models/banner_"+bannerType+".obj";
     	
         OBJInputFile objFile = new OBJInputFile();
-        File objMeshFile = new File(objFileName);
 
-        try {
-            objFile.loadFile(objMeshFile, material);
+        try (JmcConfFile objFileStream = new JmcConfFile(objFileName)) {
+            objFile.loadFile(objFileStream, material);
         } catch (IOException e) {
             Log.error("Can't read banner obj file!", e, true);
         }

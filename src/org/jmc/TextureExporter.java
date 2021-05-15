@@ -8,19 +8,19 @@ import java.awt.image.ImagingOpException;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
@@ -28,6 +28,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.jmc.util.Filesystem;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
@@ -288,12 +289,15 @@ public class TextureExporter {
 		default:
 			throw new Exception(zipfile.toString() + " does not appear to contain a Minecraft texture pack.");
 		}
-
-		File confFile = new File(Filesystem.getDatafilesDir(), confFilePath);
-		if (!confFile.canRead())
-			throw new Exception("Cannot open configuration file " + confFilePath);
-
-		Document doc = Xml.loadDocument(confFile);
+		
+		Document doc;
+		try (JmcConfFile confFile = new JmcConfFile(confFilePath)) {
+			if (!confFile.hasStream())
+				throw new Exception("Cannot open configuration file " + confFilePath);
+			
+			doc = Xml.loadDocument(confFile.getInputStream());
+		}
+		
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
 		// create a memory copy of zip file names, to avoid duplicate zipstreams

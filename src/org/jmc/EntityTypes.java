@@ -1,6 +1,5 @@
 package org.jmc;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import org.jmc.NBT.TAG_String;
 import org.jmc.entities.Entity;
 import org.jmc.entities.models.EntityModel;
 import org.jmc.entities.models.Mesh;
-import org.jmc.util.Filesystem;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
@@ -27,11 +26,13 @@ public class EntityTypes {
 	private static Map<String, Entity> entities;
 
 	private static void readConfig() throws Exception {
-		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
-		if (!confFile.canRead())
-			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-
-		Document doc = Xml.loadDocument(confFile);
+		Document doc;
+		try (JmcConfFile confFile = new JmcConfFile(CONFIG_FILE)) {
+			if (!confFile.hasStream())
+				throw new Exception("Cannot open configuration file " + CONFIG_FILE);
+			
+			 doc = Xml.loadDocument(confFile.getInputStream());
+		}
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
 		NodeList entityNodes = (NodeList) xpath.evaluate("/entities/entity", doc, XPathConstants.NODESET);

@@ -5,8 +5,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jmc.util.Filesystem;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 
@@ -37,13 +38,12 @@ public class Materials
 
 	private static void readConfig(HashMap<String, Color> mtlColors) throws Exception
 	{
-		File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
-		if (!mtlFile.canRead())
-			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-
-		BufferedReader reader = new BufferedReader(new FileReader(mtlFile));
-		try
-		{
+		
+		try (JmcConfFile mtlFile = new JmcConfFile(CONFIG_FILE)) {
+			if (!mtlFile.hasStream())
+				throw new Exception("Cannot open configuration file " + CONFIG_FILE);
+			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(mtlFile.getInputStream()));
 			String currMtl = null;
 			Pattern rxNewmtl = Pattern.compile("^\\s*newmtl\\s+(.*?)\\s*$");
 			Pattern rxKd = Pattern.compile("^\\s*Kd\\s+([0-9.]+)\\s+([0-9.]+)\\s+([0-9.]+)\\s*$");
@@ -73,10 +73,6 @@ public class Materials
 				}
 			}
 		}
-		finally
-		{
-			reader.close();
-		}
 	}
 
 
@@ -95,13 +91,14 @@ public class Materials
 		readConfig(mtlColors);
 		
 		
-		File mtlFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
-		if (!mtlFile.canRead())
-			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-		
-		matBuffer = new ByteArrayOutputStream();
-		
-		Files.copy(mtlFile.toPath(), matBuffer);
+		try (JmcConfFile mtlFile = new JmcConfFile(CONFIG_FILE)) {
+			if (!mtlFile.hasStream())
+				throw new Exception("Cannot open configuration file " + CONFIG_FILE);
+			
+			matBuffer = new ByteArrayOutputStream();
+			
+			Filesystem.copyStream(mtlFile.getInputStream(), matBuffer);
+		}
 		
 		Log.info("Loaded " + mtlColors.size() + " materials.");
 	}
@@ -116,13 +113,15 @@ public class Materials
 	{
 		if(Options.singleMaterial)
 		{
-			File mtlFile = new File(Filesystem.getDatafilesDir(), SINGLE_MTL_FILE);
-			Filesystem.copyFile(mtlFile, dest);
+			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_MTL_FILE)) {
+				Filesystem.writeFile(mtlFile.getInputStream(), dest);
+			}
 		}
 		else if(Options.useUVFile)
 		{
-			File mtlFile = new File(Filesystem.getDatafilesDir(), SINGLE_TEXTURE_MTLS_FILE);
-			Filesystem.copyFile(mtlFile, dest);
+			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_TEXTURE_MTLS_FILE)) {
+				Filesystem.writeFile(mtlFile.getInputStream(), dest);
+			}
 		}
 		else
 		{

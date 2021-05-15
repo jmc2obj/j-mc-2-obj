@@ -62,9 +62,9 @@ public class Configuration
 			}
 			else
 			{
-				readHashFile(hashfile, localhashmap);				
+				readHashFile(hashfile, localhashmap);
 			}
-
+			
 			for(ZipEntry f:files)
 			{
 				String name=f.getName();
@@ -77,9 +77,9 @@ public class Configuration
 						if(dir.exists()) throw new RuntimeException("Cannot create directory: "+dir+"! File is in the way!");
 						if(!dir.mkdir()) throw new RuntimeException("Cannot create directory: "+dir+"!");
 					}
-					continue;					
+					continue;
 				}
-
+				
 				String path=f.getName();
 				InputStream istr=Configuration.class.getClassLoader().getResourceAsStream(path);
 				String newhash=Filesystem.getHash(istr);
@@ -95,9 +95,9 @@ public class Configuration
 			
 			if(hasheschanged)
 				saveHashFile(HASH_FILE, newhashmap);
-
-
-		} catch (Exception e) {			
+			
+			
+		} catch (Exception e) {
 			Log.error("Error checking configuration files", e);
 		}
 	}
@@ -110,7 +110,7 @@ public class Configuration
 	 */
 	private static List<ZipEntry> createResourceList(String root) throws IOException
 	{
-		CodeSource src = Configuration.class.getProtectionDomain().getCodeSource();		
+		CodeSource src = Configuration.class.getProtectionDomain().getCodeSource();
 		List<ZipEntry> ret=new LinkedList<ZipEntry>();
 		String name;
 

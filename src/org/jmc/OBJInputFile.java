@@ -1,9 +1,8 @@
 package org.jmc;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,10 +12,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.jmc.geom.FaceUtils.OBJFace;
-import org.jmc.threading.ChunkProcessor;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.threading.ChunkProcessor;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 
@@ -74,12 +74,12 @@ public class OBJInputFile
 	 * @param objfile
 	 * @throws IOException 
 	 */
-	public void loadFile(File objfile, String overwriteName) throws IOException
+	public void loadFile(JmcConfFile objfile, String overwriteName) throws IOException
 	{
 		objects=new HashMap<String, OBJGroup>();
 		default_object=null;
 		
-		BufferedReader in=new BufferedReader(new FileReader(objfile));
+		BufferedReader in=new BufferedReader(new InputStreamReader(objfile.getInputStream()));
 
 		int vertex_count=1;
 		int uv_count=1;
@@ -134,7 +134,7 @@ public class OBJInputFile
 					vertex_count++;
 				}
 				catch (Exception e) {
-					Log.info("ERROR vertex format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
+					Log.info("ERROR vertex format exception in file "+objfile.getPath()+"["+line_count+"]: "+e);
 				}
 				finally {
 					scanner.close();
@@ -154,7 +154,7 @@ public class OBJInputFile
 					uv_count++;
 				}
 				catch (Exception e) {
-					Log.info("ERROR texture format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
+					Log.info("ERROR texture format exception in file "+objfile.getPath()+"["+line_count+"]: "+e);
 				}
 				continue;
 			}
@@ -172,7 +172,7 @@ public class OBJInputFile
 					norm_count++;
 				}
 				catch (Exception e) {
-					Log.info("ERROR normal format exception in file "+objfile.getName()+"["+line_count+"]: "+e);
+					Log.info("ERROR normal format exception in file "+objfile.getPath()+"["+line_count+"]: "+e);
 				}
 				continue;
 			}
@@ -182,7 +182,7 @@ public class OBJInputFile
 				String [] vs=line.substring(2).split("\\s+");	
 				if(vs.length < 3)
 				{
-					Log.error("ERROR wrong number of vertices in face in file "+objfile.getName()+"["+line_count+"]",null);
+					Log.error("ERROR wrong number of vertices in face in file "+objfile.getPath()+"["+line_count+"]",null);
 					continue;
 				}
 				
@@ -240,9 +240,9 @@ public class OBJInputFile
 							has_norm=true;
 						}
 						else 
-							Log.info("ERROR unknown vertex format in file "+objfile.getName()+"["+line_count+"]");
+							Log.info("ERROR unknown vertex format in file "+objfile.getPath()+"["+line_count+"]");
 					} catch (Exception e) {
-						Log.info("ERROR unknown vertex format in file "+objfile.getName()+"["+line_count+"]: "+e);
+						Log.info("ERROR unknown vertex format in file "+objfile.getPath()+"["+line_count+"]: "+e);
 					}
 				}
 				if(!has_uv) f.uv=null;
@@ -262,14 +262,14 @@ public class OBJInputFile
 				continue;
 			}
 
-			Log.info("ERROR unknown line in OBJ file "+objfile.getName()+"["+line_count+"]: "+line);
+			Log.info("ERROR unknown line in OBJ file "+objfile.getPath()+"["+line_count+"]: "+line);
 		}
 		in.close();
 	}
 	
-	public void loadFile(File objfile) throws IOException
+	public void loadFile(JmcConfFile objFile) throws IOException
 	{
-		loadFile(objfile, null);
+		loadFile(objFile, null);
 		return;
 	}
 	

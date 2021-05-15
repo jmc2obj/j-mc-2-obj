@@ -1,6 +1,5 @@
 package org.jmc.entities;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.jmc.OBJInputFile;
@@ -12,6 +11,7 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 public class ArmorStand extends Entity {
@@ -156,17 +156,15 @@ public class ArmorStand extends Entity {
 	public void addArmor(String objFileName, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
 		
 		OBJInputFile objFile = new OBJInputFile();
-		File objMeshFile = new File(objFileName);
 		
 		
-		
-		try {
-			objFile.loadFile(objMeshFile, material);
+		try (JmcConfFile objFileStream = new JmcConfFile(objFileName)) {
+			objFile.loadFile(objFileStream, material);
 		} catch (IOException e) {
 			Log.error("Cant read Armor_Stand Equipment", e, true);
 		}
 		
-				
+		
 		OBJGroup myObjGroup = objFile.getDefaultObject();
 		myObjGroup = objFile.overwriteMaterial(myObjGroup, material);
 		// Log.info("myObjGroup: "+myObjGroup);

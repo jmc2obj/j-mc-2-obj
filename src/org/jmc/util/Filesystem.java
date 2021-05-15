@@ -1,14 +1,15 @@
 package org.jmc.util;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -189,11 +190,29 @@ public class Filesystem {
 	 *             If the operation fails during the data copy phase.
 	 */
 	public static void copyFile(File origPath, File destPath) throws IOException {
-		try (FileInputStream ins = new FileInputStream(origPath);
-				FileOutputStream outs = new FileOutputStream(destPath)) {
-			FileChannel in = ins.getChannel();
-			FileChannel out = outs.getChannel();
-			in.transferTo(0, in.size(), out);
+		try (FileInputStream ins = new FileInputStream(origPath);) {
+			writeFile(ins, destPath);
+		}
+	}
+
+	/**
+	 * Convenience function to write a file from an {@link InputStream}. If the destination file exists it is
+	 * overwritten.
+	 * 
+	 * @param origPath
+	 *            Original path
+	 * @param destPath
+	 *            Destination path
+	 * @throws FileNotFoundException
+	 *             if either file exists but is a directory rather than a
+	 *             regular file, does not exist but cannot be read/created, or
+	 *             cannot be opened for any other reason.
+	 * @throws IOException
+	 *             If the operation fails during the data copy phase.
+	 */
+	public static void writeFile(InputStream source, File destPath) throws IOException {
+		try (FileOutputStream dest = new FileOutputStream(destPath)) {
+			copyStream(source, dest);
 		}
 	}
 
@@ -242,5 +261,78 @@ public class Filesystem {
 			hexChars[2 * i + 1] = hexArray[v & 0x0f];
 		}
 		return new String(hexChars, 0, digest.length * 2);
+	}
+	
+	
+	/**
+	 * Copies data from an {@link InputStream} to an {@link OutputStream}
+	 * 
+	 * @param source
+	 * @param target
+	 * @throws IOException
+	 */
+	public static void copyStream(InputStream source, OutputStream target) throws IOException {
+		byte[] buf = new byte[8192];
+		int length;
+		while ((length = source.read(buf)) > 0) {
+			target.write(buf, 0, length);
+		}
+	}
+	
+	public static class JmcConfFile implements Closeable {
+		private String path;
+		private InputStream inputStream;
+		
+		public JmcConfFile(String path) throws IOException {
+			if (!path.startsWith("conf")) {
+				Log.error("Trying to create JmcFile not in conf folder!", null, false);
+			}
+			this.path = path;
+			this.inputStream = openInputStream(path);
+		}
+		
+		/**
+		 * Attempts to read an extracted conf file, falls back to file bundled in .jar
+		 * 
+		 * @param filePath the file to read
+		 * @return {@link InputStream} of the file
+		 * @throws IOException 
+		 */
+		private InputStream openInputStream(String path) throws IOException {
+			File extrFile = new File(getDatafilesDir(), path);
+			if (extrFile.canRead()) {
+				return new FileInputStream(extrFile);
+			} else {
+				Log.debug("Cannot read extracted conf file, attempting bundled " + path);
+				InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+				if (is == null) {
+					throw new IOException("Could not read " + path + " from conf or .jar!");
+				}
+				return is;
+			}
+		}
+		
+		public String getPath() {
+			return path;
+		}
+		
+		/** 
+		 * returns true if the input stream is not null
+		 */
+		public boolean hasStream() {
+			return inputStream != null;
+		}
+		
+		public InputStream getInputStream() {
+			return inputStream;
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
+		
 	}
 }

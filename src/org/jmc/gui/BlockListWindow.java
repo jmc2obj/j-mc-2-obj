@@ -39,6 +39,7 @@ import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.util.Filesystem;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -294,21 +295,17 @@ public class BlockListWindow extends JmcFrame {
 	}
 
 	public void loadList(String group) {
-
-		File confFile = new File(Filesystem.getDatafilesDir(),
-				"conf/blockselection.dat");
-
-		try {
+		
+		try (JmcConfFile confFile = new JmcConfFile("conf/blockselection.dat")) {
 
 			TAG_Compound root;
-			if (!confFile.exists()) {
+			if (!confFile.hasStream()) {
 				saveList(group);
 				loadList(group);
 				return;
 			} else {
-				FileInputStream in = new FileInputStream(confFile);
-				root = (TAG_Compound) NBT_Tag.make(in);
-				in.close();
+				root = (TAG_Compound) NBT_Tag.make(confFile.getInputStream());
+				confFile.close();
 			}
 
 			TAG_Compound presetgroup = (TAG_Compound) root.getElement(group);

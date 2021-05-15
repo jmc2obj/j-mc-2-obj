@@ -1,6 +1,5 @@
 package org.jmc;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -13,7 +12,7 @@ import org.jmc.geom.Vertex;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.Mesh;
-import org.jmc.util.Filesystem;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
@@ -42,11 +41,13 @@ public class BlockTypes
 
 	private static void readConfig(HashMap<String, BlockInfo> blockTable) throws Exception
 	{
-		File confFile = new File(Filesystem.getDatafilesDir(), CONFIG_FILE);
-		if (!confFile.canRead())
-			throw new Exception("Cannot open configuration file " + CONFIG_FILE);
-
-		Document doc = Xml.loadDocument(confFile);
+		Document doc;
+		try (JmcConfFile confFile = new JmcConfFile(CONFIG_FILE)) {
+			if (!confFile.hasStream())
+				throw new Exception("Cannot open configuration file " + CONFIG_FILE);
+			
+			doc = Xml.loadDocument(confFile.getInputStream());
+		}
 		XPath xpath = XPathFactory.newInstance().newXPath();
 
 		NodeList blockNodes = (NodeList)xpath.evaluate("/blocks/block", doc, XPathConstants.NODESET);

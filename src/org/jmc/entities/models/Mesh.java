@@ -2,6 +2,7 @@ package org.jmc.entities.models;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
+import org.jmc.util.Filesystem;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 //TODO: this class is a copy of org.jmc.models.Mesh class
@@ -59,8 +62,8 @@ public class Mesh extends EntityModel
 		{
 			objin=new OBJInputFile();
 
-			try {
-				objin.loadFile(new File("conf",filename));
+			try (JmcConfFile objFile = new JmcConfFile("conf/"+filename)) {
+				objin.loadFile(objFile);
 			} catch (IOException e) {
 				Log.error("Cannot load mesh file!", e);
 				return;

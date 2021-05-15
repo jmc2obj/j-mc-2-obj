@@ -300,7 +300,7 @@ public class Chunk {
 						
 						if (BlockTypes.get(blockName.value).getActWaterlogged()) {
 							data.putIfAbsent("waterlogged", "true");
-							Log.debug("added waterlogged to: "+blockName.value);
+							//Log.debug("added waterlogged to: "+blockName.value);
 						}
 						
 						ret.data.set(base+i, data);
