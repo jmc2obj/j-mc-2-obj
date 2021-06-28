@@ -143,7 +143,7 @@ public class BlockMaterial
 	
 	private String[] getMasked(Map<BlockData, String[]> mtls, BlockData data) {
 		for (Entry<BlockData, String[]> eMtl : mtls.entrySet()) {
-			if (data.matchesMask(eMtl.getKey())) {
+			if (data.state.matchesMask(eMtl.getKey().state)) {
 				return eMtl.getValue();
 			}
 		}

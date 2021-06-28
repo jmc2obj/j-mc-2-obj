@@ -14,7 +14,7 @@ public class Composter extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		int level = data.getInt("level", 0);
+		int level = data.state.getInt("level", 0);
 		
 		String[] mtls = materials.get(data,biome);
 		String[] mtls_mainBox = new String [] { mtls[4], mtls[3], mtls[3], mtls[3], mtls[3], mtls[0] };

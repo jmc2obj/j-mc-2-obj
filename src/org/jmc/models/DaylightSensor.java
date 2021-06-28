@@ -21,7 +21,7 @@ public class DaylightSensor extends BlockModel
 
 		Vertex[] vertices = new Vertex[4];
 
-		int inverted = data.get("inverted").equals("true") ? 1 : 0;
+		int inverted = data.state.get("inverted").equals("true") ? 1 : 0;
 		
 		UV[] uvTop = new UV[] {
 				new UV(0, 0),

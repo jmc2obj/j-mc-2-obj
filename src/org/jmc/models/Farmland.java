@@ -18,7 +18,7 @@ public class Farmland extends BlockModel
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
-		mtlSides[0] = data.get("moisture").equals("7") ? abbrMtls[0] : abbrMtls[1];
+		mtlSides[0] = data.state.get("moisture").equals("7") ? abbrMtls[0] : abbrMtls[1];
 		mtlSides[1] = abbrMtls[2];
 		mtlSides[2] = abbrMtls[2];
 		mtlSides[3] = abbrMtls[2];

@@ -18,12 +18,12 @@ public class Door extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean top = data.get("half").equals("upper");
-		int open = Boolean.parseBoolean(data.get("open")) ? 1 : 0;
-		int reversed = data.get("hinge").equals("right") ? 1 : 0;// left hinge was default
+		boolean top = data.state.get("half").equals("upper");
+		int open = Boolean.parseBoolean(data.state.get("open")) ? 1 : 0;
+		int reversed = data.state.get("hinge").equals("right") ? 1 : 0;// left hinge was default
 		int direction;
 		
-		switch (data.get("facing")) {
+		switch (data.state.get("facing")) {
 		case "north":
 			direction = 3;
 			break;
@@ -38,7 +38,7 @@ public class Door extends BlockModel
 			break;
 
 		default:
-			Log.error("Unknown door facing value! " + data.get("facing"), null, false);
+			Log.error("Unknown door facing value! " + data.state.get("facing"), null, false);
 			direction = 0;
 		}
 

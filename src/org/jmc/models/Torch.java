@@ -23,9 +23,9 @@ public class Torch extends BlockModel
 		Transform translate = new Transform();
 		Transform txTorch, txFlame;
 		
-		if (data.containsKey("facing")) 
+		if (data.state.containsKey("facing")) 
 		{
-			switch(data.get("facing"))
+			switch(data.state.get("facing"))
 			{
 				case "east":
 					rotate.rotate(0, 0, -25);
@@ -112,7 +112,7 @@ public class Torch extends BlockModel
 		obj.addFace(vertices, null, txTorch, mtls[0]);
 		
 		// bottom
-		if (data.containsKey("facing") || drawSides(chunks,x,y,z)[5])
+		if (data.state.containsKey("facing") || drawSides(chunks,x,y,z)[5])
 		{
 			vertices[0] = new Vertex( 1/16f, -0.5f,  1/16f); uv[0] = new UV(7/16f, 0);
 			vertices[1] = new Vertex(-1/16f, -0.5f,  1/16f); uv[1] = new UV(9/16f, 0);

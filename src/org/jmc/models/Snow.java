@@ -15,12 +15,12 @@ public class Snow extends BlockModel
 	
 	@Override
 	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
-		int layers = data.getInt("layers");
+		int layers = data.state.getInt("layers");
 		if (side == Direction.DOWN || layers >= 8) {
 			return true;
 		}
 		
-		Integer neighbourLayers = neighbourData.getInt("layers");
+		Integer neighbourLayers = neighbourData.state.getInt("layers");
 		if (data.id.equals(neighbourData.id) && neighbourLayers != null && neighbourLayers <= layers) {
 			return true;
 		}
@@ -32,7 +32,7 @@ public class Snow extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z);
-		int layers = data.getInt("layers", 0);
+		int layers = data.state.getInt("layers", 0);
 		
 		if (layers < 8) 
 			drawSides[0] = true;

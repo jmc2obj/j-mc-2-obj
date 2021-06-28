@@ -22,7 +22,7 @@ public class CoralFan extends BlockModel
 		move.translate(x, y, z);
 		
 		// If it's not a wall fan 
-		if (!data.containsKey("facing")) 
+		if (!data.state.containsKey("facing")) 
 		{
 			Vertex[] vertices = new Vertex[4];
 			vertices[0] = new Vertex(0.5f,-0.5f,0.0f);
@@ -51,7 +51,7 @@ public class CoralFan extends BlockModel
 		}
 		else // It is a wall fan
 		{
-			switch (data.get("facing"))
+			switch (data.state.get("facing"))
 			{
 				case "north":
 					rotate.rotate(0, 0, 0);

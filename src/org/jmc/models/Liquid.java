@@ -30,7 +30,7 @@ public class Liquid extends BlockModel
     }
 	
 	private int getDataLevel(BlockData data) {
-		String level = data.get("level");
+		String level = data.state.get("level");
 		if (level != null) {
 			try {
 				return Integer.parseInt(level);
@@ -50,7 +50,7 @@ public class Liquid extends BlockModel
 			return true;
 		if ((blockId.equals("minecraft:flowing_water") || blockId.equals("minecraft:water")) && 
 				otherID.equals("minecraft:flowing_water") || otherID.equals("minecraft:water") ||
-				otherID.equals("minecraft:bubble_column") || Boolean.parseBoolean(otherBlockData.get("waterlogged")))
+				otherID.equals("minecraft:bubble_column") || Boolean.parseBoolean(otherBlockData.state.get("waterlogged")))
 			return true;
 		if ((blockId.equals("minecraft:flowing_lava") || blockId.equals("minecraft:lava")) && (otherID.equals("minecraft:flowing_lava") || otherID.equals("minecraft:lava")))
 			return true;

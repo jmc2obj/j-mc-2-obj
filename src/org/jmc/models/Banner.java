@@ -104,7 +104,7 @@ public class Banner extends BlockModel {
         switch(bannerType) {
             case "wall":
                 offsetY = -1.51;
-                switch (data.getDirection("facing", Direction.NORTH)) {
+                switch (data.state.getDirection("facing", Direction.NORTH)) {
                 default:
 				case NORTH:
                     rotation = -90;
@@ -130,7 +130,7 @@ public class Banner extends BlockModel {
                 break;
             case "standing":
             	
-                int dataRot = Integer.parseInt(data.get("rotation"));
+                int dataRot = Integer.parseInt(data.state.get("rotation"));
 
                 rotation = 90 + (360.0f / 16.0f) * dataRot;
 

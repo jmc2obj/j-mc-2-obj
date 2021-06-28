@@ -21,7 +21,7 @@ public class RedstoneRepeater extends BlockModel
 
 		String[] mtlSides = new String[6];
 		
-		if (data.get("powered").equals("true")) {
+		if (data.state.get("powered").equals("true")) {
 			mtlSides[0] = abbrMtls[0];			
 		} else {
 			mtlSides[0] = abbrMtls[1];	
@@ -37,9 +37,9 @@ public class RedstoneRepeater extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
-		int delay = Integer.parseInt(data.get("delay"))-1;
-		boolean locked = Boolean.parseBoolean(data.get("locked"));
+		String dir = data.state.get("facing");
+		int delay = Integer.parseInt(data.state.get("delay"))-1;
+		boolean locked = Boolean.parseBoolean(data.state.get("locked"));
 		
 
 		Transform rotate = new Transform();
@@ -64,7 +64,7 @@ public class RedstoneRepeater extends BlockModel
 		
 		String[] mtlsBase = getMtlSides(data,biome);
 		String mtlTorch;
-		if (data.get("powered").equals("true")) {
+		if (data.state.get("powered").equals("true")) {
 			mtlTorch = materials.get(data,biome)[4];		
 		} else {
 			mtlTorch = materials.get(data,biome)[5];	

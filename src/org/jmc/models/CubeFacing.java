@@ -19,7 +19,7 @@ public class CubeFacing extends BlockModel
 		Transform trans = new Transform();
 		Transform rotate = new Transform();
 		
-		Direction dir = data.getDirection("facing");
+		Direction dir = data.state.getDirection("facing");
 		
 		trans.translate(x, y, z);
 		rotate.rotate(dir);

@@ -17,8 +17,8 @@ public class Bed extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
-		boolean head = data.get("part").equals("head");
+		String dir = data.state.get("facing");
+		boolean head = data.state.get("part").equals("head");
 
 
 		Transform rotate = new Transform();

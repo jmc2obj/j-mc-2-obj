@@ -27,10 +27,10 @@ public class Grindstone extends BlockModel
 		UV[][] uvSides;
 		boolean[] drawSides;
 		
-		Direction dir = data.getDirection("facing", Direction.SOUTH);
+		Direction dir = data.state.getDirection("facing", Direction.SOUTH);
 		
 		// Standing on the floor
-		if (data.get("face").equals("floor"))
+		if (data.state.get("face").equals("floor"))
 		{
 			switch (dir)
 			{
@@ -42,7 +42,7 @@ public class Grindstone extends BlockModel
 			}
 		}
 		// Hanging from a ceiling
-		else if (data.get("face").equals("ceiling"))
+		else if (data.state.get("face").equals("ceiling"))
 		{
 			switch (dir)
 			{

@@ -35,7 +35,7 @@ public class Scaffolding extends BlockModel
 		
 		// If there isn't a bottom (it is standing on the ground, not floating)
 		// We'll draw 4 full posts
-		if (!data.getBool("bottom", true))
+		if (!data.state.getBool("bottom", true))
 		{
 			// Don't need to draw the top of the poles
 			drawSides = new boolean[] {false,true,true,true,true,true};

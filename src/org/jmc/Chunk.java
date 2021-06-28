@@ -289,21 +289,21 @@ public class Chunk {
 						
 						ret.id[base+i] = blockName.value;
 						
-						BlockData data = new BlockData(blockName.value);
+						Blockstate state = new Blockstate();
 						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
 						if (propertiesTag != null) {
 							for (NBT_Tag tag : propertiesTag.elements) {
 								TAG_String propTag = (TAG_String)tag;
-								data.put(propTag.getName(), propTag.value);
+								state.put(propTag.getName(), propTag.value);
 							}
 						}
 						
 						if (BlockTypes.get(blockName.value).getActWaterlogged()) {
-							data.putIfAbsent("waterlogged", "true");
+							state.putIfAbsent("waterlogged", "true");
 							//Log.debug("added waterlogged to: "+blockName.value);
 						}
 						
-						ret.data.set(base+i, data);
+						ret.data.set(base+i, new BlockData(blockName.value, state));
 					}
 				}
 

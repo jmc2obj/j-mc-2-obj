@@ -13,7 +13,7 @@ public class Jigsaw extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		
-		String orientation = data.getOrDefault("orientation", "up_north");
+		String orientation = data.state.getOrDefault("orientation", "up_north");
 
 		Transform rotate = new Transform();
 		Transform translate = new Transform();

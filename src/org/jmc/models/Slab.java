@@ -21,7 +21,7 @@ public class Slab extends BlockModel
 		UV[][] uvSides;
 		float ys, ye;
 		
-		if (data.get("type").equals("bottom")) // slab occupies the lower half
+		if (data.state.get("type").equals("bottom")) // slab occupies the lower half
 		{
 			
 			drawSides[0] = true;
@@ -29,7 +29,7 @@ public class Slab extends BlockModel
 			ys = -0.5f;
 			ye = 0.0f;
 		}
-		else if (data.get("type").equals("top")) // slab occupies the upper half
+		else if (data.state.get("type").equals("top")) // slab occupies the upper half
 		{
 			
 			drawSides[5] = true;
@@ -59,7 +59,7 @@ public class Slab extends BlockModel
 	
 	@Override
 	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
-		if (data.get("type").equals("bottom"))
+		if (data.state.get("type").equals("bottom"))
 		{
 			switch (side) {
 				case DOWN:
@@ -75,7 +75,7 @@ public class Slab extends BlockModel
 					return false;
 			}
 		}
-		else if (data.get("type").equals("top"))
+		else if (data.state.get("type").equals("top"))
 		{
 			switch (side) {
 			case DOWN:

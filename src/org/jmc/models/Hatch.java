@@ -16,9 +16,9 @@ public class Hatch extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean open = data.get("open").equals("true");
-		boolean top = data.get("half").equals("top");
-		String facing = data.get("facing");
+		boolean open = data.state.get("open").equals("true");
+		boolean top = data.state.get("half").equals("top");
+		String facing = data.state.get("facing");
 		
 		/*
 		  The model is rendered in the middle of the block, then rotated

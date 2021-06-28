@@ -24,7 +24,7 @@ public class GlazedTerracotta extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
+		String dir = data.state.get("facing");
 
 		Transform rotate = new Transform();
 		Transform translate = new Transform();

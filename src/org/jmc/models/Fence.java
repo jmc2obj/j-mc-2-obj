@@ -25,7 +25,7 @@ public class Fence extends BlockModel
 		addBox(obj, x-0.125f, y-0.5f, z-0.125f, x+0.125f, y+0.5f, z+0.125f, null, mtls, uvSides, null);
 
 		// north connector
-		if (data.get("north").equals("true"))
+		if (data.state.get("north").equals("true"))
 		{
 			uvTop = new UV[] { new UV(7/16f, 10/16f), new UV(9/16f, 10/16f), new UV(9/16f, 1), new UV(7/16f, 1) };
 			uvSide = new UV[] { new UV(10/16f, 12/16f), new UV(1, 12/16f), new UV(1, 15/16f), new UV(10/16f, 15/16f) };
@@ -37,7 +37,7 @@ public class Fence extends BlockModel
 			addBox(obj, x-0.0625f, y-0.125f, z-0.5f, x+0.0625f, y+0.0625f, z-0.125f, null, mtls, uvSides, null);
 		}
 		// south connector
-		if (data.get("south").equals("true"))
+		if (data.state.get("south").equals("true"))
 		{
 			uvTop = new UV[] { new UV(7/16f, 0), new UV(9/16f, 0), new UV(9/16f, 6/16f), new UV(7/16f, 6/16f) };
 			uvSide = new UV[] { new UV(0, 12/16f), new UV(6/16f, 12/16f), new UV(6/16f, 15/16f), new UV(0, 15/16f) };
@@ -49,7 +49,7 @@ public class Fence extends BlockModel
 			addBox(obj, x-0.0625f, y-0.125f, z+0.125f, x+0.0625f, y+0.0625f, z+0.5f, null, mtls, uvSides, null);
 		}
 		// west connector
-		if (data.get("west").equals("true"))
+		if (data.state.get("west").equals("true"))
 		{
 			uvTop = new UV[] { new UV(10/16f, 7/16f), new UV(1, 7/16f), new UV(1, 9/16f), new UV(10/16f, 9/16f) };
 			uvSide = new UV[] { new UV(10/16f, 12/16f), new UV(1, 12/16f), new UV(1, 15/16f), new UV(10/16f, 15/16f) };
@@ -61,7 +61,7 @@ public class Fence extends BlockModel
 			addBox(obj, x-0.5f, y-0.125f, z-0.0625f, x-0.125f, y+0.0625f, z+0.0625f, null, mtls, uvSides, null);
 		}
 		// east connector
-		if (data.get("east").equals("true"))
+		if (data.state.get("east").equals("true"))
 		{
 			uvTop = new UV[] { new UV(0, 7/16f), new UV(6/16f, 7/16f), new UV(6/16f, 9/16f), new UV(0, 9/16f) };
 			uvSide = new UV[] { new UV(0, 12/16f), new UV(6/16f, 12/16f), new UV(6/16f, 15/16f), new UV(0, 15/16f) };

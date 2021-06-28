@@ -41,7 +41,7 @@ public class Bell extends BlockModel
 		
 		
 		// If it's hanging from the ceiling
-		if (data.get("attachment").equals("ceiling"))
+		if (data.state.get("attachment").equals("ceiling"))
 		{
 			drawSides = new boolean[] {false,true,true,true,true,false};
 			uvSide = new UV[] { new UV(0, 11/16f), new UV(2/16f, 11/16f), new UV(2/16f, 14/16f), new UV(0, 14/16f) };
@@ -54,7 +54,7 @@ public class Bell extends BlockModel
 			Transform translate = new Transform();
 			Transform rt;
 			
-			switch (data.getDirection("facing", Direction.SOUTH))
+			switch (data.state.getDirection("facing", Direction.SOUTH))
 			{
 				case WEST: rotate.rotate(0, 90, 0); break;
 				case NORTH: rotate.rotate(0, 180, 0); break;
@@ -64,7 +64,7 @@ public class Bell extends BlockModel
 			translate.translate(x, y, z);
 			rt = translate.multiply(rotate);
 			
-			if (data.get("attachment").equals("floor"))
+			if (data.state.get("attachment").equals("floor"))
 			{
 				drawSides = new boolean[] {true,true,true,false,false,true};
 				uvSide = new UV[] { new UV(0, 0), new UV(12/16f, 0), new UV(12/16f, 2/16f), new UV(0, 2/16f) };
@@ -80,7 +80,7 @@ public class Bell extends BlockModel
 				addBox(obj, -8/16f, -8/16f, -2/16f, -6/16f, 8/16f, 2/16f, rt, mtls_Stone, uvSides, drawSides);
 				addBox(obj, 6/16f, -8/16f, -2/16f, 8/16f, 8/16f, 2/16f, rt, mtls_Stone, uvSides, drawSides);
 			}
-			else if (data.get("attachment").equals("single_wall"))
+			else if (data.state.get("attachment").equals("single_wall"))
 			{
 				drawSides = new boolean[] {true,true,false,true,true,true};
 				uvSide = new UV[] { new UV(0, 0), new UV(12/16f, 0), new UV(12/16f, 2/16f), new UV(0, 2/16f) };

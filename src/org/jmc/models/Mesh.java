@@ -43,7 +43,7 @@ public class Mesh extends BlockModel
 		{			
 			if(offset==null || offset==new Vertex(0,0,0))
 			{
-				if(!data.isEmpty() && !data2.matchesMask(data)) return false;
+				if(!data.state.isEmpty() && !data2.state.matchesMask(data.state)) return false;
 				return true;
 			}
 			else
@@ -51,7 +51,7 @@ public class Mesh extends BlockModel
 				BlockData d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
 				String i=d.id;
 
-				if(!data.isEmpty() && !d.matchesMask(data)) return false;
+				if(!data.state.isEmpty() && !d.state.matchesMask(data.state)) return false;
 
 				if(!i.isEmpty() && !i.equals(id)) return false;
 

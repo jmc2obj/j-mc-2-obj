@@ -19,7 +19,7 @@ public class TurtleEgg extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		// The amount of eggs (1-4)
-		int eggs = Integer.parseInt(data.get("eggs"));
+		int eggs = Integer.parseInt(data.state.get("eggs"));
 		
 		String[] mtlSides = getMtlSides(data, biome);
 		

@@ -18,7 +18,7 @@ public class Wall extends BlockModel
 		
 		String north, south, east, west;
 		
-		north = data.get("north");
+		north = data.state.get("north");
 		if (north == null || north.equals("false")) {
 			north = "none";
 		}
@@ -26,7 +26,7 @@ public class Wall extends BlockModel
 			north = "low";
 		}
 
-		south = data.get("south");
+		south = data.state.get("south");
 		if (south == null || south.equals("false")) {
 			south = "none";
 		}
@@ -34,7 +34,7 @@ public class Wall extends BlockModel
 			south = "low";
 		}
 
-		east = data.get("east");
+		east = data.state.get("east");
 		if (east == null || east.equals("false")) {
 			east = "none";
 		}
@@ -42,7 +42,7 @@ public class Wall extends BlockModel
 			east = "low";
 		}
 
-		west = data.get("west");
+		west = data.state.get("west");
 		if (west == null || west.equals("false")) {
 			west = "none";
 		}
@@ -50,7 +50,7 @@ public class Wall extends BlockModel
 			west = "low";
 		}
 		
-		boolean up = data.getBool("up", true);
+		boolean up = data.state.getBool("up", true);
 		
 		// center column
 		if (up) {

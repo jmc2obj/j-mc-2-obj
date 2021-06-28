@@ -33,7 +33,7 @@ public class Bamboo extends BlockModel
 		UV[][] uvSides;
 
 		// If age 0 (thinner bamboo, 2x2)
-		if (data.getInt("age") == 0)
+		if (data.state.getInt("age") == 0)
 		{
 			uvTop = new UV[] { new UV(14/16f, 14/16f), new UV(16/16f, 14/16f), new UV(16/16f, 16/16f), new UV(14/16f, 16/16f) };
 			uvSide = new UV[] { new UV(6/16f, 0), new UV(8/16f, 0), new UV(8/16f, 16/16f), new UV(6/16f, 16/16f) };
@@ -50,7 +50,7 @@ public class Bamboo extends BlockModel
 		}
 		
 		// Large leaves
-		if (data.get("leaves").equals("large"))
+		if (data.state.get("leaves").equals("large"))
 		{
 			Vertex[] vertices = new Vertex[4];
 			vertices[0] = new Vertex(randomX,-0.5f,-0.5f + randomZ);
@@ -66,7 +66,7 @@ public class Bamboo extends BlockModel
 			obj.addFace(vertices, null, move, materials.get(data,biome)[1]);
 		}
 		// Small leaves
-		else if (data.get("leaves").equals("small"))
+		else if (data.state.get("leaves").equals("small"))
 		{
 			Vertex[] vertices = new Vertex[4];
 			vertices[0] = new Vertex(randomX,-0.5f,-0.5f + randomZ);

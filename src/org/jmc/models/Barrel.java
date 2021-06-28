@@ -14,7 +14,7 @@ public class Barrel extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		
-		Direction dir = data.getDirection("facing", Direction.NORTH);
+		Direction dir = data.state.getDirection("facing", Direction.NORTH);
 
 		Transform rotate = new Transform();
 		Transform translate = new Transform();

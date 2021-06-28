@@ -186,7 +186,7 @@ public class Stairs extends BlockModel {
 		boolean[] drawSides = drawSides(chunks, x, y, z);
 
 		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north
-		int up = data.get("half").equals("top") ? 1 : 0;
+		int up = data.state.get("half").equals("top") ? 1 : 0;
 		
 		/*
 		 *  -1 for no change in shape (straight)
@@ -196,7 +196,7 @@ public class Stairs extends BlockModel {
 		 *  3 big block right (inner_left)
 		 */
 		int shape;
-		switch (data.get("shape"))
+		switch (data.state.get("shape"))
 		{
 			case ("outer_right"):
 				shape = 0;
@@ -253,18 +253,18 @@ public class Stairs extends BlockModel {
 	protected boolean getCustomOcclusion(Direction side, BlockData neighbourData, BlockData data) {
 		switch (side) {//top / bottom are always solid
 		case UP:
-			return data.get("half").equals("top");
+			return data.state.get("half").equals("top");
 		case DOWN:
-			return data.get("half").equals("bottom");
+			return data.state.get("half").equals("bottom");
 		default:
-			if (data.get("shape").startsWith("outer_"))
+			if (data.state.get("shape").startsWith("outer_"))
 				return false;
 			break;
 		}
 		
-		Direction facing = Direction.valueOf(data.get("facing").toUpperCase());
+		Direction facing = Direction.valueOf(data.state.get("facing").toUpperCase());
 		
-		if (data.get("shape").equals("straight") && neighbourData.equalData(data) && side != facing && side != facing.getOpposite()) {
+		if (data.state.get("shape").equals("straight") && neighbourData.equalData(data) && side != facing && side != facing.getOpposite()) {
 			return true;
 		}
 		
@@ -274,9 +274,9 @@ public class Stairs extends BlockModel {
 			case NORTH:
 				return true;
 			case WEST:
-				return data.get("shape").equals("inner_left");
+				return data.state.get("shape").equals("inner_left");
 			case EAST:
-				return data.get("shape").equals("inner_right");
+				return data.state.get("shape").equals("inner_right");
 			default:
 				return false;
 			}
@@ -285,9 +285,9 @@ public class Stairs extends BlockModel {
 			case EAST:
 				return true;
 			case NORTH:
-				return data.get("shape").equals("inner_left");
+				return data.state.get("shape").equals("inner_left");
 			case SOUTH:
-				return data.get("shape").equals("inner_right");
+				return data.state.get("shape").equals("inner_right");
 			default:
 				return false;
 			}
@@ -296,9 +296,9 @@ public class Stairs extends BlockModel {
 			case SOUTH:
 				return true;
 			case EAST:
-				return data.get("shape").equals("inner_left");
+				return data.state.get("shape").equals("inner_left");
 			case WEST:
-				return data.get("shape").equals("inner_right");
+				return data.state.get("shape").equals("inner_right");
 			default:
 				return false;
 			}
@@ -307,9 +307,9 @@ public class Stairs extends BlockModel {
 			case WEST:
 				return true;
 			case SOUTH:
-				return data.get("shape").equals("inner_left");
+				return data.state.get("shape").equals("inner_left");
 			case NORTH:
-				return data.get("shape").equals("inner_right");
+				return data.state.get("shape").equals("inner_right");
 			default:
 				return false;
 			}
@@ -320,7 +320,7 @@ public class Stairs extends BlockModel {
 
 	private int getFacingDir(BlockData data) {
 		int dir;
-		switch (data.get("facing")) {
+		switch (data.state.get("facing")) {
 		case "north":
 			dir = 3;
 			break;
@@ -335,7 +335,7 @@ public class Stairs extends BlockModel {
 			break;
 
 		default:
-			Log.error("Unknown stair facing value! " + data.get("facing"), null, false);
+			Log.error("Unknown stair facing value! " + data.state.get("facing"), null, false);
 			dir = 0;
 		}
 		return dir;

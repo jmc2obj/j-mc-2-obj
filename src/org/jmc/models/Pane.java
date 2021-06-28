@@ -33,10 +33,10 @@ public class Pane extends BlockModel
 		String mtl = materials.get(data,biome)[0];
 		String mtlSide = materials.get(data,biome)[1];
 		
-		boolean n = data.get("north").equals("true");
-		boolean s = data.get("south").equals("true");
-		boolean e = data.get("east").equals("true");
-		boolean w = data.get("west").equals("true");
+		boolean n = data.state.get("north").equals("true");
+		boolean s = data.state.get("south").equals("true");
+		boolean e = data.state.get("east").equals("true");
+		boolean w = data.state.get("west").equals("true");
 		boolean none = !(n || s || e || w);
 
 		boolean up = checkConnect(chunks.getBlockID(x, y+1, z));

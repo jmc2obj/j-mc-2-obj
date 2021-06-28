@@ -48,7 +48,7 @@ public class WoodLog extends BlockModel
 		// 1 - lying east-west
 		// 2 - lying north-south
 		// 3 - Anything greater (aka: 3) will return an all bark block
-		String axis = data.get("axis");
+		String axis = data.state.get("axis");
 		switch (axis) {
 		case "x":
 			dir = 1;

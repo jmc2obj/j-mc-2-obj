@@ -16,7 +16,7 @@ public class PistonBase extends BlockModel
 	@Override
 	protected String[] getMtlSides(BlockData data, int biome)
 	{
-		boolean open = data.get("extended").equals("true");
+		boolean open = data.state.get("extended").equals("true");
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
@@ -33,8 +33,8 @@ public class PistonBase extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean open = data.get("extended").equals("true");
-		String dir = data.get("facing");
+		boolean open = data.state.get("extended").equals("true");
+		String dir = data.state.get("facing");
 
 		/*
 		  The model is rendered facing up, then rotated

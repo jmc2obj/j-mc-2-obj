@@ -22,8 +22,8 @@ public class Button extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 
-		String face = data.get("face");
-		String dir = data.get("facing");
+		String face = data.state.get("face");
+		String dir = data.state.get("facing");
 		
 		switch (dir)
 		{

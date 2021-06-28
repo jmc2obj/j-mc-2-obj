@@ -47,11 +47,11 @@ public class Head extends BlockModel
 		String facing = "";
 		int rot = 0;
 		
-		if (data.containsKey("facing")) { //If it has a "facing" state, then it's a wall skull
+		if (data.state.containsKey("facing")) { //If it has a "facing" state, then it's a wall skull
 			onWall = true;
-			facing = data.get("facing");
+			facing = data.state.get("facing");
 		} else {
-			rot = Integer.parseInt(data.get("rotation"));
+			rot = Integer.parseInt(data.state.get("rotation"));
 		}
 		
 		

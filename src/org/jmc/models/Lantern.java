@@ -17,7 +17,7 @@ public class Lantern extends BlockModel
 		UV[] uvTop, uvSide;
 		UV[][] uvSides;
 		
-		boolean hanging = data.getBool("hanging", false);
+		boolean hanging = data.state.getBool("hanging", false);
 		// If hanging, we'll need to move 1 pixel up
 		float hangOffset = hanging ? 1/16f : 0;
 		

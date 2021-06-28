@@ -21,7 +21,7 @@ public class Stonecutter extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 		
-		rotate.rotate(data.getDirection("facing", Direction.NORTH));
+		rotate.rotate(data.state.getDirection("facing", Direction.NORTH));
 		translate.translate(x, y, z);		
 		rt = translate.multiply(rotate);
 

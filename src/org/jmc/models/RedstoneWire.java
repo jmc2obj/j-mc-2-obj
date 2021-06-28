@@ -16,22 +16,22 @@ public class RedstoneWire extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean on = Integer.parseInt(data.get("power")) > 0;
+		boolean on = Integer.parseInt(data.state.get("power")) > 0;
 		String mtlCross = on ? materials.get(data,biome)[0] : materials.get(data,biome)[2];
 		String mtlLine  = on ? materials.get(data,biome)[1] : materials.get(data,biome)[3];
 		
-		boolean conn_n_up = data.get("north").equals("up");
-		boolean conn_s_up = data.get("south").equals("up");
-		boolean conn_e_up = data.get("east").equals("up");
-		boolean conn_w_up = data.get("west").equals("up");
+		boolean conn_n_up = data.state.get("north").equals("up");
+		boolean conn_s_up = data.state.get("south").equals("up");
+		boolean conn_e_up = data.state.get("east").equals("up");
+		boolean conn_w_up = data.state.get("west").equals("up");
 		//boolean conn_n_down = isConnectable(chunks.getBlockID(x, y-1, z-1), false);
 		//boolean conn_s_down = isConnectable(chunks.getBlockID(x, y-1, z+1), false);
 		//boolean conn_e_down = isConnectable(chunks.getBlockID(x+1, y-1, z), false);
 		//boolean conn_w_down = isConnectable(chunks.getBlockID(x-1, y-1, z), false);
-		boolean conn_n = data.get("north").equals("side");
-		boolean conn_s = data.get("south").equals("side");
-		boolean conn_e = data.get("east").equals("side");
-		boolean conn_w = data.get("west").equals("side");
+		boolean conn_n = data.state.get("north").equals("side");
+		boolean conn_s = data.state.get("south").equals("side");
+		boolean conn_e = data.state.get("east").equals("side");
+		boolean conn_w = data.state.get("west").equals("side");
 		
 		int nconn = (conn_n ? 1:0) + (conn_s ? 1:0) + (conn_e ? 1:0) + (conn_w ? 1:0) +
 				    (conn_n_up ? 1:0) + (conn_s_up ? 1:0) + (conn_e_up ? 1:0) + (conn_w_up ? 1:0);

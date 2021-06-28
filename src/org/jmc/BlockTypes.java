@@ -89,8 +89,8 @@ public class BlockTypes
 			for (int j = 0; j < matNodes.getLength(); j++)
 			{
 				Node matNode = matNodes.item(j);
-
-				BlockData data = new BlockData(id);
+				
+				Blockstate state = new Blockstate();
 				int biome = -1;
 				
 				NamedNodeMap matAttribs = matNode.getAttributes();
@@ -102,9 +102,11 @@ public class BlockTypes
 					if (attrName.equalsIgnoreCase("jmc_biome")) 
 						biome = Integer.parseInt(attrVal, 10);
 					else {
-						data.put(attrName, attrVal);
+						state.put(attrName, attrVal);
 					}
 				}
+				
+				BlockData data = new BlockData(id, state);
 				
 				String mats = matNode.getTextContent();
 				if (mats.trim().isEmpty() || biome < -1 || biome > 255 )//TODO biome 255 id limit needed?
@@ -119,7 +121,7 @@ public class BlockTypes
 				}
 				else
 				{
-					if (!data.isEmpty())
+					if (!data.state.isEmpty())
 						materials.put(data, mats.split("\\s*,\\s*"));
 					else
 						materials.put(mats.split("\\s*,\\s*"));
@@ -247,7 +249,7 @@ public class BlockTypes
 				else {
 					//transform nodes have other attributes.
 					if (meshNode.getNodeName().equalsIgnoreCase("mesh"))
-						data.put(attrName, attrVal);
+						data.state.put(attrName, attrVal);
 				}
 			}
 		}

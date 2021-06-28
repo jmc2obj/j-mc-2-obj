@@ -23,7 +23,7 @@ public class Tripwire extends BlockModel
 	{
 		String mtl = materials.get(data,biome)[0];
 		
-		boolean active = data.get("powered").equals("true");
+		boolean active = data.state.get("powered").equals("true");
 		
 		
 		/////////////////////

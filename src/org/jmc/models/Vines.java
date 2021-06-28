@@ -16,20 +16,20 @@ public class Vines extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean top = data.get("up").equals("true");
+		boolean top = data.state.get("up").equals("true");
 		boolean n,e,s,w;
 		n = e = w = s = false;
 		
-		if (data.get("north").equals("true")) {
+		if (data.state.get("north").equals("true")) {
 			n = true;
 		}
-		if (data.get("south").equals("true")) {
+		if (data.state.get("south").equals("true")) {
 			s = true;
 		}
-		if (data.get("east").equals("true")) {
+		if (data.state.get("east").equals("true")) {
 			e = true;
 		}
-		if (data.get("west").equals("true")) {
+		if (data.state.get("west").equals("true")) {
 			w = true;
 		}
 

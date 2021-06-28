@@ -20,7 +20,7 @@ public class SeaPickle extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		// The amount of eggs (1-4)
-		int pickles = Integer.parseInt(data.get("pickles"));
+		int pickles = Integer.parseInt(data.state.get("pickles"));
 				
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
@@ -97,7 +97,7 @@ public class SeaPickle extends BlockModel
 		obj.addFace(vertices, uvTopInner, rt, materials.get(data,biome)[0]);	
 		
 		// If underwater, add the stem
-		if(data.get("waterlogged").equals("true")) 
+		if(data.state.get("waterlogged").equals("true")) 
 		{
 			UV[] uvStem1, uvStem2; // UV's for the two cross-shaped stem planes.
 			uvStem1 = new UV[] { new UV(0,13/16f), new UV(0,1), new UV(4/16f,1), new UV(4/16f,13/16f) };

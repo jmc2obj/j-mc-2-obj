@@ -15,7 +15,7 @@ public class PistonArm extends BlockModel
 
 	private String[] getMtlSidesTop(BlockData data, int biome)
 	{
-		boolean sticky = data.get("type").equals("sticky");
+		boolean sticky = data.state.get("type").equals("sticky");
 		String[] abbrMtls = materials.get(data,biome);
 
 		String[] mtlSides = new String[6];
@@ -46,7 +46,7 @@ public class PistonArm extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
+		String dir = data.state.get("facing");
 
 		/*
 		  The model is rendered facing up, then rotated

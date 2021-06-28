@@ -17,12 +17,12 @@ public class ChorusPlant extends BlockModel
 	{
 		boolean[] drawSides;
 		
-		boolean connUp = data.get("up").equals("true");
-		boolean connNorth = data.get("north").equals("true");
-		boolean connSouth = data.get("south").equals("true");
-		boolean connWest = data.get("west").equals("true");
-		boolean connEast = data.get("east").equals("true");
-		boolean connDown = data.get("down").equals("true");
+		boolean connUp = data.state.get("up").equals("true");
+		boolean connNorth = data.state.get("north").equals("true");
+		boolean connSouth = data.state.get("south").equals("true");
+		boolean connWest = data.state.get("west").equals("true");
+		boolean connEast = data.state.get("east").equals("true");
+		boolean connDown = data.state.get("down").equals("true");
 				
 		float coreTop; // How far up the core needs to raise.
 		float coreUvTop; // Corresponding UV height to maintain texture.

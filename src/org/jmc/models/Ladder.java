@@ -20,7 +20,7 @@ public class Ladder extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 		
-		switch (data.get("facing"))
+		switch (data.state.get("facing"))
 		{
 			case "north":
 				rotate.rotate(0, 180, 0);

@@ -28,7 +28,7 @@ public class DoublePlant extends BlockModel
         rZ.setSeed((x+z)*2000);       
         float randomZ = -0.2f + rZ.nextFloat() * 0.4f;	
        		
-		boolean top = data.get("half").equals("upper");
+		boolean top = data.state.get("half").equals("upper");
 		if (top) {
 			// must get the type of plant from the block below
 			data = chunks.getBlockData(x, y-1, z);

@@ -19,7 +19,7 @@ public class Observer extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 		
-		String dir = data.get("facing");
+		String dir = data.state.get("facing");
 		
 		switch (dir)
 		{

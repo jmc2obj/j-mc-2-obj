@@ -20,17 +20,17 @@ public class MushroomBlock extends BlockModel
 		String[] sides = new String[] { mat[0], mat[0], mat[0], mat[0], mat[0], mat[0] };
 
 		// If directions are "false," then this side takes the pores texture instead.
-		if(data.get("up").equals("false")) {
+		if(data.state.get("up").equals("false")) {
 			sides[0] = mat[1]; }		
-		if(data.get("north").equals("false")) {
+		if(data.state.get("north").equals("false")) {
 			sides[1] = mat[1]; }		
-		if(data.get("south").equals("false")) {
+		if(data.state.get("south").equals("false")) {
 			sides[2] = mat[1]; }		
-		if(data.get("west").equals("false")) {
+		if(data.state.get("west").equals("false")) {
 			sides[3] = mat[1]; }		
-		if(data.get("east").equals("false")) {
+		if(data.state.get("east").equals("false")) {
 			sides[4] = mat[1]; }		
-		if(data.get("down").equals("false")) {
+		if(data.state.get("down").equals("false")) {
 			sides[5] = mat[1]; }
 			
 		return sides;

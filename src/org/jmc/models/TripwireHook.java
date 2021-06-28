@@ -32,8 +32,8 @@ public class TripwireHook extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
-		boolean connected = data.get("attached").equals("true");
+		String dir = data.state.get("facing");
+		boolean connected = data.state.get("attached").equals("true");
 		
 		/*
 		 The model is rendered facing south and then rotated  

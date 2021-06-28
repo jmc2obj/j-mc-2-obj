@@ -22,9 +22,9 @@ public class Rails extends BlockModel
 		
 		boolean ascending = false;
 		boolean curved = false;
-		boolean powered = Boolean.parseBoolean(data.get("powered"));
+		boolean powered = Boolean.parseBoolean(data.state.get("powered"));
 		
-		switch (data.get("shape"))
+		switch (data.state.get("shape"))
 		{
 			case "north_south":
 				break;

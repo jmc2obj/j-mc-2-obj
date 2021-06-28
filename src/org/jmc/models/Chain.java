@@ -33,7 +33,7 @@ public class Chain extends BlockModel
 
 
 		Transform rotation = new Transform();
-		String axis = data.get("axis");
+		String axis = data.state.get("axis");
 		if (axis == null) {
 			throw new RuntimeException("Missing axis value!");
 		}

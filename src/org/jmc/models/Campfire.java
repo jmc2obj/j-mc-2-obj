@@ -21,7 +21,7 @@ public class Campfire extends BlockModel
 		
 		mtls_LogsBottom = new String [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[1] };	
 		
-		if (data.getBool("lit", false)) {
+		if (data.state.getBool("lit", false)) {
 			mtls_LogsTop = new String [] { mtls[1], mtls[2], mtls[2], mtls[1], mtls[1], mtls[1] };
 			mtls_Ash = new String [] { mtls[2], mtls[2], mtls[2], mtls[2], mtls[2], mtls[2] };
 		} else {
@@ -37,7 +37,7 @@ public class Campfire extends BlockModel
 		UV[][] uvSides;
 		boolean[] drawSides;
 		
-		Direction dir = data.getDirection("facing", Direction.SOUTH);
+		Direction dir = data.state.getDirection("facing", Direction.SOUTH);
 		
 		switch (dir)
 		{
@@ -65,7 +65,7 @@ public class Campfire extends BlockModel
 		addBox(obj,	8/16f, -5/16f, 7/16f, -8/16f, -1/16f, 3/16f, rt, mtls_LogsTop, uvSides, null);
 		
 		// Fire cross
-		if (data.getBool("lit", false))
+		if (data.state.getBool("lit", false))
 		{
 			Transform move = new Transform();
 			move.translate(x, y, z);

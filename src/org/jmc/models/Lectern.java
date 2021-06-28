@@ -26,7 +26,7 @@ public class Lectern extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 		
-		Direction facing = data.getDirection("facing", Direction.NORTH);
+		Direction facing = data.state.getDirection("facing", Direction.NORTH);
 		
 		switch (facing)
 		{

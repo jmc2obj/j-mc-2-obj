@@ -19,9 +19,9 @@ public class Stalk extends BlockModel
 		boolean n,s,e,w;
 		n=s=e=w=false;
 		
-		if (data.containsKey("facing")) 
+		if (data.state.containsKey("facing")) 
 		{
-			switch (data.get("facing")) {
+			switch (data.state.get("facing")) {
 			case "north":
 				n = true;
 				break;

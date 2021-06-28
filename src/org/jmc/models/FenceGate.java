@@ -16,9 +16,9 @@ public class FenceGate extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
-		boolean open = data.get("open").equals("true");
-		boolean inWall = data.get("in_wall").equals("true");
+		String dir = data.state.get("facing");
+		boolean open = data.state.get("open").equals("true");
+		boolean inWall = data.state.get("in_wall").equals("true");
 
 		Transform rotate = new Transform();
 		Transform translate = new Transform();

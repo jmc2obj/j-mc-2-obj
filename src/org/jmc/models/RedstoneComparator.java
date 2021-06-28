@@ -21,7 +21,7 @@ public class RedstoneComparator extends BlockModel
 
 		String[] mtlSides = new String[6];
 		
-		if (data.get("powered").equals("true")) {
+		if (data.state.get("powered").equals("true")) {
 			mtlSides[0] = abbrMtls[0];			
 		} else {
 			mtlSides[0] = abbrMtls[1];	
@@ -37,7 +37,7 @@ public class RedstoneComparator extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String dir = data.get("facing");
+		String dir = data.state.get("facing");
 
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
@@ -61,12 +61,12 @@ public class RedstoneComparator extends BlockModel
 		
 		String[] mtlsBase = getMtlSides(data,biome);
 		String mtlTorch, mtlSmallTorch;
-		if (data.get("powered").equals("true")) {
+		if (data.state.get("powered").equals("true")) {
 			mtlTorch = materials.get(data,biome)[4];		
 		} else {
 			mtlTorch = materials.get(data,biome)[5];	
 		}
-		if (data.get("mode").equals("compare")) {
+		if (data.state.get("mode").equals("compare")) {
 			mtlSmallTorch = materials.get(data,biome)[5];		
 		} else {
 			mtlSmallTorch = materials.get(data,biome)[4];	

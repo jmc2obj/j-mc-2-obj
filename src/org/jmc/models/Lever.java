@@ -45,9 +45,9 @@ public class Lever extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean on = data.get("powered").equals("true");
-		String dir = data.get("facing");
-		String face = data.get("face");
+		boolean on = data.state.get("powered").equals("true");
+		String dir = data.state.get("facing");
+		String face = data.state.get("face");
 		String orientation = face + dir; // Puts it together such as wallnorth, ceilingsouth
 		
 		/*
