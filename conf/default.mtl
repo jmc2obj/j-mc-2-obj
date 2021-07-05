@@ -1,3 +1,8 @@
+newmtl test
+kd 1 1 1
+ks 0 0 0
+map_Kd tex/test.png
+
 newmtl acacia_planks
 Kd 0.6593 0.3544 0.1970
 Ks 0.0000 0.0000 0.0000
