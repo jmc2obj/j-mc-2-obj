@@ -30,12 +30,12 @@ public class Lectern extends BlockModel
 		
 		switch (facing)
 		{
-			case WEST: rotate.rotate(0, 90, 0); break;
-			case NORTH: rotate.rotate(0, 180, 0); break;
-			case EAST: rotate.rotate(0, -90, 0); break;
+			case WEST: rotate = Transform.rotation(0, 90, 0); break;
+			case NORTH: rotate = Transform.rotation(0, 180, 0); break;
+			case EAST: rotate = Transform.rotation(0, -90, 0); break;
 			default: break;
 		}
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		// Draw the base
@@ -56,11 +56,11 @@ public class Lectern extends BlockModel
 		// Draw the podium top
 		switch (facing)
 		{
-			case WEST: rotate.rotate(0, 180, -20); translate.translate(x-1/16f, y+6/16f, z); break;
+			case WEST: rotate = Transform.rotation(0, 180, -20); translate = Transform.translation(x-1/16f, y+6/16f, z); break;
 			default:
-			case NORTH: rotate.rotate(0, -90, -20); translate.translate(x, y+6/16f, z-1/16f); break;
-			case EAST: rotate.rotate(0, 0, -20); translate.translate(x+1/16f, y+6/16f, z); break;
-			case SOUTH: rotate.rotate(0, 90, -20); translate.translate(x, y+6/16f, z+1/16f); break;
+			case NORTH: rotate = Transform.rotation(0, -90, -20); translate = Transform.translation(x, y+6/16f, z-1/16f); break;
+			case EAST: rotate = Transform.rotation(0, 0, -20); translate = Transform.translation(x+1/16f, y+6/16f, z); break;
+			case SOUTH: rotate = Transform.rotation(0, 90, -20); translate = Transform.translation(x, y+6/16f, z+1/16f); break;
 		}
 		rt = translate.multiply(rotate);
 		

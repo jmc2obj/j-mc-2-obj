@@ -28,39 +28,39 @@ public class Torch extends BlockModel
 			switch(data.state.get("facing"))
 			{
 				case "east":
-					rotate.rotate(0, 0, -25);
-					translate.translate(x-0.3f, y+0.125f, z);
+					rotate = Transform.rotation(0, 0, -25);
+					translate = Transform.translation(x-0.3f, y+0.125f, z);
 					txTorch = translate.multiply(rotate);
 	
-					translate.translate(x-0.26f, y+0.125f, z);
+					translate = Transform.translation(x-0.26f, y+0.125f, z);
 					txFlame = translate;
 					break;
 				case "west":
-					rotate.rotate(0, 0, 25);
-					translate.translate(x+0.3f, y+0.125f, z);
+					rotate = Transform.rotation(0, 0, 25);
+					translate = Transform.translation(x+0.3f, y+0.125f, z);
 					txTorch = translate.multiply(rotate);
 	
-					translate.translate(x+0.26f, y+0.125f, z);
+					translate = Transform.translation(x+0.26f, y+0.125f, z);
 					txFlame = translate;
 					break;
 				case "south":
-					rotate.rotate(25, 0, 0);			
-					translate.translate(x, y+0.125f, z-0.3f);
+					rotate = Transform.rotation(25, 0, 0);			
+					translate = Transform.translation(x, y+0.125f, z-0.3f);
 					txTorch = translate.multiply(rotate);
 	
-					translate.translate(x, y+0.125f, z-0.26f);
+					translate = Transform.translation(x, y+0.125f, z-0.26f);
 					txFlame = translate;
 					break;
 				case "north":
-					rotate.rotate(-25, 0, 0);
-					translate.translate(x, y+0.125f, z+0.3f);
+					rotate = Transform.rotation(-25, 0, 0);
+					translate = Transform.translation(x, y+0.125f, z+0.3f);
 					txTorch = translate.multiply(rotate);
 	
-					translate.translate(x, y+0.125f, z+0.26f);
+					translate = Transform.translation(x, y+0.125f, z+0.26f);
 					txFlame = translate;
 					break;
 				default:
-					translate.translate(x, y, z);
+					translate = Transform.translation(x, y, z);
 					txTorch = translate;
 					txFlame = translate;
 					break;					
@@ -68,7 +68,7 @@ public class Torch extends BlockModel
 		} 
 		else 
 		{
-			translate.translate(x, y, z);
+			translate = Transform.translation(x, y, z);
 			txTorch = translate;
 			txFlame = translate;			
 		}

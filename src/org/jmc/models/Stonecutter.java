@@ -17,13 +17,9 @@ public class Stonecutter extends BlockModel
 	{
 		String[] mtls_bottom = new String [] { materials.get(data,biome)[3], materials.get(data,biome)[2], materials.get(data,biome)[2], materials.get(data,biome)[2], materials.get(data,biome)[2], materials.get(data,biome)[0] };	
 		
-		Transform rotate = new Transform();
-		Transform translate = new Transform();
-		Transform rt;
-		
-		rotate.rotate(data.state.getDirection("facing", Direction.NORTH));
-		translate.translate(x, y, z);		
-		rt = translate.multiply(rotate);
+		Transform rotate = Transform.rotation(data.state.getDirection("facing", Direction.NORTH));
+		Transform translate = Transform.translation(x, y, z);
+		Transform rt = translate.multiply(rotate);
 
         UV[] uvSide = new UV[] { new UV(0,0), new UV(1,0), new UV(1,9/16f), new UV(0,9/16f) };
         UV[][] uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };

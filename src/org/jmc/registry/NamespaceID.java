@@ -12,7 +12,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 
-@JsonAdapter(NamespaceID.Adapter.class)
+@JsonAdapter(NamespaceID.NamespaceIDAdapter.class)
 public class NamespaceID implements Comparable<NamespaceID> {
 
 	public final String namespace;
@@ -68,7 +68,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	}
 	
 	
-	public static class Adapter implements JsonDeserializer<NamespaceID>, JsonSerializer<NamespaceID> {
+	private static class NamespaceIDAdapter implements JsonDeserializer<NamespaceID>, JsonSerializer<NamespaceID> {
 		@Override
 		public JsonElement serialize(NamespaceID src, Type typeOfSrc, JsonSerializationContext context) {
 			return new JsonPrimitive(src.toString());

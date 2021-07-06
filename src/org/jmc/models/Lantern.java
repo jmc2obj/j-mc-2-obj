@@ -38,8 +38,7 @@ public class Lantern extends BlockModel
 		final String material = materials.get(data, biome)[0];
 		if (hanging)
 		{
-			Transform move = new Transform();
-			move.translate(x, y, z);
+			Transform move = Transform.translation(x, y, z);
 			Vertex[] vertices = new Vertex[4];
 			
 			uvSide = new UV[] { new UV(11/16f, 10/16f), new UV(14/16f, 10/16f), new UV(14/16f, 16/16f), new UV(11/16f, 16/16f) };
@@ -59,8 +58,7 @@ public class Lantern extends BlockModel
 		// Otherwise we'll just draw the small chain hook
 		else
 		{
-			Transform move = new Transform();
-			move.translate(x, y, z);
+			Transform move = Transform.translation(x, y, z);
 			Vertex[] vertices = new Vertex[4];
 			
 			uvSide = new UV[] { new UV(11/16f, 4/16f), new UV(14/16f, 4/16f), new UV(14/16f, 6/16f), new UV(11/16f, 6/16f) };	

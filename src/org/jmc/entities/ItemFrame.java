@@ -76,9 +76,9 @@ public class ItemFrame extends Entity
 				break;
 		}
 
-		rotate.rotate(0, baseRotation, frameRotation);
+		rotate = Transform.rotation(0, baseRotation, frameRotation);
 
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		

@@ -26,14 +26,14 @@ public class FenceGate extends BlockModel
 
 		switch (dir)
 		{
-			case "west": rotate.rotate(0, 90, 0); break;
-			case "north": rotate.rotate(0, 180, 0); break;
-			case "east": rotate.rotate(0, -90, 0); break;
+			case "west": rotate = Transform.rotation(0, 90, 0); break;
+			case "north": rotate = Transform.rotation(0, 180, 0); break;
+			case "east": rotate = Transform.rotation(0, -90, 0); break;
 		}
 		if(inWall)
-			translate.translate(x, y-0.1875f, z);
+			translate = Transform.translation(x, y-0.1875f, z);
 		else
-			translate.translate(x, y, z);
+			translate = Transform.translation(x, y, z);
 			
 		rt = translate.multiply(rotate);
 

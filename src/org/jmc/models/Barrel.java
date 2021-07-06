@@ -22,14 +22,14 @@ public class Barrel extends BlockModel
 
 		switch (dir)
 		{
-			case UP: rotate.rotate(0, 180, 0); break;
-			case DOWN: rotate.rotate(180, 180, 0); break;
-			case NORTH: rotate.rotate(-90, 0, 0); break;
-			case SOUTH: rotate.rotate(-90, 0, 180); break;
-			case WEST: rotate.rotate(-90, 0, 90); break;
-			case EAST: rotate.rotate(-90, 0, -90); break;
+			case UP: rotate = Transform.rotation(0, 180, 0); break;
+			case DOWN: rotate = Transform.rotation(180, 180, 0); break;
+			case NORTH: rotate = Transform.rotation(-90, 0, 0); break;
+			case SOUTH: rotate = Transform.rotation(-90, 0, 180); break;
+			case WEST: rotate = Transform.rotation(-90, 0, 90); break;
+			case EAST: rotate = Transform.rotation(-90, 0, -90); break;
 		}
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		addBox(obj, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, rt, getMtlSides(data,biome), null, null);

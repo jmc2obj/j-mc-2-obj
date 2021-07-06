@@ -66,20 +66,20 @@ public class Lever extends BlockModel
 		// base
 		switch (orientation)
 		{
-			case "walleast": rotate.rotate(0, -90, 0); 	break;	// wall e
-			case "wallwest": rotate.rotate(0, 90, 0); break;		// wall w
-			case "wallsouth": rotate.rotate(0, 0, 0); break;		// wall s
-			case "wallnorth": rotate.rotate(0, 180, 0); break;	// wall n
-			case "floornorth": rotate.rotate(-90, 0, 0); break;	// ground n-s
-			case "floorsouth": rotate.rotate(-90, 0, 0); break;	// ground n-s
-			case "floorwest": rotate.rotate(-90, 0, 90); break;	// ground e-w
-			case "flooreast": rotate.rotate(-90, 0, 90); break;	// ground e-w
-			case "ceilingnorth": rotate.rotate(90, 0, 0); break;		// ceiling n-s
-			case "ceilingsouth": rotate.rotate(90, 0, 0); break;		// ceiling n-s
-			case "ceilingwest": rotate.rotate(90, 0, 90); break;	// ceiling e-w
-			case "ceilingeast": rotate.rotate(90, 0, 90); break;	// ceiling e-w
+			case "walleast": rotate = Transform.rotation(0, -90, 0); 	break;	// wall e
+			case "wallwest": rotate = Transform.rotation(0, 90, 0); break;		// wall w
+			case "wallsouth": rotate = Transform.rotation(0, 0, 0); break;		// wall s
+			case "wallnorth": rotate = Transform.rotation(0, 180, 0); break;	// wall n
+			case "floornorth": rotate = Transform.rotation(-90, 0, 0); break;	// ground n-s
+			case "floorsouth": rotate = Transform.rotation(-90, 0, 0); break;	// ground n-s
+			case "floorwest": rotate = Transform.rotation(-90, 0, 90); break;	// ground e-w
+			case "flooreast": rotate = Transform.rotation(-90, 0, 90); break;	// ground e-w
+			case "ceilingnorth": rotate = Transform.rotation(90, 0, 0); break;		// ceiling n-s
+			case "ceilingsouth": rotate = Transform.rotation(90, 0, 0); break;		// ceiling n-s
+			case "ceilingwest": rotate = Transform.rotation(90, 0, 90); break;	// ceiling e-w
+			case "ceilingeast": rotate = Transform.rotation(90, 0, 90); break;	// ceiling e-w
 		}
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 
 		drawSides = new boolean[] {true,false,true,true,true,true};
@@ -101,54 +101,54 @@ public class Lever extends BlockModel
 		switch (orientation)
 		{
 			case "walleast":
-				rotate2.rotate(0, 0, on ? -35 : 35);
-				rotate.rotate(0, -90, 0);
-				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
+				rotate2 = Transform.rotation(0, 0, on ? -35 : 35);
+				rotate = Transform.rotation(0, -90, 0);
+				translate = Transform.translation(x, y + (on ? -0.35f : 0.35f), z);
 				break;
 			case "wallwest":
-				rotate2.rotate(0, 0, on ? 35 : -35);
-				rotate.rotate(0, 90, 0);
-				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
+				rotate2 = Transform.rotation(0, 0, on ? 35 : -35);
+				rotate = Transform.rotation(0, 90, 0);
+				translate = Transform.translation(x, y + (on ? -0.35f : 0.35f), z);
 				break;
 			case "wallsouth":
-				rotate.rotate(on ? 35 : -35, 0, 0);
-				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
+				rotate = Transform.rotation(on ? 35 : -35, 0, 0);
+				translate = Transform.translation(x, y + (on ? -0.35f : 0.35f), z);
 				break;
 			case "wallnorth":
-				rotate.rotate(on ? -35 : 35, 180, 0);
-				translate.translate(x, y + (on ? -0.35f : 0.35f), z);
+				rotate = Transform.rotation(on ? -35 : 35, 180, 0);
+				translate = Transform.translation(x, y + (on ? -0.35f : 0.35f), z);
 				break;
 			case "floornorth":
-				rotate.rotate(-90 + (on ? -35 : 35), 0, 0);
-				translate.translate(x, y, z + (on ? -0.35f : 0.35f));
+				rotate = Transform.rotation(-90 + (on ? -35 : 35), 0, 0);
+				translate = Transform.translation(x, y, z + (on ? -0.35f : 0.35f));
 				break;
 			case "floorsouth":
-				rotate.rotate(-90 + (on ? 35 : -35), 0, 0);
-				translate.translate(x, y, z + (on ? 0.35f : -0.35f));
+				rotate = Transform.rotation(-90 + (on ? 35 : -35), 0, 0);
+				translate = Transform.translation(x, y, z + (on ? 0.35f : -0.35f));
 				break;				
 			case "floorwest":
-				rotate.rotate(-90, (on ? 35 : -35), 90);
-				translate.translate(x + (on ? -0.35f : 0.35f), y, z);
+				rotate = Transform.rotation(-90, (on ? 35 : -35), 90);
+				translate = Transform.translation(x + (on ? -0.35f : 0.35f), y, z);
 				break;
 			case "flooreast":
-				rotate.rotate(-90, (on ? -35 : 35), 90);
-				translate.translate(x + (on ? 0.35f : -0.35f), y, z);
+				rotate = Transform.rotation(-90, (on ? -35 : 35), 90);
+				translate = Transform.translation(x + (on ? 0.35f : -0.35f), y, z);
 				break;				
 			case "ceilingnorth":
-				rotate.rotate(90 + (on ? 35 : -35), 0, 0);
-				translate.translate(x, y, z + (on ? -0.35f : 0.35f));
+				rotate = Transform.rotation(90 + (on ? 35 : -35), 0, 0);
+				translate = Transform.translation(x, y, z + (on ? -0.35f : 0.35f));
 				break;
 			case "ceilingsouth":
-				rotate.rotate(90 + (on ? -35 : 35), 0, 0);
-				translate.translate(x, y, z + (on ? 0.35f : -0.35f));
+				rotate = Transform.rotation(90 + (on ? -35 : 35), 0, 0);
+				translate = Transform.translation(x, y, z + (on ? 0.35f : -0.35f));
 				break;					
 			case "ceilingwest":
-				rotate.rotate(90, (on ? 35 : -35), 90);
-				translate.translate(x + (on ? -0.35f : 0.35f), y, z);
+				rotate = Transform.rotation(90, (on ? 35 : -35), 90);
+				translate = Transform.translation(x + (on ? -0.35f : 0.35f), y, z);
 				break;
 			case "ceilingeast":
-				rotate.rotate(90, (on ? -35 : 35), 90);
-				translate.translate(x + (on ? 0.35f : -0.35f), y, z);
+				rotate = Transform.rotation(90, (on ? -35 : 35), 90);
+				translate = Transform.translation(x + (on ? 0.35f : -0.35f), y, z);
 				break;				
 		}
 		rt = translate.multiply(rotate2.multiply(rotate));

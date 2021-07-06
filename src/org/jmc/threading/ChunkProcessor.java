@@ -173,7 +173,7 @@ public class ChunkProcessor
 					
 					if(Options.excludeBlocks.contains(blockID))
 						continue;
-
+					
 					if(Options.convertOres){
 						if(blockID.endsWith("ore")){
 							blockID = "minecraft:stone";

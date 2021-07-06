@@ -18,8 +18,7 @@ public class Fire extends BlockModel
 	{
 		String[] mtlSides = getMtlSides(data,biome);
 		
-		Transform t = new Transform();
-		t.translate(x, y, z);
+		Transform t = Transform.translation(x, y, z);
 		
 		boolean north = data.state.getBool("north", false);
 		boolean south = data.state.getBool("south", false);
@@ -49,8 +48,7 @@ public class Fire extends BlockModel
 	}
 	
 	private void addSide(ChunkProcessor obj, Transform baseT, String material, float yaw) {
-		Transform rot = new Transform();
-		rot.rotate(0, yaw, 0);
+		Transform rot = Transform.rotation(0, yaw, 0);
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, -0.5f, -0.5f);
 		vertices[1] = new Vertex( 0.5f, -0.5f, -0.5f);
@@ -67,11 +65,11 @@ public class Fire extends BlockModel
 		vertices[2] = new Vertex(-0.44f,  0.75f, 0.25f);
 		vertices[3] = new Vertex( 0.44f,  0.75f, 0.25f);
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
-		rot.rotate(0, 90, 0);
+		rot = Transform.rotation(0, 90, 0);
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
-		rot.rotate(0, 180, 0);
+		rot = Transform.rotation(0, 180, 0);
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
-		rot.rotate(0, -90, 0);
+		rot = Transform.rotation(0, -90, 0);
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
 	}
 
@@ -83,7 +81,7 @@ public class Fire extends BlockModel
 		vertices[2] = new Vertex( 0.5f, 0.1f, -0.44f);
 		vertices[3] = new Vertex( 0.5f, 0.1f,  0.44f);
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
-		rot.rotate(0, 180, 0);
+		rot = Transform.rotation(0, 180, 0);
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
 	}
 

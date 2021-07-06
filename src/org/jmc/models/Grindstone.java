@@ -34,11 +34,11 @@ public class Grindstone extends BlockModel
 		{
 			switch (dir)
 			{
-				case NORTH: rotate.rotate(0, 180, 0); break;
+				case NORTH: rotate = Transform.rotation(0, 180, 0); break;
 				default:
-				case SOUTH: rotate.rotate(0, 0, 0); break;
-				case WEST: rotate.rotate(0, 90, 0); break;
-				case EAST: rotate.rotate(0, -90, 0); break;
+				case SOUTH: rotate = Transform.rotation(0, 0, 0); break;
+				case WEST: rotate = Transform.rotation(0, 90, 0); break;
+				case EAST: rotate = Transform.rotation(0, -90, 0); break;
 			}
 		}
 		// Hanging from a ceiling
@@ -46,11 +46,11 @@ public class Grindstone extends BlockModel
 		{
 			switch (dir)
 			{
-				case NORTH: rotate.rotate(180, 180, 0); break;
+				case NORTH: rotate = Transform.rotation(180, 180, 0); break;
 				default:
-				case SOUTH: rotate.rotate(180, 0, 0); break;
-				case WEST: rotate.rotate(180, 90, 0); break;
-				case EAST: rotate.rotate(180, -90, 0); break;
+				case SOUTH: rotate = Transform.rotation(180, 0, 0); break;
+				case WEST: rotate = Transform.rotation(180, 90, 0); break;
+				case EAST: rotate = Transform.rotation(180, -90, 0); break;
 			}
 		}
 		// Attached to the side of a wall
@@ -58,15 +58,15 @@ public class Grindstone extends BlockModel
 		{
 			switch (dir)
 			{
-				case NORTH: rotate.rotate(0, 90, 90); break;
+				case NORTH: rotate = Transform.rotation(0, 90, 90); break;
 				default:
-				case SOUTH: rotate.rotate(0, -90, 90); break;
-				case WEST: rotate.rotate(0, 0, 90); break;
-				case EAST: rotate.rotate(0, 180, 90); break;
+				case SOUTH: rotate = Transform.rotation(0, -90, 90); break;
+				case WEST: rotate = Transform.rotation(0, 0, 90); break;
+				case EAST: rotate = Transform.rotation(0, 180, 90); break;
 			}			
 		}
 		
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		

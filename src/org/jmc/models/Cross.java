@@ -16,8 +16,7 @@ public class Cross extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		Transform move = new Transform();
-		move.translate(x, y, z);
+		Transform move = Transform.translation(x, y, z);
 
 		final String material = materials.get(data, biome)[0];
 		

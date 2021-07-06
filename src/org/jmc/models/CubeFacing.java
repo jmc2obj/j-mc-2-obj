@@ -16,13 +16,10 @@ public class CubeFacing extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		Transform trans = new Transform();
-		Transform rotate = new Transform();
+		Transform trans = Transform.translation(x, y, z);
 		
 		Direction dir = data.state.getDirection("facing");
-		
-		trans.translate(x, y, z);
-		rotate.rotate(dir);
+		Transform rotate = Transform.rotation(dir);
 		
 		boolean[] dSides = drawSides(chunks, x, y, z);
 		boolean[] dSidesRot = new boolean[6];

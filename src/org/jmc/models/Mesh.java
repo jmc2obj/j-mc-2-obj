@@ -131,8 +131,7 @@ public class Mesh extends BlockModel
 	{
 		//What did this do? if(data<0) data=(byte) (16+data);
 
-		Transform translate = new Transform();
-		translate.translate(x, y, z);
+		Transform translate = Transform.translation(x, y, z);
 
 		addModel(obj,chunks,x,y,z,data,biome,translate);
 	}

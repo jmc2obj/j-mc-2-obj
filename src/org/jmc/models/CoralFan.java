@@ -16,10 +16,9 @@ public class CoralFan extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		Transform move = new Transform();
+		Transform move = Transform.translation(x, y, z);
 		Transform rotate = new Transform();
 		Transform rt;
-		move.translate(x, y, z);
 		
 		// If it's not a wall fan 
 		if (!data.state.containsKey("facing")) 
@@ -54,16 +53,16 @@ public class CoralFan extends BlockModel
 			switch (data.state.get("facing"))
 			{
 				case "north":
-					rotate.rotate(0, 0, 0);
+					rotate = Transform.rotation(0, 0, 0);
 					break;
 				case "east":
-					rotate.rotate(0, 90, 0);
+					rotate = Transform.rotation(0, 90, 0);
 					break;
 				case "south":
-					rotate.rotate(0, 180, 0);
+					rotate = Transform.rotation(0, 180, 0);
 					break;
 				case "west":
-					rotate.rotate(0, -90, 0);
+					rotate = Transform.rotation(0, -90, 0);
 					break;
 				default:
 					

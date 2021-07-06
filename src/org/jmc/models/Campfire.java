@@ -41,13 +41,13 @@ public class Campfire extends BlockModel
 		
 		switch (dir)
 		{
-			case NORTH: rotate.rotate(0, 180, 0); break;
+			case NORTH: rotate = Transform.rotation(0, 180, 0); break;
 			default:
-			case SOUTH: rotate.rotate(0, 0, 0); break;
-			case WEST: rotate.rotate(0, 90, 0); break;
-			case EAST: rotate.rotate(0, -90, 0); break;
+			case SOUTH: rotate = Transform.rotation(0, 0, 0); break;
+			case WEST: rotate = Transform.rotation(0, 90, 0); break;
+			case EAST: rotate = Transform.rotation(0, -90, 0); break;
 		}
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		// Bottom two logs
@@ -68,7 +68,7 @@ public class Campfire extends BlockModel
 		if (data.state.getBool("lit", false))
 		{
 			Transform move = new Transform();
-			move.translate(x, y, z);
+			move = Transform.translation(x, y, z);
 			
 			Vertex[] vertices = new Vertex[4];
 			vertices[0] = new Vertex(+0.5f,-0.5f,-0.5f);

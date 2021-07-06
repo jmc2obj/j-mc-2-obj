@@ -45,13 +45,13 @@ public class PistonBase extends BlockModel
 
 		switch (dir)
 		{
-			case "down": rotate.rotate(180, 0, 0); break;
-			case "north": rotate.rotate(-90, 0, 0); break;
-			case "south": rotate.rotate(90, 0, 0); break;
-			case "west": rotate.rotate(0, 0, 90); break;
-			case "east": rotate.rotate(0, 0, -90); break;
+			case "down": rotate = Transform.rotation(180, 0, 0); break;
+			case "north": rotate = Transform.rotation(-90, 0, 0); break;
+			case "south": rotate = Transform.rotation(90, 0, 0); break;
+			case "west": rotate = Transform.rotation(0, 0, 90); break;
+			case "east": rotate = Transform.rotation(0, 0, -90); break;
 		}
-		translate.translate(x, y, z);		
+		translate = Transform.translation(x, y, z);		
 		rt = translate.multiply(rotate);
 
 		

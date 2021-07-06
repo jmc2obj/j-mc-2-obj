@@ -17,8 +17,7 @@ public class Chain extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		Transform move = new Transform();
-		move.translate(x, y, z);
+		Transform move = Transform.translation(x, y, z);
 
 
 
@@ -39,10 +38,10 @@ public class Chain extends BlockModel
 		}
 		switch (axis) {
 			case "x":
-				rotation.rotate(0, 0, 90);
+				rotation = Transform.rotation(0, 0, 90);
 				break;
 			case "z":
-				rotation.rotate(90, 0, 0);
+				rotation = Transform.rotation(90, 0, 0);
 				break;
 			case "y":
 				// keep upright

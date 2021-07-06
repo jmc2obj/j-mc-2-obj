@@ -46,8 +46,8 @@ public class SignPost extends BlockModel
 			case 14: r = 135f; break;
 			case 15: r = 157.5f; break;
 		}
-		rotate.rotate(0, r, 0);
-		translate.translate(x, y, z);		
+		rotate = Transform.rotation(0, r, 0);
+		translate = Transform.translation(x, y, z);		
 		rt = translate.multiply(rotate);
 		
 

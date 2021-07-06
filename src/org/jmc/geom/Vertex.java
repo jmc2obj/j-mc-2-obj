@@ -1,11 +1,22 @@
 package org.jmc.geom;
 
+import java.lang.reflect.Type;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.JsonAdapter;
 
 /**
  * Small class for describing Vertices in a sortable fashion.
  * @author danijel
  *
  */
+@JsonAdapter(Vertex.VertexAdapter.class)
 public class Vertex implements Comparable<Vertex>
 {
 	public float x,y,z;
@@ -121,5 +132,31 @@ public class Vertex implements Comparable<Vertex>
 	{
 		Vertex c = subtract(a, b);
 		return Math.sqrt(c.x * c.x + c.y * c.y + c.z * c.z);
+	}
+	
+	private static class VertexAdapter implements JsonDeserializer<Vertex>, JsonSerializer<Vertex> {
+
+		@Override
+		public Vertex deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			try {
+				JsonArray array = json.getAsJsonArray();
+				float x = array.get(0).getAsFloat();
+				float y = array.get(1).getAsFloat();
+				float z = array.get(2).getAsFloat();
+				return new Vertex(x, y, z);
+			} catch (ClassCastException | IllegalStateException e) {
+				throw new JsonParseException("Tried to parse invalid json as Vertex", e);
+			}
+		}
+
+		@Override
+		public JsonElement serialize(Vertex src, Type typeOfSrc, JsonSerializationContext context) {
+			JsonArray array = new JsonArray(3);
+			array.add(src.x);
+			array.add(src.y);
+			array.add(src.z);
+			return array;
+		}
+		
 	}
 }

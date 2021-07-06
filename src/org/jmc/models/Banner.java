@@ -401,18 +401,15 @@ public class Banner extends BlockModel {
         // Log.info("myObjGroup: "+myObjGroup);
 
         // translate
-        Transform translate = new Transform();
-        translate.translate((float) x, (float) y, (float) z);
+        Transform translate = Transform.translation((float) x, (float) y, (float) z);
 
         // scale
-        Transform tScale = new Transform();
-        tScale.scale((float) scale, (float) scale, (float) scale);
+        Transform tScale = Transform.scale((float) scale, (float) scale, (float) scale);
 
         translate = translate.multiply(tScale);
 
         // rotate
-        Transform tRotation = new Transform();
-        tRotation.rotate(0, rotation, 0);
+        Transform tRotation = Transform.rotation(0, rotation, 0);
 
         translate = translate.multiply(tRotation);
 

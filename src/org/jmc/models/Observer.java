@@ -23,13 +23,13 @@ public class Observer extends BlockModel
 		
 		switch (dir)
 		{
-			case "up": rotate.rotate(-90, 0, 180); break;
-			case "down": rotate.rotate(90, 0, 180); break;
-			case "north": rotate.rotate(0, 180, 0); break;
-			case "west": rotate.rotate(0, 90, 0); break;
-			case "east": rotate.rotate(0, -90, 0); break;
+			case "up": rotate = Transform.rotation(-90, 0, 180); break;
+			case "down": rotate = Transform.rotation(90, 0, 180); break;
+			case "north": rotate = Transform.rotation(0, 180, 0); break;
+			case "west": rotate = Transform.rotation(0, 90, 0); break;
+			case "east": rotate = Transform.rotation(0, -90, 0); break;
 		}
-		translate.translate(x, y, z);		
+		translate = Transform.translation(x, y, z);		
 		rt = translate.multiply(rotate);
 
 		addBox(obj,

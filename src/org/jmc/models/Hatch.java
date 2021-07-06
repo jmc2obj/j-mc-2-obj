@@ -23,44 +23,41 @@ public class Hatch extends BlockModel
 		/*
 		  The model is rendered in the middle of the block, then rotated
 		*/
-		Transform rotate = new Transform();
-		Transform translate = new Transform();
+		Transform rotate = Transform.rotation(0, 0, 0);
+		Transform translate = Transform.translation(x, y, z);
 		Transform scale = new Transform();
-		
-		rotate.rotate(0, 0, 0);
-		translate.translate(x, y, z);
 		
 		if (open) // open
 		{
 			if (facing.equals("south"))
 			{
-				rotate.rotate(-90, 0, 0);
-				translate.translate(x, y, z-0.40625f);
+				rotate = Transform.rotation(-90, 0, 0);
+				translate = Transform.translation(x, y, z-0.40625f);
 				
 				if (top) {
-					scale.scale(1, 1, -1);
+					scale = Transform.scale(1, 1, -1);
 				}
 			} else if (facing.equals("north")) {
-				rotate.rotate(90, 0, 0);
-				translate.translate(x, y, z+0.40625f);
+				rotate = Transform.rotation(90, 0, 0);
+				translate = Transform.translation(x, y, z+0.40625f);
 				
 				if (!top) {
-					scale.scale(1, 1, -1);
+					scale = Transform.scale(1, 1, -1);
 				}
 			} else if (facing.equals("west")){
-				rotate.rotate(-90, 180, 90);
-				translate.translate(x+0.40625f, y, z);
+				rotate = Transform.rotation(-90, 180, 90);
+				translate = Transform.translation(x+0.40625f, y, z);
 				
 				if (!top) {
-					scale.scale(-1, 1, -1);
+					scale = Transform.scale(-1, 1, -1);
 				}
 			} else
 			{
-				rotate.rotate(-90, 0, 90);
-				translate.translate(x-0.40625f, y, z);
+				rotate = Transform.rotation(-90, 0, 90);
+				translate = Transform.translation(x-0.40625f, y, z);
 				
 				if (top) {
-					scale.scale(-1, 1, -1);
+					scale = Transform.scale(-1, 1, -1);
 				}
 			}
 			
@@ -69,19 +66,19 @@ public class Hatch extends BlockModel
 		{
 			if (facing.equals("south"))
 			{
-				rotate.rotate(0, 0, 0);
+				rotate = Transform.rotation(0, 0, 0);
 			} else if (facing.equals("north")) {
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 			} else if (facing.equals("west")) {
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 			} else {
-				rotate.rotate(0, 270, 0);
+				rotate = Transform.rotation(0, 270, 0);
 			}	
 			
 			if (top) {
-				translate.translate(x, y+0.40625f, z);
+				translate = Transform.translation(x, y+0.40625f, z);
 			} else {
-				translate.translate(x, y-0.40625f, z);
+				translate = Transform.translation(x, y-0.40625f, z);
 			}
 		}
 			

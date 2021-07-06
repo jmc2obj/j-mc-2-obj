@@ -87,10 +87,8 @@ public class Door extends BlockModel
 		};
 		int lookup = direction | reversed<<2 | open<<3;
 		
-		Transform rotate = new Transform();
-		rotate.rotate(0, table[lookup][0], 0);
-		Transform translate = new Transform();
-		translate.translate(x+table[lookup][1], y, z+table[lookup][2]);		
+		Transform rotate = Transform.rotation(0, table[lookup][0], 0);
+		Transform translate = Transform.translation(x+table[lookup][1], y, z+table[lookup][2]);		
 		Transform rt = translate.multiply(rotate);
 
 		boolean[] drawSides = drawSides(chunks, x, y, z);

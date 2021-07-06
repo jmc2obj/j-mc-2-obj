@@ -28,16 +28,16 @@ public class Button extends BlockModel
 		switch (dir)
 		{
 			case "north":
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case "south":
-				rotate.rotate(0, 0, 0);
+				rotate = Transform.rotation(0, 0, 0);
 				break;
 			case "west":
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 			case "east":
-				rotate.rotate(0, -90, 0);
+				rotate = Transform.rotation(0, -90, 0);
 				break;
 		}
 		
@@ -45,19 +45,19 @@ public class Button extends BlockModel
 		 if (face.equals("floor"))
 		 {
 			 if (dir.equals("west") || dir.equals("east")) {
-				 rotate.rotate(-90, 0, 90); }
+				 rotate = Transform.rotation(-90, 0, 90); }
 			 else
-				 rotate.rotate(-90, 0, 0);
+				 rotate = Transform.rotation(-90, 0, 0);
 		 }
 		 else if (face.equals("ceiling"))
 		 {
 			 if (dir.equals("west") || dir.equals("east")) {
-				 rotate.rotate(90, 0, 90); }
+				 rotate = Transform.rotation(90, 0, 90); }
 			 else
-				 rotate.rotate(90, 0, 0);
+				 rotate = Transform.rotation(90, 0, 0);
 		 }
 		
-		translate.translate(x, y, z);		
+		translate = Transform.translation(x, y, z);		
 			
 		rt = translate.multiply(rotate);
 		

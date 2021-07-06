@@ -110,8 +110,8 @@ public class Head extends BlockModel
 					break;
 			}
 		}
-		rotate.rotate(0, r, 0);
-		translate.translate(x+tx, y+ty, z+tz);
+		rotate = Transform.rotation(0, r, 0);
+		translate = Transform.translation(x+tx, y+ty, z+tz);
 		rt = translate.multiply(rotate);
 		
 		String[] mtlSides = getMtlSides(data, biome);

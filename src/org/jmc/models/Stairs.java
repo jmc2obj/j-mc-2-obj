@@ -33,14 +33,12 @@ public class Stairs extends BlockModel {
 			}
 		}
 
-		transforms[0][1].rotate(0, 180, 0);
-		transforms[0][2].rotate(0, 90, 0);
-		transforms[0][3].rotate(0, -90, 0);
+		transforms[0][1] = Transform.rotation(0, 180, 0);
+		transforms[0][2] = Transform.rotation(0, 90, 0);
+		transforms[0][3] = Transform.rotation(0, -90, 0);
 
-		Transform invert1 = new Transform();
-		invert1.scale(1, -1, 1);
-		Transform invert2 = new Transform();
-		invert2.scale(1, 1, -1);
+		Transform invert1 = Transform.scale(1, -1, 1);
+		Transform invert2 = Transform.scale(1, 1, -1);
 
 		for (int i = 0; i < 4; i++) {
 			transforms[1][i] = transforms[0][i].multiply(invert1);
@@ -221,8 +219,7 @@ public class Stairs extends BlockModel {
 
 		Transform trans = transforms[invert + up][dir];
 		
-		Transform shift = new Transform();
-		shift.translate(x, y, z);		
+		Transform shift = Transform.translation(x, y, z);		
 
 		Vector<Face> face_list;
 

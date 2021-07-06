@@ -22,14 +22,12 @@ public class ArmorStand extends Entity {
 
 	private Transform getTranslate(float x, float y, float z, float scale) {
 
-		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f + x;				
+		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f + x;
 		float ey=(float)((TAG_Double)pos.getElement(1)).value-0.5f + y;
 		float ez=(float)((TAG_Double)pos.getElement(2)).value-0.5f + z;
-		Transform translate = new Transform();
-		translate.translate(ex, ey, ez);
+		Transform translate = Transform.translation(ex, ey, ez);
 		
-		Transform tScale = new Transform();
-		tScale.scale(scale, scale, scale);
+		Transform tScale = Transform.scale(scale, scale, scale);
 		
 		translate = translate.multiply(tScale);
 		
@@ -45,10 +43,9 @@ public class ArmorStand extends Entity {
 	
 	
 	private Transform getRotate(float offset) {
-		float yaw=((TAG_Float)rot.getElement(0)).value;				
+		float yaw=((TAG_Float)rot.getElement(0)).value;
 		float pitch=((TAG_Float)rot.getElement(1)).value;
-		Transform rotate = new Transform();
-		rotate.rotate2(yaw+offset, pitch ,0);	
+		Transform rotate = Transform.rotation2(yaw+offset, pitch ,0);
 		return rotate;
 	}
 
@@ -59,7 +56,7 @@ public class ArmorStand extends Entity {
 		pos = (TAG_List) entity.getElement("Pos");
 		rot = (TAG_List) entity.getElement("Rotation");
 		
-		model.addEntity(obj, getTranslate().multiply(getRotate((float) 90)));	
+		model.addEntity(obj, getTranslate().multiply(getRotate((float) 90)));
 		
 		// equipment
 		// Log.info("ArmorStand found: "+entity.getElement("Equipment"));

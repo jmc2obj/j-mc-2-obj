@@ -44,23 +44,25 @@ public class Registry extends BlockModel {
 		}
 		//Log.debug(String.format("Models for %s: %s", data.toString(), String.valueOf(models)));
 	}
-
+	
+	// Add the element 
 	private void addElement(ChunkProcessor obj, ModelInfo modelInfo, RegistryModel model, ModelElement element, Transform baseTrans) {
 		Transform stateTrans = getStateTrans(modelInfo);
 		String[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
 		boolean[] drawSides = getSidesCulling(element.faces);
 		Transform elementTrans = getElemTrans(element);
-		addBox(obj, element.from[0]/16, element.from[1]/16, element.from[2]/16, element.to[0]/16, element.to[1]/16, element.to[2]/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, drawSides);
+		addBox(obj, element.from.x/16, element.from.y/16, element.from.z/16, element.to.x/16, element.to.y/16, element.to.z/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, drawSides);
 	}
-
+	
+	// Get the transform for the blockstate
 	private Transform getStateTrans(ModelInfo modelInfo) {
 		Transform t = Transform.translation(-0.5f, -0.5f, -0.5f);// offset cor to middle of block
 		t = Transform.rotation(-modelInfo.x, 0, 0).multiply(t);// rotate -x ???
 		t = Transform.rotation(0, modelInfo.y, 0).multiply(t);// then y
 		return t;
 	}
-
+	
 	// Calculate the element transformation
 	private Transform getElemTrans(ModelElement element) {
 		ElementRotation rot = element.rotation;
@@ -69,7 +71,7 @@ public class Registry extends BlockModel {
 			return t;
 		}
 		if (rot.origin != null) {
-			t = t.multiply(Transform.translation(rot.origin[0]/16, rot.origin[1]/16, rot.origin[2]/16));
+			t = Transform.translation(-rot.origin.x/16, -rot.origin.y/16, -rot.origin.z/16).multiply(t);
 		}
 		float scale = 1;
 		if (rot.rescale) {
@@ -77,27 +79,27 @@ public class Registry extends BlockModel {
 		}
 		switch (rot.axis) {
 		case "x":
-			t = t.multiply(Transform.rotation(rot.angle, 0, 0));
-			t = t.multiply(Transform.scale(1, scale, scale));
+			t = Transform.rotation(rot.angle, 0, 0).multiply(t);
+			t = rot.rescale ? Transform.scale(1, scale, scale).multiply(t) : t;
 			break;
 		case "y":
-			t = t.multiply(Transform.rotation(0, -rot.angle, 0));
-			t = t.multiply(Transform.scale(scale, 1, scale));
+			t = Transform.rotation(0, -rot.angle, 0).multiply(t);
+			t = rot.rescale ? Transform.scale(scale, 1, scale).multiply(t) : t;
 			break;
 		case "z":
-			t = t.multiply(Transform.rotation(0, 0, rot.angle));
-			t = t.multiply(Transform.scale(scale, scale, 1));
+			t = Transform.rotation(0, 0, rot.angle).multiply(t);
+			t = rot.rescale ? Transform.scale(scale, scale, 1).multiply(t) : t;
 			break;
 		default:
 			Log.debug(String.format("Model for %s had invalid rotation axis!", blockId));
 			break;
 		}
 		if (rot.origin != null) {
-			t = t.multiply(Transform.translation(-rot.origin[0]/16, -rot.origin[1]/16, -rot.origin[2]/16));
+			t = Transform.translation(rot.origin.x/16, rot.origin.y/16, rot.origin.z/16).multiply(t);
 		}
 		return t;
 	}
-
+	
 	// Get the textures for each face of the cuboid
 	private String[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures) {
 		String[] array = new String[] {"unknown", "unknown", "unknown", "unknown", "unknown", "unknown"};
@@ -141,22 +143,22 @@ public class Registry extends BlockModel {
 				UV d = new UV(faceUv[2]/16, 1-(faceUv[1]/16));
 				uvs = new UV[] {b, c, d, a};
 			}
-			float xs = elem.from[0]/16;
-			float ys = elem.from[1]/16;
-			float zs = elem.from[2]/16;
-			float xe = elem.to[0]/16;
-			float ye = elem.to[1]/16;
-			float ze = elem.to[2]/16;
+			float xs = elem.from.x/16;
+			float ys = elem.from.y/16;
+			float zs = elem.from.z/16;
+			float xe = elem.to.x/16;
+			float ye = elem.to.y/16;
+			float ze = elem.to.z/16;
 			
 			int rot = faceEntry.getValue().rotation;
 			
 			switch (faceEntry.getKey()) {
 			case "up":
-				if (uvs == null) uvs = new UV[] { new UV(xs, -ze), new UV(xe, -ze), new UV(xe, -zs), new UV(xs, -zs) };
+				if (uvs == null) uvs = new UV[] { new UV(xs, 1-ze), new UV(xe, 1-ze), new UV(xe, 1-zs), new UV(xs, 1-zs) };
 				rotateUVOrder(uvs, rot);
 				array[0] = uvs; break;
 			case "north":
-				if (uvs == null) uvs = new UV[] { new UV(-xe, ys), new UV(-xs, ys), new UV(-xs, ye), new UV(-xe, ye) };
+				if (uvs == null) uvs = new UV[] { new UV(1-xe, ys), new UV(1-xs, ys), new UV(1-xs, ye), new UV(1-xe, ye) };
 				rotateUVOrder(uvs, rot);
 				array[1] = uvs; break;
 			case "south":
@@ -168,7 +170,7 @@ public class Registry extends BlockModel {
 				rotateUVOrder(uvs, rot);
 				array[3] = uvs; break;
 			case "east":
-				if (uvs == null) uvs = new UV[] { new UV(-ze, ys), new UV(-zs, ys), new UV(-zs, ye), new UV(-ze, ye) };
+				if (uvs == null) uvs = new UV[] { new UV(1-ze, ys), new UV(1-zs, ys), new UV(1-zs, ye), new UV(1-ze, ye) };
 				rotateUVOrder(uvs, rot);
 				array[4] = uvs; break;
 			case "down":
@@ -218,34 +220,15 @@ public class Registry extends BlockModel {
 				rotateFaceUVs(array[4], -90);
 				break;
 			case "180-0":
-				rotateFaceUVs(array[1], 180);
-				rotateFaceUVs(array[2], 180);
-				rotateFaceUVs(array[3], 180);
-				rotateFaceUVs(array[4], 180);
-				break;
 			case "180-90":
-				rotateFaceUVs(array[0], 90);
-				rotateFaceUVs(array[1], 180);
-				rotateFaceUVs(array[2], 180);
-				rotateFaceUVs(array[3], 180);
-				rotateFaceUVs(array[4], 180);
-				rotateFaceUVs(array[5], -90);
-				break;
 			case "180-180":
-				rotateFaceUVs(array[0], 180);
-				rotateFaceUVs(array[1], 180);
-				rotateFaceUVs(array[2], 180);
-				rotateFaceUVs(array[3], 180);
-				rotateFaceUVs(array[4], 180);
-				rotateFaceUVs(array[5], 180);
-				break;
 			case "180-270":
-				rotateFaceUVs(array[0], -90);
+				rotateFaceUVs(array[0], modelInfo.y);
 				rotateFaceUVs(array[1], 180);
 				rotateFaceUVs(array[2], 180);
 				rotateFaceUVs(array[3], 180);
 				rotateFaceUVs(array[4], 180);
-				rotateFaceUVs(array[5], 90);
+				rotateFaceUVs(array[5], -modelInfo.y);
 				break;
 			case "270-0":
 				rotateFaceUVs(array[1], 180);
@@ -280,7 +263,8 @@ public class Registry extends BlockModel {
 		}
 		return array;
 	}
-
+	
+	// Rotate the UV array
 	private void rotateUVOrder(UV[] uvs, int rot) {
 		switch (rot) {
 		case 0:
@@ -297,19 +281,20 @@ public class Registry extends BlockModel {
 		}
 	}
 	
+	// Rotate the UV coordinates around 0,0
 	private void rotateFaceUVs(UV[] uvs, float rot) {
 		if (uvs != null) {
 			for (UV uv : uvs) {
 				Transform t = Transform.translation(-0.5f, -0.5f, 0);
-				t = t.multiply(Transform.rotation(0, 0, rot));
-				t = t.multiply(Transform.translation(0.5f, 0.5f, 0));
+				t = Transform.rotation(0, 0, rot).multiply(t);
+				t = Transform.translation(0.5f, 0.5f, 0).multiply(t);
 				UV newUV = t.multiply(uv);
 				uv.u = newUV.u;
 				uv.v = newUV.v;
 			}
 		}
 	}
-
+	
 	// Calculate the culling of each face
 	private boolean[] getSidesCulling(Map<String, ElementFace> faces) {
 		boolean[] array = new boolean[6];
@@ -334,5 +319,4 @@ public class Registry extends BlockModel {
 		}
 		return array;
 	}
-
 }

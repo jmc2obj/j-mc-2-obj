@@ -29,16 +29,16 @@ public class Lilypad extends BlockModel
 		switch (dir)
 		{
 			case 0:
-				rotate.rotate(0, -90, 0);
+				rotate = Transform.rotation(0, -90, 0);
 				break;
 			case 1:
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case 2:
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 		}
-		translate.translate(x, y, z);		
+		translate = Transform.translation(x, y, z);		
 		rt = translate.multiply(rotate);
 		
 		Vertex[] vertices = new Vertex[4];

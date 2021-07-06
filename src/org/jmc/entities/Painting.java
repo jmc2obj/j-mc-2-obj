@@ -71,18 +71,18 @@ public class Painting extends Entity
 			case 0:
 				break;
 			case 1:
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 			case 2:
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case 3:
-				rotate.rotate(0, -90, 0);
+				rotate = Transform.rotation(0, -90, 0);
 				break;
 		}
 		
-		translate.translate(x, y, z);		
-			
+		translate = Transform.translation(x, y, z);		
+		
 		rt = translate.multiply(rotate);
 		
 		BlockMaterial materials=new BlockMaterial("");

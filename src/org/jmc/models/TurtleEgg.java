@@ -29,27 +29,27 @@ public class TurtleEgg extends BlockModel
 
         // Generates a random number between 0 and 3 inclusively. 
         Random r = new Random();
-        int randomRotation = r.nextInt(4);		
+        int randomRotation = r.nextInt(4);
 		
         // Creates a rotation such that we will use to randomly rotate the egg(s) with. 
 		switch (randomRotation)
 		{
 			case 0:
-				rotate.rotate(0, 0, 0);
+				rotate = Transform.rotation(0, 0, 0);
 				break;
 			case 1:
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 			case 2:
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case 3:
-				rotate.rotate(0, 270, 0);
+				rotate = Transform.rotation(0, 270, 0);
 				break;
 		}
 		
 		
-		translate.translate(x, y, z);			
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 		
 		boolean[] drawSides = new boolean[] {true,true,true,true,true,false};

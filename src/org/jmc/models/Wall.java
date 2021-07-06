@@ -11,8 +11,7 @@ public class Wall extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		Transform trans = new Transform();
-		trans.translate(x, y, z);
+		Transform trans = Transform.translation(x, y, z);
 		
 		String[] mtls = getMtlSides(data, biome);
 		

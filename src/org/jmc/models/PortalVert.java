@@ -24,8 +24,8 @@ public class PortalVert extends BlockModel
 		Transform rt;
 		
 		if (ns)
-			rotate.rotate(0, 90, 0);
-		translate.translate(x, y, z);		
+			rotate = Transform.rotation(0, 90, 0);
+		translate = Transform.translation(x, y, z);		
 		rt = translate.multiply(rotate);
 		
 		Vertex[] vertices = new Vertex[4];

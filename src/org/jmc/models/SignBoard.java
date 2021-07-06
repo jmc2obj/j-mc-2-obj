@@ -26,19 +26,19 @@ public class SignBoard extends BlockModel
 		switch (data.state.get("facing"))
 		{
 			case "north":
-				rotate.rotate(0, 0, 0);
+				rotate = Transform.rotation(0, 0, 0);
 				break;
 			case "west":
-			  	rotate.rotate(0, -90, 0);
+			  	rotate = Transform.rotation(0, -90, 0);
 				break;
 			case "south":
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case "east":
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;		  
 		}
-		translate.translate(x, y, z);		
+		translate = Transform.translation(x, y, z);		
 			
 		rt = translate.multiply(rotate);
 		

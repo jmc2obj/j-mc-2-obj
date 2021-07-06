@@ -11,8 +11,7 @@ public class Scaffolding extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		Transform move = new Transform();
-		move.translate(x, y, z);
+		Transform move = Transform.translation(x, y, z);
 		
 		String[] mtls = getMtlSides(data, biome);
 		String[] mtls_Top = new String [] { mtls[0], mtls[1], mtls[1], mtls[1], mtls[1], mtls[5] };

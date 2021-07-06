@@ -56,12 +56,12 @@ public class Bell extends BlockModel
 			
 			switch (data.state.getDirection("facing", Direction.SOUTH))
 			{
-				case WEST: rotate.rotate(0, 90, 0); break;
-				case NORTH: rotate.rotate(0, 180, 0); break;
-				case EAST: rotate.rotate(0, -90, 0); break;
+				case WEST: rotate = Transform.rotation(0, 90, 0); break;
+				case NORTH: rotate = Transform.rotation(0, 180, 0); break;
+				case EAST: rotate = Transform.rotation(0, -90, 0); break;
 				default: break;
 			}
-			translate.translate(x, y, z);
+			translate = Transform.translation(x, y, z);
 			rt = translate.multiply(rotate);
 			
 			if (data.state.get("attachment").equals("floor"))

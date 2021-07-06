@@ -42,8 +42,7 @@ public class Pane extends BlockModel
 		boolean up = checkConnect(chunks.getBlockID(x, y+1, z));
 		boolean down = checkConnect(chunks.getBlockID(x, y-1, z));
 		
-		Transform t = new Transform();
-		t.translate(x, y, z);		
+		Transform t = Transform.translation(x, y, z);		
 		
 		Vertex[] vertices = new Vertex[4];
 		UV[] uv = new UV[4];

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jmc.geom.Vertex;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -77,8 +79,8 @@ public class ModelEntry extends RegistryEntry {
 		}
 		
 		public class ModelElement {
-			public float[] from;
-			public float[] to;
+			public Vertex from;
+			public Vertex to;
 			public ElementRotation rotation;
 			public Map<String, ElementFace> faces;
 			
@@ -88,7 +90,7 @@ public class ModelEntry extends RegistryEntry {
 			}
 			
 			public class ElementRotation {
-				public float[] origin;
+				public Vertex origin;
 				public String axis;
 				public float angle = 0;
 				public boolean rescale = false;

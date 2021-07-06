@@ -44,12 +44,12 @@ public class TripwireHook extends BlockModel
 
 		switch (dir)
 		{
-			case "south": rotate.rotate(0, 0, 0); break;
-			case "west": rotate.rotate(0, 90, 0); break;
-			case "north": rotate.rotate(0, 180, 0); break;
-			case "east": rotate.rotate(0, -90, 0); break;
+			case "south": rotate = Transform.rotation(0, 0, 0); break;
+			case "west": rotate = Transform.rotation(0, 90, 0); break;
+			case "north": rotate = Transform.rotation(0, 180, 0); break;
+			case "east": rotate = Transform.rotation(0, -90, 0); break;
 		}
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		baseTrans = translate.multiply(rotate);
 		
 		boolean[] drawSides;
@@ -76,13 +76,13 @@ public class TripwireHook extends BlockModel
 		// hook lever
 		if (!connected)
 		{
-			rotate.rotate(-35, 0, 0);
-			translate.translate(0f, 0.0625f, -0.1f);
+			rotate = Transform.rotation(-35, 0, 0);
+			translate = Transform.translation(0f, 0.0625f, -0.1f);
 		}
 		else
 		{
-			rotate.rotate(10, 0, 0);
-			translate.translate(0f, -0.1875f, -0.05f);
+			rotate = Transform.rotation(10, 0, 0);
+			translate = Transform.translation(0f, -0.1875f, -0.05f);
 		}
 		
 		uvTop = new UV[] { new UV(9/16f,7/16f), new UV(7/16f,7/16f), new UV(7/16f,0), new UV(9/16f,0) };
@@ -101,13 +101,13 @@ public class TripwireHook extends BlockModel
 		// hook ring
 		if (!connected)
 		{
-			rotate.rotate(50, 0, 0);
-			translate.translate(0f, -0.03f, -0.09f);
+			rotate = Transform.rotation(50, 0, 0);
+			translate = Transform.translation(0f, -0.03f, -0.09f);
 		}
 		else
 		{
-			rotate.rotate(10, 0, 0);
-			translate.translate(0f, -0.1875f, -0.025f);
+			rotate = Transform.rotation(10, 0, 0);
+			translate = Transform.translation(0f, -0.1875f, -0.025f);
 		}
 
 		uvTop = new UV[] { new UV(5/16f,7/16f), new UV(11/16f,7/16f), new UV(11/16f,13/16f), new UV(5/16f,13/16f) };

@@ -18,15 +18,13 @@ public class SimpleEntity extends Entity {
 		float ey=(float)((TAG_Double)pos.getElement(1)).value-0.5f;
 		float ez=(float)((TAG_Double)pos.getElement(2)).value-0.5f;
 
-		Transform translate = new Transform();
-		translate.translate(ex, ey, ez);		
+		Transform translate = Transform.translation(ex, ey, ez);		
 		
 		TAG_List rot = (TAG_List) entity.getElement("Rotation");
 		float yaw=((TAG_Float)rot.getElement(0)).value;				
 		float pitch=((TAG_Float)rot.getElement(1)).value;
 		
-		Transform rotate = new Transform();
-		rotate.rotate2(yaw+90, pitch ,0);		
+		Transform rotate = Transform.rotation2(yaw+90, pitch ,0);		
 		
 		model.addEntity(obj, translate.multiply(rotate));					
 	}

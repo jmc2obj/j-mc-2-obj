@@ -36,8 +36,7 @@ public class DoublePlant extends BlockModel
 
 		String[] mtls = materials.get(data, biome);
 
-		Transform t = new Transform();
-		t.translate(x+randomX, y, z+randomZ);
+		Transform t = Transform.translation(x+randomX, y, z+randomZ);
 		
 		if (top) {
 			Vertex[] vertices = new Vertex[4];
@@ -55,9 +54,8 @@ public class DoublePlant extends BlockModel
 
 			if (chunks.getBlockID(x, y, z).equals("minecraft:sunflower")) {
 				// Sunflower
-				Transform r = new Transform();
 				Double o = (double)(x*y*z);
-				r.rotate(0, (o.hashCode() % 30) - 15, 15);
+				Transform r = Transform.rotation(0, (o.hashCode() % 30) - 15, 15);
 				
 				Transform rt;
 				rt = t.multiply(r);

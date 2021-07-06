@@ -47,12 +47,12 @@ public class CocoaPlant extends BlockModel
 
 		switch (dir)
 		{
-			case "south": rotate.rotate(0, 180, 0); break;
-			case "west": rotate.rotate(0, -90, 0); break;
-			case "north": rotate.rotate(0, 0, 0); break;
-			case "east": rotate.rotate(0, 90, 0); break;
+			case "south": rotate = Transform.rotation(0, 180, 0); break;
+			case "west": rotate = Transform.rotation(0, -90, 0); break;
+			case "north": rotate = Transform.rotation(0, 0, 0); break;
+			case "east": rotate = Transform.rotation(0, 90, 0); break;
 		}
-		translate.translate(x, y, z);
+		translate = Transform.translation(x, y, z);
 		rt = translate.multiply(rotate);
 
 

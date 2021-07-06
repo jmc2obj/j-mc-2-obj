@@ -58,7 +58,7 @@ public class BlockTypes
 			String id = Xml.getAttribute(blockNode, "id", "");
 
 			String name = Xml.getAttribute(blockNode, "name", "");
-			String modelName = "Cube";
+			String modelName = "Registry";
 			BlockInfo.Occlusion occlusion = BlockInfo.Occlusion.FULL; 
 			BlockMaterial materials = new BlockMaterial(id);
 
@@ -351,19 +351,19 @@ public class BlockTypes
 				z=randmin+(float)Math.random()*(randmax-randmin);
 		}
 
-		Transform newtransform=new Transform();
+		Transform newtransform;
 
 		if(type.equals("translate"))
 		{
-			newtransform.translate(x, y, z);
+			newtransform = Transform.translation(x, y, z);
 		}
 		else if(type.equals("scale"))
 		{
-			newtransform.scale(x, y, z);
+			newtransform = Transform.scale(x, y, z);
 		}
 		else if(type.equals("rotate"))
 		{
-			newtransform.rotate(x, y, z);
+			newtransform = Transform.rotation(x, y, z);
 		}
 		else
 		{

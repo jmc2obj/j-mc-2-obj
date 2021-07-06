@@ -44,14 +44,13 @@ public class Stalk extends BlockModel
 		if (blockId.equals("minecraft:attached_pumpkin_stem") || blockId.equals("minecraft:attached_melon_stem") && (n||s||e||w))
 		{
 			// bent stalk
-			Transform translate = new Transform();
-			translate.translate(x, y, z);
+			Transform translate = Transform.translation(x, y, z);
 			
 			Transform rotate = new Transform();
-			if (n)		rotate.rotate(0, -90, 0);
-			else if (s)	rotate.rotate(0, 90, 0);
-			else if (e)	rotate.rotate(0, 0, 0);
-			else if (w)	rotate.rotate(0, 180, 0);
+			if (n)		rotate = Transform.rotation(0, -90, 0);
+			else if (s)	rotate = Transform.rotation(0, 90, 0);
+			else if (e)	rotate = Transform.rotation(0, 0, 0);
+			else if (w)	rotate = Transform.rotation(0, 180, 0);
 			
 			Vertex[] vertices = new Vertex[4];
 			vertices[0] = new Vertex( 0.5f, -0.5f, 0.0f);				
@@ -63,8 +62,7 @@ public class Stalk extends BlockModel
 		else
 		{
 			// straight stalk
-			Transform translate = new Transform();
-			translate.translate(x, y, z);
+			Transform translate = Transform.translation(x, y, z);
 			
 			Vertex[] vertices = new Vertex[4];
 			vertices[0] = new Vertex( 0.5f, -0.5f, -0.5f);				

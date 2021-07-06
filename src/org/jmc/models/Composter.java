@@ -36,7 +36,7 @@ public class Composter extends BlockModel
 		{
 			Transform move = new Transform();
 			// We're offsetting the move to the bottom of the composter to make it a bit easier to do the math when adding the compost.
-			move.translate(x, y-6/16f, z);
+			move = Transform.translation(x, y-6/16f, z);
 			
 			uvCompost = new UV[] { new UV(2/16f, 2/16f), new UV(14/16f, 2/16f), new UV(14/16f, 14/16f), new UV(2/16f, 14/16f) };
 			
@@ -51,7 +51,7 @@ public class Composter extends BlockModel
 		else if (level == 8)
 		{
 			Transform move = new Transform();
-			move.translate(x, y+6/16f, z);
+			move = Transform.translation(x, y+6/16f, z);
 			
 			uvCompost = new UV[] { new UV(2/16f, 2/16f), new UV(14/16f, 2/16f), new UV(14/16f, 14/16f), new UV(2/16f, 14/16f) };
 			

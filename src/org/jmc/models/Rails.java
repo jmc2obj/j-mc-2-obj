@@ -29,40 +29,40 @@ public class Rails extends BlockModel
 			case "north_south":
 				break;
 			case "east_west":
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 			case "ascending_north":
 				ascending = true;
 				break;
 			case "ascending_east":
 				ascending = true;
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 			case "ascending_south":
 				ascending = true;
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case "ascending_west":
 				ascending = true;
-				rotate.rotate(0, -90, 0);
+				rotate = Transform.rotation(0, -90, 0);
 				break;
 			case "south_east":
 				curved = true;
 				break;
 			case "south_west":
 				curved = true;
-				rotate.rotate(0, 90, 0);
+				rotate = Transform.rotation(0, 90, 0);
 				break;
 			case "north_west":
 				curved = true;
-				rotate.rotate(0, 180, 0);
+				rotate = Transform.rotation(0, 180, 0);
 				break;
 			case "north_east":
 				curved = true;
-				rotate.rotate(0, -90, 0);
+				rotate = Transform.rotation(0, -90, 0);
 				break;
 		}
-		translate.translate(x, y, z);		
+		translate = Transform.translation(x, y, z);		
 			
 		rt = translate.multiply(rotate);
 		
