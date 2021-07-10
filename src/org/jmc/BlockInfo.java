@@ -98,7 +98,7 @@ public class BlockInfo
 	 */
 	public Color getPreviewColor(BlockData blockData, int biome)
 	{
-		String[] mtlNames = getMaterials().get(blockData,biome);
+		String[] mtlNames = getMaterials().get(blockData.state,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
 			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);

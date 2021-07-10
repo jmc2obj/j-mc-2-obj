@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 public class Registries {
 	private static HashMap<NamespaceID, BlockstateEntry> blockstates = new HashMap<>();
 	private static HashMap<NamespaceID, ModelEntry> models = new HashMap<>();
+	private static HashMap<NamespaceID, TextureEntry> textures = new HashMap<>();
 	
 	static String BS_FOLDER = "C:\\Users\\James\\Desktop\\Java\\jmcTest\\1.17\\assets\\minecraft\\blockstates";
 	public static BlockstateEntry getBlockstate(NamespaceID id) {
@@ -29,8 +30,10 @@ public class Registries {
 			json = new Gson().fromJson(fr, JsonObject.class);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return null;
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return null;
 		}
 		BlockstateEntry entry = BlockstateEntry.parseJson(id, json);
 		blockstates.put(id, entry);
@@ -53,11 +56,29 @@ public class Registries {
 			json = new Gson().fromJson(fr, JsonObject.class);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return null;
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return null;
 		}
 		ModelEntry entry = ModelEntry.parseJson(id, json);
 		models.put(id, entry);
+		return entry;
+	}
+
+	static String TEX_FOLDER = "C:\\Users\\James\\Desktop\\Java\\jmcTest\\1.17\\assets\\minecraft\\textures";
+	public static TextureEntry getTexture(NamespaceID id) {
+		if (!textures.containsKey(id)) {
+			TextureEntry entry = addNewTexture(id);
+			return entry;
+		}
+		return textures.get(id);
+	}
+
+	private static synchronized TextureEntry addNewTexture(NamespaceID id) {
+		//File file = new File(TEX_FOLDER, id.path + ".png");
+		TextureEntry entry = new TextureEntry(id);
+		textures.put(id, entry);
 		return entry;
 	}
 }

@@ -47,7 +47,7 @@ public abstract class EntityModel
 	 */
 	protected String[] getMtlSides(BlockData data, byte biome)
 	{
-		String[] abbrMtls = materials.get(data, biome);
+		String[] abbrMtls = materials.get(data.state, biome);
 		
 		String[] mtlSides = new String[6];
 		if (abbrMtls.length < 2)
@@ -95,27 +95,27 @@ public abstract class EntityModel
 	 * the occlusion type of the neighbouring block and whether or not the block
 	 * is at the world (or selection) edge.
 	 *  
-	 * @param neighbourId Id of the neighbouring block, or -1 if there is no 
+	 * @param neighbour Id of the neighbouring block, or -1 if there is no 
 	 * Neighbour (because the block is at the world edge)
 	 * @param side Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Direction side, String neighbourId)
+	protected boolean drawSide(Direction side, BlockData neighbour)
 	{
-		if (neighbourId.equals(""))
+		if (neighbour.id.equals(""))
 			return Options.renderSides;
 		
-		if (neighbourId.endsWith("air"))
+		if (neighbour.id.endsWith("air"))
 			return true;
 		
-		switch(BlockTypes.get(neighbourId).getOcclusion())
+		switch(BlockTypes.get(neighbour).getOcclusion())
 		{
 			case FULL:
 				return false;
 			case NONE:
 				return true;
 			case TRANSPARENT:
-				return !neighbourId.equals(blockId);
+				return !neighbour.id.equals(blockId);
 			case BOTTOM:
 				return side != Direction.UP;
 			default:
@@ -150,12 +150,12 @@ public abstract class EntityModel
 		
 		boolean sides[] = new boolean[6];
 
-		sides[0] = drawSide(Direction.UP,    y==ymax ? "" : chunks.getBlockID(x, y+1, z));
-		sides[1] = drawSide(Direction.NORTH,  z==zmin ? "" : chunks.getBlockID(x, y, z-1));
-		sides[2] = drawSide(Direction.SOUTH,   z==zmax ? "" : chunks.getBlockID(x, y, z+1));
-		sides[3] = drawSide(Direction.WEST,   x==xmin ? "" : chunks.getBlockID(x-1, y, z));
-		sides[4] = drawSide(Direction.EAST,  x==xmax ? "" : chunks.getBlockID(x+1, y, z));
-		sides[5] = drawSide(Direction.DOWN, y==ymin ? "" : chunks.getBlockID(x, y-1, z));
+		sides[0] = drawSide(Direction.UP,    y==ymax ? new BlockData() : chunks.getBlockData(x, y+1, z));
+		sides[1] = drawSide(Direction.NORTH,  z==zmin ? new BlockData() : chunks.getBlockData(x, y, z-1));
+		sides[2] = drawSide(Direction.SOUTH,   z==zmax ? new BlockData() : chunks.getBlockData(x, y, z+1));
+		sides[3] = drawSide(Direction.WEST,   x==xmin ? new BlockData() : chunks.getBlockData(x-1, y, z));
+		sides[4] = drawSide(Direction.EAST,  x==xmax ? new BlockData() : chunks.getBlockData(x+1, y, z));
+		sides[5] = drawSide(Direction.DOWN, y==ymin ? new BlockData() : chunks.getBlockData(x, y-1, z));
 
 		return sides;
 	}

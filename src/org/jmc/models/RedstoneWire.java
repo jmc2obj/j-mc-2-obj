@@ -17,8 +17,8 @@ public class RedstoneWire extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean on = Integer.parseInt(data.state.get("power")) > 0;
-		String mtlCross = on ? materials.get(data,biome)[0] : materials.get(data,biome)[2];
-		String mtlLine  = on ? materials.get(data,biome)[1] : materials.get(data,biome)[3];
+		String mtlCross = on ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[2];
+		String mtlLine  = on ? materials.get(data.state,biome)[1] : materials.get(data.state,biome)[3];
 		
 		boolean conn_n_up = data.state.get("north").equals("up");
 		boolean conn_s_up = data.state.get("south").equals("up");

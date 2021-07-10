@@ -73,7 +73,7 @@ public abstract class BlockModel {
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
 	protected String[] getMtlSides(BlockData data, int biome) {
-		String[] abbrMtls = materials.get(data, biome);
+		String[] abbrMtls = materials.get(data.state, biome);
 
 		String[] mtlSides = new String[6];
 		if (abbrMtls.length < 2) {
@@ -143,21 +143,21 @@ public abstract class BlockModel {
 		if (neighbourData.id.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
 			return true;
 
-		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighbourData.id.equals(blockId)))
+		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighbourData.id.equals(data.id)))
 			return true;
 
-		switch (BlockTypes.get(neighbourData.id).getOcclusion()) {
+		switch (BlockTypes.get(neighbourData).getOcclusion()) {
 		case FULL:
 			return false;
 		case NONE:
 			return true;
 		case TRANSPARENT:
 		case VOLUME:
-			return !neighbourData.id.equals(blockId);
+			return !neighbourData.id.equals(data.id);
 		case BOTTOM:
 			return side != Direction.UP;
 		case CUSTOM:
-			return !BlockTypes.get(neighbourData.id).getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
+			return !BlockTypes.get(neighbourData).getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
 		default:
 			return false;
 		}

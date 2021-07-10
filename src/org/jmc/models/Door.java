@@ -42,7 +42,7 @@ public class Door extends BlockModel
 			direction = 0;
 		}
 
-		String mtl = top ? materials.get(data,biome)[0] : materials.get(data,biome)[1];
+		String mtl = top ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[1];
 		
 		/*
 		  The model is rendered in the middle of the block facing North, then 

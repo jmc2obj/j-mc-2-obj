@@ -16,7 +16,7 @@ public class TripwireHook extends BlockModel
 
 	private String[] getMtlSides(BlockData data, int biome, int i)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[i];
@@ -132,13 +132,13 @@ public class TripwireHook extends BlockModel
 			vertices[1] = new Vertex( 0.0156f, -0.4375f, 0.5f);
 			vertices[2] = new Vertex( 0.0156f, -0.4375f, 0.25f);
 			vertices[3] = new Vertex(-0.0156f, -0.4375f, 0.25f);
-			obj.addFace(vertices, uvTop, baseTrans, materials.get(data,biome)[2]);
+			obj.addFace(vertices, uvTop, baseTrans, materials.get(data.state,biome)[2]);
 
 			vertices[0] = new Vertex(-0.0156f, -0.4375f, 0.25f);
 			vertices[1] = new Vertex( 0.0156f, -0.4375f, 0.25f);
 			vertices[2] = new Vertex( 0.0156f, -0.25f, 0.1f);
 			vertices[3] = new Vertex(-0.0156f, -0.25f, 0.1f);
-			obj.addFace(vertices, uvTop, baseTrans, materials.get(data,biome)[2]);
+			obj.addFace(vertices, uvTop, baseTrans, materials.get(data.state,biome)[2]);
 		}
 	}
 

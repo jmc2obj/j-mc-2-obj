@@ -14,7 +14,7 @@ public class MushroomBlock extends BlockModel
 
 	protected String[] getMtlSides(BlockData data, int biome)
 	{
-		String[] mat = materials.get(data, biome);
+		String[] mat = materials.get(data.state, biome);
 		// Mushroom blocks are fully textured at first.
 		//                               top     north   south   west    east    bottom
 		String[] sides = new String[] { mat[0], mat[0], mat[0], mat[0], mat[0], mat[0] };

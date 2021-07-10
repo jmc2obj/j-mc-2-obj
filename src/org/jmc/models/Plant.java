@@ -34,7 +34,7 @@ public class Plant extends BlockModel
             flipValue = -1.0f; }
         
         Transform t = Transform.translation(x+randomX, y, z+randomZ);
-        final String material = materials.get(data, biome)[0];
+        final String material = materials.get(data.state, biome)[0];
  
         Vertex[] vertices = new Vertex[4];
         vertices[0] = new Vertex((+0.43f)*flipValue,-0.5f,(-0.43f)*flipValue);

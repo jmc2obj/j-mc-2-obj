@@ -40,7 +40,7 @@ public abstract class BlockstateEntry extends RegistryEntry {
 		for (String state : stateStr.split(",")) {
 			String[] keyVal = state.split("=");
 			if (keyVal.length == 2) {
-				map.put(keyVal[0].strip(), keyVal[1].strip());
+				map.put(keyVal[0].trim(), keyVal[1].trim());
 			}
 		}
 		return map;

@@ -11,7 +11,6 @@ import java.awt.Rectangle;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.jmc.BlockData;
 import org.jmc.BlockTypes;
@@ -164,19 +163,18 @@ public class ChunkProcessor
 			{
 				for(int y = ymin; y < ymax; y++)
 				{
-					BlockData blockData=chunk.getBlockData(x, y, z);
-					String blockID=blockData.id;
+					BlockData block=chunk.getBlockData(x, y, z);
 					int blockBiome=chunk.getBlockBiome(x, y, z);
 					
-					if(blockID.isEmpty())
+					if(block.id.isEmpty())
 						continue;
 					
-					if(Options.excludeBlocks.contains(blockID))
+					if(Options.excludeBlocks.contains(block.id))
 						continue;
 					
 					if(Options.convertOres){
-						if(blockID.endsWith("ore")){
-							blockID = "minecraft:stone";
+						if(block.id.endsWith("ore")){
+							block.id = "minecraft:stone";
 						}
 					}
 					
@@ -184,9 +182,9 @@ public class ChunkProcessor
 						chunk_idx_count++;
 					
 					try {
-						BlockTypes.get(blockID).getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
-						if (Boolean.parseBoolean(blockData.state.get("waterlogged"))) {
-							BlockTypes.get("minecraft:water").getModel().addModel(this, chunk, x, y, z, blockData, blockBiome);
+						BlockTypes.get(block).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
+						if (Boolean.parseBoolean(block.state.get("waterlogged"))) {
+							BlockTypes.get(new BlockData("minecraft:water")).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						}
 					}
 					catch (Exception ex) {
@@ -213,7 +211,7 @@ public class ChunkProcessor
 				}
 				//Sort faces into planar groups so merging can be efficient
 				key += Float.toString(f.vertices[0].getByInt(planar));
-				ArrayList<Face> faceList = getOrDefault(faceAxisArray, key, new ArrayList<Face>());
+				ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
 				faceList.add(f);
 				faceAxisArray.put(key, faceList);
 			}
@@ -231,7 +229,7 @@ public class ChunkProcessor
 					}
 				}
 			}
-			optimisedFaces = new ArrayList<Face>();//Clear out faces list because they have all been added so far
+			optimisedFaces.clear();//Clear out faces list because they have all been added so far
 		}
 		
 		if(Options.renderEntities)
@@ -259,9 +257,7 @@ public class ChunkProcessor
 			}
 		}
 		
-		for (Face face : optimisedFaces){
-			faces.add(face); //Add any left over faces from not optimising and entities.
-		}
+		faces.addAll(optimisedFaces);//Add any left over faces from not optimising and entities.
 		return faces;
 	}
 	
@@ -417,12 +413,5 @@ public class ChunkProcessor
 			}
 		}
 		return false;
-	}
-	
-	private static <K,V> V getOrDefault(Map<K,V> map, K key, V deflt) {
-		if (map.containsKey(key))
-			return map.get(key);
-		else
-			return deflt;
 	}
 }

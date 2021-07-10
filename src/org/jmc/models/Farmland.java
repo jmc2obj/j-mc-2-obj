@@ -15,7 +15,7 @@ public class Farmland extends BlockModel
 	@Override
 	protected String[] getMtlSides(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = data.state.get("moisture").equals("7") ? abbrMtls[0] : abbrMtls[1];

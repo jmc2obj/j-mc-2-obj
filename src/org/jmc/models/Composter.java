@@ -16,7 +16,7 @@ public class Composter extends BlockModel
 	{
 		int level = data.state.getInt("level", 0);
 		
-		String[] mtls = materials.get(data,biome);
+		String[] mtls = materials.get(data.state,biome);
 		String[] mtls_mainBox = new String [] { mtls[4], mtls[3], mtls[3], mtls[3], mtls[3], mtls[0] };
 				
 		UV[] uvTop, uvSide, uvCompost;

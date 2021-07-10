@@ -17,7 +17,7 @@ public class RedstoneRepeater extends BlockModel
 	@Override
 	protected String[] getMtlSides(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		
@@ -65,9 +65,9 @@ public class RedstoneRepeater extends BlockModel
 		String[] mtlsBase = getMtlSides(data,biome);
 		String mtlTorch;
 		if (data.state.get("powered").equals("true")) {
-			mtlTorch = materials.get(data,biome)[4];		
+			mtlTorch = materials.get(data.state,biome)[4];		
 		} else {
-			mtlTorch = materials.get(data,biome)[5];	
+			mtlTorch = materials.get(data.state,biome)[5];	
 		}			
 
 		// base
@@ -102,7 +102,7 @@ public class RedstoneRepeater extends BlockModel
 		if (locked) {
 			// delay bar
 			String[] barSides = new String[6];
-			java.util.Arrays.fill(barSides, materials.get(data,biome)[6]);
+			java.util.Arrays.fill(barSides, materials.get(data.state,biome)[6]);
 			
 			UV[][] uvBarSides = new UV[][] {
 				new UV[] { new UV( 9/16f,  2/16f), new UV( 9/16f, 14/16f), new UV( 7/16f, 14/16f), new UV( 7/16f,  2/16f) }, //t

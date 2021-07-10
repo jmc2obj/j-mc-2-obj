@@ -56,13 +56,13 @@ public class Bamboo extends BlockModel
 			vertices[1] = new Vertex(randomX,-0.5f,+0.5f + randomZ);
 			vertices[2] = new Vertex(randomX,+0.5f,+0.5f + randomZ);
 			vertices[3] = new Vertex(randomX,+0.5f,-0.5f + randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[1]);
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[1]);
 			
 			vertices[0] = new Vertex(-0.5f + randomX,-0.5f,randomZ);
 			vertices[1] = new Vertex(+0.5f + randomX,-0.5f,randomZ);
 			vertices[2] = new Vertex(+0.5f + randomX,+0.5f,randomZ);
 			vertices[3] = new Vertex(-0.5f + randomX,+0.5f,randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[1]);
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[1]);
 		}
 		// Small leaves
 		else if (data.state.get("leaves").equals("small"))
@@ -72,13 +72,13 @@ public class Bamboo extends BlockModel
 			vertices[1] = new Vertex(randomX,-0.5f,+0.5f + randomZ);
 			vertices[2] = new Vertex(randomX,+0.5f,+0.5f + randomZ);
 			vertices[3] = new Vertex(randomX,+0.5f,-0.5f + randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[2]);
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[2]);
 			
 			vertices[0] = new Vertex(-0.5f + randomX,-0.5f,randomZ);
 			vertices[1] = new Vertex(+0.5f + randomX,-0.5f,randomZ);
 			vertices[2] = new Vertex(+0.5f + randomX,+0.5f,randomZ);
 			vertices[3] = new Vertex(-0.5f + randomX,+0.5f,randomZ);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[2]);
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[2]);
 		}
 		// No leaves
 		else 

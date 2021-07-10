@@ -19,15 +19,13 @@ public class UnknownBlockInfo extends BlockInfo
 	{
 		super("", "unknown", null, Occlusion.NONE, null, false);
 
-		materials = new BlockMaterial("");
+		materials = new BlockMaterial();
 		materials.put(new String[] { "unknown" });
 
 		cubeModel = new Cube();
-		cubeModel.setBlockId("");
 		cubeModel.setMaterials(materials);
 
 		noneModel = new None();
-		noneModel.setBlockId("");
 		noneModel.setMaterials(materials);
 	}
 

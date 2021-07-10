@@ -17,7 +17,7 @@ public class PistonBase extends BlockModel
 	protected String[] getMtlSides(BlockData data, int biome)
 	{
 		boolean open = data.state.get("extended").equals("true");
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = open ? abbrMtls[1] : abbrMtls[0];

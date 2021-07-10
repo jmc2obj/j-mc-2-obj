@@ -68,11 +68,11 @@ public class Rails extends BlockModel
 		
 		String mtl;
 		if (curved || powered) {
-			mtl = materials.get(data,biome)[1];
+			mtl = materials.get(data.state,biome)[1];
 		}
 		else
 		{
-			mtl = materials.get(data,biome)[0];
+			mtl = materials.get(data.state,biome)[0];
 		}
 		
 		Vertex[] vertices = new Vertex[4];

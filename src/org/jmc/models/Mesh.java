@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jmc.BlockData;
+import org.jmc.Blockstate;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.geom.Transform;
@@ -24,7 +25,7 @@ public class Mesh extends BlockModel
 
 	public static class MeshData
 	{
-		public BlockData data;
+		public Blockstate state;
 		public Vertex offset;
 		public String id;		
 		public Transform transform;
@@ -32,28 +33,27 @@ public class Mesh extends BlockModel
 
 		public MeshData()
 		{
-			data=new BlockData();
+			state=new Blockstate();
 			id="";
 			offset=null;
 			transform=null;
 			fallthrough=false;
 		}
 
-		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, BlockData data2)
+		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, Blockstate state2)
 		{			
-			if(offset==null || offset==new Vertex(0,0,0))
+			if(offset == null || offset.equals(new Vertex(0,0,0)))
 			{
-				if(!data.state.isEmpty() && !data2.state.matchesMask(data.state)) return false;
+				if(!state.isEmpty() && !state2.matchesMask(state)) return false;
 				return true;
 			}
 			else
 			{
 				BlockData d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
-				String i=d.id;
 
-				if(!data.state.isEmpty() && !d.state.matchesMask(data.state)) return false;
+				if(!state.isEmpty() && !d.state.matchesMask(state)) return false;
 
-				if(!i.isEmpty() && !i.equals(id)) return false;
+				if(!d.id.isEmpty() && !d.id.equals(id)) return false;
 
 				return true;
 			}
@@ -138,7 +138,7 @@ public class Mesh extends BlockModel
 
 	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , BlockData data, int biome, Transform trans)
 	{
-		boolean match=mesh_data.matches(chunks, x, y, z, data);
+		boolean match=mesh_data.matches(chunks, x, y, z, data.state);
 
 		if(match)
 		{
@@ -151,7 +151,7 @@ public class Mesh extends BlockModel
 			{
 				OBJGroup group_mod = group;
 				if (materials != null) {
-					String[] mats = materials.get(data, biome);
+					String[] mats = materials.get(data.state, biome);
 					if (mats != null) {
 						group_mod = objin_file.overwriteMaterial(group, mats[0]);
 					}
@@ -187,7 +187,7 @@ public class Mesh extends BlockModel
 		ret+="STR "+obj_str+", ";
 		if (materials != null)
 			ret+="MAT "+Arrays.toString(materials.get(null, 0))+", ";
-		ret+="DATA "+mesh_data.data+", ";
+		ret+="STATE "+mesh_data.state+", ";
 		if (mesh_data.transform != null)
 			ret+="TRANS "+mesh_data.transform.toString()+", ";
 		ret+="OBJECTS "+objects.size()+":";

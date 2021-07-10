@@ -52,7 +52,7 @@ public class Chain extends BlockModel
 		}
 
 		final Transform transform = move.multiply(rotation);
-		final String material = materials.get(data, biome)[0];
+		final String material = materials.get(data.state, biome)[0];
 		
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(1/16f ,-0.5f,-1/16f);

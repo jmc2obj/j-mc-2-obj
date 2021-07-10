@@ -15,7 +15,7 @@ public class PortalHoriz extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String mtl = materials.get(data,biome)[0];
+		String mtl = materials.get(data.state,biome)[0];
 		Vertex[] vertices = new Vertex[4];
 		
 		vertices[0] = new Vertex(x-0.5f, y+0.25f, z+0.5f);

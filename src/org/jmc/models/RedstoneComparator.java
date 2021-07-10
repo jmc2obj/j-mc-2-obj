@@ -17,7 +17,7 @@ public class RedstoneComparator extends BlockModel
 	@Override
 	protected String[] getMtlSides(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		
@@ -62,14 +62,14 @@ public class RedstoneComparator extends BlockModel
 		String[] mtlsBase = getMtlSides(data,biome);
 		String mtlTorch, mtlSmallTorch;
 		if (data.state.get("powered").equals("true")) {
-			mtlTorch = materials.get(data,biome)[4];		
+			mtlTorch = materials.get(data.state,biome)[4];		
 		} else {
-			mtlTorch = materials.get(data,biome)[5];	
+			mtlTorch = materials.get(data.state,biome)[5];	
 		}
 		if (data.state.get("mode").equals("compare")) {
-			mtlSmallTorch = materials.get(data,biome)[5];		
+			mtlSmallTorch = materials.get(data.state,biome)[5];		
 		} else {
-			mtlSmallTorch = materials.get(data,biome)[4];	
+			mtlSmallTorch = materials.get(data.state,biome)[4];	
 		}	
 		
 

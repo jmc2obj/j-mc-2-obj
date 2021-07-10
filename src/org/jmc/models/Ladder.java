@@ -42,7 +42,7 @@ public class Ladder extends BlockModel
 			
 		rt = translate.multiply(rotate);
 		
-		addObject(obj, rt, materials.get(data,biome)[0]);
+		addObject(obj, rt, materials.get(data.state,biome)[0]);
 	}
 	
 	private void addObject(ChunkProcessor obj, Transform transform, String mat)

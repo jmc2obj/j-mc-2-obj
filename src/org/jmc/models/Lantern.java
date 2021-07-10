@@ -35,7 +35,7 @@ public class Lantern extends BlockModel
 		addBox(obj, x-2/16f, y-1/16f+hangOffset, z-2/16f, x+2/16f, y+1/16f+hangOffset, z+2/16f, null, mtls, uvSides, null);		
 
 		// If hanging, draw full chain
-		final String material = materials.get(data, biome)[0];
+		final String material = materials.get(data.state, biome)[0];
 		if (hanging)
 		{
 			Transform move = Transform.translation(x, y, z);

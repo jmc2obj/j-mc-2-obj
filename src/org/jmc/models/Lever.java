@@ -15,7 +15,7 @@ public class Lever extends BlockModel
 
 	private String[] getMtlSidesBase(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[1];
@@ -29,7 +29,7 @@ public class Lever extends BlockModel
 
 	private String[] getMtlSidesLever(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[0];

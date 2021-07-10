@@ -34,7 +34,7 @@ public class DoublePlant extends BlockModel
 			data = chunks.getBlockData(x, y-1, z);
 		}
 
-		String[] mtls = materials.get(data, biome);
+		String[] mtls = materials.get(data.state, biome);
 
 		Transform t = Transform.translation(x+randomX, y, z+randomZ);
 		

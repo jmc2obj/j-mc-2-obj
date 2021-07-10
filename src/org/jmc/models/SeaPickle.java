@@ -94,7 +94,7 @@ public class SeaPickle extends BlockModel
 		vertices[1] = new Vertex((x/16f)+(2/16f), ((height-8)/16f)-.01f, (z/16f)+(2/16f));
 		vertices[2] = new Vertex((x/16f)+(2/16f), ((height-8)/16f)-.01f, (z/16f)-(2/16f));
 		vertices[3] = new Vertex((x/16f)-(2/16f), ((height-8)/16f)-.01f, (z/16f)-(2/16f));
-		obj.addFace(vertices, uvTopInner, rt, materials.get(data,biome)[0]);	
+		obj.addFace(vertices, uvTopInner, rt, materials.get(data.state,biome)[0]);	
 		
 		// If underwater, add the stem
 		if(data.state.get("waterlogged").equals("true")) 
@@ -107,13 +107,13 @@ public class SeaPickle extends BlockModel
 			vertices[1] = new Vertex((x/16f)+(1/16f), ((height-8)/16f)+2/16f, (z/16f)+(1/16f));
 			vertices[2] = new Vertex((x/16f)-(1/16f), ((height-8)/16f)+2/16f, (z/16f)-(1/16f));
 			vertices[3] = new Vertex((x/16f)-(1/16f), ((height-8)/16f)-.01f, (z/16f)-(1/16f));
-			obj.addFace(vertices, uvStem1, rt, materials.get(data,biome)[0]);
+			obj.addFace(vertices, uvStem1, rt, materials.get(data.state,biome)[0]);
 			
 			vertices[0] = new Vertex((x/16f)-(1/16f), ((height-8)/16f)-.01f, (z/16f)+(1/16f));
 			vertices[1] = new Vertex((x/16f)-(1/16f), ((height-8)/16f)+2/16f, (z/16f)+(1/16f));
 			vertices[2] = new Vertex((x/16f)+(1/16f), ((height-8)/16f)+2/16f, (z/16f)-(1/16f));
 			vertices[3] = new Vertex((x/16f)+(1/16f), ((height-8)/16f)-.01f, (z/16f)-(1/16f));
-			obj.addFace(vertices, uvStem2, rt, materials.get(data,biome)[0]);
+			obj.addFace(vertices, uvStem2, rt, materials.get(data.state,biome)[0]);
 		}
 	}
 

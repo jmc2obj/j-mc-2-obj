@@ -14,7 +14,7 @@ public class WoodLog extends BlockModel
 
 	protected String[] getMtlSides(BlockData data, int biome, int dir)
 	{
-		String[] mat = materials.get(data, biome);
+		String[] mat = materials.get(data.state, biome);
 		
 		if (dir == 1)
 			return new String[] { mat[1], mat[1], mat[1], mat[0], mat[0], mat[1] };

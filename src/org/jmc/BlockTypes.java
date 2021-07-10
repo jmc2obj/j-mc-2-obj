@@ -12,6 +12,9 @@ import org.jmc.geom.Vertex;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.Mesh;
+import org.jmc.registry.BlockstateEntry;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
@@ -60,7 +63,7 @@ public class BlockTypes
 			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Registry";
 			BlockInfo.Occlusion occlusion = BlockInfo.Occlusion.FULL; 
-			BlockMaterial materials = new BlockMaterial(id);
+			BlockMaterial materials = new BlockMaterial();
 
 			String aux;
 			aux = (String)xpath.evaluate("model", blockNode, XPathConstants.STRING);
@@ -117,12 +120,12 @@ public class BlockTypes
 				
 				if(biome >= 0)
 				{
-					materials.put(biome, data, mats.split("\\s*,\\s*"));
+					materials.put(biome, data.state, mats.split("\\s*,\\s*"));
 				}
 				else
 				{
 					if (!data.state.isEmpty())
-						materials.put(data, mats.split("\\s*,\\s*"));
+						materials.put(data.state, mats.split("\\s*,\\s*"));
 					else
 						materials.put(mats.split("\\s*,\\s*"));
 				}
@@ -210,7 +213,7 @@ public class BlockTypes
 
 	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException
 	{
-		BlockData data = new BlockData(mesh.blockId);
+		Blockstate state = new Blockstate();
 		NamedNodeMap meshAttribs = meshNode.getAttributes();
 		
 		if (meshAttribs != null) {
@@ -242,19 +245,19 @@ public class BlockTypes
 					mesh.mesh_data.fallthrough = Boolean.parseBoolean(attrVal);
 				}
 				else if (attrName.equalsIgnoreCase("jmc_material")) {
-					BlockMaterial mat = new BlockMaterial(mesh.blockId);
+					BlockMaterial mat = new BlockMaterial();
 					mat.put(new String[] {attrVal});
 					mesh.setMaterials(mat);
 				}
 				else {
 					//transform nodes have other attributes.
 					if (meshNode.getNodeName().equalsIgnoreCase("mesh"))
-						data.state.put(attrName, attrVal);
+						state.put(attrName, attrVal);
 				}
 			}
 		}
 		
-		mesh.mesh_data.data = data;
+		mesh.mesh_data.state = state;
 	}
 	
 	private static void recurseChildren(NodeList children, Mesh mesh)
@@ -407,15 +410,17 @@ public class BlockTypes
 	 * If the block id is not found, returns a default BlockInfo structure for 
 	 * "unknown" blocks. The block id of the unknown block is always "". 
 	 * 
-	 * @param blockId Block id
+	 * @param block Block data
 	 * @return BlockInfo structure
 	 */
-	public static BlockInfo get(String blockId)
+	public static BlockInfo get(BlockData block)
 	{
-		BlockInfo bi = blockTable.get(blockId);
-		if (bi == null && !blockId.isEmpty() && !unknownBlockIds.contains(blockId)) {
-			Log.info("Found unknown block id: " + blockId);
-			unknownBlockIds.add(blockId);
+		BlockInfo bi = blockTable.get(block.id);
+		if (bi == null && !block.id.isEmpty() && !unknownBlockIds.contains(block.id)) {
+			Log.info("Found unknown block id: " + block.id);
+			BlockstateEntry bs = Registries.getBlockstate(NamespaceID.fromString(block.id));
+			
+			unknownBlockIds.add(block.id);
 		}
 
 		return bi != null ? bi : unknownBlock;

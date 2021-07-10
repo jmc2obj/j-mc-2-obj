@@ -15,7 +15,8 @@ public class Stonecutter extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String[] mtls_bottom = new String [] { materials.get(data,biome)[3], materials.get(data,biome)[2], materials.get(data,biome)[2], materials.get(data,biome)[2], materials.get(data,biome)[2], materials.get(data,biome)[0] };	
+		String[] mtls = materials.get(data.state, biome);
+		String[] mtls_bottom = new String [] { mtls[3], mtls[2], mtls[2], mtls[2], mtls[2], mtls[0] };	
 		
 		Transform rotate = Transform.rotation(data.state.getDirection("facing", Direction.NORTH));
 		Transform translate = Transform.translation(x, y, z);
@@ -32,6 +33,6 @@ public class Stonecutter extends BlockModel
 		vertices[1] = new Vertex(+0.5f,1/16f,0);
 		vertices[2] = new Vertex(+0.5f,8/16f,0);
 		vertices[3] = new Vertex(-0.5f,8/16f,0);
-		obj.addFace(vertices, uv, rt, materials.get(data,biome)[1]);		
+		obj.addFace(vertices, uv, rt, mtls[1]);		
 	}
 }

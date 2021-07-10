@@ -28,25 +28,25 @@ public class CoralFan extends BlockModel
 			vertices[1] = new Vertex(-0.5f,-0.5f,0.0f);	
 			vertices[2] = new Vertex(-0.5f,-0.05f,0.8f);
 			vertices[3] = new Vertex(0.5f,-0.05f,0.8f);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[0]);
 		
 			vertices[0] = new Vertex(-0.5f,-0.5f,0.0f);
 			vertices[1] = new Vertex(0.5f,-0.5f,0.0f);
 			vertices[2] = new Vertex(0.5f,-0.05f,-0.8f);
 			vertices[3] = new Vertex(-0.5f,-0.05f,-0.8f);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[0]);
 
 			vertices[0] = new Vertex(0.0f,-0.5f,0.5f);
 			vertices[1] = new Vertex(0.0f,-0.5f,-0.5f);	
 			vertices[2] = new Vertex(-0.8f,-0.05f,-0.5f);		
 			vertices[3] = new Vertex(-0.8f,-0.05f,0.5f);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[0]);	
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[0]);	
 			
 			vertices[0] = new Vertex(0.0f,-0.5f,-0.5f);
 			vertices[1] = new Vertex(0.0f,-0.5f,0.5f);	
 			vertices[2] = new Vertex(0.8f,-0.05f,0.5f);		
 			vertices[3] = new Vertex(0.8f,-0.05f,-0.5f);
-			obj.addFace(vertices, null, move, materials.get(data,biome)[0]);		
+			obj.addFace(vertices, null, move, materials.get(data.state,biome)[0]);		
 		}
 		else // It is a wall fan
 		{
@@ -75,13 +75,13 @@ public class CoralFan extends BlockModel
 			vertices[1] = new Vertex( 0.5f, -0.04f, 0.5f);
 			vertices[2] = new Vertex( 0.5f,  0.28f, -0.5f);
 			vertices[3] = new Vertex(-0.5f,  0.28f, -0.5f);
-			obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);			
+			obj.addFace(vertices, null, rt, materials.get(data.state,biome)[0]);			
 			
 			vertices[0] = new Vertex(-0.5f, 0.04f, 0.5f);
 			vertices[1] = new Vertex( 0.5f, 0.04f, 0.5f);
 			vertices[2] = new Vertex( 0.5f,  -0.28f, -0.5f);
 			vertices[3] = new Vertex(-0.5f,  -0.28f, -0.5f);
-			obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);				
+			obj.addFace(vertices, null, rt, materials.get(data.state,biome)[0]);				
 		}	
 	}
 

@@ -15,7 +15,7 @@ public class Crosshatch extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		final String material = materials.get(data, biome)[0];
+		final String material = materials.get(data.state, biome)[0];
 		Vertex[] vertices = new Vertex[4];
 
 		// front

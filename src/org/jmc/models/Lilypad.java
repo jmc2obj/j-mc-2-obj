@@ -46,7 +46,7 @@ public class Lilypad extends BlockModel
 		vertices[1] = new Vertex( 0.5f, -0.49f,  0.5f);
 		vertices[2] = new Vertex( 0.5f, -0.49f, -0.5f);			
 		vertices[3] = new Vertex(-0.5f, -0.49f, -0.5f);
-		obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);
+		obj.addFace(vertices, null, rt, materials.get(data.state,biome)[0]);
 	}
 
 }

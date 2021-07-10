@@ -10,18 +10,11 @@ import java.util.Map.Entry;
  */
 public class BlockMaterial
 {
-	public String blockID;
-	
-	public BlockMaterial(String blockID) {
-		this.blockID = blockID;
-	}
-	
-	
 	private String[] baseMaterials = null;
 
-	private Map<BlockData, String[]> dataMaterials = new LinkedHashMap<BlockData, String[]>();
+	private Map<Blockstate, String[]> dataMaterials = new LinkedHashMap<Blockstate, String[]>();
 
-	private Map<Integer, Map<BlockData, String[]>> biomeMaterials = new LinkedHashMap<Integer, Map<BlockData, String[]>>();
+	private Map<Integer, Map<Blockstate, String[]>> biomeMaterials = new LinkedHashMap<Integer, Map<Blockstate, String[]>>();
 
 
 	/**
@@ -45,14 +38,14 @@ public class BlockMaterial
 	 * @param dataValue
 	 * @param mtlNames 
 	 */
-	public void put(BlockData dataValue, String[] mtlNames)
+	public void put(Blockstate state, String[] mtlNames)
 	{
-		if (dataValue == null)
-			throw new IllegalArgumentException("dataValue must not be null");
+		if (state == null)
+			throw new IllegalArgumentException("state must not be null");
 		if (mtlNames == null || mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be null or empty");
 
-		dataMaterials.put(dataValue, mtlNames);
+		dataMaterials.put(state, mtlNames);
 	}
 
 	/**
@@ -60,27 +53,27 @@ public class BlockMaterial
 	 * for the block, simply use -1 for its value.
 	 * 
 	 * @param biomeValue
-	 * @param dataValue
+	 * @param state
 	 * @param mtlNames
 	 */
-	public void put(int biomeValue, BlockData dataValue, String[] mtlNames)
+	public void put(int biomeValue, Blockstate state, String[] mtlNames)
 	{
-		if (dataValue == null)
-			throw new IllegalArgumentException("dataValue must not be null");			
+		if (state == null)
+			throw new IllegalArgumentException("state must not be null");			
 		if (mtlNames == null || mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be null or empty");
 
-		Map<BlockData, String[]> mtls = null;
+		Map<Blockstate, String[]> mtls = null;
 
 		if(biomeMaterials.containsKey(biomeValue))
 			mtls=biomeMaterials.get(biomeValue);
 		else
 		{
-			mtls = new LinkedHashMap<BlockData, String[]>();
+			mtls = new LinkedHashMap<Blockstate, String[]>();
 			biomeMaterials.put(biomeValue, mtls);
 		}
 
-		mtls.put(dataValue, mtlNames);
+		mtls.put(state, mtlNames);
 	}
 
 
@@ -92,32 +85,32 @@ public class BlockMaterial
 	 * default materials; if the default materials are not defined returns the
 	 * materials for the lowest data value defined.
 	 * 
-	 * @param data Block data value. If null empty BlockData is used.
+	 * @param state Block data value. If null empty Blockstate is used.
 	 * @param biomeValue Block biome value.
 	 * @return Array of material names, or null.
 	 */
-	public String[] get(BlockData data, int biomeValue)
+	public String[] get(Blockstate state, int biomeValue)
 	{
-		if (data == null)
-			data = new BlockData(blockID);
+		if (state == null)
+			state = new Blockstate();
 		
 		String[] mtlNames = null;
 		if(Options.renderBiomes && biomeMaterials.containsKey(biomeValue))
 		{
-			Map<BlockData, String[]> mtls=biomeMaterials.get(biomeValue);
-			mtlNames = mtls.get(data);
+			Map<Blockstate, String[]> mtls=biomeMaterials.get(biomeValue);
+			mtlNames = mtls.get(state);
 			if (mtlNames == null)
-				mtlNames = getMasked(mtls, data);
+				mtlNames = getMasked(mtls, state);
 			if (mtlNames == null)
-				mtlNames = mtls.get(new BlockData(blockID));
+				mtlNames = mtls.get(new Blockstate());
 			if (mtlNames == null)
 				mtlNames = getFirstMtl(mtls);
 		}
 		else
 		{
-			mtlNames = dataMaterials.get(data);
+			mtlNames = dataMaterials.get(state);
 			if (mtlNames == null)
-				mtlNames = getMasked(dataMaterials, data);
+				mtlNames = getMasked(dataMaterials, state);
 			if (mtlNames == null)
 				mtlNames = baseMaterials;
 			if (mtlNames == null)
@@ -125,12 +118,12 @@ public class BlockMaterial
 
 			if (mtlNames == null && !biomeMaterials.isEmpty())
 			{
-				Map<BlockData, String[]> mtls = biomeMaterials.values().iterator().next();
-				mtlNames = mtls.get(data);
+				Map<Blockstate, String[]> mtls = biomeMaterials.values().iterator().next();
+				mtlNames = mtls.get(state);
 				if (mtlNames == null)
-					mtlNames = getMasked(mtls, data);
+					mtlNames = getMasked(mtls, state);
 				if (mtlNames == null)
-					mtlNames = mtls.get(new BlockData(blockID));
+					mtlNames = mtls.get(new Blockstate());
 				if (mtlNames == null)
 					mtlNames = getFirstMtl(mtls);
 			}
@@ -141,9 +134,9 @@ public class BlockMaterial
 		return mtlNames;
 	}
 	
-	private String[] getMasked(Map<BlockData, String[]> mtls, BlockData data) {
-		for (Entry<BlockData, String[]> eMtl : mtls.entrySet()) {
-			if (data.state.matchesMask(eMtl.getKey().state)) {
+	private String[] getMasked(Map<Blockstate, String[]> mtls, Blockstate state) {
+		for (Entry<Blockstate, String[]> eMtl : mtls.entrySet()) {
+			if (state.matchesMask(eMtl.getKey())) {
 				return eMtl.getValue();
 			}
 		}

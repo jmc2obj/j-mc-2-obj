@@ -46,31 +46,31 @@ public class Vines extends BlockModel
 		if (n)
 		{
 			trans = Transform.translation(x, y, z);		
-			obj.addFace(vertices, null, trans, materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, trans, materials.get(data.state,biome)[0]);
 		}
 		if (s)
 		{
 			rot = Transform.rotation(0, 180, 0);
 			trans = Transform.translation(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data.state,biome)[0]);
 		}
 		if (e)
 		{
 			rot = Transform.rotation(0, 90, 0);
 			trans = Transform.translation(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data.state,biome)[0]);
 		}
 		if (w)
 		{
 			rot = Transform.rotation(0, -90, 0);
 			trans = Transform.translation(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data.state,biome)[0]);
 		}
 		if (top)
 		{
 			rot = Transform.rotation(90, 0, 0);
 			trans = Transform.translation(x, y, z);		
-			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, trans.multiply(rot), materials.get(data.state,biome)[0]);
 		}
 			
 		

@@ -13,7 +13,7 @@ public class Bell extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		
-		String[] mtls = materials.get(data,biome);
+		String[] mtls = materials.get(data.state,biome);
 		String[] mtls_BellBottom = new String [] { mtls[2], mtls[1], mtls[1], mtls[1], mtls[1], mtls[2] };
 		String[] mtls_BellTop = new String [] 	{ mtls[0], mtls[1], mtls[1], mtls[1], mtls[1], mtls[2] };
 		String[] mtls_Wood = new String [] 		{ mtls[4], mtls[4], mtls[4], mtls[4], mtls[4], mtls[4] };

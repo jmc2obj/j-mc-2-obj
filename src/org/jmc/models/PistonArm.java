@@ -16,7 +16,7 @@ public class PistonArm extends BlockModel
 	private String[] getMtlSidesTop(BlockData data, int biome)
 	{
 		boolean sticky = data.state.get("type").equals("sticky");
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = sticky ? abbrMtls[1] : abbrMtls[0];
@@ -30,7 +30,7 @@ public class PistonArm extends BlockModel
 
 	private String[] getMtlSidesArm(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[2];

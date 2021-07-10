@@ -57,7 +57,7 @@ public class EntityTypes {
 				continue;
 			}
 
-			BlockMaterial materials = new BlockMaterial("");
+			BlockMaterial materials = new BlockMaterial();
 			boolean hasMtl = false;
 			NodeList matNodes = (NodeList) xpath.evaluate("materials", entityNode, XPathConstants.NODESET);
 			for (int j = 0; j < matNodes.getLength(); j++) {

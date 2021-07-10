@@ -19,7 +19,7 @@ public class CocoaPlant extends BlockModel
 	{
 		int growth = Integer.parseInt(data.state.get("age"));
 		
-		String[] abbrMtls = materials.get(data,biome);
+		String[] abbrMtls = materials.get(data.state,biome);
 
 		String[] mtlSides = new String[6];
 		mtlSides[0] = abbrMtls[growth];
@@ -110,7 +110,7 @@ public class CocoaPlant extends BlockModel
 		vertices[1] = new Vertex(0, 0.25f, -0.5f);
 		vertices[2] = new Vertex(0, 0.5f, -0.5f);
 		vertices[3] = new Vertex(0, 0.5f, 0);
-		obj.addFace(vertices, uvSide, rt, materials.get(data,biome)[growth]);
+		obj.addFace(vertices, uvSide, rt, materials.get(data.state,biome)[growth]);
 	}
 
 }

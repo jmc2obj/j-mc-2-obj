@@ -34,13 +34,13 @@ public class PortalVert extends BlockModel
 		vertices[1] = new Vertex(-0.5f, -0.5f, -0.125f);
 		vertices[2] = new Vertex(-0.5f,  0.5f, -0.125f);
 		vertices[3] = new Vertex( 0.5f,  0.5f, -0.125f);
-		obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);
+		obj.addFace(vertices, null, rt, materials.get(data.state,biome)[0]);
 
 		vertices[0] = new Vertex(-0.5f, -0.5f, 0.125f);
 		vertices[1] = new Vertex( 0.5f, -0.5f, 0.125f);
 		vertices[2] = new Vertex( 0.5f,  0.5f, 0.125f);
 		vertices[3] = new Vertex(-0.5f,  0.5f, 0.125f);
-		obj.addFace(vertices, null, rt, materials.get(data,biome)[0]);
+		obj.addFace(vertices, null, rt, materials.get(data.state,biome)[0]);
 	}
 
 }

@@ -17,21 +17,21 @@ public class Pane extends BlockModel
 {
 	
 	/** Checks whether the pane should connect to another block */
-	private boolean checkConnect(String otherId)
+	private boolean checkConnect(BlockData other)
 	{
 		// connects to other panes, glass, and any solid blocks
-		if (otherId.endsWith("air"))
+		if (other.id.endsWith("air"))
 			return false;
-		if (otherId.equals("minecraft:iron_bars") || otherId.endsWith("glass_pane") || otherId.endsWith("glass"))
+		if (other.id.equals("minecraft:iron_bars") || other.id.endsWith("glass_pane") || other.id.endsWith("glass"))
 			return true;
-		return BlockTypes.get(otherId).getOcclusion() == BlockInfo.Occlusion.FULL;
+		return BlockTypes.get(other).getOcclusion() == BlockInfo.Occlusion.FULL;
 	}
 
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String mtl = materials.get(data,biome)[0];
-		String mtlSide = materials.get(data,biome)[1];
+		String mtl = materials.get(data.state,biome)[0];
+		String mtlSide = materials.get(data.state,biome)[1];
 		
 		boolean n = data.state.get("north").equals("true");
 		boolean s = data.state.get("south").equals("true");
@@ -39,8 +39,8 @@ public class Pane extends BlockModel
 		boolean w = data.state.get("west").equals("true");
 		boolean none = !(n || s || e || w);
 
-		boolean up = checkConnect(chunks.getBlockID(x, y+1, z));
-		boolean down = checkConnect(chunks.getBlockID(x, y-1, z));
+		boolean up = checkConnect(chunks.getBlockData(x, y+1, z));
+		boolean down = checkConnect(chunks.getBlockData(x, y-1, z));
 		
 		Transform t = Transform.translation(x, y, z);		
 		

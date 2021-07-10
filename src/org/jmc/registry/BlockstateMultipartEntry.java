@@ -110,7 +110,7 @@ public class BlockstateMultipartEntry extends BlockstateEntry {
 					String[] values = keyPair.getValue().split("\\|");
 					boolean matches = false;
 					for (String value : values) {
-						matches |= value.strip().equals(data.get(keyPair.getKey()));
+						matches |= value.trim().equals(data.get(keyPair.getKey()));
 					}
 					if (!matches)
 						return false;

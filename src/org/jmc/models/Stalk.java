@@ -41,7 +41,7 @@ public class Stalk extends BlockModel
 		}
 
 		
-		if (blockId.equals("minecraft:attached_pumpkin_stem") || blockId.equals("minecraft:attached_melon_stem") && (n||s||e||w))
+		if (data.id.equals("minecraft:attached_pumpkin_stem") || data.id.equals("minecraft:attached_melon_stem") && (n||s||e||w))
 		{
 			// bent stalk
 			Transform translate = Transform.translation(x, y, z);
@@ -57,7 +57,7 @@ public class Stalk extends BlockModel
 			vertices[1] = new Vertex(-0.5f, -0.5f, 0.0f);
 			vertices[2] = new Vertex(-0.5f,  0.5f, 0.0f); 				
 			vertices[3] = new Vertex( 0.5f,  0.5f, 0.0f);	
-			obj.addFace(vertices, null, translate.multiply(rotate), materials.get(data,biome)[1]);
+			obj.addFace(vertices, null, translate.multiply(rotate), materials.get(data.state,biome)[1]);
 		}
 		else
 		{
@@ -69,13 +69,13 @@ public class Stalk extends BlockModel
 			vertices[1] = new Vertex(-0.5f, -0.5f,  0.5f);
 			vertices[2] = new Vertex(-0.5f,  0.5f,  0.5f); 				
 			vertices[3] = new Vertex( 0.5f,  0.5f, -0.5f);	
-			obj.addFace(vertices, null, translate, materials.get(data,biome)[0]);
+			obj.addFace(vertices, null, translate, materials.get(data.state,biome)[0]);
 			
 			vertices[0] = new Vertex(-0.5f, -0.5f, -0.5f);		
 			vertices[1] = new Vertex( 0.5f, -0.5f,  0.5f);
 			vertices[2] = new Vertex( 0.5f,  0.5f,  0.5f);	
 			vertices[3] = new Vertex(-0.5f,  0.5f, -0.5f);
-			obj.addFace(vertices, null, translate, materials.get(data,biome)[0]);						
+			obj.addFace(vertices, null, translate, materials.get(data.state,biome)[0]);						
 		}
 	}
 

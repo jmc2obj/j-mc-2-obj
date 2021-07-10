@@ -18,7 +18,7 @@ public class Cross extends BlockModel
 	{
 		Transform move = Transform.translation(x, y, z);
 
-		final String material = materials.get(data, biome)[0];
+		final String material = materials.get(data.state, biome)[0];
 		
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(+0.5f,-0.5f,-0.5f);
