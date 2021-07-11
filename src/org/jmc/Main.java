@@ -21,7 +21,7 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {			
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) { 
 				Log.error("Uncaught exception in thread: "+t.getName(), e);
@@ -30,7 +30,7 @@ public class Main
 
 		try
 		{
-			Preferences prefs = Preferences.userNodeForPackage(Settings.class);	
+			Preferences prefs = Preferences.userNodeForPackage(Settings.class);
 			int loc_num=prefs.getInt("LANGUAGE", 0);
 			Locale.setDefault(Options.availableLocales[loc_num]);
 		} catch(Exception e)

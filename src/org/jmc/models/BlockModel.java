@@ -2,6 +2,9 @@ package org.jmc.models;
 
 import java.awt.Rectangle;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -24,10 +27,13 @@ import org.w3c.dom.NodeList;
  * Base class for the block model handlers. These handlers are responsible for
  * rendering the geometry that represents the blocks.
  */
+@ParametersAreNonnullByDefault
 public abstract class BlockModel {
 	public String blockId = "";
+	@CheckForNull
 	protected Node configNode = null;
-	protected BlockMaterial materials = null;
+	@Nonnull
+	protected BlockMaterial materials = new BlockMaterial();
 
 	/**
 	 * Id of the block this model will be rendering. This information may
@@ -47,7 +53,7 @@ public abstract class BlockModel {
 	/**
 	 * Nodes of config file of this block
 	 */
-	public void setConfigNodes(Node blockNode) { this.configNode = blockNode; }
+	public void setConfigNodes(@CheckForNull Node blockNode) { this.configNode = blockNode; }
 
 	/**
 	 * returns a config Value
@@ -72,6 +78,7 @@ public abstract class BlockModel {
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
+	@Nonnull
 	protected String[] getMtlSides(BlockData data, int biome) {
 		String[] abbrMtls = materials.get(data.state, biome);
 
@@ -127,17 +134,17 @@ public abstract class BlockModel {
 	 * is at the world (or selection) edge.
 	 * 
 	 * @param neighbourId
-	 *            Id of the neighbouring block, or -1 if there is no neighbour
+	 *            The neighbouring block, or null if there is no neighbour
 	 *            (because the block is at the world edge)
 	 * @param side
 	 *            Side to check
 	 * @return true if side needs to be drawn
 	 */
-	protected boolean drawSide(Direction side, BlockData data, BlockData neighbourData) {
+	protected boolean drawSide(Direction side, BlockData data, @CheckForNull BlockData neighbourData) {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighbourData.id.equals(""))
+		if (neighbourData == null || neighbourData.id.equals(""))
 			return Options.renderSides;
 
 		if (neighbourData.id.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
@@ -179,7 +186,7 @@ public abstract class BlockModel {
 	 * @return Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
 	 *         EAST, DOWN
 	 */
-	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z) {
+	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z, BlockData data) {
 		int xmin, xmax, ymin, ymax, zmin, zmax;
 		Rectangle xy, xz;
 		xy = chunks.getXYBoundaries();
@@ -193,13 +200,12 @@ public abstract class BlockModel {
 
 		boolean sides[] = new boolean[6];
 
-		BlockData data = chunks.getBlockData(x, y, z);
-		sides[0] = drawSide(Direction.UP, data, y == ymax ? new BlockData() : chunks.getBlockData(x, y + 1, z));
-		sides[1] = drawSide(Direction.NORTH, data, z == zmin ? new BlockData() : chunks.getBlockData(x, y, z - 1));
-		sides[2] = drawSide(Direction.SOUTH, data, z == zmax ? new BlockData() : chunks.getBlockData(x, y, z + 1));
-		sides[3] = drawSide(Direction.WEST, data, x == xmin ? new BlockData() : chunks.getBlockData(x - 1, y, z));
-		sides[4] = drawSide(Direction.EAST, data, x == xmax ? new BlockData() : chunks.getBlockData(x + 1, y, z));
-		sides[5] = drawSide(Direction.DOWN, data, y == ymin ? new BlockData() : chunks.getBlockData(x, y - 1, z));
+		sides[0] = drawSide(Direction.UP, data, y == ymax ? null : chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Direction.NORTH, data, z == zmin ? null : chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Direction.SOUTH, data, z == zmax ? null : chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Direction.WEST, data, x == xmin ? null : chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Direction.EAST, data, x == xmax ? null : chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Direction.DOWN, data, y == ymin ? null : chunks.getBlockData(x, y - 1, z));
 
 		return sides;
 	}
@@ -237,7 +243,7 @@ public abstract class BlockModel {
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
 	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
-			Transform trans, String[] mtlSides, UV[][] uvSides, boolean[] drawSides) {
+			@CheckForNull Transform trans, String[] mtlSides, @CheckForNull UV[][] uvSides, @CheckForNull boolean[] drawSides) {
 		Vertex[] vertices = new Vertex[4];
 
 		if (drawSides == null || drawSides[0]) { // top
@@ -318,7 +324,7 @@ public abstract class BlockModel {
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
 	protected void addBoxCubeUV(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
-			Transform trans, String[] mtlSides, boolean[] drawSides) {
+			Transform trans, String[] mtlSides, @CheckForNull boolean[] drawSides) {
 		UV[] uvU = new UV[] { new UV(xs+0.5f, -ze+0.5f), new UV(xe+0.5f, -ze+0.5f), new UV(xe+0.5f, -zs+0.5f), new UV(xs+0.5f, -zs+0.5f) };
 		UV[] uvN = new UV[] { new UV(-xe+0.5f, ys+0.5f), new UV(-xs+0.5f, ys+0.5f), new UV(-xs+0.5f, ye+0.5f), new UV(-xe+0.5f, ye+0.5f) };
 		UV[] uvS = new UV[] { new UV(xs+0.5f, ys+0.5f), new UV(xe+0.5f, ys+0.5f), new UV(xe+0.5f, ye+0.5f), new UV(xs+0.5f, ye+0.5f) };

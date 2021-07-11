@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -14,6 +16,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class TripwireHook extends BlockModel
 {
 
+	@Nonnull
 	private String[] getMtlSides(BlockData data, int biome, int i)
 	{
 		String[] abbrMtls = materials.get(data.state,biome);

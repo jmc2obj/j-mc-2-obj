@@ -48,6 +48,7 @@ public class Bed extends BlockModel
 		 *           +z
 		 */
 		
+		String material = materials.get(data.state, biome)[0];
 		
 		if (head)
 		{
@@ -56,7 +57,7 @@ public class Bed extends BlockModel
 			vertices[1] = new Vertex( 0.5f, 0.0625f,  0.5f); uv[1] = new UV(6/64f, 42/64f);
 			vertices[2] = new Vertex( 0.5f, 0.0625f, -0.5f); uv[2] = new UV(6/64f, 58/64f);
 			vertices[3] = new Vertex(-0.5f, 0.0625f, -0.5f); uv[3] = new UV(22/64f, 58/64f);
-			obj.addFace(vertices, uv, rt, materials.get(data.state, biome)[0]);
+			obj.addFace(vertices, uv, rt, material);
 			// bottom
 			vertices[0] = new Vertex(-0.5f, -0.3125f,  0.5f); uv[0] = new UV(44/64f, 42/64f);
 			vertices[1] = new Vertex( 0.5f, -0.3125f,  0.5f); uv[1] = new UV(28/64f, 42/64f);

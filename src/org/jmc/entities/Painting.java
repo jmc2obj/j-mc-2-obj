@@ -87,7 +87,7 @@ public class Painting extends Entity
 		
 		BlockMaterial materials=new BlockMaterial();
 		String [] matname={motiv.toLowerCase()+"_painting"};
-		materials.put(null, matname);
+		materials.put(matname);
 		model.setMaterials(materials);
 		
 		model.setMaterials(materials);

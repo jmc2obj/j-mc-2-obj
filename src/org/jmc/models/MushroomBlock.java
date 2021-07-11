@@ -52,6 +52,6 @@ public class MushroomBlock extends BlockModel
 				null, 
 				getMtlSides(data, biome), 
 				getUvSides(), 
-				drawSides(chunks, x, y, z));
+				drawSides(chunks, x, y, z, data));
 	}
 }

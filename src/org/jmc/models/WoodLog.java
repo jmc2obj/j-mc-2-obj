@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.threading.ChunkProcessor;
@@ -12,6 +14,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class WoodLog extends BlockModel
 {
 
+	@Nonnull
 	protected String[] getMtlSides(BlockData data, int biome, int dir)
 	{
 		String[] mat = materials.get(data.state, biome);
@@ -71,7 +74,7 @@ public class WoodLog extends BlockModel
 				null, 
 				getMtlSides(data, biome, dir), 
 				getUvSides(dir), 
-				drawSides(chunks, x, y, z));
+				drawSides(chunks, x, y, z, data));
 	}
 
 }

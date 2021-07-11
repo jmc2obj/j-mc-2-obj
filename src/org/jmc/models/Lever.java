@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -13,6 +15,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class Lever extends BlockModel
 {
 
+	@Nonnull
 	private String[] getMtlSidesBase(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data.state,biome);
@@ -27,6 +30,7 @@ public class Lever extends BlockModel
 		return mtlSides;
 	}
 
+	@Nonnull
 	private String[] getMtlSidesLever(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data.state,biome);

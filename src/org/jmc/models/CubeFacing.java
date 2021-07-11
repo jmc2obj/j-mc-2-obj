@@ -21,7 +21,7 @@ public class CubeFacing extends BlockModel
 		Direction dir = data.state.getDirection("facing");
 		Transform rotate = Transform.rotation(dir);
 		
-		boolean[] dSides = drawSides(chunks, x, y, z);
+		boolean[] dSides = drawSides(chunks, x, y, z, data);
 		boolean[] dSidesRot = new boolean[6];
 		//  or top, front, back, left, right, bottom
 		//    (top, north, south, west, east, bottom)

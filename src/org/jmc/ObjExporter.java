@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.CheckForNull;
+
 import org.jmc.Options.OffsetType;
 import org.jmc.models.Banner;
 import org.jmc.threading.ReaderRunnable;
@@ -52,7 +54,7 @@ public class ObjExporter {
 	 * @param writeMtl
 	 *            Whether to write the .mtl file
 	 */
-	public static void export(ProgressCallback progress, StopCallback stop, boolean writeObj, boolean writeMtl) {
+	public static void export(@CheckForNull ProgressCallback progress, @CheckForNull StopCallback stop, boolean writeObj, boolean writeMtl) {
 		File objfile = new File(Options.outputDir, Options.objFileName);
 		File mtlfile = new File(Options.outputDir, Options.mtlFileName);
 		File tmpdir = new File(Options.outputDir, "temp");

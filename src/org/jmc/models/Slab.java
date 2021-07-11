@@ -16,7 +16,7 @@ public class Slab extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		UV[] uvSide;
 		UV[][] uvSides;
 		float ys, ye;

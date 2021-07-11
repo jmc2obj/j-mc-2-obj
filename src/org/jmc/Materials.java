@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
 import org.jmc.util.Filesystem;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -36,7 +39,7 @@ public class Materials
 	private static HashMap<String, String> mtlTextures = new HashMap<>();
 
 
-	private static void readConfig(HashMap<String, Color> mtlColors) throws Exception
+	private static void readConfig(@Nonnull HashMap<String, Color> mtlColors) throws Exception
 	{
 		
 		try (JmcConfFile mtlFile = new JmcConfFile(CONFIG_FILE)) {
@@ -137,6 +140,7 @@ public class Materials
 	 * @param mtlName Material name
 	 * @return Material color
 	 */
+	@Nonnull
 	public static Color getColor(String mtlName)
 	{
 		Color c = mtlColors.get(mtlName.toLowerCase());
@@ -150,15 +154,16 @@ public class Materials
 	 * @param mtlName Material name
 	 * @return Material texture
 	 */
+	@CheckForNull
 	public static String getTexture(String mtlName)
 	{
 		return mtlTextures.get(mtlName.toLowerCase());
 	}
 	
-	public synchronized static void addMaterial(String matName, Color color, Color spec, String diffTex, String alphaTex) {
-		if (color == null) 
+	public synchronized static void writeMaterial(String matName, Color color, Color spec, @CheckForNull String diffTex, @CheckForNull String alphaTex) {
+		if (color == null)
 			color = Color.WHITE;
-		if (spec == null) 
+		if (spec == null)
 			spec = Color.BLACK;
 		
 		float[] colorComps = color.getRGBComponents(null);

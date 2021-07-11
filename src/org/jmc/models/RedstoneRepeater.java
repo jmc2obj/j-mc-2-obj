@@ -71,7 +71,7 @@ public class RedstoneRepeater extends BlockModel
 		}			
 
 		// base
-		boolean[] drawSides = new boolean[] { true, true, true, true, true, drawSides(chunks,x,y,z)[5] };
+		boolean[] drawSides = new boolean[] { true, true, true, true, true, drawSides(chunks,x,y,z, data)[5] };
 
 		UV[] uvSide = new UV[] { new UV(0, 0), new UV(1, 0), new UV(1, 2/16f), new UV(0, 2/16f) };
 		UV[][] uvSides = new UV[][] { null, uvSide, uvSide, uvSide, uvSide, null };

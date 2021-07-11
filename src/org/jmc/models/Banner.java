@@ -144,7 +144,7 @@ public class Banner extends BlockModel {
         int baseColorIndex = -1;
         ArrayList<BannerPattern> patternList = new ArrayList<BannerPattern>();
         
-    	String bid = chunks.getBlockID(x, y, z);
+    	String bid = data.id;
     	bid = bid.split(":", 2)[1];
     	if (bid.startsWith("white"))
     		baseColorIndex = 0;
@@ -370,7 +370,7 @@ public class Banner extends BlockModel {
     	
         Color baseColor = getColorById(baseColorIndex);
         
-        Materials.addMaterial(materialName, baseColor, null, "tex/" + materialName + ".png", null);
+        Materials.writeMaterial(materialName, baseColor, null, "tex/" + materialName + ".png", null);
     }
 
     /**

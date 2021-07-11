@@ -16,22 +16,25 @@ public class DoublePlant extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data , int biome)
 	{
 		
-        // Generates a random number to offset the grass in the x and y.
-        Random rX = new Random();
-        rX.setSeed((x+z)*1000);
-        float randomX = -0.2f + rX.nextFloat() * 0.4f;
-        
-        Random rZ = new Random();
-        rZ.setSeed((x+z)*2000);       
-        float randomZ = -0.2f + rZ.nextFloat() * 0.4f;	
-       		
+		// Generates a random number to offset the grass in the x and y.
+		Random rX = new Random();
+		rX.setSeed((x+z)*1000);
+		float randomX = -0.2f + rX.nextFloat() * 0.4f;
+		
+		Random rZ = new Random();
+		rZ.setSeed((x+z)*2000);
+		float randomZ = -0.2f + rZ.nextFloat() * 0.4f;
+		
 		boolean top = data.state.get("half").equals("upper");
 		if (top) {
 			// must get the type of plant from the block below
-			data = chunks.getBlockData(x, y-1, z);
+			BlockData bottomData = chunks.getBlockData(x, y-1, z);
+			if (bottomData != null) {
+				data = bottomData;
+			}
 		}
 
 		String[] mtls = materials.get(data.state, biome);
@@ -52,7 +55,7 @@ public class DoublePlant extends BlockModel
 			vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
 			obj.addFace(vertices, null, t, mtls[1]);
 
-			if (chunks.getBlockID(x, y, z).equals("minecraft:sunflower")) {
+			if (data.id.equals("minecraft:sunflower")) {
 				// Sunflower
 				Double o = (double)(x*y*z);
 				Transform r = Transform.rotation(0, (o.hashCode() % 30) - 15, 15);

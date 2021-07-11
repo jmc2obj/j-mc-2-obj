@@ -2,6 +2,8 @@ package org.jmc.models;
 
 import java.util.Random;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -77,6 +79,7 @@ public class SeaPickle extends BlockModel
 		}
 	}
 	
+	@ParametersAreNonnullByDefault
 	private void newPickle(ChunkProcessor obj, ThreadChunkDeligate chunks, float x, float z, float height, Transform rt, BlockData data, int biome)
 	{
 		boolean[] drawSides = new boolean[] {true,true,true,true,true,false};

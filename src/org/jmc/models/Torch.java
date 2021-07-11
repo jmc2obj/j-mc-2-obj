@@ -112,7 +112,7 @@ public class Torch extends BlockModel
 		obj.addFace(vertices, null, txTorch, mtls[0]);
 		
 		// bottom
-		if (data.state.containsKey("facing") || drawSides(chunks,x,y,z)[5])
+		if (data.state.containsKey("facing") || drawSides(chunks,x,y,z, data)[5])
 		{
 			vertices[0] = new Vertex( 1/16f, -0.5f,  1/16f); uv[0] = new UV(7/16f, 0);
 			vertices[1] = new Vertex(-1/16f, -0.5f,  1/16f); uv[1] = new UV(9/16f, 0);

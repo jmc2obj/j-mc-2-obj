@@ -23,7 +23,7 @@ public class Composter extends BlockModel
 		UV[][] uvSides;
 		
 		// Draw the main box of the composter
-		addBox(obj, x - 0.5f, y - 0.5f, z - 0.5f, x + 0.5f, y + 0.5f, z + 0.5f, null, mtls_mainBox, null, drawSides(chunks, x, y, z));
+		addBox(obj, x - 0.5f, y - 0.5f, z - 0.5f, x + 0.5f, y + 0.5f, z + 0.5f, null, mtls_mainBox, null, drawSides(chunks, x, y, z, data));
 		
 		// Draw the inner box so it appears thick and 3D
 		uvTop = new UV[] { new UV(2/16f, 2/16f), new UV(14/16f, 2/16f), new UV(14/16f, 14/16f), new UV(2/16f, 14/16f) };

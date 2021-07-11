@@ -142,7 +142,7 @@ public class FaceUtils {
 		
 		@Override
 		public int compareTo(OBJFace o) {
-			if(this.obj_idx!=o.obj_idx)
+			if(!this.obj_idx.equals(o.obj_idx))
 				return this.obj_idx.compareTo(o.obj_idx);
 			return this.mtl.compareTo(o.mtl);
 		}

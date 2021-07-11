@@ -17,7 +17,7 @@ public class DaylightSensor extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtlSides = getMtlSides(data,biome);
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 
 		Vertex[] vertices = new Vertex[4];
 

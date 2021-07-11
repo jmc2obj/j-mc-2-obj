@@ -10,8 +10,8 @@ import org.jmc.Options;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_String;
 import org.jmc.NBT.TAG_Short;
+import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Log;
@@ -91,7 +91,7 @@ public class ItemFrame extends Entity
 				short map_id = ((TAG_Short)item.getElement("Damage")).value;
 				// Log.info("Found map with id: '" + map_id+ "'");
 				String [] matname={"map_" + map_id + "_item_frame"};
-				materials.put(null, matname );
+				materials.put(matname);
 				
 				
 				FilledMapDat map_data = new FilledMapDat(Options.worldDir);
@@ -127,7 +127,7 @@ public class ItemFrame extends Entity
 			default:
 				// Log.info("Unsupported FrameItem: '" + item_id + "'");
 				String [] matname1={"item_frame"};
-				materials.put(null, matname1 );
+				materials.put(matname1);
 				break;
 		}
 		model.setMaterials(materials);

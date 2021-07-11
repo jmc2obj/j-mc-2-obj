@@ -166,7 +166,7 @@ public class ChunkProcessor
 					BlockData block=chunk.getBlockData(x, y, z);
 					int blockBiome=chunk.getBlockBiome(x, y, z);
 					
-					if(block.id.isEmpty())
+					if(block == null || block.id.isEmpty())
 						continue;
 					
 					if(Options.excludeBlocks.contains(block.id))

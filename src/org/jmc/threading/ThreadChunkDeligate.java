@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.CheckForNull;
+
 import org.jmc.BlockData;
 import org.jmc.Chunk;
 import org.jmc.Chunk.Blocks;
@@ -44,6 +46,7 @@ public class ThreadChunkDeligate {
 		return xyBoundaries;
 	}
 
+	@CheckForNull
 	private Blocks getBlocks(Point p)
 	{
 		if (cached_chunkp == null) {
@@ -64,31 +67,27 @@ public class ThreadChunkDeligate {
 		return cached_chunkb;
 	}
 	
-	public String getBlockID(int x, int y, int z)
-	{
-		return getBlockData(x, y, z).id;
-	}
-	
+	@CheckForNull
 	public BlockData getBlockData(int x, int y, int z)
 	{
-		if(y<0) return new BlockData("minecraft:air");
+		if(y<0) return null;
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return new BlockData("minecraft:air");
+		if(blocks==null) return null;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);
 		
 		if(isAnvil)
 		{
-			if(y>=blocks.size/(16*16)) return new BlockData("minecraft:air");
+			if(y>=blocks.size/(16*16)) return null;
 			return blocks.data[rx + (rz * 16) + (y * 16) * 16];
 		}
 		else
 		{
-			if(y>=128) return new BlockData("minecraft:air");
+			if(y>=128) return null;
 			return blocks.data[y + (rz * 128) + (rx * 128) * 16];
 		}
 	}

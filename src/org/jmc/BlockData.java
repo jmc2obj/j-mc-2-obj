@@ -2,6 +2,11 @@ package org.jmc;
 
 import java.util.AbstractMap;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class BlockData {
 	
 	/**
@@ -21,10 +26,11 @@ public class BlockData {
 	}
 	
 	public String id;
+	@Nonnull
 	public Blockstate state;
 	
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(@CheckForNull Object o) {
 		if (super.equals(o) && o instanceof BlockData) {
 			BlockData bd = (BlockData)o;
 			return id.equals(bd.id) && state.equals(bd.state);

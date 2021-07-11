@@ -278,10 +278,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			bg.setColor(Color.black);			
 			bg.clearRect(0, 0, win_w, win_h);			
 
-			Graphics2D hg=null;
+			Graphics2D hg=height_img.createGraphics();
 			if(!fast)
 			{
-				hg=height_img.createGraphics();
 				hg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 				hg.setColor(Color.black);
 				hg.clearRect(0, 0, win_w, win_h);
@@ -617,11 +616,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			if(selectchunks){
 			
 				if(selection_start_x % 16 != 0){
-					selection_start_x = Math.round(selection_start_x / 16) * 16;
+					selection_start_x = Math.round(selection_start_x / 16f) * 16;
 				}
 				
 				if(selection_start_z % 16 != 0){
-					selection_start_z = Math.round(selection_start_z / 16) * 16;
+					selection_start_z = Math.round(selection_start_z / 16f) * 16;
 				}
 			
 			}
@@ -668,19 +667,19 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		
 		if(selectchunks){
 			if(selection_start_x % 16 != 0){
-				selection_start_x = Math.round(selection_start_x / 16) * 16;
+				selection_start_x = Math.round(selection_start_x / 16f) * 16;
 			}
 			
 			if(selection_start_z % 16 != 0){
-				selection_start_z = Math.round(selection_start_z / 16) * 16;
+				selection_start_z = Math.round(selection_start_z / 16f) * 16;
 			}
 			
 			if(selection_end_x % 16 != 0){
-				selection_end_x = Math.round(selection_end_x / 16) * 16;
+				selection_end_x = Math.round(selection_end_x / 16f) * 16;
 			}
 			
 			if(selection_end_z % 16 != 0){
-				selection_end_z = Math.round(selection_end_z / 16) * 16;
+				selection_end_z = Math.round(selection_end_z / 16f) * 16;
 			}
 		}
 		
@@ -748,19 +747,19 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			
 			if(selectchunks){
 				if(selection_start_x % 16 != 0){
-					selection_start_x = Math.round(selection_start_x / 16) * 16;
+					selection_start_x = Math.round(selection_start_x / 16f) * 16;
 				}
 				
 				if(selection_start_z % 16 != 0){
-					selection_start_z = Math.round(selection_start_z / 16) * 16;
+					selection_start_z = Math.round(selection_start_z / 16f) * 16;
 				}
 				
 				if(selection_end_x % 16 != 0){
-					selection_end_x = Math.round(selection_end_x / 16) * 16;
+					selection_end_x = Math.round(selection_end_x / 16f) * 16;
 				}
 				
 				if(selection_end_z % 16 != 0){
-					selection_end_z = Math.round(selection_end_z / 16) * 16;
+					selection_end_z = Math.round(selection_end_z / 16f) * 16;
 				}
 			}
 			

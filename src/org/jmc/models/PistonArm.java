@@ -1,5 +1,7 @@
 package org.jmc.models;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -13,6 +15,7 @@ import org.jmc.threading.ThreadChunkDeligate;
 public class PistonArm extends BlockModel
 {
 
+	@Nonnull
 	private String[] getMtlSidesTop(BlockData data, int biome)
 	{
 		boolean sticky = data.state.get("type").equals("sticky");
@@ -28,6 +31,7 @@ public class PistonArm extends BlockModel
 		return mtlSides;
 	}
 
+	@Nonnull
 	private String[] getMtlSidesArm(BlockData data, int biome)
 	{
 		String[] abbrMtls = materials.get(data.state,biome);

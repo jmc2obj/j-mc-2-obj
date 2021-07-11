@@ -4,18 +4,27 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 
 /**
  * Holds the material definitions for a block type.
  */
+@ParametersAreNonnullByDefault
 public class BlockMaterial
 {
 	private String[] baseMaterials = null;
 
+	@Nonnull
 	private Map<Blockstate, String[]> dataMaterials = new LinkedHashMap<Blockstate, String[]>();
 
 	private Map<Integer, Map<Blockstate, String[]>> biomeMaterials = new LinkedHashMap<Integer, Map<Blockstate, String[]>>();
 
+	public boolean isEmpty() {
+		return biomeMaterials.isEmpty() && dataMaterials.isEmpty() && (baseMaterials == null || baseMaterials.length < 1);
+	}
 
 	/**
 	 * Sets the materials to use by default, i.e., when there isn't a specific material 
@@ -34,11 +43,10 @@ public class BlockMaterial
 
 	/**
 	 * Sets the materials to use when the block has a specific data value.
-	 * 
-	 * @param dataValue
 	 * @param mtlNames 
+	 * @param dataValue
 	 */
-	public void put(Blockstate state, String[] mtlNames)
+	public void put(String[] mtlNames, Blockstate state)
 	{
 		if (state == null)
 			throw new IllegalArgumentException("state must not be null");
@@ -51,12 +59,11 @@ public class BlockMaterial
 	/**
 	 * Sets the materials to use when the block has a biome defined. If dataValue isn't defined
 	 * for the block, simply use -1 for its value.
-	 * 
-	 * @param biomeValue
-	 * @param state
 	 * @param mtlNames
+	 * @param state
+	 * @param biomeValue
 	 */
-	public void put(int biomeValue, Blockstate state, String[] mtlNames)
+	public void put(String[] mtlNames, Blockstate state, int biomeValue)
 	{
 		if (state == null)
 			throw new IllegalArgumentException("state must not be null");			
@@ -87,9 +94,9 @@ public class BlockMaterial
 	 * 
 	 * @param state Block data value. If null empty Blockstate is used.
 	 * @param biomeValue Block biome value.
-	 * @return Array of material names, or null.
+	 * @return Array of material names.
 	 */
-	public String[] get(Blockstate state, int biomeValue)
+	public String[] get(@CheckForNull Blockstate state, int biomeValue)
 	{
 		if (state == null)
 			state = new Blockstate();

@@ -15,6 +15,8 @@ public class Tripwire extends BlockModel
 
 	private boolean isConnectable(BlockData block, BlockData otherBlock)
 	{
+		if (otherBlock == null)
+			return false;
 		return otherBlock.id.equals(block.id) || otherBlock.id.equals("minecraft:tripwire_hook");
 	}
 	

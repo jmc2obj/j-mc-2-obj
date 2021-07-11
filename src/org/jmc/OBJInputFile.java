@@ -11,6 +11,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.annotation.CheckForNull;
+
 import org.jmc.geom.FaceUtils.OBJFace;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -74,7 +76,7 @@ public class OBJInputFile
 	 * @param objfile
 	 * @throws IOException 
 	 */
-	public void loadFile(JmcConfFile objfile, String overwriteName) throws IOException
+	public void loadFile(JmcConfFile objfile, @CheckForNull String overwriteName) throws IOException
 	{
 		objects=new HashMap<String, OBJGroup>();
 		default_object=null;

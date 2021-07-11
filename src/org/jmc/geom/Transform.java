@@ -2,6 +2,8 @@ package org.jmc.geom;
 
 import java.util.Arrays;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.geom.FaceUtils.Face;
 
 /**
@@ -33,6 +35,7 @@ public class Transform {
 			}
 	}
 
+	@Nonnull
 	public Transform multiply(Transform a) {
 		Transform ret = new Transform();
 		for (int i = 0; i < 4; i++)
@@ -44,6 +47,7 @@ public class Transform {
 		return ret;
 	}
 
+	@Nonnull
 	public Vertex multiply(Vertex vertex) {
 		if (matrix[3][0] + matrix[3][1] + matrix[3][2] + matrix[3][3] != 1)
 			throw new RuntimeException("matrix multiply error: last row doesn't add to 1");
@@ -55,6 +59,7 @@ public class Transform {
 		return ret;
 	}
 
+	@Nonnull
 	public UV multiply(UV uv) {
 		if (matrix[3][0] + matrix[3][1] + matrix[3][2] + matrix[3][3] != 1)
 			throw new RuntimeException("matrix multiply error: last row doesn't add to 1");
@@ -66,6 +71,7 @@ public class Transform {
 	}
 
 
+	@Nonnull
 	public Face multiply(Face face) {
 		Face ret = new Face();
 		ret.mtl_idx = face.mtl_idx;
@@ -78,6 +84,7 @@ public class Transform {
 		return ret;
 	}
 
+	@Nonnull
 	public Vertex applyToNormal(Vertex norm) {
 		double[][] invt = new double[3][3]; // inverse transpose
 
@@ -107,6 +114,7 @@ public class Transform {
 				* invt[1][1] + norm.z * invt[1][2]),(float) (norm.x * invt[2][0] + norm.y * invt[2][1] + norm.z * invt[2][2]));
 	}
 
+	@Nonnull
 	public static Transform translation(float x, float y, float z) {
 		Transform t = new Transform();
 
@@ -116,6 +124,7 @@ public class Transform {
 		return t;
 	}
 
+	@Nonnull
 	public static Transform scale(float x, float y, float z) {
 		Transform t = new Transform();
 
@@ -125,6 +134,7 @@ public class Transform {
 		return t;
 	}
 
+	@Nonnull
 	public static Transform rotation(double a, double b, double g) {
 		// convert to rad
 		a = Math.toRadians(a);
@@ -161,6 +171,7 @@ public class Transform {
 	/*
 	 * Rotates based on direction, assumes front facing NORTH
 	 */
+	@Nonnull
 	public static Transform rotation(Direction dir) {
 		switch (dir)
 		{
@@ -174,6 +185,7 @@ public class Transform {
 		}
 	}
 
+	@Nonnull
 	public static Transform rotation2(double yaw, double pitch, double roll) {
 		// TODO: check if this works correctly
 		// convert to rad

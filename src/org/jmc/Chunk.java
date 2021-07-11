@@ -375,16 +375,13 @@ public class Chunk {
 		int width = 4 * 16;
 		int height = 4 * 16;
 		block_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		if(!fastmode)
-			height_image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+		height_image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 
 		Graphics2D gb = block_image.createGraphics();
 		gb.setColor(Color.white);
 		gb.fillRect(0, 0, width, height);
 
-		Graphics2D gh = null;
-		if(!fastmode)
-			gh = height_image.createGraphics();
+		Graphics2D gh = height_image.createGraphics();
 		gb.setColor(Color.black);
 		gb.fillRect(0, 0, width, height);
 
@@ -409,10 +406,8 @@ public class Chunk {
 
 
 		BlockData[] topBlocks = new BlockData[16*16];
-		int biome[]=new int[16*16];
-		int himage[]=null;
-		if(!fastmode)
-			himage=new int[16*16];
+		int biome[] = new int[16*16];
+		int himage[] = new int[16*16];
 		
 		int x,y,z;
 		for(z = 0; z < 16; z++)
@@ -437,8 +432,7 @@ public class Chunk {
 					{
 						topBlocks[z*16+x] = blockData;
 						biome[z*16+x]=blockBiome;
-						if(!fastmode)
-							himage[z*16+x]=y;
+						himage[z*16+x]=y;
 					}
 				}
 			}

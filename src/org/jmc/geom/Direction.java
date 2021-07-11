@@ -1,5 +1,7 @@
 package org.jmc.geom;
 
+import javax.annotation.Nonnull;
+
 /**
  * A small enum for describing sides of a cube.
  * @author danijel
@@ -20,6 +22,7 @@ public enum Direction
 	/**Back*/
 	SOUTH;
 	
+	@Nonnull
 	public Direction getOpposite() {
 		switch(this) {
 		case UP: return Direction.DOWN;

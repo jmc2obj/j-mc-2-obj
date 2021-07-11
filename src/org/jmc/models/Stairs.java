@@ -181,7 +181,7 @@ public class Stairs extends BlockModel {
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
 
 		String[] mtls = getMtlSides(data, biome);
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 
 		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north
 		int up = data.state.get("half").equals("top") ? 1 : 0;

@@ -45,6 +45,8 @@ public class Liquid extends BlockModel
     
 	private boolean isSameLiquid(BlockData data, BlockData otherBlockData)
 	{
+		if (otherBlockData == null) 
+			return false;
 		String otherID = otherBlockData.id; 
 		if (data.id.equals(otherID))
 			return true;
@@ -79,7 +81,7 @@ public class Liquid extends BlockModel
 		boolean flow_nw, flow_n, flow_ne, flow_e, flow_se, flow_s, flow_sw, flow_w;
 
 		String mtl;
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 
 
 		boolean same_up_nw = isSameLiquid(data, chunks.getBlockData(x-1, y+1, z-1));

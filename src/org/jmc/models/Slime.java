@@ -16,7 +16,7 @@ public class Slime extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		String[] mtlSides = getMtlSides(data, biome);
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		
 		UV[] uv = { new UV(3f/16f, 3f/16f), new UV(13f/16f, 3f/16f), new UV(13f/16f, 13f/16f), new UV(3f/16f, 13f/16f) };
 		UV[][] innerUv = { uv, uv, uv, uv, uv, uv };

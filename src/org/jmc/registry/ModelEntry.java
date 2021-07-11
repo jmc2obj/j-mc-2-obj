@@ -1,8 +1,11 @@
 package org.jmc.registry;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
 
 import org.jmc.geom.Vertex;
 
@@ -67,7 +70,8 @@ public class ModelEntry extends RegistryEntry {
 	public static class RegistryModel implements Cloneable {
 		private transient ModelEntry parentEntry;
 		private NamespaceID parent;
-		public Map<String, String> textures;
+		@Nonnull
+		public Map<String, String> textures = new HashMap<>();
 		public List<ModelElement> elements;
 		
 		private RegistryModel() {
@@ -82,7 +86,8 @@ public class ModelEntry extends RegistryEntry {
 			public Vertex from;
 			public Vertex to;
 			public ElementRotation rotation;
-			public Map<String, ElementFace> faces;
+			@Nonnull
+			public Map<String, ElementFace> faces = new HashMap<>();
 			
 			@Override
 			public String toString() {

@@ -8,8 +8,6 @@ import org.jmc.threading.ChunkProcessor;
 
 public class Cube extends EntityModel
 {
-	protected BlockMaterial materials = null;
-
 	/**
 	 * Set the materials for this block.
 	 */

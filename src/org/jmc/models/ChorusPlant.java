@@ -61,7 +61,7 @@ public class ChorusPlant extends BlockModel
 				null, 
 				getMtlSides(data,biome), 
 				uvSides, 
-				drawSides(chunks, x, y, z));
+				drawSides(chunks, x, y, z, data));
 		
 	    //top, north, south, west, east, bottom
 	    

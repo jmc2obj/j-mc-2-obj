@@ -20,7 +20,7 @@ public class Cube extends BlockModel
 				null, 
 				getMtlSides(data,biome), 
 				null, 
-				drawSides(chunks, x, y, z));
+				drawSides(chunks, x, y, z, data));
 	}
 
 }

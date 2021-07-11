@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -23,6 +27,7 @@ import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 
+@ParametersAreNonnullByDefault
 public class Registry extends BlockModel {
 
 	@Override
@@ -38,7 +43,8 @@ public class Registry extends BlockModel {
 			RegistryModel model = modelEntry.generateModel();
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {
-					addElement(obj, modelInfo, model, element, new Transform(posTrans));
+					if (element != null)
+						addElement(obj, modelInfo, model, element, new Transform(posTrans));
 				}
 			}
 		}
@@ -101,6 +107,7 @@ public class Registry extends BlockModel {
 	}
 	
 	// Get the textures for each face of the cuboid
+	@Nonnull
 	private String[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures) {
 		String[] array = new String[] {"unknown", "unknown", "unknown", "unknown", "unknown", "unknown"};
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
@@ -282,7 +289,7 @@ public class Registry extends BlockModel {
 	}
 	
 	// Rotate the UV coordinates around 0,0
-	private void rotateFaceUVs(UV[] uvs, float rot) {
+	private void rotateFaceUVs(@CheckForNull UV[] uvs, float rot) {
 		if (uvs != null) {
 			for (UV uv : uvs) {
 				Transform t = Transform.translation(-0.5f, -0.5f, 0);

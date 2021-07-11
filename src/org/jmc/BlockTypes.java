@@ -3,6 +3,7 @@ package org.jmc;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.annotation.Nonnull;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -40,6 +41,7 @@ public class BlockTypes
 	private static HashSet<String> unknownBlockIds;
 	
 	private static BlockInfo unknownBlock;
+	private static BlockInfo nullBlock;
 
 
 	private static void readConfig(HashMap<String, BlockInfo> blockTable) throws Exception
@@ -58,6 +60,7 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 
+			@Nonnull
 			String id = Xml.getAttribute(blockNode, "id", "");
 
 			String name = Xml.getAttribute(blockNode, "name", "");
@@ -118,16 +121,19 @@ public class BlockTypes
 					continue;
 				}
 				
+				@Nonnull
+				String[] splitmats = mats.split("\\s*,\\s*");
+				
 				if(biome >= 0)
 				{
-					materials.put(biome, data.state, mats.split("\\s*,\\s*"));
+					materials.put(splitmats, data.state, biome);
 				}
 				else
 				{
 					if (!data.state.isEmpty())
-						materials.put(data.state, mats.split("\\s*,\\s*"));
+						materials.put(splitmats, data.state);
 					else
-						materials.put(mats.split("\\s*,\\s*"));
+						materials.put(splitmats);
 				}
 
 				hasMtl = true;
@@ -391,6 +397,7 @@ public class BlockTypes
 	{
 		// create a block to use when dealing with unknown block ids
 		unknownBlock = new UnknownBlockInfo();
+		nullBlock = new NullBlockInfo();
 
 		// create table to keep track of unknown block ids found
 		unknownBlockIds = new HashSet<String>();
@@ -415,6 +422,8 @@ public class BlockTypes
 	 */
 	public static BlockInfo get(BlockData block)
 	{
+		if (block == null)
+			return nullBlock;
 		BlockInfo bi = blockTable.get(block.id);
 		if (bi == null && !block.id.isEmpty() && !unknownBlockIds.contains(block.id)) {
 			Log.info("Found unknown block id: " + block.id);

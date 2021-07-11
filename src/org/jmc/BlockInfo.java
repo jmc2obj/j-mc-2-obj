@@ -2,7 +2,11 @@ package org.jmc;
 
 import java.awt.Color;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
 import org.jmc.models.BlockModel;
+import org.jmc.models.None;
 import org.jmc.util.Log;
 
 
@@ -35,12 +39,14 @@ public class BlockInfo
 	protected String name;
 
 	/** Materials defined for this block */
+	@Nonnull
 	protected BlockMaterial materials;
 	
 	/** How this block occludes adjacent blocks */
 	protected Occlusion occlusion;
 
 	/** 3D model handler for this block */
+	@Nonnull
 	protected BlockModel model;
 	
 	/** Force this block to always have the waterlogged tag set*/
@@ -78,13 +84,21 @@ public class BlockInfo
 
 	
 	/** Convenience constructor */
-	BlockInfo(String id2, String name, BlockMaterial materials, Occlusion occlusion, BlockModel model, boolean alwaysWaterlogged)
+	BlockInfo(String id, String name, @CheckForNull BlockMaterial materials, Occlusion occlusion, @CheckForNull BlockModel model, boolean alwaysWaterlogged)
 	{
-		this.id = id2;
+		this.id = id;
 		this.name = name;
-		this.materials = materials;
+		if (materials != null) {
+			this.materials = materials;
+		} else {
+			this.materials = new BlockMaterial();
+		}
 		this.occlusion = occlusion;
-		this.model = model;
+		if (model != null) {
+			this.model = model;
+		} else {
+			this.model = new None();
+		}
 		this.actWaterlogged = alwaysWaterlogged;
 	}
 	
@@ -98,7 +112,8 @@ public class BlockInfo
 	 */
 	public Color getPreviewColor(BlockData blockData, int biome)
 	{
-		String[] mtlNames = getMaterials().get(blockData.state,biome);
+		BlockMaterial mat = getMaterials();
+		String[] mtlNames = mat == null ? null : mat.get(blockData.state,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
 			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);

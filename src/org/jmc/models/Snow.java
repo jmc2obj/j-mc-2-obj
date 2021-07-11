@@ -31,7 +31,7 @@ public class Snow extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		int layers = data.state.getInt("layers", 0);
 		
 		if (layers < 8) 

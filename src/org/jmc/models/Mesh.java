@@ -50,6 +50,8 @@ public class Mesh extends BlockModel
 			else
 			{
 				BlockData d=chunks.getBlockData(x+(int)offset.x, y+(int)offset.y, z+(int)offset.z);
+				
+				if(d==null) return false;
 
 				if(!state.isEmpty() && !d.state.matchesMask(state)) return false;
 
@@ -120,7 +122,7 @@ public class Mesh extends BlockModel
 
 	public void propagateMaterials() {
 		for (Mesh mesh : objects) {
-			if (materials != null && mesh.materials == null && !materials.get(null, 0)[0].equals("unknown"))
+			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, 0)[0].equals("unknown"))
 				mesh.setMaterials(materials);
 			mesh.propagateMaterials();
 		}

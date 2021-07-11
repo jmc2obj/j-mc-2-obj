@@ -91,7 +91,7 @@ public class Door extends BlockModel
 		Transform translate = Transform.translation(x+table[lookup][1], y, z+table[lookup][2]);		
 		Transform rt = translate.multiply(rotate);
 
-		boolean[] drawSides = drawSides(chunks, x, y, z);
+		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		Vertex[] vertices = new Vertex[4];
 		UV[] uv = new UV[4];
 
