@@ -130,9 +130,16 @@ public class Head extends BlockModel
 			NBT_Tag skullOwnerNbt = te.getElement("SkullOwner");
 			if (skullOwnerNbt instanceof TAG_Compound) {
 				TAG_Compound skullOwnerTag = (TAG_Compound)skullOwnerNbt;
-				NBT_Tag nameNbt = skullOwnerTag.getElement("Name");
-				if (nameNbt instanceof TAG_String) {
-					String name = ((TAG_String)nameNbt).value;
+				String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
+				if (textureB64 != null) {
+					NBT_Tag nameNbt = skullOwnerTag.getElement("Name");
+					String name;
+					if (nameNbt != null) {
+						name = ((TAG_String)nameNbt).value;
+					} else {
+						String url = extractSkullOwnerTextureUrl(textureB64);
+						name = url.substring(url.lastIndexOf('/') + 1);
+					}
 					String mtlName = "player_" + name;
 					Arrays.fill(mtlSides, mtlName);
 					boolean newMat;
@@ -150,23 +157,28 @@ public class Head extends BlockModel
 		
 		addBox(obj, -0.25f,-0.25f,-0.25f, 0.25f,0.25f,0.25f, rt, mtlSides, uvSides, null);
 	}
-	
+
+	private String extractSkullOwnerTextureUrl(String textureB64) {
+		String textureStr = new String(Base64.getDecoder().decode(textureB64));
+		try {
+			JsonElement textureJson = JsonParser.parseString(textureStr);
+			return textureJson.getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").getAsJsonPrimitive("url").getAsString();
+		} catch (JsonParseException | IllegalStateException | NullPointerException e) {
+			Log.error("Couldn't read head SkullOwner texture JSON", e, false);
+			return "";
+		}
+
+	}
+
 	private void exportSkullOwnerTexture(TAG_Compound skullOwnerTag, String mtlName) {
 		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
 		if (textureB64 == null) {
-			Log.error("Couldn't read SkillOwner properties!", null, false);
+			Log.error("Couldn't read SkullOwner properties!", null, false);
 			return;
 		}
-		String textureStr = new String(Base64.getDecoder().decode(textureB64));
-		String textureUrl;
-		try {
-			JsonElement textureJson = JsonParser.parseString(textureStr);
-			textureUrl = textureJson.getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").getAsJsonPrimitive("url").getAsString();
-		} catch (JsonParseException | IllegalStateException | NullPointerException e) {
-			Log.error("Couldn't read head SkullOwner texture JSON", e, false);
-			return;
-		}
-		
+
+		String textureUrl = extractSkullOwnerTextureUrl(textureB64);
+
 		File texFile = new File(Options.outputDir+"/tex", mtlName+".png");
 		try (BufferedInputStream inputStream = new BufferedInputStream(new URL(textureUrl).openStream())) {
 			FileOutputStream fileOS = new FileOutputStream(texFile);
