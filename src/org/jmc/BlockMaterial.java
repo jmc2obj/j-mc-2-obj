@@ -34,9 +34,6 @@ public class BlockMaterial
 	 */
 	public void put(String[] mtlNames)
 	{
-		if (mtlNames == null || mtlNames.length == 0)
-			throw new IllegalArgumentException("mtlNames must not be null or empty");
-
 		baseMaterials = mtlNames;
 	}
 
@@ -48,10 +45,8 @@ public class BlockMaterial
 	 */
 	public void put(String[] mtlNames, Blockstate state)
 	{
-		if (state == null)
-			throw new IllegalArgumentException("state must not be null");
-		if (mtlNames == null || mtlNames.length == 0)
-			throw new IllegalArgumentException("mtlNames must not be null or empty");
+		if (mtlNames.length == 0)
+			throw new IllegalArgumentException("mtlNames must not be empty");
 
 		dataMaterials.put(state, mtlNames);
 	}
@@ -64,11 +59,9 @@ public class BlockMaterial
 	 * @param biomeValue
 	 */
 	public void put(String[] mtlNames, Blockstate state, int biomeValue)
-	{
-		if (state == null)
-			throw new IllegalArgumentException("state must not be null");			
-		if (mtlNames == null || mtlNames.length == 0)
-			throw new IllegalArgumentException("mtlNames must not be null or empty");
+	{		
+		if (mtlNames.length == 0)
+			throw new IllegalArgumentException("mtlNames must not be empty");
 
 		Map<Blockstate, String[]> mtls = null;
 
@@ -96,6 +89,7 @@ public class BlockMaterial
 	 * @param biomeValue Block biome value.
 	 * @return Array of material names.
 	 */
+	@Nonnull
 	public String[] get(@CheckForNull Blockstate state, int biomeValue)
 	{
 		if (state == null)
@@ -122,7 +116,7 @@ public class BlockMaterial
 				mtlNames = baseMaterials;
 			if (mtlNames == null)
 				mtlNames = getFirstMtl(dataMaterials);
-
+			
 			if (mtlNames == null && !biomeMaterials.isEmpty())
 			{
 				Map<Blockstate, String[]> mtls = biomeMaterials.values().iterator().next();
@@ -135,7 +129,7 @@ public class BlockMaterial
 					mtlNames = getFirstMtl(mtls);
 			}
 		}
-
+		
 		if (mtlNames == null)
 			throw new RuntimeException("materials definition is empty!");
 		return mtlNames;

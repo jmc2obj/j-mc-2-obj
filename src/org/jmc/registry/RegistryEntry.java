@@ -1,14 +1,14 @@
 package org.jmc.registry;
 
 public abstract class RegistryEntry {
-	public NamespaceID name;
+	public NamespaceID id;
 	
 	public RegistryEntry(NamespaceID id) {
-		this.name = id;
+		this.id = id;
 	}
 	
 	@Override
 	public String toString() {
-		return name.toString();
+		return id.toString();
 	}
 }

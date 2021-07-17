@@ -8,14 +8,17 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.jmc.BlockInfo.Occlusion;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.Mesh;
+import org.jmc.models.Registry;
 import org.jmc.registry.BlockstateEntry;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
+import org.jmc.registry.RegistryBlockMaterial;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
@@ -426,10 +429,14 @@ public class BlockTypes
 			return nullBlock;
 		BlockInfo bi = blockTable.get(block.id);
 		if (bi == null && !block.id.isEmpty() && !unknownBlockIds.contains(block.id)) {
-			Log.info("Found unknown block id: " + block.id);
 			BlockstateEntry bs = Registries.getBlockstate(NamespaceID.fromString(block.id));
-			
-			unknownBlockIds.add(block.id);
+			if (bs != null) {
+				bi = new BlockInfo(block.id, block.id, new RegistryBlockMaterial(bs), Occlusion.CUSTOM, new Registry(), false);
+				blockTable.put(block.id, bi);
+			} else {
+				Log.info("Found unknown block id: " + block.id);
+				unknownBlockIds.add(block.id);
+			}
 		}
 
 		return bi != null ? bi : unknownBlock;

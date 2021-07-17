@@ -152,11 +152,9 @@ public class Mesh extends BlockModel
 			if(group!=null && objin_file!=null)
 			{
 				OBJGroup group_mod = group;
-				if (materials != null) {
+				if (!materials.isEmpty()) {
 					String[] mats = materials.get(data.state, biome);
-					if (mats != null) {
-						group_mod = objin_file.overwriteMaterial(group, mats[0]);
-					}
+					group_mod = objin_file.overwriteMaterial(group, mats[0]);
 				}
 				objin_file.addObjectToOutput(group_mod, trans, obj);
 			}
@@ -187,7 +185,7 @@ public class Mesh extends BlockModel
 
 		ret+="MESH ("+this.hashCode()+"), ";
 		ret+="STR "+obj_str+", ";
-		if (materials != null)
+		if (!materials.isEmpty())
 			ret+="MAT "+Arrays.toString(materials.get(null, 0))+", ";
 		ret+="STATE "+mesh_data.state+", ";
 		if (mesh_data.transform != null)

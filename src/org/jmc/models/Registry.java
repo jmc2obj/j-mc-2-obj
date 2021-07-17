@@ -23,6 +23,7 @@ import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementFace;
 import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementRotation;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -113,8 +114,12 @@ public class Registry extends BlockModel {
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			String tex = faceEntry.getValue().texture;
 			if (tex != null && tex.startsWith("#")) {
-				tex = NamespaceID.fromString(textures.get(tex.substring(1))).path.split("/")[1];//TODO tex.substring(1);
+				tex = textures.get(tex.substring(1));
 			}
+			NamespaceID texNs = NamespaceID.fromString(tex);
+			TextureEntry texEnt = Registries.getTexture(texNs);
+			tex = texEnt.getMatName();
+			
 			switch (faceEntry.getKey()) {
 			case "up":
 				array[0] = tex; break;

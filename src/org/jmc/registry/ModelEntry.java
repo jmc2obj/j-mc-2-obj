@@ -45,16 +45,14 @@ public class ModelEntry extends RegistryEntry {
 		if (childModel.elements == null) {
 			childModel.elements = model.elements;
 		}
-		if (model.textures != null) {
-			for (Entry<String, String> textureEntry : model.textures.entrySet()) {
-				if (textureEntry.getValue().startsWith("#")) {
-					String refName = textureEntry.getValue().substring(1);
-					String refTex = childModel.textures.get(refName);
-					assert refTex != null;
-					childModel.textures.putIfAbsent(textureEntry.getKey(), refTex);
-				} else {
-					childModel.textures.put(textureEntry.getKey(), textureEntry.getValue());
-				}
+		for (Entry<String, String> textureEntry : model.textures.entrySet()) {
+			if (textureEntry.getValue().startsWith("#")) {
+				String refName = textureEntry.getValue().substring(1);
+				String refTex = childModel.textures.get(refName);
+				assert refTex != null;
+				childModel.textures.putIfAbsent(textureEntry.getKey(), refTex);
+			} else {
+				childModel.textures.put(textureEntry.getKey(), textureEntry.getValue());
 			}
 		}
 		if (model.parentEntry != null) {

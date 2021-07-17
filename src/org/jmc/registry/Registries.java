@@ -1,9 +1,11 @@
 package org.jmc.registry;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 import com.google.gson.Gson;
@@ -76,8 +78,22 @@ public class Registries {
 	}
 
 	private static synchronized TextureEntry addNewTexture(NamespaceID id) {
-		//File file = new File(TEX_FOLDER, id.path + ".png");
-		TextureEntry entry = new TextureEntry(id);
+		File file = new File(TEX_FOLDER, id.path + ".png");
+		if (!file.exists()) {
+			return null;
+		}
+		TextureEntry entry;
+		try (InputStream is = new FileInputStream(file)) {
+			entry = TextureEntry.fromStream(id, is);
+			entry.addToMaterials();
+			entry.exportTexture();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 		textures.put(id, entry);
 		return entry;
 	}

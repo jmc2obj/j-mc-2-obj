@@ -169,26 +169,29 @@ public class Materials
 		float[] colorComps = color.getRGBComponents(null);
 		float[] specComps = spec.getRGBComponents(null);
 		
-        PrintWriter out = new PrintWriter(Materials.getMaterialFileBuffer());
-        out.println();
-        out.println();
-        out.printf("newmtl %s", matName).println();
-        out.printf("Kd %.4f %.4f %.4f", colorComps[0], colorComps[1], colorComps[2]).println();
-        out.printf("Ks %.4f %.4f %.4f", specComps[0], specComps[1], specComps[2]);
-        if (diffTex != null) {
-        	out.println();
-        	out.printf("map_Kd %s", diffTex);
-        }
-        if (alphaTex != null) {
-        	out.println();
-        	out.printf("map_d %s", alphaTex);
-        }
-        
-        out.close();
+		PrintWriter out = new PrintWriter(Materials.getMaterialFileBuffer());
+		out.println();
+		out.printf("newmtl %s", matName).println();
+		out.printf("Kd %.4f %.4f %.4f", colorComps[0], colorComps[1], colorComps[2]).println();
+		out.printf("Ks %.4f %.4f %.4f", specComps[0], specComps[1], specComps[2]).println();
+		if (diffTex != null) {
+			out.printf("map_Kd %s", diffTex).println();
+		}
+		if (alphaTex != null) {
+			out.printf("map_d %s", alphaTex).println();
+		}
+		
+		out.close();
 	}
 
 	public static ByteArrayOutputStream getMaterialFileBuffer() {
 		return matBuffer;
+	}
+
+
+	public static void addMaterial(String matName, Color colour, String tex) {
+		mtlColors.put(matName, colour);
+		mtlTextures.put(matName, tex);
 	}
 
 
