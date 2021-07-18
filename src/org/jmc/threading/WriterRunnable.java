@@ -18,6 +18,7 @@ import org.jmc.StopCallback;
 import org.jmc.UVRecalculate;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
 
 public class WriterRunnable implements Runnable {
@@ -238,15 +239,15 @@ public class WriterRunnable implements Runnable {
 	private void appendFaces(PrintWriter out)
 	{		
 		Collections.sort(exportFaces);
-		String last_mtl=null;	
+		NamespaceID last_mtl=null;	
 		Long last_obj_idx=Long.valueOf(-1);
 		for(OBJFace f:exportFaces)
 		{
-			if(!f.mtl.equals(last_mtl) && print_usemtl)
+			if(!f.tex.equals(last_mtl) && print_usemtl)
 			{
 				out.println();
-				out.println("usemtl "+f.mtl);
-				last_mtl=f.mtl;
+				out.println("usemtl "+f.tex);
+				last_mtl=f.tex;
 			}
 			
 			if(!f.obj_idx.equals(last_obj_idx))
@@ -283,7 +284,7 @@ public class WriterRunnable implements Runnable {
 			Vertex[] verts = f.vertices;
 			Vertex[] norms = f.norms;
 			UV[] uv = f.uvs;
-			String mtl = f.material;
+			NamespaceID mtl = f.texture;
 			
 			if(f.chunk_idx != last_chunk_idx)
 			{
@@ -293,7 +294,7 @@ public class WriterRunnable implements Runnable {
 			
 			OBJFace face = new OBJFace(verts.length);
 			face.obj_idx=Long.valueOf(obj_idx_count);
-			face.mtl = mtl;
+			face.tex = mtl;
 			if (norms == null) face.normals = null;
 			if (uv == null) 
 			{

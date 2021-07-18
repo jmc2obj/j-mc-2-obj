@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -66,7 +67,7 @@ public class Rails extends BlockModel
 			
 		rt = translate.multiply(rotate);
 		
-		String mtl;
+		NamespaceID mtl;
 		if (curved || powered) {
 			mtl = materials.get(data.state,biome)[1];
 		}

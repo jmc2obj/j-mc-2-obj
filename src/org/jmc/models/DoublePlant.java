@@ -5,6 +5,7 @@ import java.util.Random;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -37,7 +38,7 @@ public class DoublePlant extends BlockModel
 			}
 		}
 
-		String[] mtls = materials.get(data.state, biome);
+		NamespaceID[] mtls = materials.get(data.state, biome);
 
 		Transform t = Transform.translation(x+randomX, y, z+randomZ);
 		

@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -48,7 +49,7 @@ public class Bed extends BlockModel
 		 *           +z
 		 */
 		
-		String material = materials.get(data.state, biome)[0];
+		NamespaceID material = materials.get(data.state, biome)[0];
 		
 		if (head)
 		{

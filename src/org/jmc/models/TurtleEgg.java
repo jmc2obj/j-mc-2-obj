@@ -5,6 +5,7 @@ import java.util.Random;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -21,7 +22,7 @@ public class TurtleEgg extends BlockModel
 		// The amount of eggs (1-4)
 		int eggs = Integer.parseInt(data.state.get("eggs"));
 		
-		String[] mtlSides = getMtlSides(data, biome);
+		NamespaceID[] mtlSides = getMtlSides(data, biome);
 		
 		Transform rotate = new Transform();
 		Transform translate = new Transform();

@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -52,7 +53,7 @@ public class Chain extends BlockModel
 		}
 
 		final Transform transform = move.multiply(rotation);
-		final String material = materials.get(data.state, biome)[0];
+		final NamespaceID material = materials.get(data.state, biome)[0];
 		
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(1/16f ,-0.5f,-1/16f);

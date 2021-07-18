@@ -8,6 +8,8 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.jmc.registry.NamespaceID;
+
 
 /**
  * Holds the material definitions for a block type.
@@ -15,12 +17,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BlockMaterial
 {
-	private String[] baseMaterials = null;
+	private NamespaceID[] baseMaterials = null;
 
 	@Nonnull
-	private Map<Blockstate, String[]> dataMaterials = new LinkedHashMap<Blockstate, String[]>();
+	private Map<Blockstate, NamespaceID[]> dataMaterials = new LinkedHashMap<>();
 
-	private Map<Integer, Map<Blockstate, String[]>> biomeMaterials = new LinkedHashMap<Integer, Map<Blockstate, String[]>>();
+	private Map<Integer, Map<Blockstate, NamespaceID[]>> biomeMaterials = new LinkedHashMap<>();
 
 	public boolean isEmpty() {
 		return biomeMaterials.isEmpty() && dataMaterials.isEmpty() && (baseMaterials == null || baseMaterials.length < 1);
@@ -32,7 +34,7 @@ public class BlockMaterial
 	 * 
 	 * @param mtlNames 
 	 */
-	public void put(String[] mtlNames)
+	public void put(NamespaceID[] mtlNames)
 	{
 		baseMaterials = mtlNames;
 	}
@@ -43,7 +45,7 @@ public class BlockMaterial
 	 * @param mtlNames 
 	 * @param dataValue
 	 */
-	public void put(String[] mtlNames, Blockstate state)
+	public void put(NamespaceID[] mtlNames, Blockstate state)
 	{
 		if (mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be empty");
@@ -58,18 +60,18 @@ public class BlockMaterial
 	 * @param state
 	 * @param biomeValue
 	 */
-	public void put(String[] mtlNames, Blockstate state, int biomeValue)
+	public void put(NamespaceID[] mtlNames, Blockstate state, int biomeValue)
 	{		
 		if (mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be empty");
 
-		Map<Blockstate, String[]> mtls = null;
+		Map<Blockstate, NamespaceID[]> mtls = null;
 
 		if(biomeMaterials.containsKey(biomeValue))
 			mtls=biomeMaterials.get(biomeValue);
 		else
 		{
-			mtls = new LinkedHashMap<Blockstate, String[]>();
+			mtls = new LinkedHashMap<Blockstate, NamespaceID[]>();
 			biomeMaterials.put(biomeValue, mtls);
 		}
 
@@ -90,15 +92,15 @@ public class BlockMaterial
 	 * @return Array of material names.
 	 */
 	@Nonnull
-	public String[] get(@CheckForNull Blockstate state, int biomeValue)
+	public NamespaceID[] get(@CheckForNull Blockstate state, int biomeValue)
 	{
 		if (state == null)
 			state = new Blockstate();
 		
-		String[] mtlNames = null;
+		NamespaceID[] mtlNames = null;
 		if(Options.renderBiomes && biomeMaterials.containsKey(biomeValue))
 		{
-			Map<Blockstate, String[]> mtls=biomeMaterials.get(biomeValue);
+			Map<Blockstate, NamespaceID[]> mtls=biomeMaterials.get(biomeValue);
 			mtlNames = mtls.get(state);
 			if (mtlNames == null)
 				mtlNames = getMasked(mtls, state);
@@ -119,7 +121,7 @@ public class BlockMaterial
 			
 			if (mtlNames == null && !biomeMaterials.isEmpty())
 			{
-				Map<Blockstate, String[]> mtls = biomeMaterials.values().iterator().next();
+				Map<Blockstate, NamespaceID[]> mtls = biomeMaterials.values().iterator().next();
 				mtlNames = mtls.get(state);
 				if (mtlNames == null)
 					mtlNames = getMasked(mtls, state);
@@ -135,8 +137,8 @@ public class BlockMaterial
 		return mtlNames;
 	}
 	
-	private String[] getMasked(Map<Blockstate, String[]> mtls, Blockstate state) {
-		for (Entry<Blockstate, String[]> eMtl : mtls.entrySet()) {
+	private NamespaceID[] getMasked(Map<Blockstate, NamespaceID[]> mtls, Blockstate state) {
+		for (Entry<Blockstate, NamespaceID[]> eMtl : mtls.entrySet()) {
 			if (state.matchesMask(eMtl.getKey())) {
 				return eMtl.getValue();
 			}
@@ -145,8 +147,8 @@ public class BlockMaterial
 	}
 
 
-	private String[] getFirstMtl(Map<?, String[]> map) {
-		for (String[] mtl : map.values()) {
+	private NamespaceID[] getFirstMtl(Map<?, NamespaceID[]> map) {
+		for (NamespaceID[] mtl : map.values()) {
 			if (mtl != null) {
 				return mtl;
 			}

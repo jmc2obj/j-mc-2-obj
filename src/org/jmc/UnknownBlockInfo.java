@@ -3,6 +3,8 @@ package org.jmc;
 import org.jmc.models.BlockModel;
 import org.jmc.models.Cube;
 import org.jmc.models.None;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
 
 
 /**
@@ -20,7 +22,7 @@ public class UnknownBlockInfo extends BlockInfo
 		super("", "unknown", null, Occlusion.NONE, null, false);
 
 		materials = new BlockMaterial();
-		materials.put(new String[] { "unknown" });
+		materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
 
 		cubeModel = new Cube();
 		cubeModel.setMaterials(materials);

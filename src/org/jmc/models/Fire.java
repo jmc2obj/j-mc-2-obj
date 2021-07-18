@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -16,7 +17,7 @@ public class Fire extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String[] mtlSides = getMtlSides(data,biome);
+		NamespaceID[] mtlSides = getMtlSides(data,biome);
 		
 		Transform t = Transform.translation(x, y, z);
 		
@@ -47,7 +48,7 @@ public class Fire extends BlockModel
 		}
 	}
 	
-	private void addSide(ChunkProcessor obj, Transform baseT, String material, float yaw) {
+	private void addSide(ChunkProcessor obj, Transform baseT, NamespaceID material, float yaw) {
 		Transform rot = Transform.rotation(0, yaw, 0);
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, -0.5f, -0.5f);
@@ -57,7 +58,7 @@ public class Fire extends BlockModel
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
 	}
 	
-	private void addFloor(ChunkProcessor obj, Transform baseT, String material) {
+	private void addFloor(ChunkProcessor obj, Transform baseT, NamespaceID material) {
 		Transform rot = new Transform();
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex( 0.49f, -0.5f, -0.25f);
@@ -73,7 +74,7 @@ public class Fire extends BlockModel
 		obj.addFace(vertices, null, baseT.multiply(rot), material);
 	}
 
-	private void addUp(ChunkProcessor obj, Transform baseT, String material) {
+	private void addUp(ChunkProcessor obj, Transform baseT, NamespaceID material) {
 		Transform rot = new Transform();
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, 0.5f,  0.49f);

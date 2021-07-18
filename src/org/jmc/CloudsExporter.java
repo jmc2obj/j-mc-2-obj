@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ThreadOutputQueue;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
 import org.jmc.threading.WriterRunnable;
@@ -52,6 +53,8 @@ public class CloudsExporter {
 		int image_w = image.getWidth();
 		int image_h = image.getHeight();
 		
+		NamespaceID texture = NamespaceID.fromString("environment/clouds");
+		
 		ArrayList<Face> faces = new ArrayList<Face>();
 		
 		for (int z = 0; z < image_h; z++) {
@@ -64,14 +67,14 @@ public class CloudsExporter {
 					verts[1] = new Vertex(x, 0, z+1);
 					verts[2] = new Vertex(x, 0, z);
 					verts[3] = new Vertex(x+1, 0, z);
-					faces.add(new Face(verts.clone(), null, null, "cloud"));
+					faces.add(new Face(verts.clone(), null, null, texture));
 					
 					// top
 					verts[0] = new Vertex(x, 0.3333f, z+1);
 					verts[1] = new Vertex(x+1, 0.3333f, z+1);
 					verts[2] = new Vertex(x+1, 0.3333f, z);
 					verts[3] = new Vertex(x, 0.3333f, z);
-					faces.add(new Face(verts.clone(), null, null, "cloud"));
+					faces.add(new Face(verts.clone(), null, null, texture));
 					
 					// left (W)
 					if (!isCloud(image, x-1, z)) {
@@ -79,7 +82,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x, 0, z+1);
 						verts[2] = new Vertex(x, 0.3333f, z+1);
 						verts[3] = new Vertex(x, 0.3333f, z);
-						faces.add(new Face(verts.clone(), null, null, "cloud"));
+						faces.add(new Face(verts.clone(), null, null, texture));
 					}
 
 					// right (E)
@@ -88,7 +91,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x+1, 0, z);
 						verts[2] = new Vertex(x+1, 0.3333f, z);
 						verts[3] = new Vertex(x+1, 0.3333f, z+1);
-						faces.add(new Face(verts.clone(), null, null, "cloud"));
+						faces.add(new Face(verts.clone(), null, null, texture));
 					}
 					
 					// front (N)
@@ -97,7 +100,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x, 0, z);
 						verts[2] = new Vertex(x, 0.3333f, z);
 						verts[3] = new Vertex(x+1, 0.3333f, z);
-						faces.add(new Face(verts.clone(), null, null, "cloud"));
+						faces.add(new Face(verts.clone(), null, null, texture));
 					}
 
 					// back (S)
@@ -106,7 +109,7 @@ public class CloudsExporter {
 						verts[1] = new Vertex(x+1, 0, z+1);
 						verts[2] = new Vertex(x+1, 0.3333f, z+1);
 						verts[3] = new Vertex(x, 0.3333f, z+1);
-						faces.add(new Face(verts.clone(), null, null, "cloud"));
+						faces.add(new Face(verts.clone(), null, null, texture));
 					}
 				}
 			}

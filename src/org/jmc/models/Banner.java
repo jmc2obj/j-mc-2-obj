@@ -3,19 +3,14 @@ package org.jmc.models;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-
 import org.jmc.BlockData;
-import org.jmc.Materials;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.Options;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
@@ -23,6 +18,9 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Filesystem.JmcConfFile;
@@ -34,7 +32,7 @@ public class Banner extends BlockModel {
      * Pattern Layer List
      * */
 
-    private static Set<String> exportedMaterials = new HashSet<String>();
+    private static Set<NamespaceID> exportedMaterials = new HashSet<>();
 
 	private static boolean firstBaseReadError = true;
     /**
@@ -202,23 +200,23 @@ public class Banner extends BlockModel {
         }
 
         // use material hash (to generate unique material name and images)
-        String bannerMaterial = "banner_";
+        String bannerTexName = "banner_";
         if (baseColorIndex > -1) {
-            bannerMaterial+= createPatternHash(baseColorIndex, patternList);
+            bannerTexName+= createPatternHash(baseColorIndex, patternList);
         }
+        NamespaceID bannerTexId = new NamespaceID("jmc2obj", "banner/" + bannerTexName);
 
 
 
         // add the Banner
-        addBanner(bannerType, bannerMaterial, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
+        addBanner(bannerType, bannerTexId, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
 
         try {
         	synchronized (exportedMaterials) {
 	            // already exported material?
-	            if (!exportedMaterials.contains(bannerMaterial)) {
-	                if (generateBannerImage(bannerMaterial, patternList)) {
-	                	addBannerMaterial(bannerMaterial, baseColorIndex);
-	                	exportedMaterials.add(bannerMaterial);
+	            if (!exportedMaterials.contains(bannerTexId)) {
+	                if (generateBannerImage(bannerTexId, patternList)) {
+	                	exportedMaterials.add(bannerTexId);
 	                }
 	            }
 			}
@@ -236,17 +234,13 @@ public class Banner extends BlockModel {
      * @param materialImageName
      * @throws IOException
      */
-    // TODO: user needs to export the textures first! - someone's might got a better idea for this!
-    private boolean generateBannerImage(String materialImageName, ArrayList<BannerPattern> patternList) throws IOException {
+    private boolean generateBannerImage(NamespaceID materialImageName, ArrayList<BannerPattern> patternList) throws IOException {
 
         // get the base material texture
-        BufferedImage backgroundImage = null;
-        try {
-            backgroundImage = ImageIO.read(new File(Options.outputDir + "/tex/banner_base.png"));
-        }
-        catch (IOException e) {
+        BufferedImage backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner/base")).getImage();
+        if (backgroundImage == null) {
         	synchronized (Banner.class) {
-                Log.error("Cant read banner_base - did you export Textures first?", e, firstBaseReadError);
+                Log.error("Cant read banner base image!", null, firstBaseReadError);
                 firstBaseReadError = false;
 			}
         }
@@ -273,22 +267,9 @@ public class Banner extends BlockModel {
                 BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 
                 // pattern source image
-                BufferedImage patternSource = null;
-                try {
-                    patternSource = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + ".png"));
-                }
-                catch (IOException e) {
-                    Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
-                    return false;
-                }
-
-                // pattern source image
-                BufferedImage patternAlpha = null;
-                try {
-                    patternAlpha = ImageIO.read(new File(Options.outputDir + "/tex/banner_pattern_" + bp.getPattern() + "_a.png"));
-                }
-                catch (IOException e) {
-                    Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
+                BufferedImage patternSource = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + bp.getPattern())).getImage();
+                if (patternSource == null) {
+                	Log.error("Cant read banner pattern " + bp.getPattern(), null, true);
                     return false;
                 }
 
@@ -299,14 +280,13 @@ public class Banner extends BlockModel {
                 
                 for(int x=0; x<imageWidth; x++) {
                     for(int y=0; y<imageHeight; y++) {
-                        Color maskColor = new Color(patternSource.getRGB(x, y));
-                        Color mainMaskColor = new Color(patternAlpha.getRGB(x, y));
-                        
+                        Color maskColor = new Color(patternSource.getRGB(x, y), true);
                         
                         int alpha = maskColor.getRed();
                         // mask the mask with the mainmask :) YEAH
-                        if (alpha > mainMaskColor.getRed()) {
-                            alpha = alpha * (mainMaskColor.getRed()/255);
+                        // AKA premult
+                        if (alpha > maskColor.getAlpha()) {
+                            alpha = alpha * (maskColor.getAlpha()/255);
                         }
                         
                         Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
@@ -321,10 +301,9 @@ public class Banner extends BlockModel {
                 
                 Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
             }
-
-            if (!ImageIO.write(combined, "PNG", new File(Options.outputDir+"/tex", materialImageName+".png"))) {
-                throw new RuntimeException("Unexpected error writing image");
-            }
+            
+            TextureEntry texEntry = Registries.getTexture(materialImageName);
+            texEntry.setImage(combined);
             return true;
         }
 		return false;
@@ -363,17 +342,6 @@ public class Banner extends BlockModel {
     }
 
     /**
-     * Append the current texture to material file
-     * @param materialName
-     */
-    private void addBannerMaterial(String materialName, int baseColorIndex) {
-    	
-        Color baseColor = getColorById(baseColorIndex);
-        
-        Materials.writeMaterial(materialName, baseColor, null, "tex/" + materialName + ".png", null);
-    }
-
-    /**
      * Add Banner to Outputfile
      *
      * @param objFileName
@@ -385,13 +353,13 @@ public class Banner extends BlockModel {
      * @param scale
      * @param rotation
      */
-    public void addBanner(String bannerType, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
+    public void addBanner(String bannerType, NamespaceID material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
     	String objFileName = "conf/models/banner_"+bannerType+".obj";
     	
         OBJInputFile objFile = new OBJInputFile();
 
         try (JmcConfFile objFileStream = new JmcConfFile(objFileName)) {
-            objFile.loadFile(objFileStream, material);
+            objFile.loadFile(objFileStream, material.getExportSafeString());
         } catch (IOException e) {
             Log.error("Can't read banner obj file!", e, true);
         }

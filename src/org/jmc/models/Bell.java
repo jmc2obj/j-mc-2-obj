@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -13,11 +14,11 @@ public class Bell extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		
-		String[] mtls = materials.get(data.state,biome);
-		String[] mtls_BellBottom = new String [] { mtls[2], mtls[1], mtls[1], mtls[1], mtls[1], mtls[2] };
-		String[] mtls_BellTop = new String [] 	{ mtls[0], mtls[1], mtls[1], mtls[1], mtls[1], mtls[2] };
-		String[] mtls_Wood = new String [] 		{ mtls[4], mtls[4], mtls[4], mtls[4], mtls[4], mtls[4] };
-		String[] mtls_Stone = new String [] 	{ mtls[3], mtls[3], mtls[3], mtls[3], mtls[3], mtls[3] };
+		NamespaceID[] mtls = materials.get(data.state,biome);
+		NamespaceID[] mtls_BellBottom = new NamespaceID []	{ mtls[2], mtls[1], mtls[1], mtls[1], mtls[1], mtls[2] };
+		NamespaceID[] mtls_BellTop = new NamespaceID [] 	{ mtls[0], mtls[1], mtls[1], mtls[1], mtls[1], mtls[2] };
+		NamespaceID[] mtls_Wood = new NamespaceID [] 		{ mtls[4], mtls[4], mtls[4], mtls[4], mtls[4], mtls[4] };
+		NamespaceID[] mtls_Stone = new NamespaceID [] 		{ mtls[3], mtls[3], mtls[3], mtls[3], mtls[3], mtls[3] };
 		
 		UV[] uvTop, uvBottom, uvSide, uvSide2;
 		UV[][] uvSides;

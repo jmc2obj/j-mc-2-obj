@@ -23,6 +23,7 @@ import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Log;
 
 
@@ -37,34 +38,34 @@ public class ChunkProcessor
 	private ArrayList<Face> faces = new ArrayList<Face>();
 
 	/**
-	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, NamespaceID) addFace}
 	 */
-	public void addFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
-		addFace(verts, null, uv, trans, mtl);
+	public void addFace(Vertex[] verts, UV[] uv, Transform trans, NamespaceID tex) {
+		addFace(verts, null, uv, trans, tex);
 	}
 	
 	/**
 	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String, boolean) addFace}
 	 */
-	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl)
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, NamespaceID tex)
 	{
-		addFace(verts, norms, uv, trans, mtl, true);
+		addFace(verts, norms, uv, trans, tex, true);
 	}
 
 	/**
 	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
 	 */
-	public void addDoubleSidedFace(Vertex[] verts, UV[] uv, Transform trans, String mtl) {
-		addDoubleSidedFace(verts, null, uv, trans, mtl);
+	public void addDoubleSidedFace(Vertex[] verts, UV[] uv, Transform trans, NamespaceID tex) {
+		addDoubleSidedFace(verts, null, uv, trans, tex);
 	}
 
-	public void addDoubleSidedFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl) {
-		addFace(verts, norms, uv, trans, mtl);
+	public void addDoubleSidedFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, NamespaceID tex) {
+		addFace(verts, norms, uv, trans, tex);
 		if (Options.doubleSidedFaces) {
 			if (uv == null) {
 				uv = defaultUVs();
 			}
-			addFace(reversed(verts), norms, reversed(uv), trans, mtl);
+			addFace(reversed(verts), norms, reversed(uv), trans, tex);
 		}
 	}
 
@@ -97,10 +98,10 @@ public class ChunkProcessor
 	 * @param uv texture coordinates for the vertices. If null, the default coordinates will be used
 	 * (only accepted if face is a quad!).
 	 * @param trans Transform to apply to the vertex coordinates. If null, no transform is applied 
-	 * @param mtl Name of the material for the face
+	 * @param tex Name of the material for the face
 	 * @param canOptimise Allows this face to be optimised
 	 */
-	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, String mtl, boolean canOptimise)
+	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, NamespaceID tex, boolean canOptimise)
 	{
 		if (uv == null)
 		{
@@ -111,7 +112,7 @@ public class ChunkProcessor
 		}
 		Face face = new Face();
 		face.uvs = uv.clone();
-		face.material = mtl;
+		face.texture = tex;
 		face.vertices = verts.clone();
 		if (norms != null) {
 			face.norms = norms.clone();
@@ -303,7 +304,7 @@ public class ChunkProcessor
 		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
 			isFacingEqual = false;
 		}
-		if (face1.material != face2.material) {
+		if (face1.texture != face2.texture) {
 			return false;
 		}
 		Vertex[] verts1 = face1.vertices;

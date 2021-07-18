@@ -4,6 +4,7 @@ import org.jmc.BlockMaterial;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 
 public class Cube extends EntityModel
@@ -20,11 +21,11 @@ public class Cube extends EntityModel
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected String[] getMtlSides()
+	protected NamespaceID[] getMtlSides()
 	{
-		String[] abbrMtls = materials.get(null, -1);
+		NamespaceID[] abbrMtls = materials.get(null, -1);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		if (abbrMtls.length < 2)
 		{
 			mtlSides[0] = abbrMtls[0];
@@ -82,7 +83,7 @@ public class Cube extends EntityModel
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, String[] mtlSides, UV[][] uvSides)
+	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 

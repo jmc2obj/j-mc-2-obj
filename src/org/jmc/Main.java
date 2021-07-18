@@ -9,6 +9,7 @@ import javax.swing.UIManager;
 import org.jmc.Options.UIMode;
 import org.jmc.gui.MainWindow;
 import org.jmc.gui.Settings;
+import org.jmc.registry.Registries;
 import org.jmc.util.Log;
 
 
@@ -65,7 +66,7 @@ public class Main
 
 		try {
 			Configuration.initialize();
-			Materials.initialize();
+			Registries.initialize();
 			BlockTypes.initialize();
 			EntityTypes.initialize();
 			
@@ -94,7 +95,7 @@ public class Main
 		
 		try {
 			Configuration.initialize();
-			Materials.initialize();
+			Registries.initialize();
 			BlockTypes.initialize();
 			EntityTypes.initialize();
 		}

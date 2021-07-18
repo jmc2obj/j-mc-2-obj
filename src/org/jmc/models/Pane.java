@@ -6,6 +6,7 @@ import org.jmc.BlockTypes;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -30,8 +31,8 @@ public class Pane extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String mtl = materials.get(data.state,biome)[0];
-		String mtlSide = materials.get(data.state,biome)[1];
+		NamespaceID mtl = materials.get(data.state,biome)[0];
+		NamespaceID mtlSide = materials.get(data.state,biome)[1];
 		
 		boolean n = data.state.get("north").equals("true");
 		boolean s = data.state.get("south").equals("true");

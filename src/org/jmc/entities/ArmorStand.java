@@ -10,6 +10,7 @@ import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -87,14 +88,6 @@ public class ArmorStand extends Entity {
 			// Log.info("----------------------------------------------");
 			// Log.info("- Slot "+i+" armed ("+mcMaterial+")");
 			// Log.info(""+armor);
-			
-			String baseItemName[] = {
-					null, 
-					"feet", 
-					"legs", 
-					"chest", 
-					"helmet"
-			};
 
 			// internal: offset x, y, z, rotate, initialscale
 			// blender:  offset ?, z, -y, rotate, initialscale
@@ -106,10 +99,18 @@ public class ArmorStand extends Entity {
 					{0, 1.71, 0, 180, 1} // helmet
 			};
 			
+			String layer[] = {
+					null, 
+					"layer_2", //feet
+					"layer_2", //legs
+					"layer_1", //chest
+					"layer_1"  //helmet
+			};
+			
 			// base material
-			if (baseItemName[i] != null) {
-				addArmor("conf/models/armor_"+baseItemName[i]+".obj", 
-						"armor_" + mcMaterial + "_"+baseItemName[i], 
+			if (layer[i] != null) {
+				addArmor("conf/models/armor_"+layer[i]+".obj", 
+						NamespaceID.fromString("models/armor/" + mcMaterial + "_"+layer[i]), 
 						obj, 
 						posCorrection[i][0], 
 						posCorrection[i][1],
@@ -120,9 +121,9 @@ public class ArmorStand extends Entity {
 			
 			// leather overlay
 			if (mcMaterial.equals("leather")) {
-				if (baseItemName[i] != null) {
-					addArmor("conf/models/armor_"+baseItemName[i]+".obj", 
-							"armor_" + mcMaterial + "_"+baseItemName[i]+"_overlay", 
+				if (layer[i] != null) {
+					addArmor("conf/models/armor_"+layer[i]+".obj", 
+							NamespaceID.fromString("models/armor/" + mcMaterial + "_"+layer[i]+"_overlay"), 
 							obj, 
 							posCorrection[i][0], 
 							posCorrection[i][1],
@@ -134,9 +135,9 @@ public class ArmorStand extends Entity {
 			
 			// is enchanted
 			if (enchanted != null) {
-				if (baseItemName[i] != null) {
-					addArmor("conf/models/armor_"+baseItemName[i]+".obj", 
-							"armor_enchanted", 
+				if (layer[i] != null) {
+					addArmor("conf/models/armor_"+layer[i]+".obj", 
+							NamespaceID.fromString("misc/enchanted_item_glint"), 
 							obj, 
 							posCorrection[i][0], 
 							posCorrection[i][1],
@@ -150,15 +151,15 @@ public class ArmorStand extends Entity {
 		
 	}
 
-	public void addArmor(String objFileName, String material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
+	public void addArmor(String objFileName, NamespaceID material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
 		
 		OBJInputFile objFile = new OBJInputFile();
 		
 		
 		try (JmcConfFile objFileStream = new JmcConfFile(objFileName)) {
-			objFile.loadFile(objFileStream, material);
+			objFile.loadFile(objFileStream, material.getExportSafeString());
 		} catch (IOException e) {
-			Log.error("Cant read Armor_Stand Equipment", e, true);
+			Log.error("Cant read Armor_Stand Equipment obj", e, true);
 		}
 		
 		

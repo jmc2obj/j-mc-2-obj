@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -13,10 +14,10 @@ public class Lectern extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		
-		String[] mtls = getMtlSides(data, biome);
-		String[] mtls_Base = new String [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[4] };
-		String[] mtls_Post = new String [] { mtls[0], mtls[1], mtls[1], mtls[2], mtls[2], mtls[4] };
-		String[] mtls_Top = new String [] { mtls[3], mtls[2], mtls[2], mtls[2], mtls[2], mtls[4] };
+		NamespaceID[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls_Base = new NamespaceID [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[4] };
+		NamespaceID[] mtls_Post = new NamespaceID [] { mtls[0], mtls[1], mtls[1], mtls[2], mtls[2], mtls[4] };
+		NamespaceID[] mtls_Top = new NamespaceID [] { mtls[3], mtls[2], mtls[2], mtls[2], mtls[2], mtls[4] };
 		
 		UV[] uvTop, uvSide, uvSide2, uvFront, uvBack;
 		UV[][] uvSides;

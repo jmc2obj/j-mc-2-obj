@@ -13,6 +13,7 @@ import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_Short;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Log;
 
@@ -24,7 +25,7 @@ import org.jmc.util.Log;
 public class ItemFrame extends Entity
 {
 	
-	private Set<String> exportedMaps = new HashSet<String>();
+	private Set<NamespaceID> exportedMaps = new HashSet<>();
 
 	
 	@Override
@@ -90,24 +91,22 @@ public class ItemFrame extends Entity
 				
 				short map_id = ((TAG_Short)item.getElement("Damage")).value;
 				// Log.info("Found map with id: '" + map_id+ "'");
-				String [] matname={"map_" + map_id + "_item_frame"};
-				materials.put(matname);
+				NamespaceID mapTexID = new NamespaceID("jmc2obj", "map/" + map_id);
+				materials.put(new NamespaceID[]{mapTexID});
 				
 				
 				FilledMapDat map_data = new FilledMapDat(Options.worldDir);
 				if (!map_data.open(String.valueOf(map_id))) {
 					// Log.info("'map_" + map_id+ ".dat' not found");
 					return;
-				}
-				else {
-					String mapName = "'map_" + map_id;
-					boolean alreadyExported = exportedMaps.contains(mapName);
+				} else {
+					boolean alreadyExported = exportedMaps.contains(mapTexID);
 					// already exported material?
 					if (!alreadyExported) {
-						exportedMaps.add(mapName);
+						exportedMaps.add(mapTexID);
 						// Log.info("export map: "+mapName);
 						try {
-							map_data.writePngTexture();
+							map_data.writePngTexture(mapTexID);
 						} catch (IOException e) {
 							Log.error("Cant write map", e, true);
 						}
@@ -115,18 +114,11 @@ public class ItemFrame extends Entity
 					else {
 						// Log.info(" - Map already exported!");
 					}
-					
-						
 				}
-				
-				
-				
-				
-				
 				break;
 			default:
 				// Log.info("Unsupported FrameItem: '" + item_id + "'");
-				String [] matname1={"item_frame"};
+				NamespaceID[] matname1={NamespaceID.fromString("block/item_frame")};
 				materials.put(matname1);
 				break;
 		}

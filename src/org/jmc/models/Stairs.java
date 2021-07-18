@@ -6,6 +6,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.Half;
+import org.jmc.registry.NamespaceID;
 import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.threading.ChunkProcessor;
@@ -180,7 +181,7 @@ public class Stairs extends BlockModel {
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
 
-		String[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls = getMtlSides(data, biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 
 		int dir = getFacingDir(data); // 0-east; 1-west; 2-south; 3-north

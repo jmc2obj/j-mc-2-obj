@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -18,10 +19,10 @@ public class Grindstone extends BlockModel
 		Transform translate = new Transform();
 		Transform rt;
 		
-		String[] mtls = getMtlSides(data, biome);
-		String[] mtls_Grindstone = new String [] { mtls[1], mtls[1], mtls[1], mtls[2], mtls[2], mtls[1] };
-		String[] mtls_Pivot = new String [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[0] };
-		String[] mtls_Poles = new String [] { mtls[3], mtls[3], mtls[3], mtls[3], mtls[3], mtls[3] };
+		NamespaceID[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls_Grindstone = new NamespaceID [] { mtls[1], mtls[1], mtls[1], mtls[2], mtls[2], mtls[1] };
+		NamespaceID[] mtls_Pivot = new NamespaceID [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[0] };
+		NamespaceID[] mtls_Poles = new NamespaceID [] { mtls[3], mtls[3], mtls[3], mtls[3], mtls[3], mtls[3] };
 		
 		UV[] uvTop, uvSide, uvSide2;
 		UV[][] uvSides;

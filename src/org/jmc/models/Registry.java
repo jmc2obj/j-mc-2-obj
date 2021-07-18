@@ -23,7 +23,6 @@ import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementFace;
 import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementRotation;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
-import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -55,7 +54,7 @@ public class Registry extends BlockModel {
 	// Add the element 
 	private void addElement(ChunkProcessor obj, ModelInfo modelInfo, RegistryModel model, ModelElement element, Transform baseTrans) {
 		Transform stateTrans = getStateTrans(modelInfo);
-		String[] textures = getFaceTextureArray(element.faces, model.textures);
+		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
 		boolean[] drawSides = getSidesCulling(element.faces);
 		Transform elementTrans = getElemTrans(element);
@@ -109,30 +108,29 @@ public class Registry extends BlockModel {
 	
 	// Get the textures for each face of the cuboid
 	@Nonnull
-	private String[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures) {
-		String[] array = new String[] {"unknown", "unknown", "unknown", "unknown", "unknown", "unknown"};
+	private NamespaceID[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures) {
+		NamespaceID[] array = new NamespaceID[6];
+		Arrays.fill(array, Registries.UNKNOWN_TEX_ID);
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			String tex = faceEntry.getValue().texture;
 			if (tex != null && tex.startsWith("#")) {
 				tex = textures.get(tex.substring(1));
 			}
 			NamespaceID texNs = NamespaceID.fromString(tex);
-			TextureEntry texEnt = Registries.getTexture(texNs);
-			tex = texEnt.getMatName();
 			
 			switch (faceEntry.getKey()) {
 			case "up":
-				array[0] = tex; break;
+				array[0] = texNs; break;
 			case "north":
-				array[1] = tex; break;
+				array[1] = texNs; break;
 			case "south":
-				array[2] = tex; break;
+				array[2] = texNs; break;
 			case "west":
-				array[3] = tex; break;
+				array[3] = texNs; break;
 			case "east":
-				array[4] = tex; break;
+				array[4] = texNs; break;
 			case "down":
-				array[5] = tex; break;
+				array[5] = texNs; break;
 			default:
 				Log.debug(String.format("Model for %s had invalid face direction!", blockId));
 				break;

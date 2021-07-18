@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -15,11 +16,11 @@ public class RedstoneRepeater extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(BlockData data, int biome)
+	protected NamespaceID[] getMtlSides(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		
 		if (data.state.get("powered").equals("true")) {
 			mtlSides[0] = abbrMtls[0];			
@@ -62,8 +63,8 @@ public class RedstoneRepeater extends BlockModel
 		rt = translate.multiply(rotate);
 
 		
-		String[] mtlsBase = getMtlSides(data,biome);
-		String mtlTorch;
+		NamespaceID[] mtlsBase = getMtlSides(data,biome);
+		NamespaceID mtlTorch;
 		if (data.state.get("powered").equals("true")) {
 			mtlTorch = materials.get(data.state,biome)[4];		
 		} else {
@@ -101,7 +102,7 @@ public class RedstoneRepeater extends BlockModel
 		
 		if (locked) {
 			// delay bar
-			String[] barSides = new String[6];
+			NamespaceID[] barSides = new NamespaceID[6];
 			java.util.Arrays.fill(barSides, materials.get(data.state,biome)[6]);
 			
 			UV[][] uvBarSides = new UV[][] {

@@ -7,24 +7,21 @@
  ******************************************************************************/
 package org.jmc;
 
-import java.io.BufferedWriter;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.zip.GZIPInputStream;
-
-import javax.imageio.ImageIO;
 
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte_Array;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.util.Log;
-
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 
 /**
  * Class used for loading the map_xxx.dat file from the world save.
@@ -87,9 +84,10 @@ public class FilledMapDat {
 	
 	/**
 	 * Exports an MapImage and Append the material
+	 * @param mapTexID 
 	 * @throws IOException 
 	 */
-	public TAG_Byte_Array writePngTexture() throws IOException
+	public TAG_Byte_Array writePngTexture(NamespaceID mapTexID) throws IOException
 	{
 		int image_width = 128;
 		int image_height = 128;
@@ -108,26 +106,8 @@ public class FilledMapDat {
 			}
 		}
 		
-		String materialName = "map_"+map_id+"_item_frame";
-		String mapFilename = "map_"+map_id+"_item_frame.png"; 
-				
-		File texFile = new File(Options.outputDir+"/tex", mapFilename);
-		if (!ImageIO.write(img, "PNG", texFile)) {
-		  throw new RuntimeException("Unexpected error writing image");
-		}
-
-		File mtlfile = new File(Options.outputDir, Options.mtlFileName);
-		
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(mtlfile, true)))) {
-			out.println("");
-			out.println("");
-			out.println("newmtl "+materialName);
-		    out.println("Kd 0.2500 0.2500 0.2500");
-    		out.println("Ks 0.0000 0.0000 0.0000");
-			out.print("map_Kd tex/"+mapFilename);
-		} catch (IOException e) {
-		    throw new RuntimeException("Unexpected error apending material file");
-		}
+		TextureEntry texEntry = Registries.getTexture(mapTexID);
+		texEntry.setImage(img);
 		
 
 		return color_map;

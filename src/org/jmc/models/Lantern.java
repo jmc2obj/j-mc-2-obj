@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -13,7 +14,7 @@ public class Lantern extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls = getMtlSides(data, biome);
 		UV[] uvTop, uvSide;
 		UV[][] uvSides;
 		
@@ -35,7 +36,7 @@ public class Lantern extends BlockModel
 		addBox(obj, x-2/16f, y-1/16f+hangOffset, z-2/16f, x+2/16f, y+1/16f+hangOffset, z+2/16f, null, mtls, uvSides, null);		
 
 		// If hanging, draw full chain
-		final String material = materials.get(data.state, biome)[0];
+		final NamespaceID material = materials.get(data.state, biome)[0];
 		if (hanging)
 		{
 			Transform move = Transform.translation(x, y, z);

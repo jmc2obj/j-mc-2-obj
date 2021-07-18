@@ -1,11 +1,8 @@
 package org.jmc.models;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
@@ -15,14 +12,15 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.jmc.BlockData;
-import org.jmc.Materials;
-import org.jmc.Options;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -38,7 +36,7 @@ import com.google.gson.JsonParser;
 public class Head extends BlockModel
 {
 
-	private static Set<String> addedMaterials = new HashSet<String>();
+	private static Set<NamespaceID> addedMaterials = new HashSet<>();
 	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
@@ -114,7 +112,7 @@ public class Head extends BlockModel
 		translate = Transform.translation(x+tx, y+ty, z+tz);
 		rt = translate.multiply(rotate);
 		
-		String[] mtlSides = getMtlSides(data, biome);
+		NamespaceID[] mtlSides = getMtlSides(data, biome);
 		UV[][] uvSides = new UV[][] {
 				new UV[] { new UV(16/64f, 32/32f), new UV(8/64f, 32/32f), new UV(8/64f, 24/32f), new UV(16/64f, 24/32f) },
 				new UV[] { new UV(8/64f, 16/32f), new UV(16/64f, 16/32f), new UV(16/64f, 24/32f), new UV(8/64f, 24/32f) },
@@ -140,14 +138,13 @@ public class Head extends BlockModel
 						String url = extractSkullOwnerTextureUrl(textureB64);
 						name = url.substring(url.lastIndexOf('/') + 1);
 					}
-					String mtlName = "player_" + name;
-					Arrays.fill(mtlSides, mtlName);
+					NamespaceID texId = new NamespaceID("jmc2obj", "head/player_" + name);
+					Arrays.fill(mtlSides, texId);
 					synchronized (addedMaterials) {
-						if (!addedMaterials.contains(mtlName)) {
-							Log.info("Downloading new player head texture: " + mtlName);
-							Materials.addMaterial(mtlName, Color.pink, Color.black, "tex/"+mtlName+".png", null);
-							if (exportSkullOwnerTexture(skullOwnerTag, mtlName))
-								addedMaterials.add(mtlName);
+						if (!addedMaterials.contains(texId)) {
+							Log.info("Downloading new player head texture: " + texId);
+							if (exportSkullOwnerTexture(skullOwnerTag, texId))
+								addedMaterials.add(texId);
 						}
 					}
 				}
@@ -169,7 +166,7 @@ public class Head extends BlockModel
 
 	}
 
-	private boolean exportSkullOwnerTexture(TAG_Compound skullOwnerTag, String mtlName) {
+	private boolean exportSkullOwnerTexture(TAG_Compound skullOwnerTag, NamespaceID texId) {
 		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
 		if (textureB64 == null) {
 			Log.error("Couldn't read SkullOwner properties!", null, false);
@@ -178,24 +175,16 @@ public class Head extends BlockModel
 
 		String textureUrl = extractSkullOwnerTextureUrl(textureB64);
 
-		File texFile = new File(Options.outputDir+"/tex", mtlName+".png");
-		try (BufferedInputStream inputStream = new BufferedInputStream(new URL(textureUrl).openStream())) {
-			texFile.getParentFile().mkdirs();
-			FileOutputStream fileOS = new FileOutputStream(texFile);
-			byte data[] = new byte[1024];
-			int byteContent;
-			while ((byteContent = inputStream.read(data, 0, 1024)) != -1) {
-				fileOS.write(data, 0, byteContent);
-			}
-			fileOS.close();
-			
-			BufferedImage texture = ImageIO.read(texFile);
+		try (InputStream inputStream = new URL(textureUrl).openStream()) {
+			BufferedImage texture = ImageIO.read(inputStream);
 			if (texture.getHeight() == 64) { // Crop new 64px high player textures to old 32px size
-				Log.debug("Cropping "+mtlName+" from 64px to 32px");
+				Log.debug("Cropping "+texId+" from 64px to 32px");
 				BufferedImage croppedTex = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
 				croppedTex.getGraphics().drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
-				ImageIO.write(croppedTex, "png", texFile);
+				texture = croppedTex;
 			}
+			TextureEntry texEntry = Registries.getTexture(texId);
+			texEntry.setImage(texture);
 			return true;
 		} catch (IOException e) {
 			Log.error("Error downloading head texture!", e, false);

@@ -364,7 +364,7 @@ public class ObjExporter {
 			}
 			
 			if (writeMtl) {
-				Materials.copyMTLFile(mtlfile);
+				Materials.writeMTLFile(mtlfile);
 				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
 			}
 

@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -34,7 +35,7 @@ public class Plant extends BlockModel
             flipValue = -1.0f; }
         
         Transform t = Transform.translation(x+randomX, y, z+randomZ);
-        final String material = materials.get(data.state, biome)[0];
+        final NamespaceID material = materials.get(data.state, biome)[0];
  
         Vertex[] vertices = new Vertex[4];
         vertices[0] = new Vertex((+0.43f)*flipValue,-0.5f,(-0.43f)*flipValue);

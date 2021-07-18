@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import org.jmc.BlockData;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -15,7 +16,7 @@ public class Slime extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String[] mtlSides = getMtlSides(data, biome);
+		NamespaceID[] mtlSides = getMtlSides(data, biome);
 		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		
 		UV[] uv = { new UV(3f/16f, 3f/16f), new UV(13f/16f, 3f/16f), new UV(13f/16f, 13f/16f), new UV(3f/16f, 13f/16f) };

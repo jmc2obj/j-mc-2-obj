@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -13,7 +14,7 @@ public class Wall extends BlockModel
 	{
 		Transform trans = Transform.translation(x, y, z);
 		
-		String[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls = getMtlSides(data, biome);
 		
 		String north, south, east, west;
 		

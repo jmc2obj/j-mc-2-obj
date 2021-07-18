@@ -2,6 +2,7 @@ package org.jmc.geom;
 
 import java.util.Arrays;
 
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Log;
 
 /**
@@ -18,18 +19,18 @@ public class FaceUtils {
 		public UV[] uvs;
 		public Vertex[] norms;
 		public int mtl_idx;
-		public String material;
+		public NamespaceID texture;
 		public boolean remove = false;
 		public int chunk_idx = -1;
 		
 		public Face() {
 		}
 		
-		public Face(Vertex[] vert, UV[] uv, Vertex[] norm, String mat) {
+		public Face(Vertex[] vert, UV[] uv, Vertex[] norm, NamespaceID tex) {
 			vertices = vert;
 			uvs = uv;
 			norms = norm;
-			material = mat;
+			texture = tex;
 		}
 
 		/**
@@ -108,7 +109,7 @@ public class FaceUtils {
 
 		@Override
 		public String toString() {
-			return "Mat:'" + material + "' Verts:" + Arrays.toString(vertices) + " UVs:" + Arrays.toString(uvs);
+			return "Mat:'" + texture + "' Verts:" + Arrays.toString(vertices) + " UVs:" + Arrays.toString(uvs);
 		}
 	}
 
@@ -121,7 +122,7 @@ public class FaceUtils {
 		public int[] vertices;
 		public int[] normals;
 		public int[] uv;
-		public String mtl;
+		public NamespaceID tex;
 		public Long obj_idx;
 		
 		public OBJFace(int sides)
@@ -137,14 +138,14 @@ public class FaceUtils {
 			vertices = f.vertices.clone();
 			normals = f.normals != null ? f.normals.clone() : null;
 			uv = f.uv != null ? f.uv.clone() : null;
-			mtl = f.mtl;
+			tex = f.tex;
 		}
 		
 		@Override
 		public int compareTo(OBJFace o) {
 			if(!this.obj_idx.equals(o.obj_idx))
 				return this.obj_idx.compareTo(o.obj_idx);
-			return this.mtl.compareTo(o.mtl);
+			return this.tex.compareTo(o.tex);
 		}
 	}
 

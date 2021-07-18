@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -13,9 +14,9 @@ public class Scaffolding extends BlockModel
 	{
 		Transform move = Transform.translation(x, y, z);
 		
-		String[] mtls = getMtlSides(data, biome);
-		String[] mtls_Top = new String [] { mtls[0], mtls[1], mtls[1], mtls[1], mtls[1], mtls[5] };
-		String[] mtls_Poles = new String [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[5] };
+		NamespaceID[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls_Top = new NamespaceID [] { mtls[0], mtls[1], mtls[1], mtls[1], mtls[1], mtls[5] };
+		NamespaceID[] mtls_Poles = new NamespaceID [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[5] };
 		
 		UV[] uvBottom, uvSide, uvSide2;
 		UV[][] uvSides;

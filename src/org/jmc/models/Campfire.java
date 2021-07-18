@@ -5,6 +5,7 @@ import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -16,17 +17,17 @@ public class Campfire extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 
-		String[] mtls = getMtlSides(data, biome);
-		String[] mtls_LogsBottom, mtls_LogsTop, mtls_Ash;
+		NamespaceID[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls_LogsBottom, mtls_LogsTop, mtls_Ash;
 		
-		mtls_LogsBottom = new String [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[1] };	
+		mtls_LogsBottom = new NamespaceID [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[1] };	
 		
 		if (data.state.getBool("lit", false)) {
-			mtls_LogsTop = new String [] { mtls[1], mtls[2], mtls[2], mtls[1], mtls[1], mtls[1] };
-			mtls_Ash = new String [] { mtls[2], mtls[2], mtls[2], mtls[2], mtls[2], mtls[2] };
+			mtls_LogsTop = new NamespaceID [] { mtls[1], mtls[2], mtls[2], mtls[1], mtls[1], mtls[1] };
+			mtls_Ash = new NamespaceID [] { mtls[2], mtls[2], mtls[2], mtls[2], mtls[2], mtls[2] };
 		} else {
 			mtls_LogsTop = mtls_LogsBottom;
-			mtls_Ash = new String [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[1] };
+			mtls_Ash = new NamespaceID [] { mtls[1], mtls[1], mtls[1], mtls[1], mtls[1], mtls[1] };
 		}
 			
 		Transform rotate = new Transform();

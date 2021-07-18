@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -42,7 +43,7 @@ public class Door extends BlockModel
 			direction = 0;
 		}
 
-		String mtl = top ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[1];
+		NamespaceID mtl = top ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[1];
 		
 		/*
 		  The model is rendered in the middle of the block facing North, then 

@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -80,7 +81,7 @@ public class Liquid extends BlockModel
 		// flow direction
 		boolean flow_nw, flow_n, flow_ne, flow_e, flow_se, flow_s, flow_sw, flow_w;
 
-		String mtl;
+		NamespaceID mtl;
 		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 
 

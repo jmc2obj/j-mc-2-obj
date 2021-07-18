@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import org.jmc.BlockData;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -15,18 +16,18 @@ public class WoodLog extends BlockModel
 {
 
 	@Nonnull
-	protected String[] getMtlSides(BlockData data, int biome, int dir)
+	protected NamespaceID[] getMtlSides(BlockData data, int biome, int dir)
 	{
-		String[] mat = materials.get(data.state, biome);
+		NamespaceID[] mat = materials.get(data.state, biome);
 		
 		if (dir == 1)
-			return new String[] { mat[1], mat[1], mat[1], mat[0], mat[0], mat[1] };
+			return new NamespaceID[] { mat[1], mat[1], mat[1], mat[0], mat[0], mat[1] };
 		else if (dir == 2)
-			return new String[] { mat[1], mat[0], mat[0], mat[1], mat[1], mat[1] };
+			return new NamespaceID[] { mat[1], mat[0], mat[0], mat[1], mat[1], mat[1] };
 		else if (dir >= 3)
-			return new String[] { mat[1], mat[1], mat[1], mat[1], mat[1], mat[1] };
+			return new NamespaceID[] { mat[1], mat[1], mat[1], mat[1], mat[1], mat[1] };
 		else
-			return new String[] { mat[0], mat[1], mat[1], mat[1], mat[1], mat[0] };
+			return new NamespaceID[] { mat[0], mat[1], mat[1], mat[1], mat[1], mat[0] };
 	}
 	
 	protected UV[][] getUvSides(int dir)

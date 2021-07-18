@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -16,11 +17,11 @@ public class Lever extends BlockModel
 {
 
 	@Nonnull
-	private String[] getMtlSidesBase(BlockData data, int biome)
+	private NamespaceID[] getMtlSidesBase(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = abbrMtls[1];
 		mtlSides[1] = abbrMtls[1];
 		mtlSides[2] = abbrMtls[1];
@@ -31,11 +32,11 @@ public class Lever extends BlockModel
 	}
 
 	@Nonnull
-	private String[] getMtlSidesLever(BlockData data, int biome)
+	private NamespaceID[] getMtlSidesLever(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = abbrMtls[0];
 		mtlSides[1] = abbrMtls[0];
 		mtlSides[2] = abbrMtls[0];

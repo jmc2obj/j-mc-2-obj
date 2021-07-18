@@ -6,6 +6,7 @@ import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 
 
@@ -86,7 +87,7 @@ public class Painting extends Entity
 		rt = translate.multiply(rotate);
 		
 		BlockMaterial materials=new BlockMaterial();
-		String [] matname={motiv.toLowerCase()+"_painting"};
+		NamespaceID[] matname={NamespaceID.fromString("painting/" + motiv.toLowerCase())};
 		materials.put(matname);
 		model.setMaterials(materials);
 		

@@ -7,6 +7,8 @@ import javax.annotation.Nonnull;
 
 import org.jmc.models.BlockModel;
 import org.jmc.models.None;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
 import org.jmc.util.Log;
 
 
@@ -113,13 +115,13 @@ public class BlockInfo
 	public Color getPreviewColor(BlockData blockData, int biome)
 	{
 		BlockMaterial mat = getMaterials();
-		String[] mtlNames = mat == null ? null : mat.get(blockData.state,biome);
+		NamespaceID[] mtlNames = mat == null ? null : mat.get(blockData.state,biome);
 		if (mtlNames == null || mtlNames.length == 0)
 		{
 			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);
-			return Materials.getColor("unknown");
+			return Registries.getTexture(Registries.UNKNOWN_TEX_ID).getAverageColour();
 		}
-		return Materials.getColor(mtlNames[0]);
+		return Registries.getTexture(mtlNames[0]).getAverageColour();
 	}
 
 }

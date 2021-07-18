@@ -6,6 +6,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -16,8 +17,8 @@ public class Bamboo extends BlockModel
 	{
 		Transform move = Transform.translation(x, y, z);
 		
-		String[] mtls = getMtlSides(data, biome);
-		String[] mtls_Stalk = new String [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[0] };
+		NamespaceID[] mtls = getMtlSides(data, biome);
+		NamespaceID[] mtls_Stalk = new NamespaceID [] { mtls[0], mtls[0], mtls[0], mtls[0], mtls[0], mtls[0] };
 		
         // Generates a random number to offset the bamboo in the x and z.
         Random rX = new Random();

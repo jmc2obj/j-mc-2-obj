@@ -5,6 +5,7 @@ import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -15,8 +16,8 @@ public class Stonecutter extends BlockModel
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
-		String[] mtls = materials.get(data.state, biome);
-		String[] mtls_bottom = new String [] { mtls[3], mtls[2], mtls[2], mtls[2], mtls[2], mtls[0] };	
+		NamespaceID[] mtls = materials.get(data.state, biome);
+		NamespaceID[] mtls_bottom = new NamespaceID [] { mtls[3], mtls[2], mtls[2], mtls[2], mtls[2], mtls[0] };	
 		
 		Transform rotate = Transform.rotation(data.state.getDirection("facing", Direction.NORTH));
 		Transform translate = Transform.translation(x, y, z);

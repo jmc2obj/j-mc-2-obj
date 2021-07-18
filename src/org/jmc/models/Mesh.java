@@ -13,6 +13,8 @@ import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Filesystem.JmcConfFile;
@@ -122,7 +124,7 @@ public class Mesh extends BlockModel
 
 	public void propagateMaterials() {
 		for (Mesh mesh : objects) {
-			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, 0)[0].equals("unknown"))
+			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, 0)[0].equals(Registries.UNKNOWN_TEX_ID))
 				mesh.setMaterials(materials);
 			mesh.propagateMaterials();
 		}
@@ -153,7 +155,7 @@ public class Mesh extends BlockModel
 			{
 				OBJGroup group_mod = group;
 				if (!materials.isEmpty()) {
-					String[] mats = materials.get(data.state, biome);
+					NamespaceID[] mats = materials.get(data.state, biome);
 					group_mod = objin_file.overwriteMaterial(group, mats[0]);
 				}
 				objin_file.addObjectToOutput(group_mod, trans, obj);

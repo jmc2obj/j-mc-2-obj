@@ -126,17 +126,21 @@ public class BlockTypes
 				
 				@Nonnull
 				String[] splitmats = mats.split("\\s*,\\s*");
+				NamespaceID[] nsMats = new NamespaceID[splitmats.length];
+				for (int k = 0; k < splitmats.length; k++) {
+					nsMats[k] = NamespaceID.fromString(splitmats[k]);
+				}
 				
 				if(biome >= 0)
 				{
-					materials.put(splitmats, data.state, biome);
+					materials.put(nsMats, data.state, biome);
 				}
 				else
 				{
 					if (!data.state.isEmpty())
-						materials.put(splitmats, data.state);
+						materials.put(nsMats, data.state);
 					else
-						materials.put(splitmats);
+						materials.put(nsMats);
 				}
 
 				hasMtl = true;
@@ -145,7 +149,7 @@ public class BlockTypes
 			if (!hasMtl)
 			{
 				Log.debug("Block " + id + " has no materials. Using default.");
-				materials.put(new String[] { "unknown" });
+				materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
 			}
 
 			BlockModel model;
@@ -255,7 +259,7 @@ public class BlockTypes
 				}
 				else if (attrName.equalsIgnoreCase("jmc_material")) {
 					BlockMaterial mat = new BlockMaterial();
-					mat.put(new String[] {attrVal});
+					mat.put(new NamespaceID[] {NamespaceID.fromString(attrVal)});
 					mesh.setMaterials(mat);
 				}
 				else {

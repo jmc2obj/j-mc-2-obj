@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.BlockData;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -17,8 +18,8 @@ public class RedstoneWire extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		boolean on = Integer.parseInt(data.state.get("power")) > 0;
-		String mtlCross = on ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[2];
-		String mtlLine  = on ? materials.get(data.state,biome)[1] : materials.get(data.state,biome)[3];
+		NamespaceID mtlCross = on ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[2];
+		NamespaceID mtlLine  = on ? materials.get(data.state,biome)[1] : materials.get(data.state,biome)[3];
 		
 		boolean conn_n_up = data.state.get("north").equals("up");
 		boolean conn_s_up = data.state.get("south").equals("up");

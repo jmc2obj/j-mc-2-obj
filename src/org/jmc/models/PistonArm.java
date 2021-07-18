@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -16,12 +17,12 @@ public class PistonArm extends BlockModel
 {
 
 	@Nonnull
-	private String[] getMtlSidesTop(BlockData data, int biome)
+	private NamespaceID[] getMtlSidesTop(BlockData data, int biome)
 	{
 		boolean sticky = data.state.get("type").equals("sticky");
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = sticky ? abbrMtls[1] : abbrMtls[0];
 		mtlSides[1] = abbrMtls[2];
 		mtlSides[2] = abbrMtls[2];
@@ -32,11 +33,11 @@ public class PistonArm extends BlockModel
 	}
 
 	@Nonnull
-	private String[] getMtlSidesArm(BlockData data, int biome)
+	private NamespaceID[] getMtlSidesArm(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = abbrMtls[2];
 		mtlSides[1] = abbrMtls[2];
 		mtlSides[2] = abbrMtls[2];

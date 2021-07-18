@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -15,13 +16,13 @@ public class CocoaPlant extends BlockModel
 {
 
 	@Override
-	protected String[] getMtlSides(BlockData data, int biome)
+	protected NamespaceID[] getMtlSides(BlockData data, int biome)
 	{
 		int growth = Integer.parseInt(data.state.get("age"));
 		
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = abbrMtls[growth];
 		mtlSides[1] = abbrMtls[growth];
 		mtlSides[2] = abbrMtls[growth];

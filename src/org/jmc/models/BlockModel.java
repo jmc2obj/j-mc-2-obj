@@ -17,6 +17,7 @@ import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -79,10 +80,10 @@ public abstract class BlockModel {
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
 	@Nonnull
-	protected String[] getMtlSides(BlockData data, int biome) {
-		String[] abbrMtls = materials.get(data.state, biome);
+	protected NamespaceID[] getMtlSides(BlockData data, int biome) {
+		NamespaceID[] abbrMtls = materials.get(data.state, biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		if (abbrMtls.length < 2) {
 			mtlSides[0] = abbrMtls[0];
 			mtlSides[1] = abbrMtls[0];
@@ -243,7 +244,7 @@ public abstract class BlockModel {
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
 	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
-			@CheckForNull Transform trans, String[] mtlSides, @CheckForNull UV[][] uvSides, @CheckForNull boolean[] drawSides) {
+			@CheckForNull Transform trans, NamespaceID[] mtlSides, @CheckForNull UV[][] uvSides, @CheckForNull boolean[] drawSides) {
 		Vertex[] vertices = new Vertex[4];
 
 		if (drawSides == null || drawSides[0]) { // top
@@ -324,7 +325,7 @@ public abstract class BlockModel {
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
 	protected void addBoxCubeUV(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
-			Transform trans, String[] mtlSides, @CheckForNull boolean[] drawSides) {
+			Transform trans, NamespaceID[] mtlSides, @CheckForNull boolean[] drawSides) {
 		UV[] uvU = new UV[] { new UV(xs+0.5f, -ze+0.5f), new UV(xe+0.5f, -ze+0.5f), new UV(xe+0.5f, -zs+0.5f), new UV(xs+0.5f, -zs+0.5f) };
 		UV[] uvN = new UV[] { new UV(-xe+0.5f, ys+0.5f), new UV(-xs+0.5f, ys+0.5f), new UV(-xs+0.5f, ye+0.5f), new UV(-xe+0.5f, ye+0.5f) };
 		UV[] uvS = new UV[] { new UV(xs+0.5f, ys+0.5f), new UV(xe+0.5f, ys+0.5f), new UV(xe+0.5f, ye+0.5f), new UV(xs+0.5f, ye+0.5f) };

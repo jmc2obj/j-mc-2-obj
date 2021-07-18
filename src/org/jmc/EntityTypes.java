@@ -12,6 +12,8 @@ import org.jmc.NBT.TAG_String;
 import org.jmc.entities.Entity;
 import org.jmc.entities.models.EntityModel;
 import org.jmc.entities.models.Mesh;
+import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
@@ -64,8 +66,13 @@ public class EntityTypes {
 				Node matNode = matNodes.item(j);
 
 				String mats = matNode.getTextContent();
+				String[] splitmats = mats.split("\\s*,\\s*");
+				NamespaceID[] nsMats = new NamespaceID[splitmats.length];
+				for (int k = 0; k < splitmats.length; k++) {
+					nsMats[k] = NamespaceID.fromString(splitmats[k]);
+				}
 
-				materials.put(mats.split("\\s*,\\s*"));
+				materials.put(nsMats);
 
 				hasMtl = true;
 			}
@@ -73,7 +80,7 @@ public class EntityTypes {
 			if (!hasMtl) {
 				// Log.info("Entity " + id +
 				// " has no materials. Using default.");
-				materials.put(new String[] { "unknown" });
+				materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
 			}
 
 			EntityModel entityModel;

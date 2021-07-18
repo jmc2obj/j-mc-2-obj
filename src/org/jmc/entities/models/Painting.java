@@ -2,6 +2,7 @@ package org.jmc.entities.models;
 
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 
 
@@ -16,7 +17,7 @@ public class Painting extends EntityModel
 		addObject(obj, transform, materials.get(null, -1)[0]);		
 	}
 	
-	private void addObject(ChunkProcessor obj, Transform transform, String mat)
+	private void addObject(ChunkProcessor obj, Transform transform, NamespaceID mat)
 	{
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, -0.5f, -0.47f);

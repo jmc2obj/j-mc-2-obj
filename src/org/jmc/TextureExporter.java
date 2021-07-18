@@ -107,7 +107,7 @@ public class TextureExporter {
 		return result;
 	}
 
-	private static BufferedImage convertImageType(BufferedImage image) {
+	public static BufferedImage convertImageType(BufferedImage image) {
 		int w = image.getWidth();
 		int h = image.getHeight();
 		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
@@ -142,7 +142,7 @@ public class TextureExporter {
 		raster.setPixels(0, 0, w, h, buffer);
 	}
 
-	private static void tintImage(BufferedImage img, Color tint) {
+	public static void tintImage(BufferedImage img, Color tint) {
 		int w = img.getWidth();
 		int h = img.getHeight();
 		int c = img.getColorModel().getPixelSize() / 8;
@@ -466,7 +466,7 @@ public class TextureExporter {
 			return null;
 	}
 
-	private static BufferedImage loadImage(File zipfile, String source, String fileName) throws IOException {
+	public static BufferedImage loadImage(File zipfile, String source, String fileName) throws IOException {
 		BufferedImage image;
 		if (source.equalsIgnoreCase("texturepack"))
 			image = loadImageFromZip(zipfile, fileName);

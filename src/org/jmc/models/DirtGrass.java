@@ -3,6 +3,7 @@ package org.jmc.models;
 import javax.annotation.Nonnull;
 
 import org.jmc.BlockData;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -14,11 +15,11 @@ public class DirtGrass extends BlockModel
 {
 	
 	@Nonnull
-	protected String[] getMtlSides(BlockData data, int biome, boolean snow)
+	protected NamespaceID[] getMtlSides(BlockData data, int biome, boolean snow)
 	{
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 		
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = abbrMtls[0];
 		mtlSides[1] = abbrMtls[snow ? 2 : 1];
 		mtlSides[2] = abbrMtls[snow ? 2 : 1];

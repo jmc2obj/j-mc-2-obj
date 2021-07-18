@@ -17,6 +17,7 @@ import org.jmc.geom.FaceUtils.OBJFace;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -249,7 +250,7 @@ public class OBJInputFile
 				}
 				if(!has_uv) f.uv=null;
 				if(!has_norm) f.normals=null;
-				f.mtl=material;
+				f.tex=NamespaceID.fromString(material);
 				
 				if (group==null)
 				{
@@ -292,11 +293,11 @@ public class OBJInputFile
 	}
 	
 	
-	public OBJGroup overwriteMaterial(OBJGroup group, String material) {
+	public OBJGroup overwriteMaterial(OBJGroup group, NamespaceID texture) {
 		OBJGroup ret = group.clone();
 		for(OBJFace f:ret.faces)
 		{
-			f.mtl = material;
+			f.tex = texture;
 		}
 		return ret;
 	}
@@ -321,7 +322,7 @@ public class OBJInputFile
 			}
 
 			// Log.info("out OBJ file material: "+f.mtl+" / "+v+" / "+norm+" / "+uv+" / "+trans);
-			out.addFace(v, norm, uv, trans, f.mtl, false);
+			out.addFace(v, norm, uv, trans, f.tex, false);
 		}
 	}
 }

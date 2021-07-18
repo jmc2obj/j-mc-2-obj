@@ -4,6 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -16,8 +17,8 @@ public class Composter extends BlockModel
 	{
 		int level = data.state.getInt("level", 0);
 		
-		String[] mtls = materials.get(data.state,biome);
-		String[] mtls_mainBox = new String [] { mtls[4], mtls[3], mtls[3], mtls[3], mtls[3], mtls[0] };
+		NamespaceID[] mtls = materials.get(data.state,biome);
+		NamespaceID[] mtls_mainBox = new NamespaceID [] { mtls[4], mtls[3], mtls[3], mtls[3], mtls[3], mtls[0] };
 				
 		UV[] uvTop, uvSide, uvCompost;
 		UV[][] uvSides;

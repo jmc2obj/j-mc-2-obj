@@ -55,12 +55,16 @@ public class NamespaceID implements Comparable<NamespaceID> {
 		NamespaceID other = (NamespaceID) obj;
 		return Objects.equals(namespace, other.namespace) && Objects.equals(path, other.path);
 	}
+	
+	public String getExportSafeString() {
+		return toString().replace(':', '_').replace('/', '-');
+	}
 
 	@Override
 	public String toString() {
 		return namespace + ":" + path;
 	}
-
+	
 	@Override
 	public int compareTo(NamespaceID o) {
 		int namespaceCmp = namespace.compareTo(o.namespace);

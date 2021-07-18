@@ -2,6 +2,7 @@ package org.jmc.models;
 
 import org.jmc.BlockData;
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -13,11 +14,11 @@ public class Farmland extends BlockModel
 {
 	
 	@Override
-	protected String[] getMtlSides(BlockData data, int biome)
+	protected NamespaceID[] getMtlSides(BlockData data, int biome)
 	{
-		String[] abbrMtls = materials.get(data.state,biome);
+		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
-		String[] mtlSides = new String[6];
+		NamespaceID[] mtlSides = new NamespaceID[6];
 		mtlSides[0] = data.state.get("moisture").equals("7") ? abbrMtls[0] : abbrMtls[1];
 		mtlSides[1] = abbrMtls[2];
 		mtlSides[2] = abbrMtls[2];

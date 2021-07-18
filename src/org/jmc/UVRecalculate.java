@@ -10,6 +10,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.jmc.geom.UV;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
@@ -19,11 +20,11 @@ import org.w3c.dom.NodeList;
 public class UVRecalculate {
 
 	private static int width, height;
-	private static Map<String,Rectangle> uv_map=null;
+	private static Map<NamespaceID,Rectangle> uv_map=null;
 	
 	public static void load(File uvFile) throws Exception
 	{
-		uv_map=new HashMap<String, Rectangle>();
+		uv_map=new HashMap<NamespaceID, Rectangle>();
 		
 		if (!(uvFile.isFile() && uvFile.exists()))
 			throw new Exception("Selected UV file does not exist!");
@@ -31,7 +32,7 @@ public class UVRecalculate {
 		Document doc = Xml.loadDocument(uvFile);
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		
-		String name;
+		NamespaceID name;
 		int u,v,w,h;
 		
 		Element root=(Element)xpath.evaluate("/textures", doc, XPathConstants.NODE);
@@ -42,7 +43,7 @@ public class UVRecalculate {
 		for(int i=0; i<textures.getLength(); i++)
 		{
 			Element texture=(Element)textures.item(i);
-			name=texture.getTextContent().trim();
+			name=NamespaceID.fromString(texture.getTextContent().trim());
 			u=Integer.parseInt(texture.getAttribute("u"));
 			v=Integer.parseInt(texture.getAttribute("v"));
 			w=Integer.parseInt(texture.getAttribute("w"));
@@ -67,7 +68,7 @@ public class UVRecalculate {
 	}
 	*/
 	
-	public static UV[] recalculate(UV[] uvs, String mtl_name)
+	public static UV[] recalculate(UV[] uvs, NamespaceID mtl_name)
 	{
 		if (uv_map == null)
 			return uvs;
@@ -75,7 +76,7 @@ public class UVRecalculate {
 		Rectangle rect = uv_map.get(mtl_name);
 		
 		if (rect == null) {
-			rect = uv_map.get(Materials.getTexture(mtl_name));
+			rect = uv_map.get(mtl_name);
 			if (rect == null) {
 				Log.info("WARNING: cannot recalculate material: " + mtl_name);
 				return uvs;
