@@ -6,13 +6,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 
 import javax.imageio.ImageIO;
 
 import org.jmc.Options;
 import org.jmc.TextureExporter;
 import org.jmc.registry.Registries.RegType;
-import org.jmc.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.JsonAdapter;
 
 public class TextureEntry extends RegistryEntry {
 
@@ -86,6 +95,27 @@ public class TextureEntry extends RegistryEntry {
 			try (InputStream is = new FileInputStream(new File(Registries.BASE_FOLDER, getPackPath()))) {
 				image = ImageIO.read(is);
 			}
+			try (InputStream is = new FileInputStream(new File(Registries.BASE_FOLDER, getPackPath()+".mcmeta"))) {
+				Meta meta = new Gson().fromJson(new InputStreamReader(is), Meta.class);
+				if (meta != null && meta.animation != null) {
+					Meta.Animation anim = meta.animation;
+					int baseFrame = 0;
+					if (anim.frames != null && anim.frames.length > 0) {
+						Meta.Animation.Frame frameMeta = anim.frames[0];
+						if (frameMeta != null) {
+							baseFrame = anim.frames[0].index;
+						}
+					}
+					int width = image.getWidth();
+					int height = image.getHeight();
+					BufferedImage frame = new BufferedImage(width, width, image.getType());
+					image.getSubimage(0, width*baseFrame, width, width).copyData(frame.getRaster());
+					image = frame;
+				}
+			} catch (IOException e) {
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			}
 			if (tint != null) {
 				image = TextureExporter.convertImageType(image);
 				TextureExporter.tintImage(image, tint);
@@ -122,7 +152,43 @@ public class TextureEntry extends RegistryEntry {
 		File file = new File(Options.outputDir, getExportFilePath());
 		if (true || !file.exists()) {
 			file.getParentFile().mkdirs();
-			ImageIO.write(getImage(), "png", file);
+			ImageIO.write(TextureExporter.scaleImage(getImage(), Options.textureScale), "png", file);
+		}
+	}
+	
+	private class Meta {
+		public Animation animation;
+		private class Animation {
+			public boolean interoplate;
+			public int width = -1;
+			public int height = -1;
+			public int frametime;
+			public Frame[] frames; // apparently can be an array of objects with index and time
+			@JsonAdapter(Frame.class)
+			private class Frame implements JsonDeserializer<Frame> {
+				public int index;
+				public Integer time;
+				
+				@Override
+				public Frame deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+					try {
+						Frame frame = new Frame();
+						if (json.isJsonPrimitive()) {
+							frame.index = json.getAsInt();
+						} else {
+							JsonObject obj = json.getAsJsonObject();
+							frame.index = obj.get("index").getAsInt();
+							JsonElement timeElem = obj.get("time");
+							if (timeElem != null) {
+								frame.time = timeElem.getAsInt();
+							}
+						}
+						return frame;
+					} catch (ClassCastException | IllegalStateException e) {
+						throw new JsonParseException(e);
+					}
+				}
+			}
 		}
 	}
 	

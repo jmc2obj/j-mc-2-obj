@@ -179,7 +179,7 @@ public class TextureExporter {
 		raster.setPixels(0, 0, w, h, buffer);
 	}
 
-	private static BufferedImage scaleImage(BufferedImage img, double factor) {
+	public static BufferedImage scaleImage(BufferedImage img, double factor) {
 		int w = img.getWidth();
 		int h = img.getHeight();
 		int new_w = (int) (w * factor);
