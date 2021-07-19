@@ -1,6 +1,7 @@
 package org.jmc;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -9,6 +10,7 @@ import org.jmc.models.BlockModel;
 import org.jmc.models.None;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.util.Log;
 
 
@@ -116,12 +118,20 @@ public class BlockInfo
 	{
 		BlockMaterial mat = getMaterials();
 		NamespaceID[] mtlNames = mat == null ? null : mat.get(blockData.state,biome);
+		TextureEntry te;
 		if (mtlNames == null || mtlNames.length == 0)
 		{
 			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);
-			return Registries.getTexture(Registries.UNKNOWN_TEX_ID).getAverageColour();
+			te = Registries.getTexture(Registries.UNKNOWN_TEX_ID);
+		} else {
+			te = Registries.getTexture(mtlNames[0]);
 		}
-		return Registries.getTexture(mtlNames[0]).getAverageColour();
+		try {
+			return te.getAverageColour();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Color.MAGENTA;
+		}
 	}
 
 }

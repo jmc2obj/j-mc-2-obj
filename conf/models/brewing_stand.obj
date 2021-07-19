@@ -77,7 +77,7 @@ vt 1.000000 0.000000
 vt 0.562500 1.000000
 vt 1.000000 1.000000
 
-usemtl brewing_stand_base
+usemtl block/brewing_stand_base
 s off
 f 1/1 2/2 3/3 4/4
 f 5/1 8/2 7/3 6/4
@@ -98,7 +98,7 @@ f 18/5 22/6 23/7 19/8
 f 19/9 23/10 24/11 20/12
 f 21/5 17/6 20/7 24/8
 
-usemtl brewing_stand
+usemtl block/brewing_stand
 f 25/21 26/22 27/23 28/24
 f 29/21 32/22 31/23 30/24
 f 25/10 29/25 30/26 26/27

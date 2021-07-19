@@ -15,6 +15,7 @@ import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Filesystem.JmcConfFile;
+import org.jmc.util.Log;
 
 
 /**
@@ -50,8 +51,14 @@ public class Materials
 		{
 			ByteArrayOutputStream matBuffer = new ByteArrayOutputStream();
 			for (TextureEntry textureEntry : Registries.getTextures()) {
-				textureEntry.exportTexture();
-				writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), textureEntry.hasAlpha() ? textureEntry.getMatName() : null);
+				if (!textureEntry.virtual) {
+					try {
+						textureEntry.exportTexture();
+						writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), textureEntry.hasAlpha() ? textureEntry.getExportFilePath() : null);
+					} catch (IOException e) {
+						Log.error("Error exporting texture " + textureEntry.id, e);
+					}
+				}
 			}
 			Files.copy(new ByteArrayInputStream(matBuffer.toByteArray()), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}

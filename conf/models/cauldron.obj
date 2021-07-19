@@ -28,7 +28,7 @@ vt 0.875000 0.875000
 vt 0.125000 0.125000
 vt 0.875000 0.125000
 
-usemtl cauldron_side
+usemtl block/cauldron_side
 s off
 f 1/1 5/2 6/3 2/4
 f 2/4 6/3 7/2 3/1
@@ -39,11 +39,11 @@ f 12/5 10/6 15/7 14/8
 f 9/5 11/6 13/7 16/8
 f 10/5 9/6 16/7 15/8
 
-usemtl cauldron_top
+usemtl block/cauldron_top
 f 8/3 7/2 9/9 10/10
 f 7/2 6/1 11/11 9/9
 f 5/4 8/3 10/10 12/12
 f 6/1 5/4 12/12 11/11
 
-usemtl cauldron_inner
+usemtl block/cauldron_inner
 f 14/11 15/12 16/10 13/9

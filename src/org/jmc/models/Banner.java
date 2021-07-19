@@ -34,7 +34,7 @@ public class Banner extends BlockModel {
 
     private static Set<NamespaceID> exportedMaterials = new HashSet<>();
 
-	private static boolean firstBaseReadError = true;
+	private static boolean firstReadError = true;
     /**
      * Class for Banner Pattern Layer
      */
@@ -211,19 +211,14 @@ public class Banner extends BlockModel {
         // add the Banner
         addBanner(bannerType, bannerTexId, obj, x + offsetX, y + offsetY, z + offsetZ, 1 + offsetScale, rotation);
 
-        try {
-        	synchronized (exportedMaterials) {
-	            // already exported material?
-	            if (!exportedMaterials.contains(bannerTexId)) {
-	                if (generateBannerImage(bannerTexId, patternList)) {
-	                	exportedMaterials.add(bannerTexId);
-	                }
-	            }
-			}
-        }
-        catch (IOException e) {
-            Log.error("Cant write Banner Texture...", e, true);
-        }
+    	synchronized (exportedMaterials) {
+            // already exported material?
+            if (!exportedMaterials.contains(bannerTexId)) {
+                if (generateBannerImage(bannerTexId, patternList)) {
+                	exportedMaterials.add(bannerTexId);
+                }
+            }
+		}
         // append the layout!
 
     }
@@ -234,82 +229,76 @@ public class Banner extends BlockModel {
      * @param materialImageName
      * @throws IOException
      */
-    private boolean generateBannerImage(NamespaceID materialImageName, ArrayList<BannerPattern> patternList) throws IOException {
+    private boolean generateBannerImage(NamespaceID materialImageName, ArrayList<BannerPattern> patternList) {
 
         // get the base material texture
-        BufferedImage backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner/base")).getImage();
-        if (backgroundImage == null) {
-        	synchronized (Banner.class) {
-                Log.error("Cant read banner base image!", null, firstBaseReadError);
-                firstBaseReadError = false;
-			}
+        BufferedImage backgroundImage;
+        try {
+        	backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner/base")).getImage();
+        } catch (IOException e) {
+            Log.error("Cant read banner base image!", e, showReadErrorPopup());
+            return false;
         }
+        // todo - do something with the basecolor here...
+        // Log.info(" - Base Color: " + baseColorIndex);
 
-        if (backgroundImage != null) {
+        int imageWidth = backgroundImage.getWidth();
+        int imageHeight = backgroundImage.getHeight();
 
-            // todo - do something with the basecolor here...
-            // Log.info(" - Base Color: " + baseColorIndex);
+        // create a new image (this one is the target!)
+        BufferedImage combined = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 
-            int imageWidth = backgroundImage.getWidth();
-            int imageHeight = backgroundImage.getHeight();
+        // get Graphics - to draw the layers
+        Graphics combinedGraphics = combined.getGraphics();
+        combinedGraphics.drawImage(backgroundImage, 0, 0, null);
+        
+        // each layer
+        for (BannerPattern bp : patternList) {
 
-            // create a new image (this one is the target!)
-            BufferedImage combined = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+            // target of one layer
+            BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 
-            // get Graphics - to draw the layers
-            Graphics combinedGraphics = combined.getGraphics();
-            combinedGraphics.drawImage(backgroundImage, 0, 0, null);
+            // pattern source image
+            BufferedImage patternSource;
+            try {
+            	TextureEntry te = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + bp.getPattern()));
+            	te.virtual = true;// make sure it's not exported
+            	patternSource = te.getImage();
+            } catch (IOException e) {
+            	Log.error("Cant read banner pattern " + bp.getPattern(), e, showReadErrorPopup());
+                return false;
+            }
+
+            // draw into layer..
+            Color patternColor = getColorById(bp.getColor());
             
-            // each layer
-            for (BannerPattern bp : patternList) {
-
-                // target of one layer
-                BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-
-                // pattern source image
-                BufferedImage patternSource = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + bp.getPattern())).getImage();
-                if (patternSource == null) {
-                	Log.error("Cant read banner pattern " + bp.getPattern(), null, true);
-                    return false;
-                }
-
-
-                // draw into layer..
-                Color patternColor = getColorById(bp.getColor());
-                
-                
-                for(int x=0; x<imageWidth; x++) {
-                    for(int y=0; y<imageHeight; y++) {
-                        Color maskColor = new Color(patternSource.getRGB(x, y), true);
-                        
-                        int alpha = maskColor.getRed();
-                        // mask the mask with the mainmask :) YEAH
-                        // AKA premult
-                        if (alpha > maskColor.getAlpha()) {
-                            alpha = alpha * (maskColor.getAlpha()/255);
-                        }
-                        
-                        Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
-                        
-                        //Log.debug(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
-                        patternImage.setRGB(x, y, currentColor.getRGB());
+            for(int x=0; x<imageWidth; x++) {
+                for(int y=0; y<imageHeight; y++) {
+                    Color maskColor = new Color(patternSource.getRGB(x, y), true);
+                    
+                    int alpha = maskColor.getRed();
+                    // mask the mask with the mainmask :) YEAH
+                    // AKA premult
+                    if (alpha > maskColor.getAlpha()) {
+                        alpha = alpha * (maskColor.getAlpha()/255);
                     }
+                    
+                    Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
+                    
+                    //Log.debug(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
+                    patternImage.setRGB(x, y, currentColor.getRGB());
                 }
-                
-                // draw this layer into the main image
-                combinedGraphics.drawImage(patternImage, 0, 0, null);
-                
-                Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
             }
             
-            TextureEntry texEntry = Registries.getTexture(materialImageName);
-            texEntry.setImage(combined);
-            return true;
+            // draw this layer into the main image
+            combinedGraphics.drawImage(patternImage, 0, 0, null);
+            
+            Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
         }
-		return false;
-
-
-
+        
+        TextureEntry texEntry = Registries.getTexture(materialImageName);
+        texEntry.setImage(combined);
+        return true;
     }
 
     /**
@@ -385,8 +374,14 @@ public class Banner extends BlockModel {
         objFile.addObjectToOutput(myObjGroup, translate, obj);
     }
     
+    private static synchronized boolean showReadErrorPopup() {
+		boolean wasFirst = firstReadError;
+		firstReadError = false;
+		return wasFirst;
+	}
+    
     public static synchronized void resetReadError(){
-    	firstBaseReadError = true;
+    	firstReadError = true;
     }
 
 }

@@ -19,6 +19,8 @@ import org.jmc.UVRecalculate;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
 
 public class WriterRunnable implements Runnable {
@@ -245,8 +247,9 @@ public class WriterRunnable implements Runnable {
 		{
 			if(!f.tex.equals(last_mtl) && print_usemtl)
 			{
+				TextureEntry te = Registries.getTexture(f.tex);
 				out.println();
-				out.println("usemtl "+f.tex);
+				out.println("usemtl "+te.getMatName());
 				last_mtl=f.tex;
 			}
 			
@@ -284,7 +287,7 @@ public class WriterRunnable implements Runnable {
 			Vertex[] verts = f.vertices;
 			Vertex[] norms = f.norms;
 			UV[] uv = f.uvs;
-			NamespaceID mtl = f.texture;
+			NamespaceID tex = f.texture;
 			
 			if(f.chunk_idx != last_chunk_idx)
 			{
@@ -294,7 +297,7 @@ public class WriterRunnable implements Runnable {
 			
 			OBJFace face = new OBJFace(verts.length);
 			face.obj_idx=Long.valueOf(obj_idx_count);
-			face.tex = mtl;
+			face.tex = tex;
 			if (norms == null) face.normals = null;
 			if (uv == null) 
 			{
@@ -302,7 +305,7 @@ public class WriterRunnable implements Runnable {
 			}
 			else if(Options.useUVFile)
 			{
-				uv=UVRecalculate.recalculate(uv, mtl);
+				uv=UVRecalculate.recalculate(uv, tex);
 			}
 		
 			for (int i = 0; i < verts.length; i++)

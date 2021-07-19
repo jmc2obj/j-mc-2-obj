@@ -26,19 +26,19 @@ public class TextureEntry extends RegistryEntry {
 	private Boolean hasAlpha;
 	//tint to apply to texture
 	private Color tint;
+	//if true, don't export, purely for internal use
+	public boolean virtual;
+	
+	//for texture exporter
+	public boolean repeating;
+	public boolean luma;
 
 	TextureEntry(NamespaceID id) {
 		super(id);
 	}
 	
-	public Color getAverageColour() {
-		BufferedImage image;
-		try {
-			image = getImage();
-		} catch (IOException e) {
-			Log.error("Error getting image for " + id, e);
-			return Color.MAGENTA;
-		}
+	public Color getAverageColour() throws IOException {
+		BufferedImage image = getImage();
 		if (avgCol == null) {
 			float red = 0;
 			float green = 0;
@@ -63,14 +63,8 @@ public class TextureEntry extends RegistryEntry {
 		return avgCol;
 	}
 
-	public boolean hasAlpha() {
-		BufferedImage image;
-		try {
-			image = getImage();
-		} catch (IOException e) {
-			Log.error("Error getting image for " + id, e);
-			return false;
-		}
+	public boolean hasAlpha() throws IOException {
+		BufferedImage image = getImage();
 		if (hasAlpha == null) {
 			hasAlpha = false;
 			int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
@@ -88,13 +82,15 @@ public class TextureEntry extends RegistryEntry {
 	
 	public BufferedImage getImage() throws IOException {
 		if (buffImage == null) {
+			BufferedImage image;
 			try (InputStream is = new FileInputStream(new File(Registries.BASE_FOLDER, getPackPath()))) {
-				setImage(ImageIO.read(is));
+				image = ImageIO.read(is);
 			}
 			if (tint != null) {
-				setImage(TextureExporter.convertImageType(buffImage));
-				TextureExporter.tintImage(buffImage, tint);
+				image = TextureExporter.convertImageType(image);
+				TextureExporter.tintImage(image, tint);
 			}
+			setImage(image);
 		}
 		return buffImage;
 	}
@@ -121,15 +117,12 @@ public class TextureEntry extends RegistryEntry {
 		return id.getExportSafeString();
 	}
 
-	public void exportTexture() {
-		try {
-			File file = new File(Options.outputDir, getExportFilePath());
-			if (!file.exists()) {
-				file.mkdirs();
-				ImageIO.write(getImage(), "png", file);
-			}
-		} catch (IOException e) {
-			Log.error("Error exporting texture " + id, e);
+	public void exportTexture() throws IOException {
+		if (virtual) return;
+		File file = new File(Options.outputDir, getExportFilePath());
+		if (true || !file.exists()) {
+			file.getParentFile().mkdirs();
+			ImageIO.write(getImage(), "png", file);
 		}
 	}
 	

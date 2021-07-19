@@ -15,7 +15,7 @@ vt 1.000000 0.000000
 vt 1.000000 0.875000
 vt 0.000000 0.875000
 vt 0.000000 0.000000
-usemtl sapling_spruce
+usemtl block/spruce_sapling
 s off
 f 1/1 2/2 3/3 4/4
 f 5/5 6/6 7/7 8/8
@@ -77,10 +77,10 @@ vt 0.625000 0.250000
 vt 0.375000 0.250000
 vt 0.625000 0.250000
 vt 0.625000 0.375000
-usemtl dirt
+usemtl block/dirt
 s off
 f 9/9 10/10 11/11 12/12
-usemtl flowerpot
+usemtl block/flower_pot
 f 13/13 14/14 15/15 16/16
 f 17/17 18/18 19/19 20/20
 f 13/21 20/22 19/23 14/24
@@ -123,7 +123,7 @@ vt 0.625000 1.000000
 vt 0.375000 1.000000
 vt 0.375000 0.312500
 vt 0.625000 0.312500
-usemtl cactus_side
+usemtl block/cactus_side
 s off
 f 25/50 26/51 27/52 28/53
 f 25/54 28/55 29/56 30/57
@@ -167,12 +167,12 @@ vt 0.000000 0.000000
 vt 1.000000 0.000000
 vt 1.000000 1.000000
 vt 0.000000 1.000000
-usemtl bamboo_stalk
+usemtl block/bamboo_stalk
 s off
 f 33/70 34/71 35/72 36/73
 f 33/74 36/75 37/76 38/77
 f 38/78 39/79 34/80 33/81
 f 36/82 35/83 40/84 37/85
 f 35/86 34/87 39/88 40/89
-usemtl bamboo_singleleaf
+usemtl block/bamboo_singleleaf
 f 41/90 42/91 44/92 43/93
