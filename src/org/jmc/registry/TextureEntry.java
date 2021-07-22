@@ -35,8 +35,6 @@ public class TextureEntry extends RegistryEntry {
 	private Boolean hasAlpha;
 	//tint to apply to texture
 	private Color tint;
-	//if true, don't export, purely for internal use
-	public boolean virtual;
 	
 	//for texture exporter
 	public boolean repeating;
@@ -148,7 +146,6 @@ public class TextureEntry extends RegistryEntry {
 	}
 
 	public void exportTexture() throws IOException {
-		if (virtual) return;
 		File file = new File(Options.outputDir, getExportFilePath());
 		if (true || !file.exists()) {
 			file.getParentFile().mkdirs();
@@ -163,7 +160,7 @@ public class TextureEntry extends RegistryEntry {
 			public int width = -1;
 			public int height = -1;
 			public int frametime;
-			public Frame[] frames; // apparently can be an array of objects with index and time
+			public Frame[] frames;
 			@JsonAdapter(Frame.class)
 			private class Frame implements JsonDeserializer<Frame> {
 				public int index;

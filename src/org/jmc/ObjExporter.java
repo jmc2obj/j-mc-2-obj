@@ -15,6 +15,8 @@ import javax.annotation.CheckForNull;
 
 import org.jmc.Options.OffsetType;
 import org.jmc.models.Banner;
+import org.jmc.registry.Registries;
+import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ReaderRunnable;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.threading.ThreadOutputQueue;
@@ -54,7 +56,7 @@ public class ObjExporter {
 	 * @param writeMtl
 	 *            Whether to write the .mtl file
 	 */
-	public static void export(@CheckForNull ProgressCallback progress, @CheckForNull StopCallback stop, boolean writeObj, boolean writeMtl) {
+	public static void export(@CheckForNull ProgressCallback progress, @CheckForNull StopCallback stop, boolean writeObj, boolean writeMtl, boolean writeTex) {
 		File objfile = new File(Options.outputDir, Options.objFileName);
 		File mtlfile = new File(Options.outputDir, Options.mtlFileName);
 		File tmpdir = new File(Options.outputDir, "temp");
@@ -76,6 +78,8 @@ public class ObjExporter {
 		}
 
 		try {
+			Registries.objTextures.clear();
+			
 			if (writeObj) {
 				if (Options.maxX - Options.minX == 0 || Options.maxY - Options.minY == 0
 						|| Options.maxZ - Options.minZ == 0) {
@@ -366,6 +370,20 @@ public class ObjExporter {
 			if (writeMtl) {
 				Materials.writeMTLFile(mtlfile);
 				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
+			}
+			
+			if (writeTex) {
+				synchronized (Registries.objTextures) {
+					for (TextureEntry tex : Registries.objTextures) {
+						tex.exportTexture();
+					}
+				}
+//				File texFolder = new File(Options.outputDir, "tex");
+//				if (Options.textureMerge) {
+//					TextureExporter.mergeTextures(texFolder, texturepack, Options.textureScale, true, Options.textureAlpha, Options.textureLight, Options.textureNormal, Options.textureSpecular, progress);
+//				} else {
+//					TextureExporter.splitTextures(texFolder, texturepack, Options.textureScale, true, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, progress);
+//				}
 			}
 
 			Log.info("Done!");

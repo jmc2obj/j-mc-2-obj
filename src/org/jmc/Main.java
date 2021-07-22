@@ -118,7 +118,7 @@ public class Main
 		}
 		
 		if (Options.exportWorld) {
-			ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl);
+			ObjExporter.export(new ConsoleProgress(), null, Options.exportObj, Options.exportMtl, Options.exportTex);
 		}
 	}
 

@@ -11,6 +11,8 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -35,6 +37,8 @@ public class Registries {
 	private static HashMap<NamespaceID, TextureEntry> textures;
 	
 	static String BASE_FOLDER = "C:\\Users\\James\\Desktop\\Java\\jmcTest\\1.17";
+	
+	public static Set<TextureEntry> objTextures = Collections.synchronizedSet(new HashSet<>());
 	
 	public static BlockstateEntry getBlockstate(NamespaceID id) {
 		if (!blockstates.containsKey(id)) {

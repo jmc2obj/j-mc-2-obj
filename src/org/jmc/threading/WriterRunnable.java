@@ -303,7 +303,7 @@ public class WriterRunnable implements Runnable {
 			{
 				face.uv = null;
 			}
-			else if(Options.useUVFile)
+			else if(Options.textureMerge)
 			{
 				uv=UVRecalculate.recalculate(uv, tex);
 			}

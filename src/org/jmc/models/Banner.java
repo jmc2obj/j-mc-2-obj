@@ -262,7 +262,6 @@ public class Banner extends BlockModel {
             BufferedImage patternSource;
             try {
             	TextureEntry te = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + bp.getPattern()));
-            	te.virtual = true;// make sure it's not exported
             	patternSource = te.getImage();
             } catch (IOException e) {
             	Log.error("Cant read banner pattern " + bp.getPattern(), e, showReadErrorPopup());

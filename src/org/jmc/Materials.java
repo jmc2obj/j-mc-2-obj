@@ -50,13 +50,12 @@ public class Materials
 		else
 		{
 			ByteArrayOutputStream matBuffer = new ByteArrayOutputStream();
-			for (TextureEntry textureEntry : Registries.getTextures()) {
-				if (!textureEntry.virtual) {
+			synchronized (Registries.objTextures) {
+				for (TextureEntry textureEntry : Registries.objTextures) {
 					try {
-						textureEntry.exportTexture();
 						writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), textureEntry.hasAlpha() ? textureEntry.getExportFilePath() : null);
 					} catch (IOException e) {
-						Log.error("Error exporting texture " + textureEntry.id, e);
+						Log.error("Error writing material definition " + textureEntry.id, e);
 					}
 				}
 			}

@@ -799,7 +799,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 									public boolean stopRequested() {
 										return stop;
 									}
-								}, true, true);
+								}, true, true, Options.exportTex);
 
 								btnStartExport.setEnabled(true);
 								btnForceStop.setEnabled(false);
@@ -874,7 +874,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 								public boolean stopRequested() {
 									return stop;
 								}
-							}, true, true);
+							}, true, true, Options.exportTex);
 
 							btnStartExport.setEnabled(true);
 							btnForceStop.setEnabled(false);
