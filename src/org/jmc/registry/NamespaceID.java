@@ -72,7 +72,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	}
 	
 	
-	private static class NamespaceIDAdapter implements JsonDeserializer<NamespaceID>, JsonSerializer<NamespaceID> {
+	static class NamespaceIDAdapter implements JsonDeserializer<NamespaceID>, JsonSerializer<NamespaceID> {
 		@Override
 		public JsonElement serialize(NamespaceID src, Type typeOfSrc, JsonSerializationContext context) {
 			return new JsonPrimitive(src.toString());

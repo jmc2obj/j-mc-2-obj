@@ -5,7 +5,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -14,19 +16,25 @@ import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -48,6 +56,8 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	JTextArea taRestart;
 	JCheckBox chckbxUseSystemBrowser;
 	JSpinner spPrevThreads;
+	JmcPackList listPacks;
+	JCheckBox chckbxUsePackDefault;
 
 	@SuppressWarnings("serial")
 	public Settings() {
@@ -57,7 +67,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 
 		setTitle(Messages.getString("Settings.SETTINGS"));
 
-		setSize(400, 300);
+		setSize(400, 400);
 
 		JPanel mp = new JPanel();
 		getContentPane().add(mp);
@@ -176,12 +186,12 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		JPanel pUseSystemBrowser = new JPanel();
 		pUseSystemBrowser.setMaximumSize(new Dimension(32767, 50));
 		mp.add(pUseSystemBrowser);
-				pUseSystemBrowser.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		pUseSystemBrowser.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		
-				chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USESYSBROWSER"));
-				chckbxUseSystemBrowser.setAlignmentX(Component.CENTER_ALIGNMENT);
-				pUseSystemBrowser.add(chckbxUseSystemBrowser);
-				chckbxUseSystemBrowser.addActionListener(saveAction);
+		chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USESYSBROWSER"));
+		chckbxUseSystemBrowser.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pUseSystemBrowser.add(chckbxUseSystemBrowser);
+		chckbxUseSystemBrowser.addActionListener(saveAction);
 		
 		JPanel pPrevThreads = new JPanel();
 		pPrevThreads.setMaximumSize(new Dimension(32767, 50));
@@ -194,6 +204,95 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		spPrevThreads = new JSpinner();
 		spPrevThreads.setModel(new SpinnerNumberModel(8, 1, 512, 1));
 		pPrevThreads.add(spPrevThreads);
+		
+		JPanel pResourcePacks = new JPanel();
+		pResourcePacks.setBorder(new TitledBorder(null, "Resource Packs", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		mp.add(pResourcePacks);
+		pResourcePacks.setLayout(new BoxLayout(pResourcePacks, BoxLayout.Y_AXIS));
+		
+		JPanel pPackList = new JPanel();
+		pResourcePacks.add(pPackList);
+		pPackList.setLayout(new BoxLayout(pPackList, BoxLayout.X_AXIS));
+		
+		JScrollPane scrollListPacks = new JScrollPane();
+		pPackList.add(scrollListPacks);
+		scrollListPacks.setAlignmentY(Component.TOP_ALIGNMENT);
+		scrollListPacks.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		listPacks = new JmcPackList();
+		listPacks.setVisibleRowCount(5);
+		scrollListPacks.setViewportView(listPacks);
+		listPacks.setBackground(Color.WHITE);
+		listPacks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		JPanel pPackListButtons = new JPanel();
+		pPackList.add(pPackListButtons);
+		pPackListButtons.setAlignmentY(Component.TOP_ALIGNMENT);
+		pPackListButtons.setLayout(new BoxLayout(pPackListButtons, BoxLayout.Y_AXIS));
+		
+		
+		ImageIcon iconPackAdd, iconPackRemove, iconPackUp, iconPackDown;
+		iconPackAdd = iconPackRemove = iconPackUp = iconPackDown = null;
+		try {
+			iconPackAdd = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/org/jmc/gui/packAdd.png")));
+			iconPackRemove = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/org/jmc/gui/packRemove.png")));
+			iconPackUp = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/org/jmc/gui/packUp.png")));
+			iconPackDown = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/org/jmc/gui/packDown.png")));
+		} catch (IOException | IllegalArgumentException e) {
+			Log.error("Couldn't load settings icons!", e);
+		}
+		
+		JButton btnPackAdd = new JButton(iconPackAdd);
+		btnPackAdd.setToolTipText(Messages.getString("Settings.PACK_ADD"));
+		btnPackAdd.setMargin(new Insets(2, 2, 2, 2));
+		btnPackAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listPacks.getModel().add(0, "uh oh. Stinky");
+				listPacks.setSelectedIndex(0);
+				saveSettings();
+			}
+		});
+		pPackListButtons.add(btnPackAdd);
+		
+		JButton btnPackRemove = new JButton(iconPackRemove);
+		btnPackRemove.setToolTipText(Messages.getString("Settings.PACK_REMOVE"));
+		btnPackRemove.setMargin(new Insets(2, 2, 2, 2));
+		btnPackRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listPacks.removeSelected();
+				saveSettings();
+			}
+		});
+		pPackListButtons.add(btnPackRemove);
+		
+		JButton btnPackUp = new JButton(iconPackUp);
+		btnPackUp.setToolTipText(Messages.getString("Settings.PACK_UP"));
+		btnPackUp.setMargin(new Insets(2, 2, 2, 2));
+		btnPackUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listPacks.moveSelectedUp();
+				saveSettings();
+			}
+		});
+		pPackListButtons.add(btnPackUp);
+		
+		JButton btnPackDown = new JButton(iconPackDown);
+		btnPackDown.setToolTipText(Messages.getString("Settings.PACK_DOWN"));
+		btnPackDown.setMargin(new Insets(2, 2, 2, 2));
+		btnPackDown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listPacks.moveSelectedDown();
+				saveSettings();
+			}
+		});
+		pPackListButtons.add(btnPackDown);
+		
+		chckbxUsePackDefault = new JCheckBox(Messages.getString("Settings.PACK_USE_DEFAULT"));
+		chckbxUsePackDefault.setSelected(true);
+		chckbxUsePackDefault.addActionListener(saveAction);
+		pResourcePacks.add(chckbxUsePackDefault);
+		
+		
 		mp.add(Box.createVerticalGlue());
 		mp.add(pRestart);
 		mp.add(pButtons);
@@ -275,6 +374,8 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
 			chckbxUseSystemBrowser.setSelected(prefs.getBoolean("USE_SYSTEM_BROWSER", true));
 			spPrevThreads.setValue(prefs.getInt("PREVIEW_THREADS", 8));
+			listPacks.loadPrefString(prefs.get("RESOURCE_PACKS", "[]"));
+			chckbxUsePackDefault.setSelected(prefs.getBoolean("USE_DEFAULT_RESOURCE_PACK", true));
 		} catch (IllegalArgumentException e) {
 			Log.error("Error loading settings! Resetting...", e);
 			resetSettings();
@@ -293,7 +394,8 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex());
 			taRestart.setVisible(true);
 		}
-
+		prefs.put("RESOURCE_PACKS", listPacks.getPrefString());
+		prefs.putBoolean("USE_DEFAULT_RESOURCE_PACK", chckbxUsePackDefault.isSelected());
 	}
 
 	private void resetSettings() {
@@ -302,7 +404,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			cbMove.setSelectedIndex(1);
 			cbSelect.setSelectedIndex(0);
 			cbLang.setSelectedIndex(0);
+			chckbxUseSystemBrowser.setSelected(true);
 			spPrevThreads.setValue(8);
+			listPacks.reset();
+			chckbxUsePackDefault.setSelected(true);
 		} catch (BackingStoreException e) {
 		}
 		loadSettings();

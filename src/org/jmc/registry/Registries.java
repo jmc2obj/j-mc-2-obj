@@ -131,12 +131,15 @@ public class Registries {
 		unkTexEntry.setImage(unkTex);
 		
 		try (JmcConfFile texturesJsonFile = new JmcConfFile("conf/textures.json")) {
-			Gson gson = new GsonBuilder().registerTypeAdapter(Color.class, new JsonDeserializer<Color>() {
-				@Override
-				public Color deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-					return new Color(Integer.parseInt(json.getAsString(), 16));
-				}
-			}).create();
+			Gson gson = new GsonBuilder()
+					.registerTypeAdapter(Color.class, new JsonDeserializer<Color>() {
+							@Override
+							public Color deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+								return new Color(Integer.parseInt(json.getAsString(), 16));
+							}
+						})
+					.excludeFieldsWithoutExposeAnnotation()
+					.create();
 			TextureEntry[] textureJsonEntries = gson.fromJson(new InputStreamReader(texturesJsonFile.getInputStream()), TextureEntry[].class);
 			for (TextureEntry textureJson : textureJsonEntries) {
 				textures.put(textureJson.id, textureJson);

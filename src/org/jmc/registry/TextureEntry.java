@@ -21,6 +21,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 
 public class TextureEntry extends RegistryEntry {
@@ -28,16 +29,20 @@ public class TextureEntry extends RegistryEntry {
 	//The texture
 	private BufferedImage buffImage;
 	//Overrides the 'id' for when the image is read from a resource pack
+	@Expose
 	private NamespaceID sourceIdOverride;
 	//cached average colour
 	private Color avgCol;
 	//cached has alpha
 	private Boolean hasAlpha;
 	//tint to apply to texture
+	@Expose
 	private Color tint;
 	
 	//for texture exporter
+	@Expose
 	public boolean repeating;
+	@Expose
 	public boolean luma;
 
 	TextureEntry(NamespaceID id) {

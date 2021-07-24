@@ -134,7 +134,7 @@ public class Vertex implements Comparable<Vertex>
 		return Math.sqrt(c.x * c.x + c.y * c.y + c.z * c.z);
 	}
 	
-	private static class VertexAdapter implements JsonDeserializer<Vertex>, JsonSerializer<Vertex> {
+	static class VertexAdapter implements JsonDeserializer<Vertex>, JsonSerializer<Vertex> {
 
 		@Override
 		public Vertex deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
