@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.Blockstate;
 
 import com.google.gson.Gson;
@@ -33,6 +35,7 @@ public abstract class BlockstateEntry extends RegistryEntry {
 	
 	protected abstract void parseJson(JsonElement json);
 	
+	@Nonnull
 	public abstract List<ModelListWeighted> getModelsFor(Blockstate state);
 	
 	protected static HashMap<String, String> parseStateString(String stateStr) {

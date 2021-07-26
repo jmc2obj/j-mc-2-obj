@@ -22,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -94,7 +95,7 @@ public class TextureExporter {
 			zf = new ZipFile(zipfile);
 			ZipEntry entry = null;
 			entry = zf.getEntry(imagePath);
-			if (entry.getName() == null)
+			if (entry == null)
 				throw new IOException("Couldn't find " + imagePath + " in " + zipfile.getName());
 			zis = zf.getInputStream(entry);
 			result = ImageIO.read(zis);
@@ -107,6 +108,7 @@ public class TextureExporter {
 		return result;
 	}
 
+	@Nonnull
 	public static BufferedImage convertImageType(BufferedImage image) {
 		int w = image.getWidth();
 		int h = image.getHeight();

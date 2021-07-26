@@ -51,7 +51,7 @@ public class BlockstateVariantEntry extends BlockstateEntry {
 				return stateModels;// Only 1 matching state for variant type
 			}
 		}
-		return null;
+		return stateModels;
 	}
 	
 	@Override

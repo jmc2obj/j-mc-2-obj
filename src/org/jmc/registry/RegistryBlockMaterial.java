@@ -25,6 +25,9 @@ public class RegistryBlockMaterial extends BlockMaterial {
 			for (ModelListWeighted modelList : bse.getModelsFor(state)) {
 				for (ModelInfo modelInfo : modelList.models) {
 					ModelEntry modelEntry = Registries.getModel(modelInfo.id);
+					if (modelEntry == null) {
+						continue;
+					}
 					RegistryModel model = modelEntry.generateModel();
 					for (String texture : model.textures.values()) {
 						textureCount.put(texture, textureCount.getOrDefault(texture, 0) + 1);
@@ -33,6 +36,7 @@ public class RegistryBlockMaterial extends BlockMaterial {
 							highestUses++;
 						}
 					}
+					
 				}
 			}
 			if (mats[0] == null)

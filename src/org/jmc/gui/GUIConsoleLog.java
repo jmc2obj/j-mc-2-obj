@@ -11,6 +11,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -79,12 +80,17 @@ public class GUIConsoleLog extends JmcFrame{
 	 *            line to be added to the log
 	 */
 	public void log(String msg, boolean isError, boolean isDebug) {
-		try {
-			Style color = taLog.addStyle("color", null);
-			StyleConstants.setForeground(color, isError ? Color.RED : isDebug ? Color.GRAY : Color.WHITE);
-			taLog.getStyledDocument().insertString(taLog.getDocument().getLength(), msg + "\n", color);
-			taLog.setCaretPosition(taLog.getDocument().getLength());
-		} catch (BadLocationException e) { /* don't care */	}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Style color = taLog.addStyle("color", null);
+					StyleConstants.setForeground(color, isError ? Color.RED : isDebug ? Color.GRAY : Color.WHITE);
+					taLog.getStyledDocument().insertString(taLog.getDocument().getLength(), msg + "\n", color);
+					taLog.setCaretPosition(taLog.getDocument().getLength());
+				} catch (BadLocationException e) { /* don't care */	}
+			}
+		});
 	}
 	
 }

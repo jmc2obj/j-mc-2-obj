@@ -109,7 +109,7 @@ public class Main
 			try {
 				TextureExporter.splitTextures(
 						new File(Options.outputDir, "tex"), 
-						Options.texturePack, Options.textureScale, Options.textureDiffuse, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, new ConsoleProgress());
+						Options.resourcePacks.get(0), Options.textureScale, Options.textureDiffuse, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, new ConsoleProgress());
 			}
 			catch (Exception e) {
 				Log.error("Error saving textures:", e);

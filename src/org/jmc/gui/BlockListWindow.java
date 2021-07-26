@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -89,7 +91,7 @@ public class BlockListWindow extends JmcFrame {
 
 			@Override
 			public void caretUpdate(CaretEvent e) {
-				Log.info("Searching for: " + searchbar.getText());
+				Log.debug("Searching for: " + searchbar.getText());
 				updateListings();
 			}
 		});
@@ -221,7 +223,16 @@ public class BlockListWindow extends JmcFrame {
 			listItems.add(item);
 		}
 		
-		updateListings();
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					updateListings();
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 		loadList("CurSelection");
 	}
 

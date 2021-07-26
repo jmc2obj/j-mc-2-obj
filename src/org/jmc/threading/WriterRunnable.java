@@ -248,6 +248,7 @@ public class WriterRunnable implements Runnable {
 			if(!f.tex.equals(last_mtl) && print_usemtl)
 			{
 				TextureEntry te = Registries.getTexture(f.tex);
+				Registries.objTextures.add(te);
 				out.println();
 				out.println("usemtl "+te.getMatName());
 				last_mtl=f.tex;

@@ -63,6 +63,7 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 
+			@SuppressWarnings("null")
 			@Nonnull
 			String id = Xml.getAttribute(blockNode, "id", "");
 
@@ -124,6 +125,7 @@ public class BlockTypes
 					continue;
 				}
 				
+				@SuppressWarnings("null")
 				@Nonnull
 				String[] splitmats = mats.split("\\s*,\\s*");
 				NamespaceID[] nsMats = new NamespaceID[splitmats.length];

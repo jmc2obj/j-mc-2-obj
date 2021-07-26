@@ -2,20 +2,25 @@ package org.jmc.registry;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.annotation.CheckForNull;
 
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
+import org.jmc.util.ResourcePackIO;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,27 +37,53 @@ public class Registries {
 
 	public static final NamespaceID UNKNOWN_TEX_ID = new NamespaceID("jmc2obj", "unknown");
 
-	private static HashMap<NamespaceID, BlockstateEntry> blockstates;
-	private static HashMap<NamespaceID, ModelEntry> models;
-	private static HashMap<NamespaceID, TextureEntry> textures;
-	
-	static String BASE_FOLDER = "C:\\Users\\James\\Desktop\\Java\\jmcTest\\1.17";
+	private static Map<NamespaceID, BlockstateEntry> blockstates = new ConcurrentHashMap<>();
+	private static Map<NamespaceID, Lock> blockstatesLocks = new HashMap<>();
+	private static Map<NamespaceID, ModelEntry> models = new ConcurrentHashMap<>();
+	private static Map<NamespaceID, Lock> modelsLocks = new HashMap<>();
+	private static Map<NamespaceID, TextureEntry> textures = new ConcurrentHashMap<>();
+	private static Map<NamespaceID, Lock> texturesLocks = new HashMap<>();
 	
 	public static Set<TextureEntry> objTextures = Collections.synchronizedSet(new HashSet<>());
 	
-	public static BlockstateEntry getBlockstate(NamespaceID id) {
-		if (!blockstates.containsKey(id)) {
-			BlockstateEntry entry = addNewBlockstate(id);
-			return entry;
+	private static Lock getLock(Map<NamespaceID, Lock> map, NamespaceID id) {
+		Lock lock = map.get(id);
+		if (lock == null) {
+			lock = new ReentrantLock();
+			map.put(id, lock);
 		}
-		return blockstates.get(id);
+		return lock;
+	}
+	
+	@CheckForNull
+	public static BlockstateEntry getBlockstate(NamespaceID id) {
+		Lock idLock;
+		boolean hasLock = false;
+		synchronized (blockstatesLocks) {
+			if (blockstates.containsKey(id)) {
+				return blockstates.get(id);// if it exists then just return
+			} else {
+				idLock = getLock(blockstatesLocks, id);
+				hasLock = idLock.tryLock();// try and lock to create
+			}
+		}
+		try {
+			if (hasLock) {// we have the lock to create, add to map
+				BlockstateEntry entry = addNewBlockstate(id);
+				return entry;
+			} else {
+				idLock.lock();// wait for the creation thread to finish
+				return blockstates.get(id);
+			}
+		} finally {
+			idLock.unlock();
+		}
 	}
 
-	private static synchronized BlockstateEntry addNewBlockstate(NamespaceID id) {
-		File file = new File(BASE_FOLDER, getFilePath(id, RegType.BLOCKSTATE));
+	private static BlockstateEntry addNewBlockstate(NamespaceID id) {
 		JsonObject json = null;
-		try (FileReader fr = new FileReader(file)){
-			json = new Gson().fromJson(fr, JsonObject.class);
+		try (InputStream is = ResourcePackIO.loadResourceAsStream(getFilePath(id, RegType.BLOCKSTATE))){
+			json = new Gson().fromJson(new InputStreamReader(is), JsonObject.class);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
@@ -65,24 +96,40 @@ public class Registries {
 		return entry;
 	}
 	
+	@CheckForNull
 	public static ModelEntry getModel(NamespaceID id) {
-		if (!models.containsKey(id)) {
-			ModelEntry entry = addNewModel(id);
-			return entry;
+		Lock idLock;
+		boolean hasLock = false;
+		synchronized (modelsLocks) {
+			if (models.containsKey(id)) {
+				return models.get(id);
+			} else {
+				idLock = getLock(modelsLocks, id);
+				hasLock = idLock.tryLock();
+			}
 		}
-		return models.get(id);
+		try {
+			if (hasLock) {
+				ModelEntry entry = addNewModel(id);
+				return entry;
+			} else {
+				idLock.lock();
+				return models.get(id);
+			}
+		} finally {
+			idLock.unlock();
+		}
 	}
 
-	private static synchronized ModelEntry addNewModel(NamespaceID id) {
-		File file = new File(BASE_FOLDER, getFilePath(id, RegType.MODEL));
+	private static ModelEntry addNewModel(NamespaceID id) {
 		JsonObject json = null;
-		try (FileReader fr = new FileReader(file)){
-			json = new Gson().fromJson(fr, JsonObject.class);
+		try (InputStream is = ResourcePackIO.loadResourceAsStream(getFilePath(id, RegType.MODEL))){
+			json = new Gson().fromJson(new InputStreamReader(is), JsonObject.class);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.info("Couldn't find ");
 			return null;
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		}
 		ModelEntry entry = ModelEntry.parseJson(id, json);
@@ -91,21 +138,33 @@ public class Registries {
 	}
 
 	public static TextureEntry getTexture(NamespaceID id) {
-		if (!textures.containsKey(id)) {
-			TextureEntry entry = addNewTexture(id);
-			return entry;
+		Lock idLock;
+		boolean hasLock = false;
+		synchronized (texturesLocks) {
+			if (textures.containsKey(id)) {
+				return textures.get(id);
+			} else {
+				idLock = getLock(texturesLocks, id);
+				hasLock = idLock.tryLock();
+			}
 		}
-		return textures.get(id);
+		try {
+			if (hasLock) {
+				TextureEntry entry = addNewTexture(id);
+				return entry;
+			} else {
+				idLock.lock();
+				return textures.get(id);
+			}
+		} finally {
+			idLock.unlock();
+		}
 	}
 
-	private static synchronized TextureEntry addNewTexture(NamespaceID id) {
+	private static TextureEntry addNewTexture(NamespaceID id) {
 		TextureEntry entry = new TextureEntry(id);
 		textures.put(id, entry);
 		return entry;
-	}
-
-	public static Collection<TextureEntry> getTextures() {
-		return Collections.unmodifiableCollection(textures.values());
 	}
 
 	public static String getFilePath(NamespaceID id, RegType model) {
@@ -117,14 +176,15 @@ public class Registries {
 		case TEXTURE:
 			return String.format("assets/%s/textures/%s.png", id.namespace, id.path);
 		default:
-			throw new RuntimeException("Invalid registry type getting path for id");
+			throw new RuntimeException("Invalid registry type getting path for id " + id);
 		}
 	}
 
 	public static void initialize() {
-		blockstates = new HashMap<>();
-		models = new HashMap<>();
-		textures = new HashMap<>();
+		blockstates.clear();
+		models.clear();
+		textures.clear();
+		objTextures.clear();
 		TextureEntry unkTexEntry = addNewTexture(UNKNOWN_TEX_ID);
 		BufferedImage unkTex = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		unkTex.setRGB(0, 0, Color.MAGENTA.getRGB());
@@ -142,10 +202,17 @@ public class Registries {
 					.create();
 			TextureEntry[] textureJsonEntries = gson.fromJson(new InputStreamReader(texturesJsonFile.getInputStream()), TextureEntry[].class);
 			for (TextureEntry textureJson : textureJsonEntries) {
+				if (textureJson.id == null) {
+					throw new Exception("Texture id is null!");
+				}
 				textures.put(textureJson.id, textureJson);
 			}
 		} catch (Exception e) {
 			Log.error("Error loading textures.json", e);
 		}
+	}
+
+	public static void reloadResourcePacks() {
+		initialize();
 	}
 }

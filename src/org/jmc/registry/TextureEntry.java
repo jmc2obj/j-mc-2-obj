@@ -3,17 +3,19 @@ package org.jmc.registry;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
 import org.jmc.Options;
 import org.jmc.TextureExporter;
 import org.jmc.registry.Registries.RegType;
+import org.jmc.util.ResourcePackIO;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
@@ -25,18 +27,23 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 
 public class TextureEntry extends RegistryEntry {
-
+	
 	//The texture
+	@CheckForNull
 	private BufferedImage buffImage;
 	//Overrides the 'id' for when the image is read from a resource pack
 	@Expose
+	@CheckForNull
 	private NamespaceID sourceIdOverride;
 	//cached average colour
+	@CheckForNull
 	private Color avgCol;
 	//cached has alpha
+	@CheckForNull
 	private Boolean hasAlpha;
 	//tint to apply to texture
 	@Expose
+	@CheckForNull
 	private Color tint;
 	
 	//for texture exporter
@@ -49,9 +56,12 @@ public class TextureEntry extends RegistryEntry {
 		super(id);
 	}
 	
+	@Nonnull
 	public Color getAverageColour() throws IOException {
 		BufferedImage image = getImage();
-		if (avgCol == null) {
+		if (avgCol != null) {
+			return avgCol;
+		} else {
 			float red = 0;
 			float green = 0;
 			float blue = 0;
@@ -71,34 +81,35 @@ public class TextureEntry extends RegistryEntry {
 			green /= count;
 			blue /= count;
 			avgCol = new Color(red, green, blue);
+			return avgCol;
 		}
-		return avgCol;
 	}
 
 	public boolean hasAlpha() throws IOException {
 		BufferedImage image = getImage();
-		if (hasAlpha == null) {
-			hasAlpha = false;
+		if (hasAlpha != null) {
+			return hasAlpha;
+		} else {
 			int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
 			for (int pixelData : pixels) {
 				Color pixel = new Color(pixelData, true);
 				float[] values = pixel.getRGBComponents(null);
 				if (values[3] < 1) {
 					hasAlpha = true;
-					break;
+					return hasAlpha;
 				}
 			}
+			hasAlpha = false;
+			return hasAlpha;
 		}
-		return hasAlpha;
 	}
 	
 	public BufferedImage getImage() throws IOException {
-		if (buffImage == null) {
-			BufferedImage image;
-			try (InputStream is = new FileInputStream(new File(Registries.BASE_FOLDER, getPackPath()))) {
-				image = ImageIO.read(is);
-			}
-			try (InputStream is = new FileInputStream(new File(Registries.BASE_FOLDER, getPackPath()+".mcmeta"))) {
+		if (buffImage != null) {
+			return buffImage;
+		} else {
+			BufferedImage image = ResourcePackIO.loadImage(getFilePath());
+			try (InputStream is = ResourcePackIO.loadResourceAsStream(getFilePath()+".mcmeta")) {
 				Meta meta = new Gson().fromJson(new InputStreamReader(is), Meta.class);
 				if (meta != null && meta.animation != null) {
 					Meta.Animation anim = meta.animation;
@@ -110,7 +121,6 @@ public class TextureEntry extends RegistryEntry {
 						}
 					}
 					int width = image.getWidth();
-					int height = image.getHeight();
 					BufferedImage frame = new BufferedImage(width, width, image.getType());
 					image.getSubimage(0, width*baseFrame, width, width).copyData(frame.getRaster());
 					image = frame;
@@ -124,8 +134,8 @@ public class TextureEntry extends RegistryEntry {
 				TextureExporter.tintImage(image, tint);
 			}
 			setImage(image);
+			return buffImage;
 		}
-		return buffImage;
 	}
 	
 	public void setImage(BufferedImage image) {
@@ -134,7 +144,7 @@ public class TextureEntry extends RegistryEntry {
 		buffImage = image;
 	}
 
-	public String getPackPath() {
+	public String getFilePath() {
 		if (sourceIdOverride != null) {
 			return Registries.getFilePath(sourceIdOverride, RegType.TEXTURE);
 		} else {
@@ -158,6 +168,7 @@ public class TextureEntry extends RegistryEntry {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private class Meta {
 		public Animation animation;
 		private class Animation {

@@ -80,8 +80,8 @@ public class MainWindow extends JmcFrame
 	
 	public void loadingFinished()
 	{
-		panel.loadingFinished();
 		blocksWindow.initialize();
+		panel.loadingFinished();
 	}
 	
 	public void highlightUpdateButton()

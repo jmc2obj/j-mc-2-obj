@@ -1017,7 +1017,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 	private void saveSettings() {
 
-		Log.info("Saving Options");
+		Log.debug("Saving export settings");
 
 		prefs.putFloat("DEFAULT_SCALE", Options.scale);
 		prefs.putInt("OFFSET_X", Options.offsetX);

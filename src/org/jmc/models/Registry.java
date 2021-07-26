@@ -35,11 +35,19 @@ public class Registry extends BlockModel {
 		Transform posTrans = Transform.translation(x, y, z);
 		
 		BlockstateEntry bsEntry = Registries.getBlockstate(NamespaceID.fromString(data.id));
+		if (bsEntry == null) {
+			Log.debug(String.format("Couldn't get blockstate to export %s", data.id.toString()));
+			return;
+		}
 		List<ModelListWeighted> modelParts = bsEntry.getModelsFor(data.state);
 		
 		for (ModelListWeighted modelList : modelParts) {
 			ModelInfo modelInfo = modelList.getRandomModel();
 			ModelEntry modelEntry = Registries.getModel(modelInfo.id);
+			if (modelEntry == null) {
+				Log.debug(String.format("Couldn't get model %s to export %s", modelInfo.id, bsEntry.id));
+				continue;
+			}
 			RegistryModel model = modelEntry.generateModel();
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {

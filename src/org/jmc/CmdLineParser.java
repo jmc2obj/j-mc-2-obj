@@ -140,8 +140,8 @@ public class CmdLineParser
 						else throw new CmdLineException("Invalid argument to option --tex_export: " + part);
 					}
 				}
-				else if (a.startsWith("--texturepack=")) {
-					Options.texturePack = new File(a.substring(14));
+				else if (a.startsWith("--resourcepack=")) {
+					Options.resourcePacks.add(new File(a.substring(15)));
 				}
 				else if (a.startsWith("--texturescale=")) {
 					Options.textureScale = Float.parseFloat(a.substring(15));

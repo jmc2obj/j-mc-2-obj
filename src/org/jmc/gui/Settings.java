@@ -13,6 +13,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -25,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,22 +39,21 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jmc.Options;
+import org.jmc.registry.Registries;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Settings extends JmcFrame implements WindowListener, ChangeListener {
 
 	private static final long serialVersionUID = -5546934145954405065L;
 
 	private Preferences prefs;
 
-	JComboBox cbMove, cbSelect, cbLang;
+	JComboBox<String> cbMove, cbSelect, cbLang;
 	JTextArea taRestart;
 	JCheckBox chckbxUseSystemBrowser;
 	JSpinner spPrevThreads;
@@ -62,8 +63,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	@SuppressWarnings("serial")
 	public Settings() {
 		prefs = Preferences.userNodeForPackage(getClass());
-
-		loadSettings();
 
 		setTitle(Messages.getString("Settings.SETTINGS"));
 
@@ -87,7 +86,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pMove.setLayout(new BoxLayout(pMove, BoxLayout.LINE_AXIS));
 		JLabel lMove = new JLabel(Messages.getString("Settings.DRAG"));
-		cbMove = new JComboBox(actions);
+		cbMove = new JComboBox<String>(actions);
 		pMove.add(lMove);
 		pMove.add(cbMove);
 
@@ -95,7 +94,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pSelect.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pSelect.setLayout(new BoxLayout(pSelect, BoxLayout.LINE_AXIS));
 		JLabel lSelect = new JLabel(Messages.getString("Settings.SELECT"));
-		cbSelect = new JComboBox(actions);
+		cbSelect = new JComboBox<String>(actions);
 		pSelect.add(lSelect);
 		pSelect.add(cbSelect);
 
@@ -103,7 +102,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pLang.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pLang.setLayout(new BoxLayout(pLang, BoxLayout.LINE_AXIS));
 		JLabel lLang = new JLabel(Messages.getString("Settings.LANGUAGE"));
-		cbLang = new JComboBox(languages);
+		cbLang = new JComboBox<String>(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
 
@@ -247,9 +246,14 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackAdd.setMargin(new Insets(2, 2, 2, 2));
 		btnPackAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPacks.getModel().add(0, "uh oh. Stinky");
+				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
+				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
+				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
+				File path = jfc.getSelectedFile();
+				listPacks.getModel().add(0, path);
 				listPacks.setSelectedIndex(0);
 				saveSettings();
+				updateResourcePacks(true);
 			}
 		});
 		pPackListButtons.add(btnPackAdd);
@@ -261,6 +265,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			public void actionPerformed(ActionEvent e) {
 				listPacks.removeSelected();
 				saveSettings();
+				updateResourcePacks(true);
 			}
 		});
 		pPackListButtons.add(btnPackRemove);
@@ -272,6 +277,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			public void actionPerformed(ActionEvent e) {
 				listPacks.moveSelectedUp();
 				saveSettings();
+				updateResourcePacks(true);
 			}
 		});
 		pPackListButtons.add(btnPackUp);
@@ -283,13 +289,20 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			public void actionPerformed(ActionEvent e) {
 				listPacks.moveSelectedDown();
 				saveSettings();
+				updateResourcePacks(true);
 			}
 		});
 		pPackListButtons.add(btnPackDown);
 		
 		chckbxUsePackDefault = new JCheckBox(Messages.getString("Settings.PACK_USE_DEFAULT"));
 		chckbxUsePackDefault.setSelected(true);
-		chckbxUsePackDefault.addActionListener(saveAction);
+		chckbxUsePackDefault.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveSettings();
+				updateResourcePacks(true);
+			}
+		});
 		pResourcePacks.add(chckbxUsePackDefault);
 		
 		
@@ -299,14 +312,14 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 
 		mp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		loadSettingsAfter();
+		loadSettings();
+		updateResourcePacks(false);
 
 		addWindowListener(this);
 		cbMove.addActionListener(saveAction);
 		cbSelect.addActionListener(saveAction);
 		cbLang.addActionListener(saveAction);
 		spPrevThreads.addChangeListener(new ChangeListener() {
-			
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				saveSettings();
@@ -357,17 +370,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		return cbSelect.getSelectedIndex();
 	}
 
-	private void getFields() {
-		saveSettings();
-	}
-
-	private void setFields() {
-	}
-
 	private void loadSettings() {
-	}
-
-	private void loadSettingsAfter() {
 		try {
 			cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
 			cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
@@ -410,32 +413,32 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			chckbxUsePackDefault.setSelected(true);
 		} catch (BackingStoreException e) {
 		}
-		loadSettings();
-		setFields();
+		saveSettings();
 	}
-
-	@SuppressWarnings("unused")
-	private DocumentListener document_listener = new DocumentListener() {
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			getFields();
+	
+	private void updateResourcePacks(boolean reloadRegistries) {
+		List<File> resPacks = Options.resourcePacks;
+		synchronized (resPacks) {
+			resPacks.clear();
+			for (File pack : listPacks.getList()) {
+				resPacks.add(pack);
+			}
+			if (chckbxUsePackDefault.isSelected()) {
+				resPacks.add(Filesystem.getMinecraftJar());
+			}
 		}
-
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			getFields();
+		if (reloadRegistries) {
+			Registries.reloadResourcePacks();
+			if (MainWindow.main != null) {
+				MainWindow.main.reloadPreviewLoader();
+				//MainWindow.main.clearPreviewImages();
+			}
 		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			getFields();
-		}
-	};
+	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
 		loadSettings();
-		setFields();
 	}
 
 	@Override
