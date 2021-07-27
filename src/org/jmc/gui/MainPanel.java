@@ -230,7 +230,7 @@ public class MainPanel extends JPanel {
 
 		// START PREVIEW CONTROLS
 		JPanel pControls = new JPanel();
-		pControls.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		pControls.setLayout(new WrapLayout(FlowLayout.CENTER, 0, 0));
 		pControls.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
 		// Render Options Panel
