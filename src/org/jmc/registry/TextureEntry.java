@@ -4,8 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
 
 import javax.annotation.CheckForNull;
@@ -109,8 +108,8 @@ public class TextureEntry extends RegistryEntry {
 			return buffImage;
 		} else {
 			BufferedImage image = ResourcePackIO.loadImage(getFilePath());
-			try (InputStream is = ResourcePackIO.loadResourceAsStream(getFilePath()+".mcmeta")) {
-				Meta meta = new Gson().fromJson(new InputStreamReader(is), Meta.class);
+			try (Reader reader = ResourcePackIO.loadText(getFilePath()+".mcmeta")) {
+				Meta meta = new Gson().fromJson(reader, Meta.class);
 				if (meta != null && meta.animation != null) {
 					Meta.Animation anim = meta.animation;
 					int baseFrame = 0;
@@ -121,7 +120,7 @@ public class TextureEntry extends RegistryEntry {
 						}
 					}
 					int width = image.getWidth();
-					BufferedImage frame = new BufferedImage(width, width, image.getType());
+					BufferedImage frame = TextureExporter.cloneImageType(image, width, width);
 					image.getSubimage(0, width*baseFrame, width, width).copyData(frame.getRaster());
 					image = frame;
 				}

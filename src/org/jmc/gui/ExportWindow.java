@@ -124,6 +124,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JPanel holderExtraMapsText;
 	private JPanel holderSingleTexOpts;
 	private JLabel lblUVFile;
+	private JCheckBox chckbxExportTextures;
 
 
 	/**
@@ -254,6 +255,10 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderTexExport.setBorder(new EmptyBorder(5, 5, 5, 5));
 		pTextureOptions.add(holderTexExport);
 		holderTexExport.setLayout(new BoxLayout(holderTexExport, BoxLayout.Y_AXIS));
+		
+		chckbxExportTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_TEXTURES")); //$NON-NLS-1$
+		chckbxExportTextures.setAlignmentX(Component.CENTER_ALIGNMENT);
+		holderTexExport.add(chckbxExportTextures);
 
 		chckbxSeparateAlphaTexture = new JCheckBox(Messages.getString("TexsplitDialog.EXP_ALPHA"));
 		chckbxSeparateAlphaTexture.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -942,6 +947,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		cboxTexScale.addActionListener(genericSaveAction);
 
+		chckbxExportTextures.addActionListener(genericSaveAction);
 		chckbxSeparateAlphaTexture.addActionListener(genericSaveAction);
 		chckbxExportNormalMaps.addActionListener(genericSaveAction);
 		chckbxExportSpecularMaps.addActionListener(genericSaveAction);
@@ -1001,6 +1007,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", false));
 		
 		cboxTexScale.setSelectedItem("" + prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
+		chckbxExportTextures.setSelected(prefs.getBoolean("TEXTURE_EXPORT", true));
 		chckbxSeparateAlphaTexture.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
 		chckbxExportNormalMaps.setSelected(prefs.getBoolean("TEXTURE_NORMAL", false));
 		chckbxExportSpecularMaps.setSelected(prefs.getBoolean("TEXTURE_SPECULAR", false));
@@ -1081,6 +1088,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
 
 		prefs.putDouble("TEXTURE_SCALE_ID", Options.textureScale);
+		prefs.putBoolean("TEXTURE_EXPORT", Options.exportTex);
 		prefs.putBoolean("TEXTURE_ALPHA", Options.textureAlpha);
 		prefs.putBoolean("TEXTURE_NORMAL", Options.textureNormal);
 		prefs.putBoolean("TEXTURE_SPECULAR", Options.textureSpecular);
@@ -1173,6 +1181,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			}
 		}
 
+		Options.exportTex = chckbxExportTextures.isSelected();
 		Options.textureAlpha = chckbxSeparateAlphaTexture.isSelected();
 		Options.textureNormal = chckbxExportNormalMaps.isSelected();
 		Options.textureSpecular = chckbxExportSpecularMaps.isSelected();

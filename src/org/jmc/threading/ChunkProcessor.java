@@ -189,7 +189,7 @@ public class ChunkProcessor
 						}
 					}
 					catch (Exception ex) {
-						Log.error("Error rendering block, skipping.", ex);
+						Log.error(String.format("Error rendering block '%s', skipping.", block.id), ex);
 					}
 				}
 			}

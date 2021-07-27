@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
+import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
@@ -187,7 +188,7 @@ public class TextureExporter {
 		int new_w = (int) (w * factor);
 		int new_h = (int) (h * factor);
 
-		BufferedImage result = new BufferedImage(new_w, new_h, img.getType());
+		BufferedImage result = cloneImageType(img, new_w, new_h);
 		for (int y = 0; y < new_h; y++) {
 			for (int x = 0; x < new_w; x++) {
 				int src = img.getRGB((int) (x / factor), (int) (y / factor));
@@ -195,6 +196,25 @@ public class TextureExporter {
 			}
 		}
 
+		return result;
+	}
+
+	/**
+	 * Makes a new {@link BufferedImage} of the same type with the specified width and height
+	 * Copies the {@link IndexColorModel} of indexed images. 
+	 * 
+	 * @param img The image to copy from
+	 * @param width
+	 * @param height
+	 * @return An empty {@link BufferedImage} with matching type
+	 */
+	public static BufferedImage cloneImageType(BufferedImage img, int width, int height) {
+		BufferedImage result;
+		if ((img.getType() == BufferedImage.TYPE_BYTE_INDEXED || img.getType() == BufferedImage.TYPE_BYTE_BINARY) && img.getColorModel() instanceof IndexColorModel) {
+			result = new BufferedImage(width, height, img.getType(), (IndexColorModel) img.getColorModel());
+		} else {
+			result = new BufferedImage(width, height, img.getType());
+		}
 		return result;
 	}
 

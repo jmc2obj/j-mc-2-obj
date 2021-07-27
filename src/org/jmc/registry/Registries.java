@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,13 +82,13 @@ public class Registries {
 
 	private static BlockstateEntry addNewBlockstate(NamespaceID id) {
 		JsonObject json = null;
-		try (InputStream is = ResourcePackIO.loadResourceAsStream(getFilePath(id, RegType.BLOCKSTATE))){
-			json = new Gson().fromJson(new InputStreamReader(is), JsonObject.class);
+		try (Reader reader = ResourcePackIO.loadText(getFilePath(id, RegType.BLOCKSTATE))){
+			json = new Gson().fromJson(reader, JsonObject.class);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.info(String.format("Couldn't find blockstate %s in any resource pack!", id));
 			return null;
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		}
 		BlockstateEntry entry = BlockstateEntry.parseJson(id, json);
@@ -123,10 +123,10 @@ public class Registries {
 
 	private static ModelEntry addNewModel(NamespaceID id) {
 		JsonObject json = null;
-		try (InputStream is = ResourcePackIO.loadResourceAsStream(getFilePath(id, RegType.MODEL))){
-			json = new Gson().fromJson(new InputStreamReader(is), JsonObject.class);
+		try (Reader reader = ResourcePackIO.loadText(getFilePath(id, RegType.MODEL))){
+			json = new Gson().fromJson(reader, JsonObject.class);
 		} catch (FileNotFoundException e) {
-			Log.info("Couldn't find ");
+			Log.info(String.format("Couldn't find model %s in any resource pack!", id));
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
