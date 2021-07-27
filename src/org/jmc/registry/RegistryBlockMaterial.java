@@ -9,11 +9,11 @@ import org.jmc.registry.BlockstateEntry.ModelListWeighted;
 import org.jmc.registry.ModelEntry.RegistryModel;
 
 public class RegistryBlockMaterial extends BlockMaterial {
-	private BlockstateEntry bse;
+	private NamespaceID id;
 	
-	public RegistryBlockMaterial(BlockstateEntry bse) {
+	public RegistryBlockMaterial(NamespaceID id) {
 		super();
-		this.bse = bse;
+		this.id = id;
 	}
 	
 	@Override
@@ -22,21 +22,24 @@ public class RegistryBlockMaterial extends BlockMaterial {
 			NamespaceID[] mats = new NamespaceID[1];
 			HashMap<String, Integer> textureCount = new HashMap<>();
 			int highestUses = 0;
-			for (ModelListWeighted modelList : bse.getModelsFor(state)) {
-				for (ModelInfo modelInfo : modelList.models) {
-					ModelEntry modelEntry = Registries.getModel(modelInfo.id);
-					if (modelEntry == null) {
-						continue;
-					}
-					RegistryModel model = modelEntry.generateModel();
-					for (String texture : model.textures.values()) {
-						textureCount.put(texture, textureCount.getOrDefault(texture, 0) + 1);
-						if (textureCount.get(texture) > highestUses) {
-							mats[0] = NamespaceID.fromString(texture);
-							highestUses++;
+			BlockstateEntry bse = Registries.getBlockstate(id);
+			if (bse != null) {
+				for (ModelListWeighted modelList : bse.getModelsFor(state)) {
+					for (ModelInfo modelInfo : modelList.models) {
+						ModelEntry modelEntry = Registries.getModel(modelInfo.id);
+						if (modelEntry == null) {
+							continue;
 						}
+						RegistryModel model = modelEntry.generateModel();
+						for (String texture : model.textures.values()) {
+							textureCount.put(texture, textureCount.getOrDefault(texture, 0) + 1);
+							if (textureCount.get(texture) > highestUses) {
+								mats[0] = NamespaceID.fromString(texture);
+								highestUses++;
+							}
+						}
+						
 					}
-					
 				}
 			}
 			if (mats[0] == null)
