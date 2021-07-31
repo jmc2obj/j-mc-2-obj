@@ -11,6 +11,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.jmc.BlockData;
+import org.jmc.geom.BlockPos;
+import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.registry.BlockstateEntry;
@@ -32,7 +34,7 @@ public class Registry extends BlockModel {
 
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
-		Transform posTrans = Transform.translation(x, y, z);
+		BlockPos pos = new BlockPos(x, y, z);
 		
 		BlockstateEntry bsEntry = Registries.getBlockstate(NamespaceID.fromString(data.id));
 		if (bsEntry == null) {
@@ -52,7 +54,7 @@ public class Registry extends BlockModel {
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {
 					if (element != null)
-						addElement(obj, modelInfo, model, element, new Transform(posTrans));
+						addElement(obj, chunks, pos, data, modelInfo, model, element);
 				}
 			}
 		}
@@ -60,16 +62,18 @@ public class Registry extends BlockModel {
 	}
 	
 	// Add the element 
-	private void addElement(ChunkProcessor obj, ModelInfo modelInfo, RegistryModel model, ModelElement element, Transform baseTrans) {
+	private void addElement(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos, BlockData data, ModelInfo modelInfo, RegistryModel model, ModelElement element) {
+		Transform baseTrans = pos.getTransform();
 		Transform stateTrans = getStateTrans(modelInfo);
 		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
-		boolean[] drawSides = getSidesCulling(element.faces);
+		boolean[] drawSides = getSidesCulling(chunks, pos, data, element.faces, stateTrans);
 		Transform elementTrans = getElemTrans(element);
 		addBox(obj, element.from.x/16, element.from.y/16, element.from.z/16, element.to.x/16, element.to.y/16, element.to.z/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, drawSides);
 	}
 	
 	// Get the transform for the blockstate
+	@Nonnull
 	private Transform getStateTrans(ModelInfo modelInfo) {
 		Transform t = Transform.translation(-0.5f, -0.5f, -0.5f);// offset cor to middle of block
 		t = Transform.rotation(-modelInfo.x, 0, 0).multiply(t);// rotate -x ???
@@ -314,22 +318,43 @@ public class Registry extends BlockModel {
 	}
 	
 	// Calculate the culling of each face
-	private boolean[] getSidesCulling(Map<String, ElementFace> faces) {
+	private boolean[] getSidesCulling(ThreadChunkDeligate chunks, BlockPos pos, BlockData data, Map<String, ElementFace> faces, Transform stateTrans) {
 		boolean[] array = new boolean[6];
+		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
+		Transform rotation = stateTrans.multiply(Transform.translation(0.5f, 0.5f, 0.5f));
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
+			Direction dir;
 			switch (faceEntry.getKey()) {
 			case "up":
-				array[0] = true; break;
+				dir = Direction.UP;
+				dir = dir.rotate(rotation);
+				array[0] = ds[dir.getArrIndex()];
+				break;
 			case "north":
-				array[1] = true; break;
+				dir = Direction.NORTH;
+				dir = dir.rotate(rotation);
+				array[1] = ds[dir.getArrIndex()];
+				break;
 			case "south":
-				array[2] = true; break;
+				dir = Direction.SOUTH;
+				dir = dir.rotate(rotation);
+				array[2] = ds[dir.getArrIndex()];
+				break;
 			case "west":
-				array[3] = true; break;
+				dir = Direction.WEST;
+				dir = dir.rotate(rotation);
+				array[3] = ds[dir.getArrIndex()];
+				break;
 			case "east":
-				array[4] = true; break;
+				dir = Direction.EAST;
+				dir = dir.rotate(rotation);
+				array[4] = ds[dir.getArrIndex()];
+				break;
 			case "down":
-				array[5] = true; break;
+				dir = Direction.DOWN;
+				dir = dir.rotate(rotation);
+				array[5] = ds[dir.getArrIndex()];
+				break;
 			default:
 				Log.debug(String.format("Model for %s had invalid face direction!", blockId));
 				break;

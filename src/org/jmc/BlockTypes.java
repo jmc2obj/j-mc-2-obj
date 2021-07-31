@@ -437,7 +437,7 @@ public class BlockTypes
 		if (bi == null && !block.id.isEmpty() && !unknownBlockIds.contains(block.id)) {
 			BlockstateEntry bs = Registries.getBlockstate(NamespaceID.fromString(block.id));
 			if (bs != null) {
-				bi = new BlockInfo(block.id, block.id, new RegistryBlockMaterial(bs.id), Occlusion.CUSTOM, new Registry(), false);
+				bi = new BlockInfo(block.id, block.id, new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false);
 				blockTable.put(block.id, bi);
 			} else {
 				Log.info("Found unknown block id: " + block.id);
