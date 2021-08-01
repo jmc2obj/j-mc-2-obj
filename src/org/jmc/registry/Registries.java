@@ -8,16 +8,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.CheckForNull;
 
+import org.jmc.util.CachedGetter;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.ResourcePackIO;
@@ -37,134 +33,65 @@ public class Registries {
 
 	public static final NamespaceID UNKNOWN_TEX_ID = new NamespaceID("jmc2obj", "unknown");
 
-	private static Map<NamespaceID, BlockstateEntry> blockstates = new ConcurrentHashMap<>();
-	private static Map<NamespaceID, Lock> blockstatesLocks = new HashMap<>();
-	private static Map<NamespaceID, ModelEntry> models = new ConcurrentHashMap<>();
-	private static Map<NamespaceID, Lock> modelsLocks = new HashMap<>();
-	private static Map<NamespaceID, TextureEntry> textures = new ConcurrentHashMap<>();
-	private static Map<NamespaceID, Lock> texturesLocks = new HashMap<>();
+	private final static CachedGetter<NamespaceID, BlockstateEntry> blockstates;
+	private final static CachedGetter<NamespaceID, ModelEntry> models;
+	private final static CachedGetter<NamespaceID, TextureEntry> textures;
 	
 	public static Set<TextureEntry> objTextures = Collections.synchronizedSet(new HashSet<>());
 	
-	private static Lock getLock(Map<NamespaceID, Lock> map, NamespaceID id) {
-		Lock lock = map.get(id);
-		if (lock == null) {
-			lock = new ReentrantLock();
-			map.put(id, lock);
-		}
-		return lock;
+	static {
+		blockstates = new CachedGetter<NamespaceID, BlockstateEntry>() {
+			@Override
+			public BlockstateEntry make(NamespaceID key) {
+				JsonObject json = null;
+				try (Reader reader = ResourcePackIO.loadText(getFilePath(key, RegType.BLOCKSTATE))){
+					json = new Gson().fromJson(reader, JsonObject.class);
+				} catch (FileNotFoundException e) {
+					Log.info(String.format("Couldn't find blockstate %s in any resource pack!", key));
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+				return BlockstateEntry.parseJson(key, json);
+			}
+		};
+		models = new CachedGetter<NamespaceID, ModelEntry>() {
+			@Override
+			public ModelEntry make(NamespaceID key) {
+				JsonObject json = null;
+				try (Reader reader = ResourcePackIO.loadText(getFilePath(key, RegType.MODEL))){
+					json = new Gson().fromJson(reader, JsonObject.class);
+				} catch (FileNotFoundException e) {
+					Log.info(String.format("Couldn't find model %s in any resource pack!", key));
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+				return ModelEntry.parseJson(key, json);
+			}
+		};
+		textures = new CachedGetter<NamespaceID, TextureEntry>() {
+			@Override
+			public TextureEntry make(NamespaceID key) {
+				return new TextureEntry(key);
+			}
+		};
 	}
 	
 	@CheckForNull
 	public static BlockstateEntry getBlockstate(NamespaceID id) {
-		Lock idLock;
-		boolean hasLock = false;
-		synchronized (blockstatesLocks) {
-			if (blockstates.containsKey(id)) {
-				return blockstates.get(id);// if it exists then just return
-			} else {
-				idLock = getLock(blockstatesLocks, id);
-				hasLock = idLock.tryLock();// try and lock to create
-			}
-		}
-		try {
-			if (hasLock) {// we have the lock to create, add to map
-				BlockstateEntry entry = addNewBlockstate(id);
-				return entry;
-			} else {
-				idLock.lock();// wait for the creation thread to finish
-				return blockstates.get(id);
-			}
-		} finally {
-			idLock.unlock();
-		}
-	}
-
-	private static BlockstateEntry addNewBlockstate(NamespaceID id) {
-		JsonObject json = null;
-		try (Reader reader = ResourcePackIO.loadText(getFilePath(id, RegType.BLOCKSTATE))){
-			json = new Gson().fromJson(reader, JsonObject.class);
-		} catch (FileNotFoundException e) {
-			Log.info(String.format("Couldn't find blockstate %s in any resource pack!", id));
-			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		BlockstateEntry entry = BlockstateEntry.parseJson(id, json);
-		blockstates.put(id, entry);
-		return entry;
+		return blockstates.get(id);
 	}
 	
 	@CheckForNull
 	public static ModelEntry getModel(NamespaceID id) {
-		Lock idLock;
-		boolean hasLock = false;
-		synchronized (modelsLocks) {
-			if (models.containsKey(id)) {
-				return models.get(id);
-			} else {
-				idLock = getLock(modelsLocks, id);
-				hasLock = idLock.tryLock();
-			}
-		}
-		try {
-			if (hasLock) {
-				ModelEntry entry = addNewModel(id);
-				return entry;
-			} else {
-				idLock.lock();
-				return models.get(id);
-			}
-		} finally {
-			idLock.unlock();
-		}
-	}
-
-	private static ModelEntry addNewModel(NamespaceID id) {
-		JsonObject json = null;
-		try (Reader reader = ResourcePackIO.loadText(getFilePath(id, RegType.MODEL))){
-			json = new Gson().fromJson(reader, JsonObject.class);
-		} catch (FileNotFoundException e) {
-			Log.info(String.format("Couldn't find model %s in any resource pack!", id));
-			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		ModelEntry entry = ModelEntry.parseJson(id, json);
-		models.put(id, entry);
-		return entry;
+		return models.get(id);
 	}
 
 	public static TextureEntry getTexture(NamespaceID id) {
-		Lock idLock;
-		boolean hasLock = false;
-		synchronized (texturesLocks) {
-			if (textures.containsKey(id)) {
-				return textures.get(id);
-			} else {
-				idLock = getLock(texturesLocks, id);
-				hasLock = idLock.tryLock();
-			}
-		}
-		try {
-			if (hasLock) {
-				TextureEntry entry = addNewTexture(id);
-				return entry;
-			} else {
-				idLock.lock();
-				return textures.get(id);
-			}
-		} finally {
-			idLock.unlock();
-		}
-	}
-
-	private static TextureEntry addNewTexture(NamespaceID id) {
-		TextureEntry entry = new TextureEntry(id);
-		textures.put(id, entry);
-		return entry;
+		return textures.get(id);
 	}
 
 	public static String getFilePath(NamespaceID id, RegType model) {
@@ -185,7 +112,8 @@ public class Registries {
 		models.clear();
 		textures.clear();
 		objTextures.clear();
-		TextureEntry unkTexEntry = addNewTexture(UNKNOWN_TEX_ID);
+		TextureEntry unkTexEntry = new TextureEntry(UNKNOWN_TEX_ID);
+		textures.put(UNKNOWN_TEX_ID, unkTexEntry);
 		BufferedImage unkTex = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		unkTex.setRGB(0, 0, Color.MAGENTA.getRGB());
 		unkTexEntry.setImage(unkTex);

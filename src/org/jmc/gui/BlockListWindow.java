@@ -13,10 +13,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -215,7 +215,7 @@ public class BlockListWindow extends JmcFrame {
 	
 	DefaultListModel<CheckListItem> dlm = new DefaultListModel<>();
 	public void initialize() {
-		HashMap<String, BlockInfo> blocks = BlockTypes.getAll();
+		Map<String, BlockInfo> blocks = BlockTypes.getAll();
 		blockInfo.addAll(blocks.values());
 		for (BlockInfo info : blockInfo) {
 			CheckListItem item = new CheckListItem(info);
@@ -333,17 +333,16 @@ public class BlockListWindow extends JmcFrame {
 						.getElement(labelElement.getName());
 
 				if (byteElement != null)
-					labelList.getModel().getElementAt(i)
-							.setSelected(byteElement.value == 1 ? true : false);
-				else
-					labelList.getModel().getElementAt(i).setSelected(false);
+					labelList.getModel().getElementAt(i).setSelected(byteElement.value == 1 ? true : false);
+				//else// if the model isn't in the file
+				//	labelList.getModel().getElementAt(i).setSelected(false);
 
 			}
 
 			Options.excludeBlocks = getExcludedBlockIds();
 			
 		} catch (Exception e) {
-			Log.error("Error log blocks selection", e);
+			Log.error("Error loading blocks selection", e);
 		}
 
 	}

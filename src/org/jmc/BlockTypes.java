@@ -1,7 +1,9 @@
 package org.jmc;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPath;
@@ -19,6 +21,7 @@ import org.jmc.registry.BlockstateEntry;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.RegistryBlockMaterial;
+import org.jmc.util.CachedGetter;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
@@ -39,15 +42,26 @@ public class BlockTypes
 	private static final String CONFIG_FILE = "conf/blocks.conf";
 
 
-	private static HashMap<String, BlockInfo> blockTable;
+	private final static CachedGetter<String, BlockInfo> blockTable = new CachedGetter<String, BlockInfo>() {
+		@Override
+		public BlockInfo make(String key) {
+			BlockstateEntry bs = Registries.getBlockstate(NamespaceID.fromString(key));
+			if (bs != null) {
+				Log.info(String.format("Found unknown block '%s', using default properties.", key));
+				return new BlockInfo(key, key, new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false);
+			} else {
+				return null;
+			}
+		}
+	};
 
-	private static HashSet<String> unknownBlockIds;
+	private final static Set<String> unknownBlockIds = Collections.synchronizedSet(new HashSet<>());
 	
 	private static BlockInfo unknownBlock;
 	private static BlockInfo nullBlock;
 
 
-	private static void readConfig(HashMap<String, BlockInfo> blockTable) throws Exception
+	private static void readConfig(CachedGetter<String, BlockInfo> blockTable) throws Exception
 	{
 		Document doc;
 		try (JmcConfFile confFile = new JmcConfFile(CONFIG_FILE)) {
@@ -407,14 +421,10 @@ public class BlockTypes
 		// create a block to use when dealing with unknown block ids
 		unknownBlock = new UnknownBlockInfo();
 		nullBlock = new NullBlockInfo();
-
-		// create table to keep track of unknown block ids found
-		unknownBlockIds = new HashSet<String>();
 		
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");
 
-		blockTable = new HashMap<String, BlockInfo>();
 		readConfig(blockTable);
 
 		Log.info("Loaded " + blockTable.size() + " block definitions.");
@@ -433,24 +443,22 @@ public class BlockTypes
 	{
 		if (block == null)
 			return nullBlock;
+		if (block.id.isEmpty() || unknownBlockIds.contains(block.id)) {
+			return unknownBlock;
+		}
 		BlockInfo bi = blockTable.get(block.id);
-		if (bi == null && !block.id.isEmpty() && !unknownBlockIds.contains(block.id)) {
-			BlockstateEntry bs = Registries.getBlockstate(NamespaceID.fromString(block.id));
-			if (bs != null) {
-				bi = new BlockInfo(block.id, block.id, new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false);
-				blockTable.put(block.id, bi);
-			} else {
-				Log.info("Found unknown block id: " + block.id);
-				unknownBlockIds.add(block.id);
-			}
+		if (bi == null) {
+			Log.info("Found unknown block id: " + block.id);
+			unknownBlockIds.add(block.id);
+			return unknownBlock;
 		}
 
-		return bi != null ? bi : unknownBlock;
+		return bi;
 	}
 	
-	public static HashMap<String, BlockInfo> getAll()
+	public static Map<String, BlockInfo> getAll()
 	{
-		return blockTable;
+		return blockTable.getAll();
 	}
 
 }
