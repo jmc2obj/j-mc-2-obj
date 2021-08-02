@@ -215,9 +215,11 @@ public class Banner extends BlockModel {
         try {
         	synchronized (exportedMaterials) {
 	            // already exported material?
-	            if (exportedMaterials.add(bannerMaterial)) {
-	                generateBannerImage(bannerMaterial, patternList);
-	                addBannerMaterial(bannerMaterial, baseColorIndex);
+	            if (!exportedMaterials.contains(bannerMaterial)) {
+	                if (generateBannerImage(bannerMaterial, patternList)) {
+	                	addBannerMaterial(bannerMaterial, baseColorIndex);
+	                	exportedMaterials.add(bannerMaterial);
+	                }
 	            }
 			}
         }
@@ -235,7 +237,7 @@ public class Banner extends BlockModel {
      * @throws IOException
      */
     // TODO: user needs to export the textures first! - someone's might got a better idea for this!
-    private void generateBannerImage(String materialImageName, ArrayList<BannerPattern> patternList) throws IOException {
+    private boolean generateBannerImage(String materialImageName, ArrayList<BannerPattern> patternList) throws IOException {
 
         // get the base material texture
         BufferedImage backgroundImage = null;
@@ -277,7 +279,7 @@ public class Banner extends BlockModel {
                 }
                 catch (IOException e) {
                     Log.error("Cant read banner_pattern_" + bp.getPattern() + " - did you export Textures first?", e, true);
-                    return;
+                    return false;
                 }
 
                 // pattern source image
@@ -287,7 +289,7 @@ public class Banner extends BlockModel {
                 }
                 catch (IOException e) {
                     Log.error("Cant read banner_pattern_" + bp.getPattern() + "_a - you need to export Textures with seperate alpha!", e, true);
-                    return;
+                    return false;
                 }
 
 
@@ -323,7 +325,9 @@ public class Banner extends BlockModel {
             if (!ImageIO.write(combined, "PNG", new File(Options.outputDir+"/tex", materialImageName+".png"))) {
                 throw new RuntimeException("Unexpected error writing image");
             }
+            return true;
         }
+		return false;
 
 
 

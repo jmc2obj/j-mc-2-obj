@@ -142,14 +142,13 @@ public class Head extends BlockModel
 					}
 					String mtlName = "player_" + name;
 					Arrays.fill(mtlSides, mtlName);
-					boolean newMat;
 					synchronized (addedMaterials) {
-						newMat = addedMaterials.add(mtlName);
-					}
-					if (newMat) {
-						Log.debug("Downloading new player head texture: " + mtlName);
-						Materials.addMaterial(mtlName, Color.pink, Color.black, "tex/"+mtlName+".png", null);
-						exportSkullOwnerTexture(skullOwnerTag, mtlName);
+						if (!addedMaterials.contains(mtlName)) {
+							Log.info("Downloading new player head texture: " + mtlName);
+							Materials.addMaterial(mtlName, Color.pink, Color.black, "tex/"+mtlName+".png", null);
+							if (exportSkullOwnerTexture(skullOwnerTag, mtlName))
+								addedMaterials.add(mtlName);
+						}
 					}
 				}
 			}
@@ -170,17 +169,18 @@ public class Head extends BlockModel
 
 	}
 
-	private void exportSkullOwnerTexture(TAG_Compound skullOwnerTag, String mtlName) {
+	private boolean exportSkullOwnerTexture(TAG_Compound skullOwnerTag, String mtlName) {
 		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
 		if (textureB64 == null) {
 			Log.error("Couldn't read SkullOwner properties!", null, false);
-			return;
+			return false;
 		}
 
 		String textureUrl = extractSkullOwnerTextureUrl(textureB64);
 
 		File texFile = new File(Options.outputDir+"/tex", mtlName+".png");
 		try (BufferedInputStream inputStream = new BufferedInputStream(new URL(textureUrl).openStream())) {
+			texFile.getParentFile().mkdirs();
 			FileOutputStream fileOS = new FileOutputStream(texFile);
 			byte data[] = new byte[1024];
 			int byteContent;
@@ -196,11 +196,11 @@ public class Head extends BlockModel
 				croppedTex.getGraphics().drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
 				ImageIO.write(croppedTex, "png", texFile);
 			}
+			return true;
 		} catch (IOException e) {
 			Log.error("Error downloading head texture!", e, false);
-			return;
+			return false;
 		}
-		
 	}
 	
 	private String getSkullOwnerTextureValue(TAG_Compound skullOwnerTag) {
