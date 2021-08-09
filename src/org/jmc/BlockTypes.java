@@ -31,7 +31,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-
 /**
  * This class reads the block definition file (blocks.conf) and makes the information
  * available to the program.
@@ -77,9 +76,14 @@ public class BlockTypes
 		{
 			Node blockNode = blockNodes.item(i);
 
-			@SuppressWarnings("null")
+			String idAttr = Xml.getAttribute(blockNode, "id");
+			if (idAttr == null) {
+				Log.info("Found block tag without id!");
+				continue;
+			}
+			
 			@Nonnull
-			String id = Xml.getAttribute(blockNode, "id", "");
+			NamespaceID id = NamespaceID.fromString(idAttr); 
 
 			String name = Xml.getAttribute(blockNode, "name", "");
 			String modelName = "Registry";
@@ -92,7 +96,19 @@ public class BlockTypes
 			{
 				modelName = aux;
 			}
-
+			
+			BlockModel model;
+			try {
+				Class<?> modelClass = Class.forName("org.jmc.models." + modelName);
+				model = (BlockModel)modelClass.getConstructor().newInstance();
+			}
+			catch (Exception e) {
+				Log.info("Block " + id + " has invalid model. Using default.");
+				model = new Cube();
+			}
+			model.setBlockId(id.toString());
+			model.setConfigNodes(blockNode);
+			
 			aux = (String)xpath.evaluate("occlusion", blockNode, XPathConstants.STRING);
 			if (aux != null && aux.length() > 0)
 			{
@@ -107,7 +123,7 @@ public class BlockTypes
 			if (waterlogged == null) {
 				waterlogged = false;
 			}
-
+			
 			boolean hasMtl = false;
 			NodeList matNodes = (NodeList)xpath.evaluate("materials", blockNode, XPathConstants.NODESET);
 			for (int j = 0; j < matNodes.getLength(); j++)
@@ -123,14 +139,14 @@ public class BlockTypes
 					Node attrib = matAttribs.item(k);
 					String attrName = attrib.getNodeName();
 					String attrVal = attrib.getNodeValue();
-					if (attrName.equalsIgnoreCase("jmc_biome")) 
+					if (attrName.equalsIgnoreCase("jmc_biome")) {
 						biome = Integer.parseInt(attrVal, 10);
-					else {
+					} else {
 						state.put(attrName, attrVal);
 					}
 				}
 				
-				BlockData data = new BlockData(id, state);
+				BlockData data = new BlockData(id.toString(), state);
 				
 				String mats = matNode.getTextContent();
 				if (mats.trim().isEmpty() || biome < -1 || biome > 255 )//TODO biome 255 id limit needed?
@@ -158,34 +174,28 @@ public class BlockTypes
 					else
 						materials.put(nsMats);
 				}
-
+				
 				hasMtl = true;
 			}
-
+			
 			if (!hasMtl)
 			{
-				Log.debug("Block " + id + " has no materials. Using default.");
-				materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
+				if (model instanceof Registry) {
+					materials = new RegistryBlockMaterial(id);
+				} else {
+					Log.debug("Block " + id + " has no materials. Using default.");
+					materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
+				}
 			}
-
-			BlockModel model;
-			try {
-				Class<?> modelClass = Class.forName("org.jmc.models." + modelName);
-				model = (BlockModel)modelClass.getConstructor().newInstance();
-			}
-			catch (Exception e) {
-				Log.info("Block " + id + " has invalid model. Using default.");
-				model = new Cube();
-			}
-			model.setBlockId(id);
+			
 			model.setMaterials(materials);
-			model.setConfigNodes(blockNode);
-
+			
+			
 			if(modelName.equals("Mesh"))
 			{
 				Mesh mesh=(Mesh)model;
-
-				NodeList meshNodes = (NodeList)xpath.evaluate("mesh", blockNode, XPathConstants.NODESET);			
+				
+				NodeList meshNodes = (NodeList)xpath.evaluate("mesh", blockNode, XPathConstants.NODESET);
 				for (int j = 0; j < meshNodes.getLength(); j++)
 				{
 					Node meshNode = meshNodes.item(j);
@@ -194,49 +204,48 @@ public class BlockTypes
 					}catch (Exception e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
-					}					
+					}
 				}
-
-				NodeList trasNodes = (NodeList)xpath.evaluate("translate", blockNode, XPathConstants.NODESET);			
+				
+				NodeList trasNodes = (NodeList)xpath.evaluate("translate", blockNode, XPathConstants.NODESET);
 				for (int j = 0; j < trasNodes.getLength(); j++)
 				{
-					Node transNode = trasNodes.item(j);					
+					Node transNode = trasNodes.item(j);
 					try {
 						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
-					}					
+					}
 				}
-
-				NodeList rotNodes = (NodeList)xpath.evaluate("rotate", blockNode, XPathConstants.NODESET);			
+				
+				NodeList rotNodes = (NodeList)xpath.evaluate("rotate", blockNode, XPathConstants.NODESET);
 				for (int j = 0; j < rotNodes.getLength(); j++)
 				{
-					Node transNode = rotNodes.item(j);					
+					Node transNode = rotNodes.item(j);
 					try {
 						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
-					}					
+					}
 				}
-
-				NodeList scaleNodes = (NodeList)xpath.evaluate("scale", blockNode, XPathConstants.NODESET);			
+				
+				NodeList scaleNodes = (NodeList)xpath.evaluate("scale", blockNode, XPathConstants.NODESET);
 				for (int j = 0; j < scaleNodes.getLength(); j++)
 				{
-					Node transNode = scaleNodes.item(j);					
+					Node transNode = scaleNodes.item(j);
 					try {
 						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
-					}					
+					}
 				}
 				
 				mesh.propagateMaterials();
 			}
-
-			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged)); 
+			blockTable.put(id.toString(), new BlockInfo(id.toString(), name, materials, occlusion, model, waterlogged)); 
 		}
 	}
 
@@ -421,6 +430,9 @@ public class BlockTypes
 		// create a block to use when dealing with unknown block ids
 		unknownBlock = new UnknownBlockInfo();
 		nullBlock = new NullBlockInfo();
+		
+		blockTable.clear();
+		unknownBlockIds.clear();
 		
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");

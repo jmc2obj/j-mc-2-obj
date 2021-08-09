@@ -810,6 +810,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 								btnForceStop.setEnabled(false);
 							}
 						});
+						t.setName("ExportThread");
 						t.start();
 
 					}

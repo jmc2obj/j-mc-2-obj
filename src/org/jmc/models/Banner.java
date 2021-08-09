@@ -234,7 +234,7 @@ public class Banner extends BlockModel {
         // get the base material texture
         BufferedImage backgroundImage;
         try {
-        	backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner/base")).getImage();
+        	backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner_base")).getImage();
         } catch (IOException e) {
             Log.error("Cant read banner base image!", e, showReadErrorPopup());
             return false;
@@ -381,6 +381,12 @@ public class Banner extends BlockModel {
     
     public static synchronized void resetReadError(){
     	firstReadError = true;
+    }
+    
+    public static void clearExported() {
+    	synchronized (exportedMaterials) {
+			exportedMaterials.clear();
+		}
     }
 
 }

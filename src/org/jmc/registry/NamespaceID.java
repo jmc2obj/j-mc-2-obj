@@ -3,6 +3,8 @@ package org.jmc.registry;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -25,6 +27,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 		this.path = path;
 	}
 	
+	@Nonnull
 	public static NamespaceID fromString(String name) {
 		if (name == null) throw new IllegalArgumentException("name can't be null!");
 		
@@ -61,6 +64,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	}
 
 	@Override
+	@Nonnull
 	public String toString() {
 		return namespace + ":" + path;
 	}

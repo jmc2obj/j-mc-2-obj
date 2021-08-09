@@ -13,6 +13,8 @@ import java.util.Set;
 
 import javax.annotation.CheckForNull;
 
+import org.jmc.BlockTypes;
+import org.jmc.models.Banner;
 import org.jmc.util.CachedGetter;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -142,5 +144,11 @@ public class Registries {
 
 	public static void reloadResourcePacks() {
 		initialize();
+		try {
+			BlockTypes.initialize();
+		} catch (Exception e) {
+			Log.error("Couldn't reload resource packs.", e);
+		}
+		Banner.clearExported();
 	}
 }

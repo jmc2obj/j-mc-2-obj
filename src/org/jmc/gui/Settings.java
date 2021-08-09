@@ -431,7 +431,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			Registries.reloadResourcePacks();
 			if (MainWindow.main != null) {
 				MainWindow.main.reloadPreviewLoader();
-				//MainWindow.main.clearPreviewImages();
 			}
 		}
 	}

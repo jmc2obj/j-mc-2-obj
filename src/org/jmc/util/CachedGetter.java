@@ -3,13 +3,12 @@ package org.jmc.util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.CheckForNull;
 
 public abstract class CachedGetter <K, V> {
-	private final Map<K, V> entries = new ConcurrentHashMap<>();
+	private final Map<K, V> entries = new HashMap<>();
 	private final Map<K, AtomicBoolean> creatingStates = new HashMap<>();
 	
 	/**Gets the cached value for {@code key}.
@@ -77,7 +76,7 @@ public abstract class CachedGetter <K, V> {
 		entries.put(key, value);
 	}
 	
-	public int size() {
+	public synchronized int size() {
 		return entries.size();
 	}
 	
