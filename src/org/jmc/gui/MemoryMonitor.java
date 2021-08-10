@@ -78,6 +78,11 @@ public class MemoryMonitor extends JPanel implements Runnable {
 		return ""+mem;		
 	}
 	
+	private int scaleLong(long val, long max) {
+		double pos = (double)val / (double)max;
+		return (int) Math.floor((double)Integer.MAX_VALUE * pos);
+	}
+	
 	/**
 	 * Main thread method.
 	 */
@@ -90,13 +95,13 @@ public class MemoryMonitor extends JPanel implements Runnable {
 			long free=Runtime.getRuntime().freeMemory();
 			long max=Runtime.getRuntime().maxMemory();
 			
-			label.setText("T:"+toSize(total)+" F:"+toSize(free)+" M:"+toSize(max));		
+			label.setText("T:"+toSize(total)+" F:"+toSize(free)+" M:"+toSize(max));
 			
-			bar1.setMaximum((int) total);
-			bar1.setValue((int) (total-free));
+			bar1.setMaximum(scaleLong(total, total));
+			bar1.setValue(scaleLong(total-free, total));
 			
-			bar2.setMaximum((int) max);
-			bar2.setValue((int) total);
+			bar2.setMaximum(scaleLong(max, max));
+			bar2.setValue(scaleLong(total, max));
 			
 			try {
 				Thread.sleep(500);
