@@ -56,7 +56,7 @@ public class DoublePlant extends BlockModel
 			vertices[3] = new Vertex(-0.5f,+0.5f,-0.5f);
 			obj.addFace(vertices, null, t, mtls[1]);
 
-			if (data.id.equals("minecraft:sunflower")) {
+			if (data.id.equals(new NamespaceID("minecraft","sunflower"))) {
 				// Sunflower
 				Double o = (double)(x*y*z);
 				Transform r = Transform.rotation(0, (o.hashCode() % 30) - 15, 15);

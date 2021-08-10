@@ -41,26 +41,26 @@ public class BlockTypes
 	private static final String CONFIG_FILE = "conf/blocks.conf";
 
 
-	private final static CachedGetter<String, BlockInfo> blockTable = new CachedGetter<String, BlockInfo>() {
+	private final static CachedGetter<NamespaceID, BlockInfo> blockTable = new CachedGetter<NamespaceID, BlockInfo>() {
 		@Override
-		public BlockInfo make(String key) {
-			BlockstateEntry bs = Registries.getBlockstate(NamespaceID.fromString(key));
+		public BlockInfo make(NamespaceID key) {
+			BlockstateEntry bs = Registries.getBlockstate(key);
 			if (bs != null) {
 				Log.info(String.format("Found unknown block '%s', using default properties.", key));
-				return new BlockInfo(key, key, new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false);
+				return new BlockInfo(key, key.toString(), new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false);
 			} else {
 				return null;
 			}
 		}
 	};
 
-	private final static Set<String> unknownBlockIds = Collections.synchronizedSet(new HashSet<>());
+	private final static Set<NamespaceID> unknownBlockIds = Collections.synchronizedSet(new HashSet<>());
 	
 	private static BlockInfo unknownBlock;
 	private static BlockInfo nullBlock;
 
 
-	private static void readConfig(CachedGetter<String, BlockInfo> blockTable) throws Exception
+	private static void readConfig(CachedGetter<NamespaceID, BlockInfo> blockTable) throws Exception
 	{
 		Document doc;
 		try (JmcConfFile confFile = new JmcConfFile(CONFIG_FILE)) {
@@ -106,7 +106,7 @@ public class BlockTypes
 				Log.info("Block " + id + " has invalid model. Using default.");
 				model = new Cube();
 			}
-			model.setBlockId(id.toString());
+			model.setBlockId(id);
 			model.setConfigNodes(blockNode);
 			
 			aux = (String)xpath.evaluate("occlusion", blockNode, XPathConstants.STRING);
@@ -146,7 +146,7 @@ public class BlockTypes
 					}
 				}
 				
-				BlockData data = new BlockData(id.toString(), state);
+				BlockData data = new BlockData(id, state);
 				
 				String mats = matNode.getTextContent();
 				if (mats.trim().isEmpty() || biome < -1 || biome > 255 )//TODO biome 255 id limit needed?
@@ -245,7 +245,7 @@ public class BlockTypes
 				
 				mesh.propagateMaterials();
 			}
-			blockTable.put(id.toString(), new BlockInfo(id.toString(), name, materials, occlusion, model, waterlogged)); 
+			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged));
 		}
 	}
 
@@ -260,7 +260,7 @@ public class BlockTypes
 				String attrName = attrib.getNodeName();
 				String attrVal = attrib.getNodeValue();
 				if (attrName.equalsIgnoreCase("id")) {
-					mesh.mesh_data.id  = attrVal;
+					mesh.mesh_data.id  = NamespaceID.fromString(attrVal);
 				}
 				else if (attrName.equalsIgnoreCase("jmc_offset")) {
 					if(attrVal.length()>0)
@@ -455,7 +455,7 @@ public class BlockTypes
 	{
 		if (block == null)
 			return nullBlock;
-		if (block.id.isEmpty() || unknownBlockIds.contains(block.id)) {
+		if (block.id == NamespaceID.NULL || unknownBlockIds.contains(block.id)) {
 			return unknownBlock;
 		}
 		BlockInfo bi = blockTable.get(block.id);
@@ -468,7 +468,7 @@ public class BlockTypes
 		return bi;
 	}
 	
-	public static Map<String, BlockInfo> getAll()
+	public static Map<NamespaceID, BlockInfo> getAll()
 	{
 		return blockTable.getAll();
 	}

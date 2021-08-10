@@ -35,7 +35,7 @@ public class DirtGrass extends BlockModel
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
 	{
 		BlockData above = chunks.getBlockData(x, y+1, z);
-		boolean snow = above != null && above.id.equals("minecraft:snow");
+		boolean snow = above != null && above.id.equals(new NamespaceID("minecraft", "snow"));
 		
 		addBox(obj,
 				x - 0.5f, y - 0.5f, z - 0.5f,

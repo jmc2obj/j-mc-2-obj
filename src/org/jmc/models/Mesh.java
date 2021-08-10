@@ -29,14 +29,14 @@ public class Mesh extends BlockModel
 	{
 		public Blockstate state;
 		public Vertex offset;
-		public String id;		
+		public NamespaceID id;		
 		public Transform transform;
 		public boolean fallthrough;
 
 		public MeshData()
 		{
 			state=new Blockstate();
-			id="";
+			id=NamespaceID.NULL;
 			offset=null;
 			transform=null;
 			fallthrough=false;
@@ -57,7 +57,7 @@ public class Mesh extends BlockModel
 
 				if(!state.isEmpty() && !d.state.matchesMask(state)) return false;
 
-				if(!d.id.isEmpty() && !d.id.equals(id)) return false;
+				if(d.id != NamespaceID.NULL && !d.id.equals(id)) return false;
 
 				return true;
 			}

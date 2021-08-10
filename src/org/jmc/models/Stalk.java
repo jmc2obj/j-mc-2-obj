@@ -3,6 +3,7 @@ package org.jmc.models;
 import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
@@ -41,7 +42,7 @@ public class Stalk extends BlockModel
 		}
 
 		
-		if (data.id.equals("minecraft:attached_pumpkin_stem") || data.id.equals("minecraft:attached_melon_stem") && (n||s||e||w))
+		if (data.id.equals(new NamespaceID("minecraft", "attached_pumpkin_stem")) || data.id.equals(new NamespaceID("minecraft", "attached_melon_stem")) && (n||s||e||w))
 		{
 			// bent stalk
 			Transform translate = Transform.translation(x, y, z);

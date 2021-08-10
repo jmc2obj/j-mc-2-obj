@@ -28,6 +28,7 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_Long_Array;
 import org.jmc.NBT.TAG_String;
 import org.jmc.models.None;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Log;
 /**
  * Class describing a chunk. A chunk is a 16x16 group of blocks of 
@@ -283,7 +284,7 @@ public class Chunk {
 						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
 						TAG_String blockName = (TAG_String)blockTag.getElement("Name");
 						
-						BlockData block = new BlockData(blockName.value);
+						BlockData block = new BlockData(NamespaceID.fromString(blockName.value));
 						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
 						if (propertiesTag != null) {
 							for (NBT_Tag tag : propertiesTag.elements) {

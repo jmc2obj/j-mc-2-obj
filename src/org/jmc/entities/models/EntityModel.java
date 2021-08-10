@@ -21,7 +21,7 @@ import org.jmc.threading.ThreadChunkDeligate;
  */
 public abstract class EntityModel
 {
-	protected String blockId = "";
+	protected NamespaceID blockId = NamespaceID.NULL;
 	protected BlockMaterial materials = null;
 	
 
@@ -29,7 +29,7 @@ public abstract class EntityModel
 	 * Id of the block this model will be rendering.
 	 * This information may influence the behavior of the model.
 	 */
-	public void setBlockId(String val)
+	public void setBlockId(NamespaceID val)
 	{
 		this.blockId = val;
 	}
@@ -103,10 +103,10 @@ public abstract class EntityModel
 	 */
 	protected boolean drawSide(Direction side, BlockData neighbour)
 	{
-		if (neighbour.id.equals(""))
+		if (neighbour.id == NamespaceID.NULL)
 			return Options.renderSides;
 		
-		if (neighbour.id.endsWith("air"))
+		if (neighbour.id.path.endsWith("air"))
 			return true;
 		
 		switch(BlockTypes.get(neighbour).getOcclusion())

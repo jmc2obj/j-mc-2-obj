@@ -30,7 +30,7 @@ import org.w3c.dom.NodeList;
  */
 @ParametersAreNonnullByDefault
 public abstract class BlockModel {
-	public String blockId = "";
+	public NamespaceID blockId = NamespaceID.NULL;
 	@CheckForNull
 	protected Node configNode = null;
 	@Nonnull
@@ -40,7 +40,7 @@ public abstract class BlockModel {
 	 * Id of the block this model will be rendering. This information may
 	 * influence the behavior of the model.
 	 */
-	public void setBlockId(String id) {
+	public void setBlockId(NamespaceID id) {
 		this.blockId = id;
 	}
 
@@ -145,10 +145,10 @@ public abstract class BlockModel {
 		if (Options.objectPerBlock)
 			return true;
 
-		if (neighbourData == null || neighbourData.id.equals(""))
+		if (neighbourData == null || neighbourData.id == NamespaceID.NULL)
 			return Options.renderSides;
 
-		if (neighbourData.id.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
+		if (neighbourData.id.path.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
 			return true;
 
 		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighbourData.id.equals(data.id)))

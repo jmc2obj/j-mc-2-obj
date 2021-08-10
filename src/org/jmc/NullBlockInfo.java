@@ -2,6 +2,7 @@ package org.jmc;
 
 import org.jmc.models.BlockModel;
 import org.jmc.models.None;
+import org.jmc.registry.NamespaceID;
 
 
 /**
@@ -15,7 +16,7 @@ public class NullBlockInfo extends BlockInfo
 
 	NullBlockInfo()
 	{
-		super("", "unknown", null, Occlusion.NONE, null, false);
+		super(NamespaceID.NULL, "unknown", null, Occlusion.NONE, null, false);
 
 		noneModel = new None();
 	}

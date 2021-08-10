@@ -18,7 +18,7 @@ public class Tripwire extends BlockModel
 	{
 		if (otherBlock == null)
 			return false;
-		return otherBlock.id.equals(block.id) || otherBlock.id.equals("minecraft:tripwire_hook");
+		return otherBlock.id.equals(block.id) || otherBlock.id.equals(new NamespaceID("minecraft", "tripwire_hook"));
 	}
 	
 	@Override

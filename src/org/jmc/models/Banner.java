@@ -142,8 +142,7 @@ public class Banner extends BlockModel {
         int baseColorIndex = -1;
         ArrayList<BannerPattern> patternList = new ArrayList<BannerPattern>();
         
-    	String bid = data.id;
-    	bid = bid.split(":", 2)[1];
+    	String bid = data.id.path;
     	if (bid.startsWith("white"))
     		baseColorIndex = 0;
     	else if (bid.startsWith("orange"))

@@ -37,7 +37,7 @@ public class BlockInfo
 
 	
 	/** Block id */
-	protected String id;
+	protected NamespaceID id;
 	
 	/** Block name */
 	protected String name;
@@ -58,7 +58,7 @@ public class BlockInfo
 	
 
 	/** @return Block id */
-	public String getId() {
+	public NamespaceID getId() {
 		return id;
 	}
 
@@ -88,7 +88,7 @@ public class BlockInfo
 
 	
 	/** Convenience constructor */
-	BlockInfo(String id, String name, @CheckForNull BlockMaterial materials, Occlusion occlusion, @CheckForNull BlockModel model, boolean alwaysWaterlogged)
+	BlockInfo(NamespaceID id, String name, @CheckForNull BlockMaterial materials, Occlusion occlusion, @CheckForNull BlockModel model, boolean alwaysWaterlogged)
 	{
 		this.id = id;
 		this.name = name;

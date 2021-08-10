@@ -167,15 +167,15 @@ public class ChunkProcessor
 					BlockData block=chunk.getBlockData(x, y, z);
 					int blockBiome=chunk.getBlockBiome(x, y, z);
 					
-					if(block == null || block.id.isEmpty())
+					if(block == null || block.id == NamespaceID.NULL)
 						continue;
 					
 					if(Options.excludeBlocks.contains(block.id))
 						continue;
 					
 					if(Options.convertOres){
-						if(block.id.endsWith("ore")){
-							block.id = "minecraft:stone";
+						if(block.id.path.endsWith("ore")){
+							block.id = new NamespaceID("minecraft", "stone");
 						}
 					}
 					
@@ -185,7 +185,7 @@ public class ChunkProcessor
 					try {
 						BlockTypes.get(block).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						if (Boolean.parseBoolean(block.state.get("waterlogged"))) {
-							BlockTypes.get(new BlockData("minecraft:water")).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
+							BlockTypes.get(new BlockData(new NamespaceID("minecraft", "water"))).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						}
 					}
 					catch (Exception ex) {

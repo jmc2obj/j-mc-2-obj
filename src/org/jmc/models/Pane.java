@@ -21,9 +21,9 @@ public class Pane extends BlockModel
 	private boolean checkConnect(BlockData other)
 	{
 		// connects to other panes, glass, and any solid blocks
-		if (other.id.endsWith("air"))
+		if (other.id.path.endsWith("air"))
 			return false;
-		if (other.id.equals("minecraft:iron_bars") || other.id.endsWith("glass_pane") || other.id.endsWith("glass"))
+		if (other.id.equals(new NamespaceID("minecraft", "iron_bars")) || other.id.path.endsWith("glass_pane") || other.id.path.endsWith("glass"))
 			return true;
 		return BlockTypes.get(other).getOcclusion() == BlockInfo.Occlusion.FULL;
 	}

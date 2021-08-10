@@ -40,6 +40,7 @@ import org.jmc.Options;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -215,7 +216,7 @@ public class BlockListWindow extends JmcFrame {
 	
 	DefaultListModel<CheckListItem> dlm = new DefaultListModel<>();
 	public void initialize() {
-		Map<String, BlockInfo> blocks = BlockTypes.getAll();
+		Map<NamespaceID, BlockInfo> blocks = BlockTypes.getAll();
 		blockInfo.addAll(blocks.values());
 		for (BlockInfo info : blockInfo) {
 			CheckListItem item = new CheckListItem(info);
@@ -347,8 +348,8 @@ public class BlockListWindow extends JmcFrame {
 
 	}
 
-	private Set<String> getExcludedBlockIds() {
-		Set<String> result = new HashSet<String>();
+	private Set<NamespaceID> getExcludedBlockIds() {
+		Set<NamespaceID> result = new HashSet<>();
 		for (int i = 0; i < listItems.size(); i++) {
 			if (!listItems.get(i).isSelected()) {
 				BlockInfo blkInfo = (BlockInfo)listItems.get(i).getItem();

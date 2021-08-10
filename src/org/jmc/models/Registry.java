@@ -36,7 +36,7 @@ public class Registry extends BlockModel {
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
 		BlockPos pos = new BlockPos(x, y, z);
 		
-		BlockstateEntry bsEntry = Registries.getBlockstate(NamespaceID.fromString(data.id));
+		BlockstateEntry bsEntry = Registries.getBlockstate(data.id);
 		if (bsEntry == null) {
 			Log.debug(String.format("Couldn't get blockstate to export %s", data.id.toString()));
 			return;

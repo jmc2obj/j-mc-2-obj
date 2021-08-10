@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.jmc.registry.NamespaceID;
+
 
 /**
  * Holds the global options for the program.
@@ -194,7 +196,7 @@ public class Options
 	/**
 	 * List of block ids to exclude.
 	 */
-	public static Set<String> excludeBlocks = new HashSet<String>();
+	public static Set<NamespaceID> excludeBlocks = new HashSet<>();
 
 	/**
 	 * If true, UV file is used to convert UVs during export.

@@ -6,26 +6,29 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.jmc.registry.NamespaceID;
+
 @ParametersAreNonnullByDefault
 public class BlockData {
 	
 	/**
-	 * Sets id to "" empty string.
+	 * Sets id to NamespaceID.NULL.
 	 */
 	public BlockData() {
-		this("");
+		this(NamespaceID.NULL);
 	}
 	
-	public BlockData(String id) {
+	public BlockData(NamespaceID id) {
 		this(id, new Blockstate());
 	}
 	
-	public BlockData(String id, Blockstate state) {
+	public BlockData(NamespaceID id, Blockstate state) {
 		this.id = id;
 		this.state = state;
 	}
 	
-	public String id;
+	@Nonnull
+	public NamespaceID id;
 	@Nonnull
 	public Blockstate state;
 	

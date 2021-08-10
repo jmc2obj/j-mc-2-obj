@@ -19,7 +19,7 @@ public class UnknownBlockInfo extends BlockInfo
 
 	UnknownBlockInfo()
 	{
-		super("", "unknown", null, Occlusion.NONE, null, false);
+		super(NamespaceID.NULL, "unknown", null, Occlusion.NONE, null, false);
 
 		materials = new BlockMaterial();
 		materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
