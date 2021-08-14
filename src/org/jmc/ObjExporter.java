@@ -368,11 +368,12 @@ public class ObjExporter {
 			}
 			
 			if (writeMtl) {
+				Log.info(String.format("Writing materials to %s...", mtlfile.getAbsolutePath()));
 				Materials.writeMTLFile(mtlfile);
-				Log.info("Saved materials to " + mtlfile.getAbsolutePath());
 			}
 			
 			if (writeTex) {
+				Log.info("Exporting textures...");
 				synchronized (Registries.objTextures) {
 					for (TextureEntry tex : Registries.objTextures) {
 						tex.exportTexture();
