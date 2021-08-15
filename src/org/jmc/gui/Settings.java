@@ -250,6 +250,9 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
 				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
 				File path = jfc.getSelectedFile();
+				if (path == null) {
+					return;
+				}
 				listPacks.getModel().add(0, path);
 				listPacks.setSelectedIndex(0);
 				saveSettings();
@@ -263,9 +266,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackRemove.setMargin(new Insets(2, 2, 2, 2));
 		btnPackRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPacks.removeSelected();
-				saveSettings();
-				updateResourcePacks(true);
+				if (listPacks.removeSelected()) {
+					saveSettings();
+					updateResourcePacks(true);
+				}
 			}
 		});
 		pPackListButtons.add(btnPackRemove);
@@ -275,9 +279,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackUp.setMargin(new Insets(2, 2, 2, 2));
 		btnPackUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPacks.moveSelectedUp();
-				saveSettings();
-				updateResourcePacks(true);
+				if (listPacks.moveSelectedUp()) {
+					saveSettings();
+					updateResourcePacks(true);
+				}
 			}
 		});
 		pPackListButtons.add(btnPackUp);
@@ -287,9 +292,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackDown.setMargin(new Insets(2, 2, 2, 2));
 		btnPackDown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPacks.moveSelectedDown();
-				saveSettings();
-				updateResourcePacks(true);
+				if (listPacks.moveSelectedDown()) {
+					saveSettings();
+					updateResourcePacks(true);
+				}
 			}
 		});
 		pPackListButtons.add(btnPackDown);

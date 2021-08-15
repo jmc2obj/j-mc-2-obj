@@ -31,28 +31,31 @@ public class JmcPackList extends JList<File> {
 		super.setModel(model);
 	}
 	
-	public void removeSelected() {
+	public boolean removeSelected() {
 		int selected = getSelectedIndex();
-		if (selected == -1) return;
+		if (selected == -1) return false;
 		getModel().remove(selected);
+		return true;
 	}
 	
-	public void moveSelectedUp() {
+	public boolean moveSelectedUp() {
 		int selected = getSelectedIndex();
-		if (selected <= 0) return;
+		if (selected <= 0) return false;
 		DefaultListModel<File> model = getModel();
 		File elem = model.remove(selected);
 		model.add(--selected, elem);
 		setSelectedIndex(selected);
+		return true;
 	}
 	
-	public void moveSelectedDown() {
+	public boolean moveSelectedDown() {
 		int selected = getSelectedIndex();
 		DefaultListModel<File> model = getModel();
-		if (selected == -1 || selected >= model.size()-1) return;
+		if (selected == -1 || selected >= model.size()-1) return false;
 		File elem = model.remove(selected);
 		model.add(++selected, elem);
 		setSelectedIndex(selected);
+		return true;
 	}
 	
 	public String getPrefString() {
