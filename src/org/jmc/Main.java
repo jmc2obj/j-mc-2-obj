@@ -70,6 +70,8 @@ public class Main
 			EntityTypes.initialize();
 			
 			MainWindow.main.loadingFinished();
+			
+			Log.info("Initialization done");
 		}
 		catch (Exception e) {
 			Log.error("Error reading configuration file:", e);

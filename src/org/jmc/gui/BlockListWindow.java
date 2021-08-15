@@ -223,7 +223,6 @@ public class BlockListWindow extends JmcFrame {
 		
 		updateListings();
 		loadList("CurSelection");
-		Log.info("Inisalizing Blocks");
 	}
 
 	public void updateListings() {

@@ -560,11 +560,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		switch(action_index)
 		{
 		case 0:
-			return e.getButton()==MouseEvent.BUTTON1;
+			return e.getButton()==MouseEvent.BUTTON1 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)==0);
 		case 1:
-			return e.getButton()==MouseEvent.BUTTON3;
+			return e.getButton()==MouseEvent.BUTTON3 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)==0);
 		case 2:
-			return e.getButton()==MouseEvent.BUTTON2;
+			return e.getButton()==MouseEvent.BUTTON2 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)==0);
 		case 3:
 			return e.getButton()==MouseEvent.BUTTON1 && ((e.getModifiersEx()&MouseEvent.SHIFT_DOWN_MASK)!=0);
 		case 4:
@@ -596,7 +596,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		if(isPerformingAction(e, MainWindow.settings.getSelectAction()))
 		{
 			selecting_area=true;
-
+			
 			shaping_action=getCursorSelectionPosition(x, y);
 			if(shaping_action!=CursorSelectionPosition.OUTSIDE)
 			{
@@ -606,10 +606,10 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				ssx=selection_start_x;
 				ssz=selection_start_z;
 				sex=selection_end_x;
-				sez=selection_end_z;				
+				sez=selection_end_z;
 				return;
 			}
-
+			
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			selection_start_x=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
 			selection_start_z=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
@@ -625,18 +625,16 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				}
 			
 			}
-
+			
 			return;
-
 		}
-
+		
 		if(isPerformingAction(e, MainWindow.settings.getMoveAction()))
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			last_x=e.getX();
-			last_y=e.getY();			
+			last_y=e.getY();
 			moving_map=true;
-
 		}
 	}
 
