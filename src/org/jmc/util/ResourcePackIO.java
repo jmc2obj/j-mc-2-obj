@@ -59,6 +59,9 @@ public class ResourcePackIO {
 	}
 	
 	public static byte[] loadResource(File packPath, String filePath) throws IOException {
+		if (packPath.isFile() && packPath.getName().equals("pack.mcmeta")) {
+			packPath = packPath.getParentFile();
+		}
 		if (packPath.isDirectory()) {
 			try (FileInputStream fis = new FileInputStream(new File(packPath, filePath))) {
 				return IOUtils.toByteArray(fis);

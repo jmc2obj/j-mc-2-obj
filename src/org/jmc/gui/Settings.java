@@ -39,6 +39,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jmc.Options;
@@ -247,6 +248,11 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
+				//jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				jfc.addChoosableFileFilter(new FileFilter() {
+					@Override public String getDescription() {return "Extracted pack.mcmeta";}
+					@Override public boolean accept(File f) {return f.isDirectory() || f.getName().equals("pack.mcmeta");}
+				});
 				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
 				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
 				File path = jfc.getSelectedFile();
