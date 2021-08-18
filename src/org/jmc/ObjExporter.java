@@ -16,7 +16,6 @@ import javax.annotation.CheckForNull;
 import org.jmc.Options.OffsetType;
 import org.jmc.models.Banner;
 import org.jmc.registry.Registries;
-import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ReaderRunnable;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.threading.ThreadOutputQueue;
@@ -369,14 +368,17 @@ public class ObjExporter {
 			
 			if (writeMtl) {
 				Log.info(String.format("Writing materials to %s...", mtlfile.getAbsolutePath()));
-				Materials.writeMTLFile(mtlfile);
+				Materials.writeMTLFile(mtlfile, progress);
 			}
 			
 			if (writeTex) {
 				Log.info("Exporting textures...");
 				synchronized (Registries.objTextures) {
-					for (TextureEntry tex : Registries.objTextures) {
-						tex.exportTexture();
+					if (Options.textureMerge) {
+						Log.error("Texture merging is not supported!", null);
+						TextureExporter.mergeTextures(Registries.objTextures, progress);
+					} else {
+						TextureExporter.exportTextures(Registries.objTextures, progress);
 					}
 				}
 //				File texFolder = new File(Options.outputDir, "tex");
@@ -386,14 +388,11 @@ public class ObjExporter {
 //					TextureExporter.splitTextures(texFolder, texturepack, Options.textureScale, true, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, progress);
 //				}
 			}
-
 			Log.info("Done!");
-
 		} catch (Exception e) {
 			Log.error("Error while exporting OBJ:", e);
 		}
 	}
-
 }
 
 /**

@@ -1,6 +1,5 @@
 package org.jmc;
 
-import java.io.File;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
@@ -102,19 +101,6 @@ public class Main
 		catch (Exception e) {
 			Log.error("Error reading configuration file:", e);
 			System.exit(-2);
-		}
-		
-		if (Options.exportTex) {
-			Log.info("Exporting textures...");
-			try {
-				TextureExporter.splitTextures(
-						new File(Options.outputDir, "tex"), 
-						Options.resourcePacks.get(0), Options.textureScale, Options.textureDiffuse, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, new ConsoleProgress());
-			}
-			catch (Exception e) {
-				Log.error("Error saving textures:", e);
-			}
-			Log.info("Texture export complete.");
 		}
 		
 		if (Options.exportWorld) {

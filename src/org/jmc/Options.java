@@ -66,9 +66,25 @@ public class Options
 	public static List<File> resourcePacks = Collections.synchronizedList(new ArrayList<File>());
 
 	/**
+	 * Whether to export the textures.
+	 */
+	public static boolean exportTex = true;
+
+	/**
 	 * Scaling to apply to textures.
 	 */
 	public static double textureScale = 1.0;
+	
+	/**
+	 * Whether to overwrite existing textures.
+	 */
+	public static boolean textureOverwrite = true;
+	
+	/**
+	 * Whether to export the base textures.
+	 * Only used in console mode.
+	 */
+	public static boolean textureDiffuse = true;
 
 	/**
 	 * Export alpha channel as separate file(s).
@@ -76,15 +92,25 @@ public class Options
 	public static boolean textureAlpha = false;
 	
 	/**
-	 * Export a separate pass for blocks that should emit light. Useful for
-	 * renders using GI.
+	 * Whether to attempt exporting normal maps.
 	 */
-	public static boolean textureLight;
+	public static boolean textureNormal = false;
+	
+	/**
+	 * Whether to attempt exporting specular maps.
+	 */
+	public static boolean textureSpecular = false;
 
 	/**
 	 * Merge textures into one file.
 	 */
 	public static boolean textureMerge = false;
+	
+	/**
+	 * Export a separate pass for blocks that should emit light. Useful for
+	 * renders using GI.
+	 */
+	public static boolean textureLight = false;
 
 	/**
 	 * Export cloud texture to an OBJ file.
@@ -158,7 +184,7 @@ public class Options
 	public static boolean convertOres = false;
 	
 	/**
-	 * If true, will export a separate object for each block.
+	 * If true, will export with a single material.
 	 */
 	public static boolean singleMaterial = false;
 
@@ -232,18 +258,6 @@ public class Options
 	public static boolean exportMtl = true;
 
 	/**
-	 * Whether to export the textures.
-	 * Only used in console mode.
-	 */
-	public static boolean exportTex = false;
-	
-	/**
-	 * Whether to export the base textures.
-	 * Only used in console mode.
-	 */
-	public static boolean textureDiffuse = true;
-
-	/**
 	 * Whether to overwrite .OBJ files on export.
 	 * Only used in GUI mode.
 	 */
@@ -269,17 +283,4 @@ public class Options
 	 * How many threads to use when exporting.
 	 */
 	public static int exportThreads = 8;
-	
-	/**
-	 * Whether to attempt exporting normal maps.
-	 */
-	public static boolean textureNormal = false;
-	
-	/**
-	 * Whether to attempt exporting specular maps.
-	 */
-	public static boolean textureSpecular = false;
-	
-	
-	
 }

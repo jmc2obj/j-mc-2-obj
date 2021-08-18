@@ -2,16 +2,14 @@ package org.jmc.registry;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
 
-import org.jmc.Options;
+import org.apache.commons.io.FilenameUtils;
 import org.jmc.TextureExporter;
 import org.jmc.registry.Registries.RegType;
 import org.jmc.util.ResourcePackIO;
@@ -108,26 +106,7 @@ public class TextureEntry extends RegistryEntry {
 			return buffImage;
 		} else {
 			BufferedImage image = ResourcePackIO.loadImage(getFilePath());
-			try (Reader reader = ResourcePackIO.loadText(getFilePath()+".mcmeta")) {
-				Meta meta = new Gson().fromJson(reader, Meta.class);
-				if (meta != null && meta.animation != null) {
-					Meta.Animation anim = meta.animation;
-					int baseFrame = 0;
-					if (anim.frames != null && anim.frames.length > 0) {
-						Meta.Animation.Frame frameMeta = anim.frames[0];
-						if (frameMeta != null) {
-							baseFrame = anim.frames[0].index;
-						}
-					}
-					int width = image.getWidth();
-					BufferedImage frame = TextureExporter.cloneImageType(image, width, width);
-					image.getSubimage(0, width*baseFrame, width, width).copyData(frame.getRaster());
-					image = frame;
-				}
-			} catch (IOException e) {
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-			}
+			image = cropAnimation(image);
 			if (tint != null) {
 				image = TextureExporter.convertImageType(image);
 				TextureExporter.tintImage(image, tint);
@@ -135,6 +114,50 @@ public class TextureEntry extends RegistryEntry {
 			setImage(image);
 			return buffImage;
 		}
+	}
+	
+	public BufferedImage getNormalMap() throws IOException {
+		String filePath = getFilePath();
+		String basePath = FilenameUtils.removeExtension(filePath);
+		String ext = FilenameUtils.getExtension(filePath);
+		BufferedImage image = ResourcePackIO.loadImage(basePath + "_n." + ext);
+		image = cropAnimation(image);
+		return image;
+	}
+	
+	public BufferedImage getSpecularMap() throws IOException {
+		String filePath = getFilePath();
+		String basePath = FilenameUtils.removeExtension(filePath);
+		String ext = FilenameUtils.getExtension(filePath);
+		BufferedImage image = ResourcePackIO.loadImage(basePath + "_s." + ext);
+		image = cropAnimation(image);
+		return image;
+	}
+	
+	/** Crop the image if there is an animation .mcmeta file 
+	 * @return Cropped image or the given image*/
+	private BufferedImage cropAnimation(BufferedImage image) {
+		try (Reader reader = ResourcePackIO.loadText(getFilePath()+".mcmeta")) {
+			Meta meta = new Gson().fromJson(reader, Meta.class);
+			if (meta != null && meta.animation != null) {
+				Meta.Animation anim = meta.animation;
+				int baseFrame = 0;
+				if (anim.frames != null && anim.frames.length > 0) {
+					Meta.Animation.Frame frameMeta = anim.frames[0];
+					if (frameMeta != null) {
+						baseFrame = anim.frames[0].index;
+					}
+				}
+				int width = image.getWidth();
+				BufferedImage frame = TextureExporter.cloneImageType(image, width, width);
+				image.getSubimage(0, width*baseFrame, width, width).copyData(frame.getRaster());
+				image = frame;
+			}
+		} catch (IOException e) {
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		}
+		return image;
 	}
 	
 	public void setImage(BufferedImage image) {
@@ -157,14 +180,6 @@ public class TextureEntry extends RegistryEntry {
 
 	public String getMatName() {
 		return id.getExportSafeString();
-	}
-
-	public void exportTexture() throws IOException {
-		File file = new File(Options.outputDir, getExportFilePath());
-		if (true || !file.exists()) {
-			file.getParentFile().mkdirs();
-			ImageIO.write(TextureExporter.scaleImage(getImage(), Options.textureScale), "png", file);
-		}
 	}
 	
 	@SuppressWarnings("unused")

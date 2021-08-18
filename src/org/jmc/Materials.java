@@ -32,24 +32,21 @@ public class Materials
 	 * Copies the .mtl file to the given location.
 	 * 
 	 * @param dest Destination file
+	 * @param progress 
 	 */
-	public static void writeMTLFile(File dest) throws IOException
+	public static void writeMTLFile(File dest, ProgressCallback progress) throws IOException
 	{
-		if(Options.singleMaterial)
-		{
+		if(Options.singleMaterial) {
 			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_MTL_FILE)) {
 				Filesystem.writeFile(mtlFile.getInputStream(), dest);
 			}
-		}
-		else if(Options.useUVFile)
-		{
+		} else if(Options.useUVFile) {
 			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_TEXTURE_MTLS_FILE)) {
 				Filesystem.writeFile(mtlFile.getInputStream(), dest);
 			}
-		}
-		else
-		{
+		} else {
 			ByteArrayOutputStream matBuffer = new ByteArrayOutputStream();
+			int count = 0;
 			synchronized (Registries.objTextures) {
 				for (TextureEntry textureEntry : Registries.objTextures) {
 					try {
@@ -57,6 +54,8 @@ public class Materials
 					} catch (IOException e) {
 						Log.error("Error writing material definition " + textureEntry.id, e);
 					}
+					if (progress != null)
+						progress.setProgress((float)++count / Registries.objTextures.size());
 				}
 			}
 			Files.copy(new ByteArrayInputStream(matBuffer.toByteArray()), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);

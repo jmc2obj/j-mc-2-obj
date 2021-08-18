@@ -44,7 +44,6 @@ import org.jmc.Options;
 import org.jmc.Options.OffsetType;
 import org.jmc.ProgressCallback;
 import org.jmc.StopCallback;
-import org.jmc.TextureExporter;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -89,8 +88,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JButton btnForceStop;
 	private JButton btnFromResourcePack;
 	private JButton btnMinecraftTextures;
-	private JButton btnCustomResourcePack;
-	private JButton btnMinecraftDefault;
 	private JButton btnBlocksToExport;
 
 	private JProgressBar progressBar;
@@ -303,18 +300,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		
 		chckbxExportSpecularMaps = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SPECULAR"));
 		holderExtraMapsChks.add(chckbxExportSpecularMaps);
-
-		JLabel lblExportTexturesFrom = new JLabel(Messages.getString("TexsplitDialog.TEX_LOC"));
-		lblExportTexturesFrom.setAlignmentX(Component.CENTER_ALIGNMENT);
-		holderTexExport.add(lblExportTexturesFrom);
-
-		btnMinecraftDefault = new JButton(Messages.getString("TexsplitDialog.MINECRAFT"));
-		btnMinecraftDefault.setAlignmentX(Component.CENTER_ALIGNMENT);
-		holderTexExport.add(btnMinecraftDefault);
-
-		btnCustomResourcePack = new JButton(Messages.getString("TexsplitDialog.CUSTOM"));
-		btnCustomResourcePack.setAlignmentX(Component.CENTER_ALIGNMENT);
-		holderTexExport.add(btnCustomResourcePack);
 
 		//##########################################################################################################
 		//CloudsExport
@@ -569,45 +554,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					txtZ.setEnabled(false);
 				}
 				saveSettings();
-			}
-		};
-
-		AbstractAction exportTexFromMC = new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-				if (retval != JFileChooser.APPROVE_OPTION)
-					return;
-				ExportTextures(new File(jfc.getSelectedFile().toString().concat("/tex")), null,
-						Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x", "")),
-						chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(),
-						chckbxExportSeparateLight.isSelected(), chckbxExportNormalMaps.isSelected(), chckbxExportSpecularMaps.isSelected());
-
-			}
-		};
-
-		AbstractAction exportTexFromRP = new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
-				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
-				if (retval != JFileChooser.APPROVE_OPTION)
-					return;
-				JFileChooser jfcDest = new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfcDest.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				retval = jfcDest.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
-				if (retval != JFileChooser.APPROVE_OPTION)
-					return;
-				ExportTextures(new File(jfcDest.getSelectedFile().toString().concat("/tex")), jfc.getSelectedFile(),
-						Double.parseDouble(cboxTexScale.getSelectedItem().toString().replace("x", "")),
-						chckbxCombineAllTextures.isSelected(), chckbxSeparateAlphaTexture.isSelected(),
-						chckbxExportSeparateLight.isSelected(), chckbxExportNormalMaps.isSelected(), chckbxExportSpecularMaps.isSelected());
-
 			}
 		};
 
@@ -955,9 +901,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxCombineAllTextures.addActionListener(genericSaveAction);
 		chckbxExportSeparateLight.addActionListener(genericSaveAction);
 
-		btnMinecraftDefault.addActionListener(exportTexFromMC);
-		btnCustomResourcePack.addActionListener(exportTexFromRP);
-
 		btnFromResourcePack.addActionListener(exportCloudsFromRP);
 		btnMinecraftTextures.addActionListener(exportCloudsFromMC);
 
@@ -1190,25 +1133,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.textureMerge = chckbxCombineAllTextures.isSelected();
 		
 		Options.exportThreads = (Integer)spinnerThreads.getValue();
-	}
-
-	private void ExportTextures(final File destination, final File texturepack, final double texScale,
-			final boolean texMerge, final boolean alphas, final boolean lumas, final boolean normals, final boolean specular) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (texMerge) {
-						TextureExporter.mergeTextures(destination, texturepack, texScale, true, alphas, lumas, normals, specular, ExportWindow.this);
-						ExportWindow.this.textFieldSingleTexUV.setText(new File(destination, "texture.uv").toString());
-					} else {
-						TextureExporter.splitTextures(destination, texturepack, texScale, true, alphas, normals, specular, ExportWindow.this);
-					}
-				} catch (Exception e) {
-					Log.error(Messages.getString("TexsplitDialog.ERR_EXP"), e);
-				}
-			}
-		}).start();
 	}
 
 	private void ExportCloudsOBJ(final File destination, final File file, final File texturepack) {
