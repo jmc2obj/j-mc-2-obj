@@ -95,7 +95,7 @@ public class EntityTypes {
 			Entity entity;
 			try {
 				Class<?> entityClass = Class.forName("org.jmc.entities." + handlerName);
-				entity = (Entity) entityClass.getConstructor().newInstance();
+				entity = (Entity) entityClass.getConstructor(String.class).newInstance(id);
 			} catch (Exception e) {
 				Log.info("Entity " + id + " has invalid handler. Skipping.");
 				continue;

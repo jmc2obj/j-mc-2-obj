@@ -7,10 +7,10 @@ import java.util.Set;
 import org.jmc.BlockMaterial;
 import org.jmc.FilledMapDat;
 import org.jmc.Options;
+import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_Short;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.registry.NamespaceID;
@@ -25,6 +25,11 @@ import org.jmc.util.Log;
 public class ItemFrame extends Entity
 {
 	
+	public ItemFrame(String id) {
+		super(id);
+	}
+
+
 	private Set<NamespaceID> exportedMaps = new HashSet<>();
 
 	
@@ -42,7 +47,7 @@ public class ItemFrame extends Entity
 		String item_id = "";
 		
 		try {
-			item_id = ((TAG_String)item.getElement("id")).value;	
+			item_id = ((TAG_String)item.getElement("id")).value;
 		}
 		catch (Exception e) {
 			// Log.info("Item Id of frame not found - that seams ok - it may be empty!");
@@ -53,26 +58,30 @@ public class ItemFrame extends Entity
 		Transform translate = new Transform();
 		Transform rt;
 
-		int frameRotation = ((TAG_Byte)entity.getElement("ItemRotation")).value;
-		frameRotation = frameRotation * 90; // doku says: 45 degrees - but thats wrong (at least for "filled_map")
-		if (frameRotation > 180) {
-			frameRotation = 0 - 180 + (frameRotation - 180);
+		int frameRotation = 0;
+		NBT_Tag itemRot = entity.getElement("ItemRotation");
+		if (itemRot != null) {
+			frameRotation = ((TAG_Byte)itemRot).value;
+			frameRotation = frameRotation * 90; // doku says: 45 degrees - but thats wrong (at least for "filled_map")
+			if (frameRotation > 180) {
+				frameRotation = 0 - 180 + (frameRotation - 180);
+			}
 		}
 
 		int baseRotation = 0;
 
 		switch (facing)
 		{
-			case 0:
+			case 3:
 				baseRotation = 0;
 				break;
-			case 1:
+			case 4:
 				baseRotation = 90;
 				break;
 			case 2:
 				baseRotation = 180;
 				break;
-			case 3:
+			case 5:
 				baseRotation = -90;
 				break;
 		}
@@ -88,8 +97,8 @@ public class ItemFrame extends Entity
 		switch (item_id)
 		{
 			case "minecraft:filled_map":
-				
-				short map_id = ((TAG_Short)item.getElement("Damage")).value;
+				TAG_Compound itemTag = (TAG_Compound) item.getElement("tag");
+				int map_id = ((TAG_Int)itemTag.getElement("map")).value;
 				// Log.info("Found map with id: '" + map_id+ "'");
 				NamespaceID mapTexID = new NamespaceID("jmc2obj", "map/" + map_id);
 				materials.put(new NamespaceID[]{mapTexID});

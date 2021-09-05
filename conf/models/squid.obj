@@ -1,5 +1,5 @@
 o squid
-usemtl mob_squid
+usemtl entity/squid/squid
 s off
 
 v -0.376000 0.001000 0.062500

@@ -139,16 +139,21 @@ public class TextureExporter {
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
+	 * @throws IOException 
 	 * @throws Exception
 	 *             if there is an error.
 	 */
-	public static void exportTextures(Set<TextureEntry> textures, ProgressCallback progress) throws Exception {
+	public static void exportTextures(Set<TextureEntry> textures, ProgressCallback progress) throws IOException {
 		int count = 0;
 		for (TextureEntry texture : textures) {
 			File file = new File(Options.outputDir, texture.getExportFilePath());
 			if (Options.textureDiffuse && (Options.textureOverwrite || !file.exists())) {
-				file.getParentFile().mkdirs();
-				ImageIO.write(scaleImage(texture.getImage(), Options.textureScale), "png", file);
+				try {
+					file.getParentFile().mkdirs();
+					ImageIO.write(scaleImage(texture.getImage(), Options.textureScale), "png", file);
+				} catch (IOException e) {
+					Log.error("Couldn't export texture " + texture.id.toString(), e);
+				}
 			}
 			String fileName = file.getName();
 			String baseName = FilenameUtils.removeExtension(fileName);

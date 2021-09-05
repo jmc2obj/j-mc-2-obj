@@ -10,23 +10,27 @@ import org.jmc.threading.ChunkProcessor;
 public class SimpleEntity extends Entity {
 	
 
+	public SimpleEntity(String id) {
+		super(id);
+	}
+
 	@Override
 	public void addEntity(ChunkProcessor obj, TAG_Compound entity) {
 		
 		TAG_List pos = (TAG_List) entity.getElement("Pos");
-		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f;				
+		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f;
 		float ey=(float)((TAG_Double)pos.getElement(1)).value-0.5f;
 		float ez=(float)((TAG_Double)pos.getElement(2)).value-0.5f;
-
-		Transform translate = Transform.translation(ex, ey, ez);		
+		
+		Transform translate = Transform.translation(ex, ey, ez);
 		
 		TAG_List rot = (TAG_List) entity.getElement("Rotation");
-		float yaw=((TAG_Float)rot.getElement(0)).value;				
+		float yaw=((TAG_Float)rot.getElement(0)).value;
 		float pitch=((TAG_Float)rot.getElement(1)).value;
 		
-		Transform rotate = Transform.rotation2(yaw+90, pitch ,0);		
+		Transform rotate = Transform.rotation2(yaw+90, pitch ,0);
 		
-		model.addEntity(obj, translate.multiply(rotate));					
+		model.addEntity(obj, translate.multiply(rotate));
 	}
 
 }

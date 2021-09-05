@@ -1,5 +1,5 @@
 o cow
-usemtl mob_cow
+usemtl entity/cow/cow
 s off
 
 v 0.125000 0.000000 -0.250000

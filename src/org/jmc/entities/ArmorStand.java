@@ -17,6 +17,10 @@ import org.jmc.util.Log;
 
 public class ArmorStand extends Entity {
 	
+	public ArmorStand(String id) {
+		super(id);
+	}
+
 	private TAG_List pos;
 	private TAG_List rot;
 	
@@ -61,7 +65,7 @@ public class ArmorStand extends Entity {
 		
 		// equipment
 		// Log.info("ArmorStand found: "+entity.getElement("Equipment"));
-		TAG_List Equipment = (TAG_List) entity.getElement("Equipment");
+		TAG_List Equipment = (TAG_List) entity.getElement("ArmorItems");
 		
 		for(int i=1; i<5; i++) {
 			TAG_Compound armor = ((TAG_Compound)Equipment.getElement(i));
@@ -70,7 +74,7 @@ public class ArmorStand extends Entity {
 				item_id = ((TAG_String)armor.getElement("id")).value;
 			}
 			catch (Exception e) {
-				Log.info("Slot "+i+" not armed");
+				Log.debug("Slot "+i+" not armed");
 				continue;
 			}
 			TAG_Compound tag = ((TAG_Compound)armor.getElement("tag"));
@@ -85,6 +89,8 @@ public class ArmorStand extends Entity {
 
 			String mcMaterial = item_id.substring(item_id.indexOf(":")+1, item_id.indexOf("_"));
 			
+			if (mcMaterial.equals("golden")) mcMaterial = "gold";
+			
 			// Log.info("----------------------------------------------");
 			// Log.info("- Slot "+i+" armed ("+mcMaterial+")");
 			// Log.info(""+armor);
@@ -92,25 +98,30 @@ public class ArmorStand extends Entity {
 			// internal: offset x, y, z, rotate, initialscale
 			// blender:  offset ?, z, -y, rotate, initialscale
 			double posCorrection[][] = {
-					{0, 0, 0, 180, 1}, // item
 					{0, 0.194, -0.03, 0, 1}, // feet
 					{0, 0.778, 0.01, 0, 1}, // legs
 					{0, 1.14, 0.002, 180, 1}, // chest
 					{0, 1.71, 0, 180, 1} // helmet
 			};
 			
-			String layer[] = {
-					null, 
+			String tex[] = {
 					"layer_2", //feet
 					"layer_2", //legs
 					"layer_1", //chest
 					"layer_1"  //helmet
 			};
 			
+			String model[] = {
+					"feet", //feet
+					"legs", //legs
+					"chest", //chest
+					"helmet"  //helmet
+			};
+			
 			// base material
-			if (layer[i] != null) {
-				addArmor("conf/models/armor_"+layer[i]+".obj", 
-						NamespaceID.fromString("models/armor/" + mcMaterial + "_"+layer[i]), 
+			if (model[i] != null) {
+				addArmor("conf/models/armor_"+model[i]+".obj", 
+						NamespaceID.fromString("models/armor/" + mcMaterial + "_"+tex[i]), 
 						obj, 
 						posCorrection[i][0], 
 						posCorrection[i][1],
@@ -121,9 +132,9 @@ public class ArmorStand extends Entity {
 			
 			// leather overlay
 			if (mcMaterial.equals("leather")) {
-				if (layer[i] != null) {
-					addArmor("conf/models/armor_"+layer[i]+".obj", 
-							NamespaceID.fromString("models/armor/" + mcMaterial + "_"+layer[i]+"_overlay"), 
+				if (model[i] != null) {
+					addArmor("conf/models/armor_"+model[i]+".obj", 
+							NamespaceID.fromString("models/armor/" + mcMaterial + "_"+tex[i]+"_overlay"), 
 							obj, 
 							posCorrection[i][0], 
 							posCorrection[i][1],
@@ -135,8 +146,8 @@ public class ArmorStand extends Entity {
 			
 			// is enchanted
 			if (enchanted != null) {
-				if (layer[i] != null) {
-					addArmor("conf/models/armor_"+layer[i]+".obj", 
+				if (model[i] != null) {
+					addArmor("conf/models/armor_"+model[i]+".obj", 
 							NamespaceID.fromString("misc/enchanted_item_glint"), 
 							obj, 
 							posCorrection[i][0], 

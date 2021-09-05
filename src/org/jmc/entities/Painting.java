@@ -16,6 +16,11 @@ import org.jmc.threading.ChunkProcessor;
  */
 public class Painting extends Entity
 {
+	public Painting(String id) {
+		super(id);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void addEntity(ChunkProcessor obj, TAG_Compound entity)
 	{
@@ -62,6 +67,7 @@ public class Painting extends Entity
 		byte facing = ((TAG_Byte)entity.getElement("Facing")).value;
 
 		String motiv=((TAG_String)entity.getElement("Motive")).value;
+		NamespaceID motivID = NamespaceID.fromString(motiv);
 		
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
@@ -82,18 +88,16 @@ public class Painting extends Entity
 				break;
 		}
 		
-		translate = Transform.translation(x, y, z);		
+		translate = Transform.translation(x, y, z);
 		
 		rt = translate.multiply(rotate);
 		
 		BlockMaterial materials=new BlockMaterial();
-		NamespaceID[] matname={NamespaceID.fromString("painting/" + motiv.toLowerCase())};
+		NamespaceID[] matname={new NamespaceID(motivID.namespace, "painting/" + motivID.path)};
 		materials.put(matname);
 		model.setMaterials(materials);
 		
-		model.setMaterials(materials);
-		
-		model.addEntity(obj, rt);		
+		model.addEntity(obj, rt);
 	}
 
 }

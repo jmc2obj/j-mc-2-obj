@@ -1,5 +1,5 @@
 o chicken
-usemtl mob_chicken
+usemtl entity/chicken
 s off
 
 v -0.187500 0.045280 0.125000

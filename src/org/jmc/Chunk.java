@@ -42,6 +42,7 @@ public class Chunk {
 	 * Root of the loaded chunk structure.
 	 */
 	private TAG_Compound root;
+	private TAG_Compound entities_root;
 
 	/**
 	 * Position of chunk.
@@ -67,15 +68,20 @@ public class Chunk {
 	/**
 	 * Main constructor of chunks. 
 	 * @param is input stream located at the place in the file where the chunk begins 
+	 * @param entityIs 
 	 * @param is_anvil is the file new Anvil or old Region format
 	 * @throws Exception throws errors while parsing the chunk
 	 */
-	public Chunk(InputStream is, boolean is_anvil) throws Exception
+	public Chunk(InputStream is, InputStream entityIs, boolean is_anvil) throws Exception
 	{
 		this.is_anvil=is_anvil;
 
 		root=(TAG_Compound) NBT_Tag.make(is);
 		is.close();
+		if (entityIs != null) {
+			entities_root = (TAG_Compound) NBT_Tag.make(entityIs);
+			entityIs.close();
+		}
 
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 
@@ -344,12 +350,22 @@ public class Chunk {
 			
 		}
 
-		TAG_List entities = (TAG_List) level.getElement("Entities");
-		if(entities!=null && entities.elements.length>0)
+		TAG_List chunk_entities = (TAG_List) level.getElement("Entities");
+		if(chunk_entities!=null && chunk_entities.elements.length>0)
 		{
-			for(int i=0; i<entities.elements.length; i++)
+			for(int i=0; i<chunk_entities.elements.length; i++)
 			{
-				ret.entities.add((TAG_Compound)entities.elements[i]);
+				ret.entities.add((TAG_Compound)chunk_entities.elements[i]);
+			}
+		}
+		if (entities_root != null) {
+			TAG_List entities = (TAG_List) entities_root.getElement("Entities");
+			if(entities!=null && entities.elements.length>0)
+			{
+				for(int i=0; i<entities.elements.length; i++)
+				{
+					ret.entities.add((TAG_Compound)entities.elements[i]);
+				}
 			}
 		}
 

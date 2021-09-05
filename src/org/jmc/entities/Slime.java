@@ -10,6 +10,10 @@ import org.jmc.threading.ChunkProcessor;
 
 public class Slime extends Entity {
 
+	public Slime(String id) {
+		super(id);
+	}
+
 	@Override
 	public void addEntity(ChunkProcessor obj, TAG_Compound entity) {
 		

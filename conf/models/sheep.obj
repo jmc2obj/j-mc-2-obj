@@ -1,5 +1,5 @@
 o sheep
-usemtl mob_sheep
+usemtl entity/sheep/sheep
 s off
 
 v 0.062000 -0.019035 -0.312500

@@ -1,5 +1,5 @@
 o pig
-usemtl mob_pig
+usemtl entity/pig/pig
 s off
 
 v 0.125000 0.062500 -0.250000

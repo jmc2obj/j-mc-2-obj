@@ -36,13 +36,17 @@ public class Region implements Iterable<Chunk> {
 	 */
 	private File region_file;
 	/**
+	 * Path to the entities file.
+	 */
+	private File region_entity_file;
+	/**
 	 * Buffer of offsets of individual chunks.
 	 */
 	private ByteBuffer offset;
 	/**
-	 * Buffer of timestamps of individual chunks.
+	 * Buffer of offsets of individual in the entiy file chunks.
 	 */
-	private ByteBuffer timestamp;
+	private ByteBuffer entity_offset;
 	/**
 	 * Is the file in anvil or old mcregion format.
 	 */
@@ -66,18 +70,25 @@ public class Region implements Iterable<Chunk> {
 			throw new IOException("Unknown file extension! Only .mcr or .mca supported!");
 
 		region_file=file;
+		
+		region_entity_file = new File(file.getParentFile().getParent()+"/entities", file.getName());
 
 		FileInputStream fis=new FileInputStream(region_file);
 
 		byte [] offset_array=new byte[4096];
 		fis.read(offset_array);
 		offset=ByteBuffer.wrap(offset_array);
-
-		byte [] timestamp_array=new byte[4096];
-		fis.read(timestamp_array);
-		timestamp=ByteBuffer.wrap(timestamp_array);
-
+		
 		fis.close();
+		if (is_anvil && region_entity_file.exists()) {
+			fis=new FileInputStream(region_entity_file);
+			
+			offset_array=new byte[4096];
+			fis.read(offset_array);
+			entity_offset=ByteBuffer.wrap(offset_array);
+			
+			fis.close();
+		}
 
 	}	
 	
@@ -185,41 +196,38 @@ public class Region implements Iterable<Chunk> {
 	 */
 	public Chunk getChunk(int idx) throws Exception
 	{
+		if (region_entity_file.exists()) {
+			return new Chunk(getChunkStream(region_file, offset, idx), getChunkStream(region_entity_file, entity_offset, idx),is_anvil);
+		} else {
+			return new Chunk(getChunkStream(region_file, offset, idx),null,is_anvil);
+		}
+	}
+	
+	private InputStream getChunkStream(File file, ByteBuffer offset, int idx) throws Exception {
 		int off = offset.getInt(idx*4);
 		int sec = off >> 8;
 		int len = off & 0xff;
-		//int ts = THIS IS UNUSED - line below is to supress the warning 
-		timestamp.getInt(idx*4);
 
 		if(sec<2)
 			return null;
 
-		RandomAccessFile raf=new RandomAccessFile(region_file, "r");
+		RandomAccessFile raf=new RandomAccessFile(file, "r");
 		raf.seek(sec*4096);
 
 		len=raf.readInt();
 		int compression_type=raf.readByte();
-		if(compression_type==1) //GZIP
-		{
-			byte[] buf = new byte[len - 1];
-			raf.read(buf);
-			raf.close();
-			InputStream is=new GZIPInputStream(new ByteArrayInputStream(buf));
-			return new Chunk(is,is_anvil);
-		}
-		else if(compression_type==2)//Inflate
-		{
-			byte[] buf = new byte[len - 1];
-			raf.read(buf);
-			raf.close();
-			InputStream is=new InflaterInputStream(new ByteArrayInputStream(buf));
-			return new Chunk(is,is_anvil);
-		}
-		else
-		{
-			raf.close();
+		byte[] buf = new byte[len - 1];
+		raf.read(buf);
+		raf.close();
+		InputStream is;
+		if(compression_type==1) { //GZIP
+			is=new GZIPInputStream(new ByteArrayInputStream(buf));
+		} else if(compression_type==2) {//Inflate
+			is=new InflaterInputStream(new ByteArrayInputStream(buf));
+		} else {
 			throw new Exception("Wrong compression type!");
 		}
+		return is;
 	}
 
 	/**

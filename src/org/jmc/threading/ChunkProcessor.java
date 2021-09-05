@@ -17,6 +17,7 @@ import org.jmc.BlockTypes;
 import org.jmc.EntityTypes;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_String;
 import org.jmc.entities.Entity;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
@@ -238,11 +239,12 @@ public class ChunkProcessor
 			for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
 			{
 				Entity handler=EntityTypes.getEntity(entity);
-				try {
-					if(handler!=null) handler.addEntity(this, entity);
-				}
-				catch (Exception ex) {
-					Log.error("Error rendering entity, skipping.", ex);
+				if (handler!=null) {
+					try {
+						handler.addEntity(this, entity);
+					} catch (Exception ex) {
+						Log.error(String.format("Error rendering entity %s, skipping.", handler.id), ex);
+					}
 				}
 			}
 	
@@ -253,7 +255,7 @@ public class ChunkProcessor
 					if(handler!=null) handler.addEntity(this, entity);
 				}
 				catch (Exception ex) {
-					Log.error("Error rendering tyle entity, skipping.", ex);
+					Log.error("Error rendering tile entity, skipping.", ex);
 				}
 			}
 		}

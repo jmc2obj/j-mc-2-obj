@@ -8,6 +8,12 @@ public abstract class Entity {
 	
 	protected EntityModel model;
 	
+	final public String id;
+	
+	public Entity(String id) {
+		this.id = id;
+	}
+	
 	public void useModel(EntityModel model)
 	{
 		this.model=model;
