@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +44,8 @@ public class Registry extends BlockModel {
 		}
 		List<ModelListWeighted> modelParts = bsEntry.getModelsFor(data.state);
 		
+		List<AddedElem> addedElems = new ArrayList<>();
+		
 		for (ModelListWeighted modelList : modelParts) {
 			ModelInfo modelInfo = modelList.getRandomModel();
 			ModelEntry modelEntry = Registries.getModel(modelInfo.id);
@@ -54,7 +57,7 @@ public class Registry extends BlockModel {
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {
 					if (element != null)
-						addElement(obj, chunks, pos, data, modelInfo, model, element);
+						addElement(obj, chunks, pos, data, modelInfo, model, element, addedElems);
 				}
 			}
 		}
@@ -62,13 +65,30 @@ public class Registry extends BlockModel {
 	}
 	
 	// Add the element 
-	private void addElement(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos, BlockData data, ModelInfo modelInfo, RegistryModel model, ModelElement element) {
+	private void addElement(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos, BlockData data, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<@Nonnull AddedElem> prevElems) {
 		Transform baseTrans = pos.getTransform();
 		Transform stateTrans = getStateTrans(modelInfo);
 		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
 		boolean[] drawSides = getSidesCulling(chunks, pos, data, element.faces, stateTrans);
 		Transform elementTrans = getElemTrans(element);
+		
+		// if element in the same position was added before then don't add another on top (grass_block overlay)
+		AddedElem elem = new AddedElem(stateTrans, elementTrans, element, drawSides);
+		boolean add = true;
+		for (AddedElem prevElem : prevElems) {
+			if (elem.matches(prevElem)) {
+				if (elem.hasNew(prevElem)) {// same elem but new faces that weren't added before
+					drawSides = elem.getNew(prevElem);
+					prevElem.addSides(elem);
+					add = false;
+				} else {
+					Log.debug(String.format("Skipping double element on %s", data.id));
+					return;
+				}
+			}
+		}
+		if (add) prevElems.add(elem);
 		addBox(obj, element.from.x/16, element.from.y/16, element.from.z/16, element.to.x/16, element.to.y/16, element.to.z/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, drawSides);
 	}
 	
@@ -82,6 +102,7 @@ public class Registry extends BlockModel {
 	}
 	
 	// Calculate the element transformation
+	@Nonnull
 	private Transform getElemTrans(ModelElement element) {
 		ElementRotation rot = element.rotation;
 		Transform t = new Transform();
@@ -318,6 +339,7 @@ public class Registry extends BlockModel {
 	}
 	
 	// Calculate the culling of each face
+	@Nonnull
 	private boolean[] getSidesCulling(ThreadChunkDeligate chunks, BlockPos pos, BlockData data, Map<String, ElementFace> faces, Transform stateTrans) {
 		boolean[] array = new boolean[6];
 		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
@@ -361,5 +383,60 @@ public class Registry extends BlockModel {
 			}
 		}
 		return array;
+	}
+	
+	private class AddedElem {
+		private Transform stateTrans;
+		private Transform elemTrans;
+		private ModelElement elem;
+		private boolean[] drawnSides;
+		
+		private AddedElem(Transform stateTrans, Transform elemTrans, ModelElement elem, boolean[] drawnSides) {
+			this.stateTrans = stateTrans;
+			this.elemTrans = elemTrans;
+			this.elem = elem;
+			this.drawnSides = drawnSides;
+		}
+		
+		public boolean hasNew(AddedElem prevElem) {
+			for (boolean side : getNew(prevElem)) {
+				if (side) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean[] getNew(AddedElem prevElem) {
+			if (prevElem.drawnSides.length != drawnSides.length) {
+				throw new IllegalArgumentException("Sides array length mismatch!");
+			}
+			boolean[] newSides = new boolean[drawnSides.length];
+			for (int i = 0; i < drawnSides.length; i++) {
+				newSides[i] = !prevElem.drawnSides[i] && drawnSides[i];
+			}
+			return newSides;
+		}
+		
+		public boolean matches(@CheckForNull AddedElem obj) {
+			if (obj instanceof AddedElem) {
+				AddedElem otherElem = (AddedElem)obj;
+				boolean equal = stateTrans.equals(otherElem.stateTrans);
+				equal &= elemTrans.equals(otherElem.elemTrans);
+				equal &= elem.from.equals(otherElem.elem.from);
+				equal &= elem.to.equals(otherElem.elem.to);
+				return equal;
+			}
+			return false;
+		}
+		
+		public void addSides(AddedElem elem) {
+			if (elem.drawnSides.length != drawnSides.length) {
+				throw new IllegalArgumentException("Sides array length mismatch!");
+			}
+			for (int i = 0; i < drawnSides.length; i++) {
+				drawnSides[i] |= elem.drawnSides[i];
+			}
+		}
 	}
 }

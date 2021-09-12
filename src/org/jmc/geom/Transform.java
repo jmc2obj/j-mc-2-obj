@@ -220,6 +220,22 @@ public class Transform {
 	}
 	
 	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Transform) {
+			Transform other = (Transform) obj;
+			boolean equal = true;
+			for (int i = 0; i < matrix.length; i++)  {
+				for (int j = 0; j < matrix[i].length; j++) {
+					equal &= matrix[i][j] == other.matrix[i][j];
+				}
+			}
+			return equal;
+		} else {
+			return super.equals(obj);
+		}
+	}
+	
+	@Override
 	public String toString() {
 		return Arrays.deepToString(matrix);
 	}

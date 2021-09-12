@@ -17,7 +17,6 @@ import org.jmc.BlockTypes;
 import org.jmc.EntityTypes;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_String;
 import org.jmc.entities.Entity;
 import org.jmc.geom.FaceUtils;
 import org.jmc.geom.FaceUtils.Face;
