@@ -17,6 +17,8 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.jmc.BlockInfo.Occlusion;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Byte;
@@ -43,23 +45,27 @@ public class Chunk {
 	 */
 	private TAG_Compound root;
 	private TAG_Compound entities_root;
+	
+	public final int chunkVer;
+	
+	private int[] yMinMax = null;
 
 	/**
 	 * Position of chunk.
 	 */
-	private int pos_x,pos_z;
+	private final int pos_x,pos_z;
 
 	/**
 	 * Is the chunk type new Anvil or not.
 	 * Used to determine how to properly analyze the data.
 	 */
-	private boolean is_anvil;
+	private final boolean is_anvil;
 
 
 	/**
 	 * 64x64 color image of topmost blocks in chunk.  
 	 */
-	private BufferedImage block_image;	
+	private BufferedImage block_image;
 	/**
 	 * 64x64 grey-scale image of height of topmost blocks.
 	 */
@@ -90,7 +96,18 @@ public class Chunk {
 
 		pos_x = xPos.value;
 		pos_z = zPos.value;
-
+		
+		if (is_anvil) {
+			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
+				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
+			} else {
+				Log.error(String.format("Couldn't get chunk(%d,%d) DataVersion!", pos_x,pos_z), null, false);
+				chunkVer = Integer.MAX_VALUE;
+			}
+		} else {
+			chunkVer = 0;
+		}
+		
 		block_image=null;
 		height_image=null;
 	}
@@ -142,7 +159,7 @@ public class Chunk {
 		 * Main constructor.
 		 * @param num number of blocks to allocate
 		 */
-		public Blocks(int block_num)
+		public Blocks(int block_num, int ymin)
 		{
 			size = block_num;
 			data=new BlockData[block_num];
@@ -150,9 +167,12 @@ public class Chunk {
 			Arrays.fill(biome, 1);//default to plains
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
+			this.ymin = ymin;
 		}
 		
 		public final int size;
+		
+		public final int ymin;
 		
 		/**
 		 * Block meta-data.
@@ -183,51 +203,25 @@ public class Chunk {
 	{
 		Blocks ret=null;
 		TAG_Compound level = (TAG_Compound) root.getElement("Level");
-
+		
 		if(is_anvil)
 		{
-			int chunkVer = 0;
-			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
-				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
-			}
-			
-			int ymax=0;
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			if (sections == null) {
-				return new Blocks(16*16*256);
-			}
-			for(NBT_Tag section: sections.elements)
-			{
-				TAG_Compound c_section = (TAG_Compound) section;
-				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-				if (c_section.getElement("BlockStates") != null) {
-					ymax= Math.max(ymax, yval.value);
-				}
+				return new Blocks(16*16*256, 0);
 			}
 			
-			ymax=(ymax+1)*16;
-
-			ret=new Blocks(16*16*ymax);
+			int ymin=getYMin();
+			int ymax=getYMax();
 			
-			TAG_Int_Array tagBiomes;
-			if (chunkVer <= 1464) {// <= 18w05a
-				TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
-				int[] biomes = new int[tagByteBiomes.data.length];
-				for (int i = 0; i < tagByteBiomes.data.length; i++) {
-					biomes[i] = tagByteBiomes.data[i];
-				}
-				tagBiomes = new TAG_Int_Array("Biomes", biomes);
-			}
-			else {
-				tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
-			}
-
+			ret=new Blocks(16*16*(ymax- ymin), ymin);
+			
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
 				
-				int base=yval.value*16*16*16;
+				int base=((yval.value*16)-ymin)*16*16;
 				
 				if (chunkVer <= 1450) {// <= 1.12
 					short[] oldIDs = new short[ret.size];
@@ -237,7 +231,7 @@ public class Chunk {
 					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
 					for(int i=0; i<tagBlocks.data.length; i++)
 						oldIDs[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
-
+					
 					if(tagAdd!=null)
 					{
 						for(int i=0; i<tagAdd.data.length; i++)
@@ -249,7 +243,7 @@ public class Chunk {
 							oldIDs[base+2*i+1] += (add2<<8);
 						}
 					}
-
+					
 					for(int i=0; i<tagData.data.length; i++)
 					{
 						byte add1=(byte)(tagData.data[i]&0x0f);
@@ -314,19 +308,32 @@ public class Chunk {
 						ret.data[base+i] = block;
 					}
 				}
-
-				if(tagBiomes!=null) {
-					for(int x = 0; x < 16; x++) {
-						for (int z = 0; z < 16; z++) {
-							for (int y = 0; y < ymax; y++) {
-								int biome;
-								if (chunkVer <= 2201) {// <= 19w35a
-									biome = tagBiomes.data[x+z*16];
-								} else {
-									biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
-								}
-								ret.biome[x + z*16 + y*16*16] = biome;
+			}
+			
+			TAG_Int_Array tagBiomes;
+			if (chunkVer <= 1464) {// <= 18w05a
+				TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
+				int[] biomes = new int[tagByteBiomes.data.length];
+				for (int i = 0; i < tagByteBiomes.data.length; i++) {
+					biomes[i] = tagByteBiomes.data[i];
+				}
+				tagBiomes = new TAG_Int_Array("Biomes", biomes);
+			}
+			else {
+				tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
+			}
+			
+			if(tagBiomes!=null) {
+				for(int x = 0; x < 16; x++) {
+					for (int z = 0; z < 16; z++) {
+						for (int y = 0; y < ymax - ymin; y++) {
+							int biome;
+							if (chunkVer <= 2201) {// <= 19w35a
+								biome = tagBiomes.data[x+z*16];
+							} else {
+								biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
 							}
+							ret.biome[x + z*16 + y*16*16] = biome;
 						}
 					}
 				}
@@ -336,15 +343,15 @@ public class Chunk {
 		{
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
-
+			
 			byte add1,add2;
-			ret=new Blocks(blocks.data.length);
+			ret=new Blocks(blocks.data.length, 0);
 			short[] oldIDs = new short[ret.size];
 			byte[] oldData = new byte[ret.size];
-
+			
 			for(int i=0; i<blocks.data.length; i++)
 				oldIDs[i] = blocks.data[i];
-
+			
 			for(int i=0; i<data.data.length; i++)
 			{
 				add1=(byte) (data.data[i]&0x0f);
@@ -356,7 +363,7 @@ public class Chunk {
 			Log.info("Chunk is old version (pre 1.2.1), skipping! " + pos_x + " " + pos_z);
 			
 		}
-
+		
 		TAG_List chunk_entities = (TAG_List) level.getElement("Entities");
 		if(chunk_entities!=null && chunk_entities.elements.length>0)
 		{
@@ -387,6 +394,43 @@ public class Chunk {
 		}
 
 		return ret;
+	}
+	
+	public int getYMin() {
+		return getYMinMax()[0];
+	}
+	public int getYMax() {
+		return getYMinMax()[1];
+	}
+	
+	@Nonnull
+	private int[] getYMinMax() {
+		if (yMinMax != null && yMinMax.length == 2) {
+			return yMinMax;
+		}
+		if(is_anvil) {
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			TAG_List sections = (TAG_List) level.getElement("Sections");
+			
+			int ymin=Integer.MAX_VALUE;
+			int ymax=Integer.MIN_VALUE;
+			for(NBT_Tag section: sections.elements)
+			{
+				TAG_Compound c_section = (TAG_Compound) section;
+				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
+				if (c_section.getElement("BlockStates") != null) {
+					ymin= Math.min(ymin, yval.value);
+					ymax= Math.max(ymax, yval.value);
+				}
+			}
+			ymin=ymin*16;
+			ymax=(ymax+1)*16;
+			yMinMax = new int[] {ymin, ymax};
+			return yMinMax;
+		} else {
+			yMinMax = new int[] {0, 255};
+			return yMinMax;
+		}
 	}
 
 	/**
@@ -439,12 +483,13 @@ public class Chunk {
 			{
 				for(y = floor; y < ceiling; y++)
 				{
+					int arrayY = y - bd.ymin; 
 					BlockData blockData;
-					blockBiome = bd.biome[x + z*16 + y*16*16];
+					blockBiome = bd.biome[x + z*16 + arrayY*16*16];
 					
 					if(is_anvil)
 					{
-						blockData = bd.data[x + (z * 16) + (y * 16) * 16];
+						blockData = bd.data[x + (z * 16) + (arrayY * 16) * 16];
 					}
 					else
 					{

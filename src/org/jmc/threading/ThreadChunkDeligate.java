@@ -70,20 +70,21 @@ public class ThreadChunkDeligate {
 	@CheckForNull
 	public BlockData getBlockData(int x, int y, int z)
 	{
-		if(y<0) return null;
 		
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return null;
+		if(y<blocks.ymin) return null;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);
 		
 		if(isAnvil)
 		{
-			if(y>=blocks.size/(16*16)) return null;
-			return blocks.data[rx + (rz * 16) + (y * 16) * 16];
+			int arrayY = y - blocks.ymin;
+			if(arrayY>=blocks.size/(16*16)) return null;
+			return blocks.data[rx + (rz * 16) + (arrayY * 16) * 16];
 		}
 		else
 		{
@@ -98,12 +99,14 @@ public class ThreadChunkDeligate {
 		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return 255;
+		if(y<blocks.ymin) return 255;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);
 		
-		if(y>=blocks.size/(16*16)) return 1;
-		return blocks.biome[rx + (rz * 16) + (y * 16) * 16];
+		int arrayY = y - blocks.ymin;
+		if(arrayY>=blocks.size/(16*16)) return 1;
+		return blocks.biome[rx + (rz * 16) + (arrayY * 16) * 16];
 	}
 	
 	public List<TAG_Compound> getEntities(int cx, int cz)
