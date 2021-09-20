@@ -159,7 +159,7 @@ public class Chunk {
 		 * Main constructor.
 		 * @param num number of blocks to allocate
 		 */
-		public Blocks(int block_num, int ymin)
+		public Blocks(int block_num, int ymin, int ymax)
 		{
 			size = block_num;
 			data=new BlockData[block_num];
@@ -168,21 +168,52 @@ public class Chunk {
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
 			this.ymin = ymin;
+			this.ymax = ymax;
 		}
 		
-		public final int size;
+		private final int size;
 		
 		public final int ymin;
+		public final int ymax;
 		
 		/**
 		 * Block meta-data.
 		 */
-		public BlockData[] data;
+		private BlockData[] data;
+		
+		public BlockData getBlockData(int x, int y, int z) { 
+			int index = getIndex(x, y, z);
+			if (index == -1) {
+				return null;
+			} else {
+				return data[index];
+			}
+		}
 
 		/**
 		 * Biome IDSs.
 		 */
 		public int [] biome;
+		
+		public int getBiome(int x, int y, int z) { 
+			int index = getIndex(x, y, z);
+			if (index == -1) {
+				return -1;
+			} else {
+				return biome[index];
+			}
+		}
+		
+		private int getIndex(int x, int y, int z) {
+			if (x < 0 || x > 15 || z < 0 || z > 15) {
+				throw new IllegalArgumentException("Invalid relative chunk coordinate");
+			}
+			if (y < ymin || y > ymax) {
+				return -1;
+			} else {
+				return x + (z * 16) + ((y - ymin) * 16) * 16;
+			}
+		}
 
 		/**
 		 * Entities.
@@ -208,13 +239,13 @@ public class Chunk {
 		{
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			if (sections == null) {
-				return new Blocks(16*16*256, 0);
+				return new Blocks(16*16*256, 0, 255);
 			}
 			
 			int ymin=getYMin();
 			int ymax=getYMax();
 			
-			ret=new Blocks(16*16*(ymax- ymin), ymin);
+			ret=new Blocks(16*16*(ymax- ymin), ymin, ymax);
 			
 			for(NBT_Tag section: sections.elements)
 			{
@@ -345,7 +376,7 @@ public class Chunk {
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
 			byte add1,add2;
-			ret=new Blocks(blocks.data.length, 0);
+			ret=new Blocks(blocks.data.length, 0, 255);
 			short[] oldIDs = new short[ret.size];
 			byte[] oldData = new byte[ret.size];
 			
@@ -456,18 +487,10 @@ public class Chunk {
 		int blockBiome=0;
 		Blocks bd=getBlocks();
 
-		int ymax=0;
-		if(is_anvil)
-			ymax=bd.size/(16*16);
-		else 
-			ymax=128;
-
-		if(floor>ymax)
+		if(floor>bd.ymax)
 			return;
-		if(ceiling>ymax)
-			ceiling=ymax;
-		if(ceiling<1)
-			ceiling=1;
+		if(ceiling>bd.ymax)
+			ceiling=bd.ymax;
 		if(floor>=ceiling)
 			floor=ceiling-1;
 
@@ -483,18 +506,10 @@ public class Chunk {
 			{
 				for(y = floor; y < ceiling; y++)
 				{
-					int arrayY = y - bd.ymin; 
 					BlockData blockData;
-					blockBiome = bd.biome[x + z*16 + arrayY*16*16];
 					
-					if(is_anvil)
-					{
-						blockData = bd.data[x + (z * 16) + (arrayY * 16) * 16];
-					}
-					else
-					{
-						blockData = bd.data[y + (z * 128) + (x * 128) * 16];
-					}
+					blockBiome = bd.getBiome(x, y, z);
+					blockData = bd.getBlockData(x, y, z);
 					
 					if(blockData != null && !BlockTypes.get(blockData).getOcclusion().equals(Occlusion.NONE))
 					{
@@ -530,7 +545,7 @@ public class Chunk {
 			{
 				for(x = 0; x < 16; x++)
 				{
-					h=himage[z*16+x]%256;
+					h=Math.floorMod(himage[z*16+x],256);//TODO remap height range?
 					gh.setColor(new Color(h,h,h));
 					gh.fillRect(x*4, z*4, 4, 4);
 				}

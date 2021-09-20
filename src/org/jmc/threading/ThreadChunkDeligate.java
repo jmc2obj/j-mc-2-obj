@@ -23,7 +23,6 @@ public class ThreadChunkDeligate {
 	
 	private Point cached_chunkp;
 	private Blocks cached_chunkb;
-	private boolean isAnvil;
 	private Rectangle xzBoundaries;
 	private Rectangle xyBoundaries;
 	private Map<Point,Blocks> auxChunks;
@@ -75,22 +74,11 @@ public class ThreadChunkDeligate {
 		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return null;
-		if(y<blocks.ymin) return null;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);
 		
-		if(isAnvil)
-		{
-			int arrayY = y - blocks.ymin;
-			if(arrayY>=blocks.size/(16*16)) return null;
-			return blocks.data[rx + (rz * 16) + (arrayY * 16) * 16];
-		}
-		else
-		{
-			if(y>=128) return null;
-			return blocks.data[y + (rz * 128) + (rx * 128) * 16];
-		}
+		return blocks.getBlockData(rx, y, rz);
 	}
 	
 	public int getBlockBiome(int x, int y, int z)
@@ -99,14 +87,11 @@ public class ThreadChunkDeligate {
 		Blocks blocks=getBlocks(chunk_p);
 		
 		if(blocks==null) return 255;
-		if(y<blocks.ymin) return 255;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);
 		
-		int arrayY = y - blocks.ymin;
-		if(arrayY>=blocks.size/(16*16)) return 1;
-		return blocks.biome[rx + (rz * 16) + (arrayY * 16) * 16];
+		return blocks.getBiome(rx, y, rz);
 	}
 	
 	public List<TAG_Compound> getEntities(int cx, int cz)
@@ -155,6 +140,5 @@ public class ThreadChunkDeligate {
 		auxChunks.clear();
 		cached_chunkp = p;
 		cached_chunkb = chunkBuffer.getBlocks(p);
-		isAnvil = chunkBuffer.isAnvil();
 	}
 }
