@@ -305,7 +305,7 @@ public class ChunkProcessor
 		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
 			isFacingEqual = false;
 		}
-		if (face1.texture != face2.texture) {
+		if (!face1.texture.equals(face2.texture)) {
 			return false;
 		}
 		Vertex[] verts1 = face1.vertices;
