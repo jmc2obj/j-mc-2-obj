@@ -306,7 +306,7 @@ public class WriterRunnable implements Runnable {
 			}
 			else if(Options.textureMerge)
 			{
-				uv=UVRecalculate.recalculate(uv, tex);
+				//uv=UVRecalculate.recalculate(uv, tex); TODO fix single tex export
 			}
 		
 			for (int i = 0; i < verts.length; i++)

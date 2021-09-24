@@ -225,16 +225,6 @@ public class Options
 	public static Set<NamespaceID> excludeBlocks = new HashSet<>();
 
 	/**
-	 * If true, UV file is used to convert UVs during export.
-	 */
-	public static boolean useUVFile = false;
-
-	/**
-	 * UV file from the setting above.
-	 */
-	public static File UVFile;
-
-	/**
 	 * Whether to export the world.
 	 * Only used in console mode.
 	 */

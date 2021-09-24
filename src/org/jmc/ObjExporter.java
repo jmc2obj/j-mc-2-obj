@@ -109,7 +109,7 @@ public class ObjExporter {
 					ozs = 0;
 				}
 
-				if (Options.useUVFile) {
+				/*if (Options.useUVFile) {
 					Log.info("Using file to recalculate UVs: " + Options.UVFile.getAbsolutePath());
 					try {
 						UVRecalculate.load(Options.UVFile);
@@ -118,7 +118,7 @@ public class ObjExporter {
 						obj_writer.close();
 						return;
 					}
-				}
+				}*/// TODO fix single tex export
 				
 				int chunksToDo = (ce.x - cs.x + 1) * (ce.y - cs.y + 1);
 
@@ -139,11 +139,11 @@ public class ObjExporter {
 					obj_writer.println();
 				}
 
-				if (Options.singleMaterial) {
+				/*if (Options.singleMaterial) {
 					obj_writer.println("usemtl minecraft_material");
 					obj_writer.println();
 					writeRunner.setPrintUseMTL(false);
-				}
+				}*///TODO fix single tex export
 				
 				Banner.resetReadError();
 				
@@ -293,10 +293,10 @@ public class ObjExporter {
 					normal.close();
 					uv.close();
 
-					if (Options.singleMaterial) {
+					/*if (Options.singleMaterial) {
 						main.println("usemtl minecraft_material");
 						main.println();
-					}
+					}*///TODO fix single tex export
 
 					BufferedReader norm_reader = new BufferedReader(new FileReader(normalfile));
 					while ((line = norm_reader.readLine()) != null)
@@ -333,7 +333,7 @@ public class ObjExporter {
 							main.println("g " + ff.name);
 						main.println();
 
-						if (!Options.singleMaterial) {
+						/*if (!Options.singleMaterial)TODO fix single tex export*/ {
 							main.println("usemtl " + ff.name);
 							main.println();
 						}
@@ -374,19 +374,14 @@ public class ObjExporter {
 			if (writeTex) {
 				Log.info("Exporting textures...");
 				synchronized (Registries.objTextures) {
-					if (Options.textureMerge) {
+					/*if (Options.textureMerge) {
 						Log.error("Texture merging is not supported!", null);
 						TextureExporter.mergeTextures(Registries.objTextures, progress);
 					} else {
 						TextureExporter.exportTextures(Registries.objTextures, progress);
-					}
+					//}*/// TODO fix single tex export
+					TextureExporter.exportTextures(Registries.objTextures, progress);
 				}
-//				File texFolder = new File(Options.outputDir, "tex");
-//				if (Options.textureMerge) {
-//					TextureExporter.mergeTextures(texFolder, texturepack, Options.textureScale, true, Options.textureAlpha, Options.textureLight, Options.textureNormal, Options.textureSpecular, progress);
-//				} else {
-//					TextureExporter.splitTextures(texFolder, texturepack, Options.textureScale, true, Options.textureAlpha, Options.textureNormal, Options.textureSpecular, progress);
-//				}
 			}
 			Log.info("Done!");
 		} catch (Exception e) {

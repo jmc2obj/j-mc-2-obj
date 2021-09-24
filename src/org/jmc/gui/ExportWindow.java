@@ -2,7 +2,6 @@ package org.jmc.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -74,15 +73,11 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JCheckBox chckbxOptimiseGeo;
 	private JCheckBox chckbxConvertOreTo;
 	private JCheckBox chckbxMergeVerticies;
-	private JCheckBox chckbxSingleMat;
-	private JCheckBox chckbxSingleTexture;
 
 	private JComboBox<String> cboxTexScale;
 	private JCheckBox chckbxSeparateAlphaTexture;
 	private JCheckBox chckbxCombineAllTextures;
-
-	private JButton btnBrowseUV;
-	private JTextField textFieldSingleTexUV;
+	private JCheckBox chckbxSingleMat;
 
 	private JButton btnStartExport;
 	private JButton btnForceStop;
@@ -100,8 +95,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JPanel holderTexExport;
 	private JPanel holderMapScale;
 	private JPanel holderSepBlock;
-	private JPanel holderSingleTex;
-	private JPanel holderUV;
 	private JPanel holderExportPanel;
 	private JPanel holderLeft;
 	private JPanel holderTop;
@@ -120,7 +113,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JLabel lblExtraMapsHelp;
 	private JPanel holderExtraMapsText;
 	private JPanel holderSingleTexOpts;
-	private JLabel lblUVFile;
 	private JCheckBox chckbxExportTextures;
 
 
@@ -154,6 +146,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//ExportOffset
 		//##########################################################################################################
 		JPanel pMapExportOffset = new JPanel();
+		pMapExportOffset.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderLeft.add(pMapExportOffset);
 		pMapExportOffset.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
 				Messages.getString("OBJExportOptions.OFFSET"), TitledBorder.CENTER, TitledBorder.TOP, null,
@@ -229,12 +222,14 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//TextureExporting
 		//##########################################################################################################
 		JPanel pTextureOptions = new JPanel();
+		pTextureOptions.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderLeft.add(pTextureOptions);
 		pTextureOptions.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
 				Messages.getString("TexsplitDialog.WIN_TITLE"), TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		pTextureOptions.setLayout(new BoxLayout(pTextureOptions, BoxLayout.Y_AXIS));
 
 		holderPreScale = new JPanel();
+		holderPreScale.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderPreScale.setBorder(new EmptyBorder(5, 5, 5, 5));
 		pTextureOptions.add(holderPreScale);
 		holderPreScale.setLayout(new BoxLayout(holderPreScale, BoxLayout.X_AXIS));
@@ -249,32 +244,44 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		cboxTexScale.setMaximumSize(cboxTexScale.getPreferredSize());
 
 		holderTexExport = new JPanel();
+		holderTexExport.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderTexExport.setBorder(new EmptyBorder(5, 5, 5, 5));
 		pTextureOptions.add(holderTexExport);
 		holderTexExport.setLayout(new BoxLayout(holderTexExport, BoxLayout.Y_AXIS));
 		
-		chckbxExportTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_TEXTURES")); //$NON-NLS-1$
-		chckbxExportTextures.setAlignmentX(Component.CENTER_ALIGNMENT);
+		chckbxExportTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_TEXTURES"));
 		holderTexExport.add(chckbxExportTextures);
 
 		chckbxSeparateAlphaTexture = new JCheckBox(Messages.getString("TexsplitDialog.EXP_ALPHA"));
-		chckbxSeparateAlphaTexture.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderTexExport.add(chckbxSeparateAlphaTexture);
+		
+		//##########################################################################################################
+		//SingleTexFile
+		//##########################################################################################################
+
+		holderSingleTexOpts = new JPanel();
+		holderSingleTexOpts.setAlignmentX(Component.LEFT_ALIGNMENT);
+		holderSingleTexOpts.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		//holderTexExport.add(holderSingleTexOpts);// TODO fix single tex export
+		holderSingleTexOpts.setLayout(new BoxLayout(holderSingleTexOpts, BoxLayout.Y_AXIS));
 
 		chckbxCombineAllTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SINGLE"));
-		chckbxCombineAllTextures.setAlignmentX(Component.CENTER_ALIGNMENT);
-		holderTexExport.add(chckbxCombineAllTextures);
+		holderSingleTexOpts.add(chckbxCombineAllTextures);
 
 		chckbxExportSeparateLight = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SEPERATE_LIGHT"));
-		chckbxExportSeparateLight.setAlignmentX(Component.CENTER_ALIGNMENT);
-		holderTexExport.add(chckbxExportSeparateLight);
+		holderSingleTexOpts.add(chckbxExportSeparateLight);
+		
+		chckbxSingleMat = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_MTL"));
+		holderSingleTexOpts.add(chckbxSingleMat);
 		
 		holderExtraMaps = new JPanel();
+		holderExtraMaps.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderExtraMaps.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		holderTexExport.add(holderExtraMaps);
 		holderExtraMaps.setLayout(new BoxLayout(holderExtraMaps, BoxLayout.Y_AXIS));
 		
 		holderExtraMapsText = new JPanel();
+		holderExtraMapsText.setAlignmentX(Component.LEFT_ALIGNMENT);
 		FlowLayout fl_holderExtraMapsText = (FlowLayout) holderExtraMapsText.getLayout();
 		fl_holderExtraMapsText.setVgap(2);
 		holderExtraMaps.add(holderExtraMapsText);
@@ -290,6 +297,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		lblExtraMapsHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
 		
 		holderExtraMapsChks = new JPanel();
+		holderExtraMapsChks.setAlignmentX(Component.LEFT_ALIGNMENT);
 		FlowLayout fl_holderExtraMapsChks = (FlowLayout) holderExtraMapsChks.getLayout();
 		fl_holderExtraMapsChks.setVgap(0);
 		fl_holderExtraMapsChks.setHgap(0);
@@ -305,6 +313,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//CloudsExport
 		//##########################################################################################################
 		JPanel pCloudExport = new JPanel();
+		pCloudExport.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pTextureOptions.add(pCloudExport);
 		pCloudExport.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		pCloudExport.setLayout(new BoxLayout(pCloudExport, BoxLayout.X_AXIS));
@@ -312,7 +321,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderCloudExports = new JPanel();
 		holderCloudExports.setBorder(new EmptyBorder(5, 5, 5, 5));
 		pCloudExport.add(holderCloudExports);
-		holderCloudExports.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		holderCloudExports.setLayout(new BoxLayout(holderCloudExports, BoxLayout.Y_AXIS));
 
 		JLabel lblExportCloudsObj = new JLabel(Messages.getString("TexsplitDialog.EXP_CLOUDS"));
@@ -398,52 +406,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//##########################################################################################################
 		chckbxMergeVerticies = new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
 		pExportOptions.add(chckbxMergeVerticies);
-		
-		holderSingleTexOpts = new JPanel();
-		holderSingleTexOpts.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		holderSingleTexOpts.setAlignmentX(Component.LEFT_ALIGNMENT);
-		pExportOptions.add(holderSingleTexOpts);
-		holderSingleTexOpts.setLayout(new BoxLayout(holderSingleTexOpts, BoxLayout.Y_AXIS));
-
-		//##########################################################################################################
-		//SingleTexFile
-		//##########################################################################################################
-		holderSingleTex = new JPanel();
-		holderSingleTexOpts.add(holderSingleTex);
-		holderSingleTex.setAlignmentX(Component.LEFT_ALIGNMENT);
-		holderSingleTex.setLayout(new BoxLayout(holderSingleTex, BoxLayout.X_AXIS));
-
-		chckbxSingleTexture = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_TEX"));
-		holderSingleTex.add(chckbxSingleTexture);
-
-		JLabel lblSingleTexHelp = new JLabel("???");
-		holderSingleTex.add(lblSingleTexHelp);
-		lblSingleTexHelp.setToolTipText(Messages.getString("OBJExportOptions.SINGLE_TEX_HELP"));
-		lblSingleTexHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblSingleTexHelp.setForeground(Color.RED);
-
-		//##########################################################################################################
-		//UV Map
-		//##########################################################################################################
-		holderUV = new JPanel();
-		holderUV.setAlignmentX(Component.LEFT_ALIGNMENT);
-		holderSingleTexOpts.add(holderUV);
-		holderUV.setLayout(new BoxLayout(holderUV, BoxLayout.X_AXIS));
-		
-		lblUVFile = new JLabel(Messages.getString("OBJExportOptions.SINGLE_TEX_UV_FILE"));
-		holderUV.add(lblUVFile);
-
-		textFieldSingleTexUV = new JTextField();
-		textFieldSingleTexUV.setColumns(24);
-		textFieldSingleTexUV
-				.setMaximumSize(new Dimension(Integer.MAX_VALUE, textFieldSingleTexUV.getPreferredSize().height));
-		holderUV.add(textFieldSingleTexUV);
-
-		btnBrowseUV = new JButton(Messages.getString("OBJExportPanel.BROWSE"));
-		holderUV.add(btnBrowseUV);
-		
-		chckbxSingleMat = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_MTL"));
-		holderSingleTexOpts.add(chckbxSingleMat);
 
 		//##########################################################################################################
 		//ExportThreads
@@ -646,23 +608,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 				ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(),
 						jfcRP.getSelectedFile());
 
-			}
-		};
-
-		AbstractAction uvSelect = new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				JFileChooser jfcFile = new JFileChooser(MainWindow.settings.getLastExportPath());
-				jfcFile.setDialogTitle("UV File");
-				jfcFile.setFileFilter(new FileNameExtensionFilter("UVfile", "uv"));
-				if (jfcFile.showDialog(ExportWindow.this,
-						Messages.getString("OBJExportOptions.SEL_UV_DIALOG")) != JFileChooser.APPROVE_OPTION) {
-					return;
-				}
-
-				File save_path = jfcFile.getSelectedFile();
-				textFieldSingleTexUV.setText(save_path.getAbsolutePath());
 			}
 		};
 
@@ -877,9 +822,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxMergeVerticies.addActionListener(genericSaveAction);
 
 		chckbxSingleMat.addActionListener(genericSaveAction);
-		chckbxSingleTexture.addActionListener(genericSaveAction);
-		textFieldSingleTexUV.getDocument().addDocumentListener(tf_listener);
-		btnBrowseUV.addActionListener(uvSelect);
 		
 		spinnerThreads.addChangeListener(genericSaveChange);
 
@@ -944,10 +886,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", true));
 		
-		chckbxSingleTexture.setSelected(prefs.getBoolean("USE_UV_FILE", false));
-		textFieldSingleTexUV.setText(prefs.get("UV_FILE", ""));
-		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", true));
-		
 		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", false));
 		
 		cboxTexScale.setSelectedItem("" + prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
@@ -957,6 +895,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxExportSpecularMaps.setSelected(prefs.getBoolean("TEXTURE_SPECULAR", false));
 		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
 		chckbxCombineAllTextures.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
+		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", true));
 		
 		spinnerThreads.setValue(prefs.getInt("EXPORT_THREADS", 8));
 		
@@ -1027,9 +966,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
 		prefs.putBoolean("SINGLE_MTL", Options.singleMaterial);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
-		prefs.putBoolean("USE_UV_FILE", Options.useUVFile);
 		prefs.putBoolean("USE_LAST_SAVE_LOC", Options.useLastSaveLoc);
-		prefs.put("UV_FILE", Options.UVFile.getAbsolutePath());
 
 		prefs.putDouble("TEXTURE_SCALE_ID", Options.textureScale);
 		prefs.putBoolean("TEXTURE_EXPORT", Options.exportTex);
@@ -1043,22 +980,14 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	}
 
 	private void updateEnabledSettings() {
-		if (chckbxSingleTexture.isSelected() && chckbxSingleTexture.isEnabled()) {
-			chckbxSingleMat.setEnabled(true);
-			textFieldSingleTexUV.setEnabled(true);
-			btnBrowseUV.setEnabled(true);
-			chckbxOptimiseGeo.setEnabled(false);
-		} else {
-			chckbxSingleMat.setEnabled(false);
-			textFieldSingleTexUV.setEnabled(false);
-			btnBrowseUV.setEnabled(false);
-			chckbxOptimiseGeo.setEnabled(true);
-		}
-
-		if (chckbxCombineAllTextures.isSelected()) {
+		/*if (chckbxCombineAllTextures.isSelected()) {TODO fix single tex export
 			chckbxExportSeparateLight.setEnabled(true);
-		} else {
+			chckbxSingleMat.setEnabled(true);
+			chckbxOptimiseGeo.setEnabled(false);
+		} else*/ {
 			chckbxExportSeparateLight.setEnabled(false);
+			chckbxSingleMat.setEnabled(false);
+			chckbxOptimiseGeo.setEnabled(true);
 		}
 
 		if (chckbxSeparateMat.isSelected()) {
@@ -1108,9 +1037,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.optimiseGeometry = chckbxOptimiseGeo.isSelected() && chckbxOptimiseGeo.isEnabled();
 		Options.convertOres = chckbxConvertOreTo.isSelected();
 		Options.removeDuplicates = chckbxMergeVerticies.isSelected();
-		Options.useUVFile = chckbxSingleTexture.isSelected();
-		Options.UVFile = new File(textFieldSingleTexUV.getText());
-		Options.singleMaterial = chckbxSingleMat.isSelected() && chckbxSingleMat.isEnabled();
 		Options.useLastSaveLoc = chckbxUseLastSaveLoc.isSelected();
 
 		String txt = cboxTexScale.getSelectedItem().toString();
@@ -1129,8 +1055,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.textureAlpha = chckbxSeparateAlphaTexture.isSelected();
 		Options.textureNormal = chckbxExportNormalMaps.isSelected();
 		Options.textureSpecular = chckbxExportSpecularMaps.isSelected();
-		Options.textureLight = chckbxExportSeparateLight.isSelected();
 		Options.textureMerge = chckbxCombineAllTextures.isSelected();
+		Options.textureLight = chckbxExportSeparateLight.isSelected() && chckbxExportSeparateLight.isEnabled();
+		Options.singleMaterial = chckbxSingleMat.isSelected() && chckbxSingleMat.isEnabled();
 		
 		Options.exportThreads = (Integer)spinnerThreads.getValue();
 	}

@@ -36,7 +36,7 @@ public class Materials
 	 */
 	public static void writeMTLFile(File dest, ProgressCallback progress) throws IOException
 	{
-		if(Options.singleMaterial) {
+		/*if(Options.singleMaterial) { TODO fix single tex export
 			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_MTL_FILE)) {
 				Filesystem.writeFile(mtlFile.getInputStream(), dest);
 			}
@@ -44,7 +44,7 @@ public class Materials
 			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_TEXTURE_MTLS_FILE)) {
 				Filesystem.writeFile(mtlFile.getInputStream(), dest);
 			}
-		} else {
+		} else*/ {
 			ByteArrayOutputStream matBuffer = new ByteArrayOutputStream();
 			int count = 0;
 			synchronized (Registries.objTextures) {
