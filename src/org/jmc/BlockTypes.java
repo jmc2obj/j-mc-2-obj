@@ -1,9 +1,8 @@
 package org.jmc;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPath;
@@ -54,7 +53,7 @@ public class BlockTypes
 		}
 	};
 
-	private final static Set<NamespaceID> unknownBlockIds = Collections.synchronizedSet(new HashSet<>());
+	private final static Set<NamespaceID> unknownBlockIds = ConcurrentHashMap.newKeySet();
 	
 	private static BlockInfo unknownBlock;
 	private static BlockInfo nullBlock;
@@ -446,7 +445,7 @@ public class BlockTypes
 	/**
 	 * Gets the block information for the given block id.
 	 * If the block id is not found, returns a default BlockInfo structure for 
-	 * "unknown" blocks. The block id of the unknown block is always "". 
+	 * "unknown" blocks. 
 	 * 
 	 * @param block Block data
 	 * @return BlockInfo structure

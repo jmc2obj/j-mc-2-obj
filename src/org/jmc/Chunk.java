@@ -403,7 +403,6 @@ public class Chunk {
 		gb.fillRect(0, 0, width, height);
 
 		int blockBiome=0;
-		Color c;
 		Blocks bd=getBlocks();
 
 		int ymax=0;
@@ -463,12 +462,10 @@ public class Chunk {
 				BlockData blockData = topBlocks[z*16+x];
 				blockBiome = biome[z*16+x];
 				
-				if(blockData != null && BlockTypes.get(blockData).getModel().getClass() != None.class)
-				{
-					c = BlockTypes.get(blockData).getPreviewColor(blockData,blockBiome);
-					if(c!=null)
-					{
-						gb.setColor(c);
+				if(blockData != null) {
+					BlockInfo type = BlockTypes.get(blockData);
+					if (type.getModel().getClass() != None.class) {
+						gb.setColor(type.getPreviewColor(blockData,blockBiome));
 						gb.fillRect(x*4, z*4, 4, 4);
 					}
 				}

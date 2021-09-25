@@ -3,12 +3,13 @@ package org.jmc.util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.CheckForNull;
 
 public abstract class CachedGetter <K, V> {
-	private final Map<K, V> entries = new HashMap<>();
+	private final Map<K, V> entries = new ConcurrentHashMap<>(new HashMap<>());
 	private final Map<K, AtomicBoolean> creatingStates = new HashMap<>();
 	
 	/**Gets the cached value for {@code key}.
@@ -18,26 +19,28 @@ public abstract class CachedGetter <K, V> {
 	 */
 	@CheckForNull
 	public V get(K key) {
+		if (entries.containsKey(key)) {// fast path
+			return entries.get(key);// if it exists then just return
+		} 
 		AtomicBoolean creatingState;
 		synchronized (this) {
-			if (entries.containsKey(key)) {
+			if (entries.containsKey(key)) {// check again, in case
 				return entries.get(key);// if it exists then just return
-			} else {
-				creatingState = creatingStates.get(key);
-				if (creatingState == null) {
-					creatingState = new AtomicBoolean(false);
-					creatingStates.put(key, creatingState);
-				}
-				if (!creatingState.compareAndSet(false, true)) {// try and become creator
-					while (creatingState.get()) {
-						try {
-							this.wait();// wait until created
-						} catch (InterruptedException e) {
-							throw new RuntimeException(e);
-						}
+			}
+			creatingState = creatingStates.get(key);
+			if (creatingState == null) {
+				creatingState = new AtomicBoolean(false);
+				creatingStates.put(key, creatingState);
+			}
+			if (!creatingState.compareAndSet(false, true)) {// try and become creator
+				while (creatingState.get()) {
+					try {
+						this.wait();// wait until created
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
 					}
-					return entries.get(key);
 				}
+				return entries.get(key);
 			}
 		}
 		// we are the creator, add to map
