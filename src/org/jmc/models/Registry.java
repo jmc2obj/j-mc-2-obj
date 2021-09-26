@@ -65,7 +65,7 @@ public class Registry extends BlockModel {
 	}
 	
 	// Add the element 
-	private void addElement(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos, BlockData data, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<@Nonnull AddedElem> prevElems) {
+	private void addElement(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos, BlockData data, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<AddedElem> prevElems) {
 		Transform baseTrans = pos.getTransform();
 		Transform stateTrans = getStateTrans(modelInfo);
 		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
@@ -76,7 +76,7 @@ public class Registry extends BlockModel {
 		// if element in the same position was added before then don't add another on top (grass_block overlay)
 		AddedElem elem = new AddedElem(stateTrans, elementTrans, element, drawSides);
 		boolean add = true;
-		for (AddedElem prevElem : prevElems) {
+		for (@Nonnull AddedElem prevElem : prevElems) {
 			if (elem.matches(prevElem)) {
 				if (elem.hasNew(prevElem)) {// same elem but new faces that weren't added before
 					drawSides = elem.getNew(prevElem);
