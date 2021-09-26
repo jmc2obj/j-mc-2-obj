@@ -67,7 +67,7 @@
 	{"id": "jmc2obj:banner/pattern_cbo",  "sourceIdOverride": "entity/banner/curly_border"},
 	{"id": "jmc2obj:banner/pattern_bri",  "sourceIdOverride": "entity/banner/bricks"},
 	{"id": "jmc2obj:banner/pattern_gra",  "sourceIdOverride": "entity/banner/gradient"},
-	{"id": "jmc2obj:banner/pattern_gru",  "sourceIdOverride": "entity/banner/gradient_ip"},
+	{"id": "jmc2obj:banner/pattern_gru",  "sourceIdOverride": "entity/banner/gradient_up"},
 	{"id": "jmc2obj:banner/pattern_cre",  "sourceIdOverride": "entity/banner/creeper"},
 	{"id": "jmc2obj:banner/pattern_sku",  "sourceIdOverride": "entity/banner/skull"},
 	{"id": "jmc2obj:banner/pattern_flo",  "sourceIdOverride": "entity/banner/flower"},
