@@ -193,6 +193,9 @@ public class Chunk {
 			
 			int ymax=0;
 			TAG_List sections = (TAG_List) level.getElement("Sections");
+			if (sections == null) {
+				return new Blocks(16*16*256);
+			}
 			for(NBT_Tag section: sections.elements)
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
