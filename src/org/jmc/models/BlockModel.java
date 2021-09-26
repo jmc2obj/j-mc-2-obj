@@ -151,7 +151,7 @@ public abstract class BlockModel {
 		if (neighbourData.id.path.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
 			return true;
 
-		if (Options.objectPerMaterial && Options.objectPerMaterialOcclusionBarrier && (!neighbourData.id.equals(data.id)))
+		if (Options.objectPerMaterial && !Options.objectPerMaterialOcclusion && (!neighbourData.id.equals(data.id)))
 			return true;
 
 		switch (BlockTypes.get(neighbourData).getOcclusion()) {

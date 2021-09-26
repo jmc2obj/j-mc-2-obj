@@ -958,7 +958,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("RENDER_UNKNOWN", Options.renderUnknown);
 		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
-		prefs.putBoolean("OBJ_PER_MTL_OCCL", Options.objectPerMaterialOcclusionBarrier);
+		prefs.putBoolean("OBJ_PER_MTL_OCCL", Options.objectPerMaterialOcclusion);
 		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
 		prefs.putBoolean("DOUBLE_SINGLE_FACES", Options.doubleSidedFaces);
@@ -1030,7 +1030,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.renderEntities = chckbxRenderEntities.isSelected();
 		Options.renderUnknown = chckbxRenderUnknownBlocks.isSelected();
 		Options.objectPerMaterial = chckbxSeparateMat.isSelected();
-		Options.objectPerMaterialOcclusionBarrier = chckbxSeparateMatOccl.isSelected();
+		Options.objectPerMaterialOcclusion = chckbxSeparateMatOccl.isSelected();
 		Options.objectPerChunk = chckbxSeparateChunk.isSelected();
 		Options.objectPerBlock = chckbxSeparateBlock.isSelected();
 		Options.doubleSidedFaces = chckbxDoubleSidedFaces.isSelected();

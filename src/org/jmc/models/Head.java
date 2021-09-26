@@ -35,7 +35,6 @@ import com.google.gson.JsonParser;
  */
 public class Head extends BlockModel
 {
-
 	private static Set<NamespaceID> addedMaterials = new HashSet<>();
 	
 	@Override
@@ -207,6 +206,12 @@ public class Head extends BlockModel
 			}
 		}
 		return null;
+	}
+	
+	public static void clearExported() {
+		synchronized (addedMaterials) {
+			addedMaterials.clear();
+		}
 	}
 
 }

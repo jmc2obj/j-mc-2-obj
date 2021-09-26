@@ -3,13 +3,15 @@ package org.jmc.util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.CheckForNull;
 
 public abstract class CachedGetter <K, V> {
-	private final Map<K, V> entries = new ConcurrentHashMap<>(new HashMap<>());
+	private final Map<K, Optional<V>> entries = new ConcurrentHashMap<>(new HashMap<>());
 	private final Map<K, AtomicBoolean> creatingStates = new HashMap<>();
 	
 	/**Gets the cached value for {@code key}.
@@ -19,13 +21,14 @@ public abstract class CachedGetter <K, V> {
 	 */
 	@CheckForNull
 	public V get(K key) {
-		if (entries.containsKey(key)) {// fast path
-			return entries.get(key);// if it exists then just return
+		Optional<V> entryOpt = entries.get(key);
+		if (entryOpt != null) {// fast path
+			return entryOpt.orElse(null);// if it exists then just return
 		} 
 		AtomicBoolean creatingState;
 		synchronized (this) {
 			if (entries.containsKey(key)) {// check again, in case
-				return entries.get(key);// if it exists then just return
+				return entries.get(key).orElse(null);// if it exists then just return
 			}
 			creatingState = creatingStates.get(key);
 			if (creatingState == null) {
@@ -40,13 +43,13 @@ public abstract class CachedGetter <K, V> {
 						throw new RuntimeException(e);
 					}
 				}
-				return entries.get(key);
+				return entries.get(key).orElse(null);
 			}
 		}
 		// we are the creator, add to map
 		V entry = make(key);
 		synchronized (this) {
-			entries.put(key, entry);
+			entries.put(key, Optional.ofNullable(entry));
 			creatingStates.remove(key);
 			creatingState.set(false);
 			this.notifyAll();
@@ -56,7 +59,13 @@ public abstract class CachedGetter <K, V> {
 	
 	/** @return Unmodifiable map of the entries */
 	public Map<K,V> getAll() {
-		return Collections.unmodifiableMap(entries);
+		HashMap<K, V> map = new HashMap<>();
+		synchronized (this) {
+			for (Entry<K, Optional<V>> e : entries.entrySet()) {
+				map.put(e.getKey(), e.getValue().orElse(null));
+			}
+		}
+		return Collections.unmodifiableMap(map);
 	}
 	
 	public synchronized void clear() {
@@ -76,7 +85,7 @@ public abstract class CachedGetter <K, V> {
 				}
 			}
 		}
-		entries.put(key, value);
+		entries.put(key, Optional.ofNullable(value));
 	}
 	
 	public synchronized int size() {
