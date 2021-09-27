@@ -342,38 +342,61 @@ public class Registry extends BlockModel {
 	@Nonnull
 	private boolean[] getSidesCulling(ThreadChunkDeligate chunks, BlockPos pos, BlockData data, Map<String, ElementFace> faces, Transform stateTrans) {
 		boolean[] array = new boolean[6];
+		Arrays.fill(array, true);
 		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
 		Transform rotation = stateTrans.multiply(Transform.translation(0.5f, 0.5f, 0.5f));
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			Direction dir;
-			switch (faceEntry.getKey()) {
+			if (faceEntry.getValue().cullface == null) {
+				continue;
+			}
+			switch (faceEntry.getValue().cullface) {
 			case "up":
 				dir = Direction.UP;
+				break;
+			case "north":
+				dir = Direction.NORTH;
+				break;
+			case "south":
+				dir = Direction.SOUTH;
+				break;
+			case "west":
+				dir = Direction.WEST;
+				break;
+			case "east":
+				dir = Direction.EAST;
+				break;
+			case "down":
+			case "bottom":
+				dir = Direction.DOWN;
+				break;
+			default:
+				Log.debug(String.format("Model for %s had invalid cullface direction!", blockId));
+				continue;
+			}
+			
+			switch (faceEntry.getKey()) {
+			case "up":
 				dir = dir.rotate(rotation);
 				array[0] = ds[dir.getArrIndex()];
 				break;
 			case "north":
-				dir = Direction.NORTH;
 				dir = dir.rotate(rotation);
 				array[1] = ds[dir.getArrIndex()];
 				break;
 			case "south":
-				dir = Direction.SOUTH;
 				dir = dir.rotate(rotation);
 				array[2] = ds[dir.getArrIndex()];
 				break;
 			case "west":
-				dir = Direction.WEST;
 				dir = dir.rotate(rotation);
 				array[3] = ds[dir.getArrIndex()];
 				break;
 			case "east":
-				dir = Direction.EAST;
 				dir = dir.rotate(rotation);
 				array[4] = ds[dir.getArrIndex()];
 				break;
 			case "down":
-				dir = Direction.DOWN;
 				dir = dir.rotate(rotation);
 				array[5] = ds[dir.getArrIndex()];
 				break;

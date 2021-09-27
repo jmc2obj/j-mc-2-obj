@@ -332,6 +332,11 @@ public class ChunkProcessor
 			return false;
 		}
 		if (matches.size() == 2 && isFacingEqual){
+			
+			if ((verts1MatchIndex.get(0)+2)%4 == verts1MatchIndex.get(1) || (verts2MatchIndex.get(0)+2)%4 == verts2MatchIndex.get(1)) {
+				return false;//Don't allow matching diagonal vertices
+			}
+			
 			//mmdanggg2: if the face extends in the axis we are looking at
 			int extendingIn;
 			float xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
