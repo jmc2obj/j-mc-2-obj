@@ -83,7 +83,7 @@ public class Registry extends BlockModel {
 					prevElem.addSides(elem);
 					add = false;
 				} else {
-					Log.debug(String.format("Skipping double element on %s", data.id));
+					//Log.debug(String.format("Skipping double element on %s", data.id));
 					return;
 				}
 			}
@@ -342,14 +342,23 @@ public class Registry extends BlockModel {
 	@Nonnull
 	private boolean[] getSidesCulling(ThreadChunkDeligate chunks, BlockPos pos, BlockData data, Map<String, ElementFace> faces, Transform stateTrans) {
 		boolean[] array = new boolean[6];
-		Arrays.fill(array, true);
 		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
 		Transform rotation = stateTrans.multiply(Transform.translation(0.5f, 0.5f, 0.5f));
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
-			Direction dir;
+			int faceIndex;
+			try {
+				 faceIndex = Direction.valueOf(faceEntry.getKey().toUpperCase()).getArrIndex();
+			} catch (IllegalArgumentException e) {
+				Log.debug(String.format("Model for %s had invalid face direction '%s'!", blockId, faceEntry.getKey()));
+				continue;
+			}
+			
+			array[faceIndex] = true;
+			
 			if (faceEntry.getValue().cullface == null) {
 				continue;
 			}
+			Direction dir;
 			switch (faceEntry.getValue().cullface) {
 			case "up":
 				dir = Direction.UP;
@@ -374,36 +383,8 @@ public class Registry extends BlockModel {
 				Log.debug(String.format("Model for %s had invalid cullface direction!", blockId));
 				continue;
 			}
-			
-			switch (faceEntry.getKey()) {
-			case "up":
-				dir = dir.rotate(rotation);
-				array[0] = ds[dir.getArrIndex()];
-				break;
-			case "north":
-				dir = dir.rotate(rotation);
-				array[1] = ds[dir.getArrIndex()];
-				break;
-			case "south":
-				dir = dir.rotate(rotation);
-				array[2] = ds[dir.getArrIndex()];
-				break;
-			case "west":
-				dir = dir.rotate(rotation);
-				array[3] = ds[dir.getArrIndex()];
-				break;
-			case "east":
-				dir = dir.rotate(rotation);
-				array[4] = ds[dir.getArrIndex()];
-				break;
-			case "down":
-				dir = dir.rotate(rotation);
-				array[5] = ds[dir.getArrIndex()];
-				break;
-			default:
-				Log.debug(String.format("Model for %s had invalid face direction!", blockId));
-				break;
-			}
+			dir = dir.rotate(rotation);
+			array[faceIndex] = ds[dir.getArrIndex()];
 		}
 		return array;
 	}
