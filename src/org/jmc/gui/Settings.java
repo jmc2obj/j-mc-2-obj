@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -36,6 +38,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.TransferHandler;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -87,7 +90,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pMove.setLayout(new BoxLayout(pMove, BoxLayout.LINE_AXIS));
 		JLabel lMove = new JLabel(Messages.getString("Settings.DRAG"));
-		cbMove = new JComboBox<String>(actions);
+		cbMove = new JComboBox<>(actions);
 		pMove.add(lMove);
 		pMove.add(cbMove);
 
@@ -95,7 +98,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pSelect.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pSelect.setLayout(new BoxLayout(pSelect, BoxLayout.LINE_AXIS));
 		JLabel lSelect = new JLabel(Messages.getString("Settings.SELECT"));
-		cbSelect = new JComboBox<String>(actions);
+		cbSelect = new JComboBox<>(actions);
 		pSelect.add(lSelect);
 		pSelect.add(cbSelect);
 
@@ -103,7 +106,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pLang.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pLang.setLayout(new BoxLayout(pLang, BoxLayout.LINE_AXIS));
 		JLabel lLang = new JLabel(Messages.getString("Settings.LANGUAGE"));
-		cbLang = new JComboBox<String>(languages);
+		cbLang = new JComboBox<>(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
 
@@ -221,9 +224,40 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		
 		listPacks = new JmcPackList();
 		listPacks.setVisibleRowCount(5);
-		scrollListPacks.setViewportView(listPacks);
 		listPacks.setBackground(Color.WHITE);
 		listPacks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollListPacks.setViewportView(listPacks);
+		scrollListPacks.setTransferHandler(new TransferHandler(null) {
+			@Override
+			public boolean canImport(TransferSupport support) {
+				if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+					support.setDropAction(LINK);
+					return true;
+				}
+				return false;
+			}
+			@SuppressWarnings("unchecked")
+			@Override
+			public boolean importData(TransferSupport support) {
+				if (!canImport(support)) {
+					return false;
+				}
+				List<File> files;
+				try {
+					files = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+				} catch (UnsupportedFlavorException | IOException ex) {
+					return false;
+				}
+				
+				for (File file: files) {
+					listPacks.getModel().add(0, file);
+				}
+				listPacks.setSelectedIndex(0);
+				saveSettings();
+				updateResourcePacks(true);
+				return true;
+			}
+		});
 		
 		JPanel pPackListButtons = new JPanel();
 		pPackList.add(pPackListButtons);
@@ -254,6 +288,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 					@Override public boolean accept(File f) {return f.isDirectory() || f.getName().equals("pack.mcmeta");}
 				});
 				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
+				jfc.setCurrentDirectory(Filesystem.getMinecraftDir());
 				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
 				File path = jfc.getSelectedFile();
 				if (path == null) {
