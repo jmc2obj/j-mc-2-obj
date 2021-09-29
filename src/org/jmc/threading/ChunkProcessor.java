@@ -327,8 +327,8 @@ public class ChunkProcessor
 			}
 		}
 		if (matches.size() == 4 && !isFacingEqual){
-			face1.remove = true;
-			face2.remove = true;
+			//face1.remove = true;
+			//face2.remove = true;
 			return false;
 		}
 		if (matches.size() == 2 && isFacingEqual){
