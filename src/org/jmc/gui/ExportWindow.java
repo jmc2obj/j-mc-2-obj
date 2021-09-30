@@ -884,7 +884,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
 		chckbxDoubleSidedFaces.setSelected(prefs.getBoolean("DOUBLE_SINGLE_FACES", false));
 		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
-		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", true));
+		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
 		
 		chckbxUseLastSaveLoc.setSelected(prefs.getBoolean("USE_LAST_SAVE_LOC", false));
 		
@@ -895,7 +895,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxExportSpecularMaps.setSelected(prefs.getBoolean("TEXTURE_SPECULAR", false));
 		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
 		chckbxCombineAllTextures.setSelected(prefs.getBoolean("TEXTURE_MERGE", false));
-		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", true));
+		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", false));
 		
 		spinnerThreads.setValue(prefs.getInt("EXPORT_THREADS", 8));
 		
