@@ -87,6 +87,9 @@ public class ObjExporter {
 				}
 
 				PrintWriter obj_writer = new PrintWriter(new FileWriter(objfile));
+				
+				if (progress != null)
+					progress.setMessage(Messages.getString("Progress.OBJ"));
 
 				// Calculate the boundaries of the chunks selected by the user 
 				Point cs = Chunk.getChunkPos(Options.minX, Options.minZ);
@@ -210,6 +213,8 @@ public class ObjExporter {
 					//mmdanggg2: in maya the obj importer does not recognise the same obj group appearing twice
 					//		so if we want to export per chunk, the current sorting will not work in maya.
 					Log.info("Sorting OBJ file...");
+					if (progress != null)
+						progress.setMessage(Messages.getString("Progress.OBJ_SORT"));
 
 					if (!tmpdir.mkdir()) {
 						Log.error("Cannot temp create directory: " + tmpdir.getAbsolutePath(), null);

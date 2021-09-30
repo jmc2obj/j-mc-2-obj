@@ -129,4 +129,9 @@ class ConsoleProgress implements ProgressCallback
 			if (last == SIZE) System.out.println("]");
 		}
 	}
+
+	@Override
+	public void setMessage(String message) {
+		// TODO Auto-generated method stub
+	}
 }

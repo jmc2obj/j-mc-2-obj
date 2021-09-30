@@ -16,6 +16,7 @@ import org.jmc.registry.TextureEntry;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
+import org.jmc.util.Messages;
 
 
 /**
@@ -36,6 +37,8 @@ public class Materials
 	 */
 	public static void writeMTLFile(File dest, ProgressCallback progress) throws IOException
 	{
+		if (progress != null)
+			progress.setMessage(Messages.getString("Progress.MTL"));
 		/*if(Options.singleMaterial) { TODO fix single tex export
 			try (JmcConfFile mtlFile = new JmcConfFile(SINGLE_MTL_FILE)) {
 				Filesystem.writeFile(mtlFile.getInputStream(), dest);

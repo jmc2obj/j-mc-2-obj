@@ -21,6 +21,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.TextureEntry;
 import org.jmc.util.Log;
+import org.jmc.util.Messages;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -144,6 +145,8 @@ public class TextureExporter {
 	 *             if there is an error.
 	 */
 	public static void exportTextures(Set<TextureEntry> textures, ProgressCallback progress) throws IOException {
+		if (progress != null)
+			progress.setMessage(Messages.getString("Progress.TEX"));
 		int count = 0;
 		for (TextureEntry texture : textures) {
 			File file = new File(Options.outputDir, texture.getExportFilePath());
@@ -206,7 +209,8 @@ public class TextureExporter {
 	 *             if there is an error.
 	 */
 	public static void mergeTextures(Set<TextureEntry> textures, ProgressCallback progress) throws Exception {
-		
+		if (progress != null)
+			progress.setMessage(Messages.getString("Progress.TEX"));
 		Map<NamespaceID, Rectangle> ret = new HashMap<>();
 		
 		// calculate maxwidth so to keep the size of the final file more or less

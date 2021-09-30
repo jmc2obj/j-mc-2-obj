@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -460,7 +461,17 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderExportBtns.add(btnForceStop);
 		btnForceStop.setEnabled(false);
 
-		progressBar = new JProgressBar();
+		progressBar = new JProgressBar() {
+			@Override
+			public String getString() {
+				String percent = NumberFormat.getPercentInstance().format(new Double(getPercentComplete()));
+				if (progressString != null) {
+					return progressString + " " + percent;
+				} else {
+					return percent;
+				}
+			}
+		};
 		progressBar.setStringPainted(true);
 		contentPane.add(progressBar);
 
@@ -1078,6 +1089,11 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	@Override
 	public void setProgress(float value) {
 		progressBar.setValue((int) (value * 100f));
+	}
+	
+	@Override
+	public void setMessage(String message) {
+		progressBar.setString(message);
 	}
 
 	public void mapLoaded() {
