@@ -10,6 +10,7 @@ import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
+import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Filesystem.JmcConfFile;
@@ -180,6 +181,15 @@ public class ArmorStand extends Entity {
 		Transform translate = getTranslate((float)x, (float)y, (float)z, (float)scale).multiply(getRotate((float) rotation));
 		
 		objFile.addObjectToOutput(myObjGroup, translate, obj);
+	}
+
+	@Override
+	public Vertex getPosition(TAG_Compound entity) {
+		TAG_List pos = (TAG_List) entity.getElement("Pos");
+		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f;
+		float ey=(float)((TAG_Double)pos.getElement(1)).value-0.5f;
+		float ez=(float)((TAG_Double)pos.getElement(2)).value-0.5f;
+		return new Vertex(ex, ey, ez);
 	}
 	
 }

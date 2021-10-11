@@ -12,7 +12,9 @@ import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
 import org.jmc.NBT.TAG_String;
+import org.jmc.geom.BlockPos;
 import org.jmc.geom.Transform;
+import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Log;
@@ -37,9 +39,7 @@ public class ItemFrame extends Entity
 	public void addEntity(ChunkProcessor obj, TAG_Compound entity)
 	{
 		
-		int x=((TAG_Int)entity.getElement("TileX")).value;
-		int y=((TAG_Int)entity.getElement("TileY")).value;
-		int z=((TAG_Int)entity.getElement("TileZ")).value;
+		BlockPos pos = getBlockPosition(entity);
 		byte facing = ((TAG_Byte)entity.getElement("Facing")).value;
 		
 		TAG_Compound item = ((TAG_Compound)entity.getElement("Item"));
@@ -88,7 +88,7 @@ public class ItemFrame extends Entity
 
 		rotate = Transform.rotation(0, baseRotation, frameRotation);
 
-		translate = Transform.translation(x, y, z);
+		translate = Transform.translation(pos.x, pos.y, pos.z);
 		rt = translate.multiply(rotate);
 		
 		
@@ -136,6 +136,19 @@ public class ItemFrame extends Entity
 	
 		
 			
+	}
+
+	private BlockPos getBlockPosition(TAG_Compound entity) {
+		int x=((TAG_Int)entity.getElement("TileX")).value;
+		int y=((TAG_Int)entity.getElement("TileY")).value;
+		int z=((TAG_Int)entity.getElement("TileZ")).value;
+		return new BlockPos(x, y, z);
+	}
+
+	@Override
+	public Vertex getPosition(TAG_Compound entity) {
+		BlockPos pos = getBlockPosition(entity);
+		return new Vertex(pos.x, pos.y, pos.z);
 	}
 
 }

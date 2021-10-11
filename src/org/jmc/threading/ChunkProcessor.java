@@ -240,7 +240,10 @@ public class ChunkProcessor
 				Entity handler=EntityTypes.getEntity(entity);
 				if (handler!=null) {
 					try {
-						handler.addEntity(this, entity);
+						Vertex pos = handler.getPosition(entity);
+						if (pos.x > xmin && pos.y > ymin && pos.z > zmin && pos.x < xmax && pos.y < ymax && pos.z < zmax) {
+							handler.addEntity(this, entity);
+						}
 					} catch (Exception ex) {
 						Log.error(String.format("Error rendering entity %s, skipping.", handler.id), ex);
 					}
@@ -250,11 +253,16 @@ public class ChunkProcessor
 			for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
 			{
 				Entity handler=EntityTypes.getEntity(entity);
-				try {
-					if(handler!=null) handler.addEntity(this, entity);
-				}
-				catch (Exception ex) {
-					Log.error("Error rendering tile entity, skipping.", ex);
+				if(handler!=null) {
+					try {
+						Vertex pos = handler.getPosition(entity);
+						if (pos.x > xmin && pos.y > ymin && pos.z > zmin && pos.x < xmax && pos.y < ymax && pos.z < zmax) {
+							handler.addEntity(this, entity);
+						}
+					}
+					catch (Exception ex) {
+						Log.error("Error rendering tile entity, skipping.", ex);
+					}
 				}
 			}
 		}
