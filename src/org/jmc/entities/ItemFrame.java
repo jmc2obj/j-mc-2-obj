@@ -32,7 +32,7 @@ public class ItemFrame extends Entity
 	}
 
 
-	private Set<NamespaceID> exportedMaps = new HashSet<>();
+	private static Set<NamespaceID> exportedMaps = new HashSet<>();
 
 	
 	@Override
@@ -109,19 +109,17 @@ public class ItemFrame extends Entity
 					// Log.info("'map_" + map_id+ ".dat' not found");
 					return;
 				} else {
-					boolean alreadyExported = exportedMaps.contains(mapTexID);
-					// already exported material?
-					if (!alreadyExported) {
-						exportedMaps.add(mapTexID);
-						// Log.info("export map: "+mapName);
-						try {
-							map_data.writePngTexture(mapTexID);
-						} catch (IOException e) {
-							Log.error("Cant write map", e, true);
+					synchronized (exportedMaps) {
+						// already exported material?
+						if (!exportedMaps.contains(mapTexID)) {
+							// Log.info("export map: "+mapName);
+							try {
+								map_data.writePngTexture(mapTexID);
+								exportedMaps.add(mapTexID);
+							} catch (IOException e) {
+								Log.error("Cant write map", e, true);
+							}
 						}
-					}
-					else {
-						// Log.info(" - Map already exported!");
 					}
 				}
 				break;
@@ -150,5 +148,11 @@ public class ItemFrame extends Entity
 		BlockPos pos = getBlockPosition(entity);
 		return new Vertex(pos.x, pos.y, pos.z);
 	}
+	
+	public static void clearExported() {
+		synchronized (exportedMaps) {
+			exportedMaps.clear();
+		}
+    }
 
 }
