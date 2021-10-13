@@ -291,9 +291,13 @@ public class Chunk {
 						}
 						
 						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
-						TAG_String blockName = (TAG_String)blockTag.getElement("Name");
+						String blockName = ((TAG_String)blockTag.getElement("Name")).value;
+						if (blockName == null) {
+							Log.debug("No block name!");
+							continue;
+						}
 						
-						BlockData block = new BlockData(NamespaceID.fromString(blockName.value));
+						BlockData block = new BlockData(NamespaceID.fromString(blockName));
 						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
 						if (propertiesTag != null) {
 							for (NBT_Tag tag : propertiesTag.elements) {

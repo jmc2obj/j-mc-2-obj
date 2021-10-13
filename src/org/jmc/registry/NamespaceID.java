@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -30,9 +31,8 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	}
 	
 	@Nonnull
+	@ParametersAreNonnullByDefault
 	public static NamespaceID fromString(String name) {
-		if (name == null) throw new IllegalArgumentException("name can't be null!");
-		
 		String[] splitName = name.split(":");
 		
 		if (splitName.length > 2) {
@@ -84,6 +84,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 			return new JsonPrimitive(src.toString());
 		}
 
+		@SuppressWarnings("null")
 		@Override
 		public NamespaceID deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			return NamespaceID.fromString(json.getAsString());

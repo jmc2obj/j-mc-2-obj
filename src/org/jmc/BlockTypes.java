@@ -159,7 +159,9 @@ public class BlockTypes
 				String[] splitmats = mats.split("\\s*,\\s*");
 				NamespaceID[] nsMats = new NamespaceID[splitmats.length];
 				for (int k = 0; k < splitmats.length; k++) {
-					nsMats[k] = NamespaceID.fromString(splitmats[k]);
+					String mat = splitmats[k];
+					if (mat != null)
+						nsMats[k] = NamespaceID.fromString(mat);
 				}
 				
 				if(biome >= 0)
@@ -201,6 +203,7 @@ public class BlockTypes
 					try {
 						parseMeshNode(meshNode,mesh);
 					}catch (Exception e) {
+						Log.debug(e.getLocalizedMessage());
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
 					}
@@ -213,6 +216,7 @@ public class BlockTypes
 					try {
 						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
+						Log.debug(e.getLocalizedMessage());
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
 					}
@@ -225,6 +229,7 @@ public class BlockTypes
 					try {
 						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
+						Log.debug(e.getLocalizedMessage());
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
 					}
@@ -237,6 +242,7 @@ public class BlockTypes
 					try {
 						parseTransNode(transNode,mesh);
 					}catch (RuntimeException e) {
+						Log.debug(e.getLocalizedMessage());
 						Log.info("Block " + id + " has invalid mesh definition. Ignoring.");
 						continue;
 					}
@@ -258,6 +264,7 @@ public class BlockTypes
 				Node attrib = meshAttribs.item(k);
 				String attrName = attrib.getNodeName();
 				String attrVal = attrib.getNodeValue();
+				if (attrVal == null) break; 
 				if (attrName.equalsIgnoreCase("id")) {
 					mesh.mesh_data.id  = NamespaceID.fromString(attrVal);
 				}

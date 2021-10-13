@@ -32,6 +32,7 @@ public class RegistryBlockMaterial extends BlockMaterial {
 						}
 						RegistryModel model = modelEntry.generateModel();
 						for (String texture : model.textures.values()) {
+							if (texture == null) continue;
 							textureCount.put(texture, textureCount.getOrDefault(texture, 0) + 1);
 							if (textureCount.get(texture) > highestUses) {
 								mats[0] = NamespaceID.fromString(texture);

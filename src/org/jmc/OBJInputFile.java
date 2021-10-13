@@ -18,6 +18,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
+import org.jmc.registry.Registries;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -250,7 +251,12 @@ public class OBJInputFile
 				}
 				if(!has_uv) f.uv=null;
 				if(!has_norm) f.normals=null;
-				f.tex=NamespaceID.fromString(material);
+				
+				if(material != null) {
+					f.tex=NamespaceID.fromString(material);
+				} else {
+					f.tex=Registries.UNKNOWN_TEX_ID;
+				}
 				
 				if (group==null)
 				{

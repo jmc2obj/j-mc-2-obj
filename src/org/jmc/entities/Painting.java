@@ -10,6 +10,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
+import org.jmc.util.Log;
 
 
 /**
@@ -67,6 +68,10 @@ public class Painting extends Entity
 		byte facing = ((TAG_Byte)entity.getElement("Facing")).value;
 
 		String motiv=((TAG_String)entity.getElement("Motive")).value;
+		if (motiv == null) {
+			Log.debug(String.format("Painting at %s has no 'Motive'", pos.toString()));
+			return;
+		}
 		NamespaceID motivID = NamespaceID.fromString(motiv);
 		
 		Transform rotate = new Transform();

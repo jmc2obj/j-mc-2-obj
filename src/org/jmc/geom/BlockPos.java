@@ -28,4 +28,9 @@ public class BlockPos {
 			return super.equals(obj);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("[%d, %d, %d]", x, y, z);
+	}
 }

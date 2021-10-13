@@ -69,7 +69,9 @@ public class EntityTypes {
 				String[] splitmats = mats.split("\\s*,\\s*");
 				NamespaceID[] nsMats = new NamespaceID[splitmats.length];
 				for (int k = 0; k < splitmats.length; k++) {
-					nsMats[k] = NamespaceID.fromString(splitmats[k]);
+					String mat = splitmats[k];
+					if (mat != null)
+						nsMats[k] = NamespaceID.fromString(mat);
 				}
 
 				materials.put(nsMats);

@@ -149,6 +149,7 @@ public class Registry extends BlockModel {
 			if (tex != null && tex.startsWith("#")) {
 				tex = textures.get(tex.substring(1));
 			}
+			if (tex == null) break;
 			NamespaceID texNs = NamespaceID.fromString(tex);
 			
 			switch (faceEntry.getKey()) {
