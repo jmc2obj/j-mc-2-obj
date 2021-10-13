@@ -268,20 +268,15 @@ public class Banner extends BlockModel {
             }
 
             // draw into layer..
-            Color patternColor = getColorById(bp.getColor());
+            Color layerColor = getColorById(bp.getColor());
+            float layerComps[] = layerColor.getComponents(null);
             
             for(int x=0; x<imageWidth; x++) {
                 for(int y=0; y<imageHeight; y++) {
-                    Color maskColor = new Color(patternSource.getRGB(x, y), true);
+                    Color patternColor = new Color(patternSource.getRGB(x, y), true);
+                    float patternComps[] = patternColor.getComponents(null);
                     
-                    int alpha = maskColor.getRed();
-                    // mask the mask with the mainmask :) YEAH
-                    // AKA premult
-                    if (alpha > maskColor.getAlpha()) {
-                        alpha = alpha * (maskColor.getAlpha()/255);
-                    }
-                    
-                    Color currentColor = new Color(patternColor.getRed(), patternColor.getGreen(), patternColor.getBlue(), alpha);
+                    Color currentColor = new Color(layerComps[0] * patternComps[0], layerComps[1] * patternComps[1], layerComps[2] * patternComps[2], patternComps[3]);
                     
                     //Log.debug(mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getRed()+", "+mainMaskColor.getAlpha());
                     patternImage.setRGB(x, y, currentColor.getRGB());
