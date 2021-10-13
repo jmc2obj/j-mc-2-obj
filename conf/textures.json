@@ -50,7 +50,7 @@
 	{"id": "jmc2obj:banner/pattern_lud",  "sourceIdOverride": "entity/banner/diagonal_up_left"},
 	{"id": "jmc2obj:banner/pattern_rd",   "sourceIdOverride": "entity/banner/diagonal_up_right"},
 	{"id": "jmc2obj:banner/pattern_vh",   "sourceIdOverride": "entity/banner/half_vertical"},
-	{"id": "jmc2obj:banner/pattern_vhr",  "sourceIdOverride": "entity/banner/half_vertiacl_right"},
+	{"id": "jmc2obj:banner/pattern_vhr",  "sourceIdOverride": "entity/banner/half_vertical_right"},
 	{"id": "jmc2obj:banner/pattern_hh",   "sourceIdOverride": "entity/banner/half_horizontal"},
 	{"id": "jmc2obj:banner/pattern_hhb",  "sourceIdOverride": "entity/banner/half_horizontal_bottom"},
 	{"id": "jmc2obj:banner/pattern_bl",   "sourceIdOverride": "entity/banner/square_bottom_left"},
