@@ -24,10 +24,10 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	public final String path;
 	
 	public NamespaceID(String namespace, String path) {
-		if (namespace == null) throw new IllegalArgumentException("namespace can't be null!");
-		if (path == null) throw new IllegalArgumentException("path can't be null!");
-		this.namespace = namespace;
-		this.path = path;
+		if (namespace == null) throw new IllegalArgumentException("NamespaceID namespace can't be null!");
+		if (path == null) throw new IllegalArgumentException("NamespaceID path can't be null!");
+		this.namespace = namespace.intern();
+		this.path = path.intern();
 	}
 	
 	@Nonnull
@@ -36,7 +36,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 		String[] splitName = name.split(":");
 		
 		if (splitName.length > 2) {
-			throw new IllegalArgumentException("name can't contain more than 1 colon!");
+			throw new IllegalArgumentException("NamespaceID name can't contain more than 1 colon!");
 		} else if (splitName.length == 1) {
 			splitName = new String[] {"minecraft", name};
 		}

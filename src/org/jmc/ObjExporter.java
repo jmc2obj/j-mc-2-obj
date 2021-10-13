@@ -75,6 +75,8 @@ public class ObjExporter {
 			Log.error("Cannot write to the chosen location!", e);
 			return;
 		}
+		
+		long exportTimer = System.nanoTime();
 
 		try {
 			Registries.objTextures.clear();
@@ -164,8 +166,8 @@ public class ObjExporter {
 				writeThread.setName("WriteThread");
 				writeThread.start();
 				
-				long timer = System.nanoTime();
-				long timer2 = System.nanoTime();
+				long objTimer = System.nanoTime();
+				long objTimer2 = objTimer;
 				
 				ArrayList<Point> chunkList = new ArrayList<Point>();
 				
@@ -184,19 +186,19 @@ public class ObjExporter {
 				
 				inputQueue.finish();
 				
-				timer = System.nanoTime();
+				objTimer2 = System.nanoTime();
 				
 				for (Thread thread : threads){
 					thread.join();
 				}
-				Log.debug("Reading Chunks:" + (System.nanoTime() - timer)/1000000000d);
-				timer = System.nanoTime();
+				Log.debug("Reading Chunks:" + (System.nanoTime() - objTimer2)/1000000000d);
+				objTimer2 = System.nanoTime();
 				
 				outputQueue.finish();
 				writeThread.join();
 				
-				Log.debug("Writing File:" + (System.nanoTime() - timer)/1000000000d);
-				Log.info("Time:" + (System.nanoTime() - timer2)/1000000000d);
+				Log.debug("Writing File:" + (System.nanoTime() - objTimer2)/1000000000d);
+				Log.info("OBJ Export Time:" + (System.nanoTime() - objTimer)/1000000000d);
 				
 				chunk_buffer.removeAllChunks();
 
@@ -388,6 +390,7 @@ public class ObjExporter {
 					TextureExporter.exportTextures(Registries.objTextures, progress);
 				}
 			}
+			Log.info("Export Time:" + (System.nanoTime() - exportTimer)/1000000000d);
 			Log.info("Done!");
 		} catch (Exception e) {
 			Log.error("Error while exporting OBJ:", e);
