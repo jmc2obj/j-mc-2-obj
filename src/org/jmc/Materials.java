@@ -53,7 +53,15 @@ public class Materials
 			synchronized (Registries.objTextures) {
 				for (TextureEntry textureEntry : Registries.objTextures) {
 					try {
-						writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), textureEntry.hasAlpha() ? textureEntry.getExportFilePath() : null);
+						String alphaTex = null;
+						if (textureEntry.hasAlpha()) {
+							if (Options.textureAlpha) {
+								alphaTex = textureEntry.getExportFilePathAlpha();
+							} else {
+								alphaTex = textureEntry.getExportFilePath();
+							}
+						}
+						writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), alphaTex);
 					} catch (IOException e) {
 						Log.error("Error writing material definition " + textureEntry.id, e);
 					}

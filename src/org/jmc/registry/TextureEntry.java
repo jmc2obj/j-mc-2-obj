@@ -178,6 +178,18 @@ public class TextureEntry extends RegistryEntry {
 		return String.format("tex/%s/%s.png", id.namespace, id.path);
 	}
 
+	public String getExportFilePathAlpha() {
+		return String.format("tex/%s/%s_a.png", id.namespace, id.path);
+	}
+
+	public String getExportFilePathNormal() {
+		return String.format("tex/%s/%s_a.png", id.namespace, id.path);
+	}
+
+	public String getExportFilePathSpecular() {
+		return String.format("tex/%s/%s_a.png", id.namespace, id.path);
+	}
+
 	public String getMatName() {
 		return id.getExportSafeString();
 	}

@@ -17,7 +17,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.TextureEntry;
 import org.jmc.util.Log;
@@ -151,29 +150,28 @@ public class TextureExporter {
 		for (TextureEntry texture : textures) {
 			File file = new File(Options.outputDir, texture.getExportFilePath());
 			if (Options.textureDiffuse && (Options.textureOverwrite || !file.exists())) {
+				file.getParentFile().mkdirs();
 				try {
-					file.getParentFile().mkdirs();
 					ImageIO.write(scaleImage(texture.getImage(), Options.textureScale), "png", file);
 				} catch (IOException e) {
 					Log.error("Couldn't export texture " + texture.id.toString(), e);
 				}
 			}
-			String fileName = file.getName();
-			String baseName = FilenameUtils.removeExtension(fileName);
-			String ext = FilenameUtils.getExtension(fileName);
 			if (Options.textureAlpha) {
-				File normalFile = new File(file.getParentFile(), baseName + "_a." + ext);
-				if (Options.textureOverwrite || !normalFile.exists()) {
+				File alphaFile = new File(Options.outputDir, texture.getExportFilePathAlpha());
+				if (Options.textureOverwrite || !alphaFile.exists()) {
+					alphaFile.getParentFile().mkdirs();
 					try {
-						ImageIO.write(scaleImage(convertToAlpha(texture.getImage()), Options.textureScale), "png", normalFile);
+						ImageIO.write(scaleImage(convertToAlpha(texture.getImage()), Options.textureScale), "png", alphaFile);
 					} catch (IOException e) {
 						Log.debug(String.format("Couldn't export alpha texture for '%s' error: %s", texture.id.toString(), e.getMessage()));
 					}
 				}
 			}
 			if (Options.textureNormal) {
-				File normalFile = new File(file.getParentFile(), baseName + "_n." + ext);
+				File normalFile = new File(Options.outputDir, texture.getExportFilePathNormal());
 				if (Options.textureOverwrite || !normalFile.exists()) {
+					normalFile.getParentFile().mkdirs();
 					try {
 						ImageIO.write(scaleImage(texture.getNormalMap(), Options.textureScale), "png", normalFile);
 					} catch (IOException e) {
@@ -182,8 +180,9 @@ public class TextureExporter {
 				}
 			}
 			if (Options.textureSpecular) {
-				File specularFile = new File(file.getParentFile(), baseName + "_s." + ext);
+				File specularFile = new File(Options.outputDir, texture.getExportFilePathSpecular());
 				if (Options.textureOverwrite || !specularFile.exists()) {
+					specularFile.getParentFile().mkdirs();
 					try {
 						ImageIO.write(scaleImage(texture.getSpecularMap(), Options.textureScale), "png", specularFile);
 					} catch (IOException e) {
