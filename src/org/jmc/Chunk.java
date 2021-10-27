@@ -159,8 +159,9 @@ public class Chunk {
 		 * Main constructor.
 		 * @param num number of blocks to allocate
 		 */
-		public Blocks(int block_num, int ymin, int ymax)
+		public Blocks(int ymin, int ymax)
 		{
+			int block_num = 16*16*Math.abs(ymax - ymin);
 			size = block_num;
 			data=new BlockData[block_num];
 			biome=new int[block_num];
@@ -208,7 +209,7 @@ public class Chunk {
 			if (x < 0 || x > 15 || z < 0 || z > 15) {
 				throw new IllegalArgumentException("Invalid relative chunk coordinate");
 			}
-			if (y < ymin || y > ymax) {
+			if (y < ymin || y >= ymax) {
 				return -1;
 			} else {
 				return x + (z * 16) + ((y - ymin) * 16) * 16;
@@ -239,13 +240,13 @@ public class Chunk {
 		{
 			TAG_List sections = (TAG_List) level.getElement("Sections");
 			if (sections == null) {
-				return new Blocks(16*16*256, 0, 255);
+				return new Blocks(0, 256);
 			}
 			
 			int ymin=getYMin();
 			int ymax=getYMax();
 			
-			ret=new Blocks(16*16*(ymax- ymin), ymin, ymax);
+			ret=new Blocks(ymin, ymax);
 			
 			for(NBT_Tag section: sections.elements)
 			{
@@ -288,8 +289,19 @@ public class Chunk {
 					break;
 					
 				} else {// >= 1.13
-					TAG_List tagPalette = (TAG_List) c_section.getElement("Palette");
-					TAG_Long_Array tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
+					TAG_List tagPalette;
+					TAG_Long_Array tagBlockStates;
+					if (chunkVer >= 2834) {// >= 21w37a
+						TAG_Compound tagBlockStatesComp = (TAG_Compound) c_section.getElement("block_states");
+						if (tagBlockStatesComp == null) {
+							continue;
+						}
+						tagPalette = (TAG_List) tagBlockStatesComp.getElement("palette");
+						tagBlockStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
+					} else {
+						tagPalette = (TAG_List) c_section.getElement("Palette");
+						tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
+					}
 					
 					if (tagPalette == null || tagBlockStates == null) {
 						continue;
@@ -376,7 +388,7 @@ public class Chunk {
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
 			byte add1,add2;
-			ret=new Blocks(blocks.data.length, 0, 255);
+			ret=new Blocks(0, 256);
 			short[] oldIDs = new short[ret.size];
 			byte[] oldData = new byte[ret.size];
 			
@@ -442,6 +454,10 @@ public class Chunk {
 		if(is_anvil) {
 			TAG_Compound level = (TAG_Compound) root.getElement("Level");
 			TAG_List sections = (TAG_List) level.getElement("Sections");
+			if (sections == null) {
+				yMinMax = new int[] {0, 256};
+				return yMinMax;
+			}
 			
 			int ymin=Integer.MAX_VALUE;
 			int ymax=Integer.MIN_VALUE;
@@ -449,7 +465,7 @@ public class Chunk {
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-				if (c_section.getElement("BlockStates") != null) {
+				if (c_section.getElement("block_states") != null || c_section.getElement("BlockStates") != null) {
 					ymin= Math.min(ymin, yval.value);
 					ymax= Math.max(ymax, yval.value);
 				}
@@ -459,7 +475,7 @@ public class Chunk {
 			yMinMax = new int[] {ymin, ymax};
 			return yMinMax;
 		} else {
-			yMinMax = new int[] {0, 255};
+			yMinMax = new int[] {0, 256};
 			return yMinMax;
 		}
 	}
