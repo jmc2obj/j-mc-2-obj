@@ -16,7 +16,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,10 +41,10 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.MouseInputAdapter;
 
 import org.jmc.ChunkLoaderThread;
 import org.jmc.LevelDat;
@@ -55,7 +54,6 @@ import org.jmc.NBT.TAG_List;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
-import javax.swing.border.EmptyBorder;
 
 /**
  * Main Panel containing all the content of the window.
@@ -135,7 +133,7 @@ public class MainPanel extends JPanel {
 	private JCheckBox chckbxFastRender;
 	private JComboBox cbPath;
 	private JComboBox cbDimension;
-	private JSlider sFloor, sCeil;
+	private JSpinner minYSpinner, maxYSpinner;
 
 	public static SpinnerModel modelPos1X, modelPos1Z, modelPos2X, modelPos2Z;
 
@@ -155,8 +153,6 @@ public class MainPanel extends JPanel {
 	 * Necessary for restarting the thread when loading a new map.
 	 */
 	private ChunkLoaderThread chunk_loader = null;
-
-	private boolean slider_pressed = false;
 
 	/**
 	 * Panel constructor.
@@ -286,14 +282,8 @@ public class MainPanel extends JPanel {
 
 		JLabel lblMinY = new JLabel(Messages.getString("PreviewPanel.FLOOR"));
 		final SpinnerModel minYModel = new SpinnerNumberModel(-64, -2048, 2048, 1);
-		final JSpinner minYSpinner = new JSpinner(minYModel);
+		minYSpinner = new JSpinner(minYModel);
 		minYSpinner.setPreferredSize(new Dimension(70, 22));
-		minYSpinner.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				sFloor.setValue((int) minYSpinner.getModel().getValue());
-			}
-		});
 
 		holderMinY.add(lblMinY);
 		holderMinY.add(minYSpinner);
@@ -305,14 +295,8 @@ public class MainPanel extends JPanel {
 
 		JLabel lblMaxY = new JLabel(Messages.getString("PreviewPanel.CEILING"));
 		final SpinnerModel maxYModel = new SpinnerNumberModel(320, -2048, 2048, 1);
-		final JSpinner maxYSpinner = new JSpinner(maxYModel);
+		maxYSpinner = new JSpinner(maxYModel);
 		maxYSpinner.setPreferredSize(new Dimension(70, 22));
-		maxYSpinner.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				sCeil.setValue((int) maxYSpinner.getModel().getValue());
-			}
-		});
 
 		holderMaxY.add(lblMaxY);
 		holderMaxY.add(maxYSpinner);
@@ -403,26 +387,39 @@ public class MainPanel extends JPanel {
 
 		preview = new PreviewPanel();
 		preview.setBackground(new Color(110, 150, 100));
+		preview.setAltitudes((int)minYModel.getValue(), (int)maxYModel.getValue());
 
 		JPanel preview_alts = new JPanel();
 		preview_alts.setLayout(new BorderLayout());
 		JPanel alts = new JPanel();
 		alts.setLayout(new BoxLayout(alts, BoxLayout.PAGE_AXIS));
 
-		sFloor = new JSlider();
+		final JSlider sFloor = new JSlider();
 		sFloor.setOrientation(JSlider.VERTICAL);
 		sFloor.setToolTipText(Messages.getString("MainPanel.FLOOR_SLIDER"));
-		sFloor.setMinimum(-2048);
-		sFloor.setMaximum(2048);// TODO: this should really be read from the
+		sFloor.setMinimum(-64);
+		sFloor.setMaximum(320);// TODO: this should really be read from the
 								// file, IMO
 		sFloor.setValue(-64);
+		sFloor.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				minYSpinner.setValue(sFloor.getValue());
+			}
+		});
 
-		sCeil = new JSlider();
+		final JSlider sCeil = new JSlider();
 		sCeil.setOrientation(JSlider.VERTICAL);
 		sCeil.setToolTipText(Messages.getString("MainPanel.CEILING_SLIDER"));
-		sCeil.setMinimum(-2048);
-		sCeil.setMaximum(2048);
+		sCeil.setMinimum(-64);
+		sCeil.setMaximum(320);
 		sCeil.setValue(320);
+		sCeil.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				maxYSpinner.setValue(sCeil.getValue());
+			}
+		});
 
 		memory_monitor = new MemoryMonitor();
 
@@ -439,49 +436,34 @@ public class MainPanel extends JPanel {
 		ChangeListener slider_listener = new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				if (e.getSource().equals(sCeil)) {
-					maxYModel.setValue(sCeil.getValue());
-					if (sFloor.getValue() >= sCeil.getValue()) {
-						sFloor.setValue(sCeil.getValue() - 1);
-						minYModel.setValue(sCeil.getValue() - 1);
+				int ymin = (int) minYModel.getValue();
+				int ymax = (int) maxYModel.getValue();
+				if (e.getSource().equals(maxYSpinner)) {
+					sCeil.setValue(ymax);
+					if (ymin >= ymax) {
+						ymin = ymax - 1;
+						minYModel.setValue(ymin);
+						sFloor.setValue(ymin);
 					}
 				} else {
-					minYModel.setValue(sFloor.getValue());
-					if (sCeil.getValue() <= sFloor.getValue()) {
-						sCeil.setValue(sFloor.getValue() + 1);
-						maxYModel.setValue(sFloor.getValue() + 1);
+					sFloor.setValue(ymin);
+					if (ymax <= ymin) {
+						ymax = ymin + 1;
+						maxYModel.setValue(ymax);
+						sCeil.setValue(ymax);
 					}
 				}
 				if (Options.worldDir != null) {
-					if (!slider_pressed)
-						chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-					preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
+					chunk_loader.setYBounds(ymin, ymax);
+					preview.setAltitudes(ymin, ymax);
 					preview.repaint();
 				}
 			}
 		};
 
-		MouseInputAdapter slider_adapter = new MouseInputAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				slider_pressed = true;
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				slider_pressed = false;
-				if (Options.worldDir != null) {
-					chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
-				}
-			}
-		};
-
-		sCeil.addChangeListener(slider_listener);
-		sCeil.addMouseListener(slider_adapter);
-		sFloor.addChangeListener(slider_listener);
-		sFloor.addMouseListener(slider_adapter);
-		preview.setAltitudes(sFloor.getValue(), sCeil.getValue());
-
+		minYSpinner.addChangeListener(slider_listener);
+		maxYSpinner.addChangeListener(slider_listener);
+		
 		bPath.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -701,8 +683,8 @@ public class MainPanel extends JPanel {
 			Options.minZ = rect.y;
 			Options.maxZ = rect.y + rect.height;
 
-			Options.minY = sFloor.getValue();
-			Options.maxY = sCeil.getValue();
+			Options.minY = (int) minYSpinner.getValue();
+			Options.maxY = (int) maxYSpinner.getValue();
 		}
 
 	}
@@ -713,7 +695,7 @@ public class MainPanel extends JPanel {
 			chunk_loader.stopRunning();
 
 		chunk_loader = new ViewChunkLoaderThread(preview);
-		chunk_loader.setYBounds(sFloor.getValue(), sCeil.getValue());
+		chunk_loader.setYBounds((int) minYSpinner.getValue(), (int) maxYSpinner.getValue());
 		(new Thread(chunk_loader, "ViewChunkLoader")).start();
 	}
 
