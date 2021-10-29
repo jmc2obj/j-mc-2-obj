@@ -81,7 +81,10 @@ public class Chunk {
 	public Chunk(InputStream is, InputStream entityIs, boolean is_anvil) throws Exception
 	{
 		this.is_anvil=is_anvil;
-
+		if (is == null) {
+			throw new IllegalArgumentException("Chunk InputStream null!");
+		}
+		
 		root=(TAG_Compound) NBT_Tag.make(is);
 		is.close();
 		if (entityIs != null) {
@@ -89,24 +92,30 @@ public class Chunk {
 			entityIs.close();
 		}
 
-		TAG_Compound level = (TAG_Compound) root.getElement("Level");
-
-		TAG_Int xPos=(TAG_Int) level.getElement("xPos");
-		TAG_Int zPos=(TAG_Int) level.getElement("zPos");
-
-		pos_x = xPos.value;
-		pos_z = zPos.value;
 		
 		if (is_anvil) {
 			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
 				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
 			} else {
-				Log.error(String.format("Couldn't get chunk(%d,%d) DataVersion!", pos_x,pos_z), null, false);
-				chunkVer = Integer.MAX_VALUE;
+				Log.debug(String.format("Couldn't get chunk DataVersion!"));
+				chunkVer = 0;//Integer.MAX_VALUE;
 			}
 		} else {
 			chunkVer = 0;
 		}
+
+		TAG_Int xPos, zPos;
+		if (chunkVer >= 2844) {// >= 21w43a
+			xPos=(TAG_Int) root.getElement("xPos");
+			zPos=(TAG_Int) root.getElement("zPos");
+		} else {
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			xPos=(TAG_Int) level.getElement("xPos");
+			zPos=(TAG_Int) level.getElement("zPos");
+		}
+
+		pos_x = xPos.value;
+		pos_z = zPos.value;
 		
 		block_image=null;
 		height_image=null;
@@ -234,11 +243,16 @@ public class Chunk {
 	public Blocks getBlocks()
 	{
 		Blocks ret=null;
-		TAG_Compound level = (TAG_Compound) root.getElement("Level");
 		
 		if(is_anvil)
 		{
-			TAG_List sections = (TAG_List) level.getElement("Sections");
+			TAG_List sections;
+			if (chunkVer >= 2844) {// >= 21w43a
+				sections = (TAG_List) root.getElement("sections");
+			} else {
+				TAG_Compound level = (TAG_Compound) root.getElement("Level");
+				sections = (TAG_List) level.getElement("Sections");
+			}
 			if (sections == null) {
 				return new Blocks(0, 256);
 			}
@@ -255,40 +269,7 @@ public class Chunk {
 				
 				int base=((yval.value*16)-ymin)*16*16;
 				
-				if (chunkVer <= 1450) {// <= 1.12
-					short[] oldIDs = new short[ret.size];
-					byte[] oldData = new byte[ret.size];
-					TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
-					TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
-					for(int i=0; i<tagBlocks.data.length; i++)
-						oldIDs[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
-					
-					if(tagAdd!=null)
-					{
-						for(int i=0; i<tagAdd.data.length; i++)
-						{
-							short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
-							short add1 = (short)(add&0x0f);
-							short add2 = (short)(add>>4);
-							oldIDs[base+2*i] += (add1<<8);
-							oldIDs[base+2*i+1] += (add2<<8);
-						}
-					}
-					
-					for(int i=0; i<tagData.data.length; i++)
-					{
-						byte add1=(byte)(tagData.data[i]&0x0f);
-						byte add2=(byte)(tagData.data[i]>>4);
-						oldData[base+2*i]=add1;
-						oldData[base+2*i+1]=add2;
-						//TODO old format conversion
-					}
-					
-					Log.info("Chunk is old version (pre 1.13), skipping! " + pos_x + " " + pos_z);
-					break;
-					
-				} else {// >= 1.13
+				if (chunkVer >= 1451) {// >= 1.13/17w47a
 					TAG_List tagPalette;
 					TAG_Long_Array tagBlockStates;
 					if (chunkVer >= 2834) {// >= 21w37a
@@ -350,33 +331,67 @@ public class Chunk {
 						
 						ret.data[base+i] = block;
 					}
+				} else {// <= 1.12
+					short[] oldIDs = new short[ret.size];
+					byte[] oldData = new byte[ret.size];
+					TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
+					TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
+					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
+					for(int i=0; i<tagBlocks.data.length; i++)
+						oldIDs[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
+					
+					if(tagAdd!=null)
+					{
+						for(int i=0; i<tagAdd.data.length; i++)
+						{
+							short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
+							short add1 = (short)(add&0x0f);
+							short add2 = (short)(add>>4);
+							oldIDs[base+2*i] += (add1<<8);
+							oldIDs[base+2*i+1] += (add2<<8);
+						}
+					}
+					
+					for(int i=0; i<tagData.data.length; i++)
+					{
+						byte add1=(byte)(tagData.data[i]&0x0f);
+						byte add2=(byte)(tagData.data[i]>>4);
+						oldData[base+2*i]=add1;
+						oldData[base+2*i+1]=add2;
+						//TODO old format conversion
+					}
+					
+					Log.info("Chunk is old version (pre 1.13), skipping! " + pos_x + " " + pos_z);
+					break;
 				}
 			}
 			
-			TAG_Int_Array tagBiomes;
-			if (chunkVer <= 1464) {// <= 18w05a
-				TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
-				int[] biomes = new int[tagByteBiomes.data.length];
-				for (int i = 0; i < tagByteBiomes.data.length; i++) {
-					biomes[i] = tagByteBiomes.data[i];
+			if (chunkVer < 2844) {// < 21w43a
+				TAG_Compound level = (TAG_Compound) root.getElement("Level");
+				TAG_Int_Array tagBiomes;
+				if (chunkVer >= 1466) {// >= 18w06a
+					tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
+				} else {
+					TAG_Byte_Array tagByteBiomes = (TAG_Byte_Array) level.getElement("Biomes");
+					int[] biomes = new int[tagByteBiomes.data.length];
+					for (int i = 0; i < tagByteBiomes.data.length; i++) {
+						biomes[i] = tagByteBiomes.data[i];
+					}
+					tagBiomes = new TAG_Int_Array("Biomes", biomes);
 				}
-				tagBiomes = new TAG_Int_Array("Biomes", biomes);
-			}
-			else {
-				tagBiomes = (TAG_Int_Array) level.getElement("Biomes");
-			}
-			
-			if(tagBiomes!=null) {
-				for(int x = 0; x < 16; x++) {
-					for (int z = 0; z < 16; z++) {
-						for (int y = 0; y < ymax - ymin; y++) {
-							int biome;
-							if (chunkVer <= 2201) {// <= 19w35a
-								biome = tagBiomes.data[x+z*16];
-							} else {
-								biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
+				
+				if(tagBiomes!=null && tagBiomes.data.length > 0) {
+					for(int x = 0; x < 16; x++) {
+						for (int z = 0; z < 16; z++) {
+							for (int y = 0; y < ymax - ymin; y++) {
+								int biome;
+								if (chunkVer >= 2203) {// >= 19w36a
+									biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
+								} else {
+									biome = tagBiomes.data[x+z*16];
+								}
+								ret.biome[x + z*16 + y*16*16] = biome;
 							}
-							ret.biome[x + z*16 + y*16*16] = biome;
 						}
 					}
 				}
@@ -384,6 +399,7 @@ public class Chunk {
 		}
 		else
 		{
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
@@ -407,31 +423,33 @@ public class Chunk {
 			
 		}
 		
-		TAG_List chunk_entities = (TAG_List) level.getElement("Entities");
-		if(chunk_entities!=null && chunk_entities.elements.length>0)
-		{
-			for(int i=0; i<chunk_entities.elements.length; i++)
-			{
-				ret.entities.add((TAG_Compound)chunk_entities.elements[i]);
+		if (chunkVer < 2844) {// < 21w43a
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			TAG_List chunk_entities = (TAG_List) level.getElement("Entities");
+			if(chunk_entities!=null && chunk_entities.elements.length>0) {
+				for(int i=0; i<chunk_entities.elements.length; i++) {
+					ret.entities.add((TAG_Compound)chunk_entities.elements[i]);
+				}
 			}
 		}
 		if (entities_root != null) {
 			TAG_List entities = (TAG_List) entities_root.getElement("Entities");
-			if(entities!=null && entities.elements.length>0)
-			{
-				for(int i=0; i<entities.elements.length; i++)
-				{
+			if(entities!=null && entities.elements.length>0) {
+				for(int i=0; i<entities.elements.length; i++) {
 					ret.entities.add((TAG_Compound)entities.elements[i]);
 				}
 			}
 		}
-
-
-		TAG_List tile_entities = (TAG_List) level.getElement("TileEntities");
-		if(tile_entities!=null && tile_entities.elements.length>0)
-		{
-			for(int i=0; i<tile_entities.elements.length; i++)
-			{
+		
+		TAG_List tile_entities;
+		if (chunkVer >= 2844) {// >= 21w43a
+			tile_entities = (TAG_List) root.getElement("block_entities");
+		} else {
+			TAG_Compound level = (TAG_Compound) root.getElement("Level");
+			tile_entities = (TAG_List) level.getElement("TileEntities");
+		}
+		if(tile_entities!=null && tile_entities.elements.length>0) {
+			for(int i=0; i<tile_entities.elements.length; i++) {
 				ret.tile_entities.add((TAG_Compound)tile_entities.elements[i]);
 			}
 		}
@@ -452,8 +470,13 @@ public class Chunk {
 			return yMinMax;
 		}
 		if(is_anvil) {
-			TAG_Compound level = (TAG_Compound) root.getElement("Level");
-			TAG_List sections = (TAG_List) level.getElement("Sections");
+			TAG_List sections;
+			if (chunkVer >= 2844) {
+				sections = (TAG_List) root.getElement("sections");
+			} else {
+				TAG_Compound level = (TAG_Compound) root.getElement("Level");
+				sections = (TAG_List) level.getElement("Sections");
+			}
 			if (sections == null) {
 				yMinMax = new int[] {0, 256};
 				return yMinMax;
@@ -465,7 +488,7 @@ public class Chunk {
 			{
 				TAG_Compound c_section = (TAG_Compound) section;
 				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
-				if (c_section.getElement("block_states") != null || c_section.getElement("BlockStates") != null) {
+				if (c_section.getElement("block_states") != null || c_section.getElement("BlockStates") != null || c_section.getElement("Blocks") != null) {
 					ymin= Math.min(ymin, yval.value);
 					ymax= Math.max(ymax, yval.value);
 				}
@@ -503,6 +526,8 @@ public class Chunk {
 		int blockBiome=0;
 		Blocks bd=getBlocks();
 
+		int drawYMax = ceiling;
+		int drawYMin = floor;
 		if(floor>bd.ymax)
 			return;
 		if(ceiling>bd.ymax)
@@ -560,8 +585,8 @@ public class Chunk {
 			{
 				for(x = 0; x < 16; x++)
 				{
-					float a = himage[z*16+x] - floor;
-					float b = ceiling - floor;
+					float a = himage[z*16+x] - drawYMin;
+					float b = drawYMax - drawYMin;
 					float r = Math.max(0, Math.min(1, a / b));
 					gh.setColor(new Color(r,r,r));
 					gh.fillRect(x*4, z*4, 4, 4);
