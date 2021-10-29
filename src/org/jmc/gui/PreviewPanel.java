@@ -331,7 +331,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			mg.drawImage(base_img,0,0,null);
 			if(!fast)
 			{
-				mg.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,(float) (0.6)));
+				mg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
 				mg.drawImage(height_img,0,0,null);
 			}
 			if(showchunks)

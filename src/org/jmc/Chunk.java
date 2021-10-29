@@ -556,13 +556,14 @@ public class Chunk {
 		}
 
 		if(!fastmode){
-			int h;
 			for(z = 0; z < 16; z++)
 			{
 				for(x = 0; x < 16; x++)
 				{
-					h=Math.floorMod(himage[z*16+x],256);//TODO remap height range?
-					gh.setColor(new Color(h,h,h));
+					float a = himage[z*16+x] - floor;
+					float b = ceiling - floor;
+					float r = Math.max(0, Math.min(1, a / b));
+					gh.setColor(new Color(r,r,r));
 					gh.fillRect(x*4, z*4, 4, 4);
 				}
 			}
