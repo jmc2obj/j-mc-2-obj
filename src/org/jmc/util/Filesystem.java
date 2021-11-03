@@ -101,7 +101,7 @@ public class Filesystem {
 				}
 			}
 			if (best != null) {
-				Log.info("Using version: " + best.getName());
+				Log.debug("Found version: " + best.getName());
 				return new File(best, best.getName() + ".jar");
 			}
 		}

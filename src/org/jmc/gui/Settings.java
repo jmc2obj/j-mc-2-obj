@@ -471,7 +471,9 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				resPacks.add(pack);
 			}
 			if (chckbxUsePackDefault.isSelected()) {
-				resPacks.add(Filesystem.getMinecraftJar());
+				File mc = Filesystem.getMinecraftJar();
+				Log.info(String.format("Using minecraft %s as default resource pack.", mc.getName()));
+				resPacks.add(mc);
 			}
 		}
 		if (reloadRegistries) {
