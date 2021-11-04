@@ -51,7 +51,7 @@ public class Registries {
 				try (Reader reader = ResourcePackIO.loadText(getFilePath(key, RegType.BLOCKSTATE))){
 					json = new Gson().fromJson(reader, JsonObject.class);
 				} catch (FileNotFoundException e) {
-					Log.info(String.format("Couldn't find blockstate %s in any resource pack!", key));
+					Log.error(String.format("Couldn't find blockstate %s in any resource pack!", key), null, false);
 					return null;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -67,7 +67,7 @@ public class Registries {
 				try (Reader reader = ResourcePackIO.loadText(getFilePath(key, RegType.MODEL))){
 					json = new Gson().fromJson(reader, JsonObject.class);
 				} catch (FileNotFoundException e) {
-					Log.info(String.format("Couldn't find model %s in any resource pack!", key));
+					Log.error(String.format("Couldn't find model %s in any resource pack!", key), null, false);
 					return null;
 				} catch (IOException e) {
 					e.printStackTrace();
