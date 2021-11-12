@@ -4,9 +4,10 @@ import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class ObjExporter {
 					return;
 				}
 
-				PrintWriter obj_writer = new PrintWriter(new FileWriter(objfile));
+				PrintWriter obj_writer = new PrintWriter(objfile, StandardCharsets.UTF_8.name());
 				
 				if (progress != null)
 					progress.setMessage(Messages.getString("Progress.OBJ"));
@@ -224,15 +225,15 @@ public class ObjExporter {
 					}
 
 					File mainfile = new File(tmpdir, "main");
-					PrintWriter main = new PrintWriter(mainfile);
+					PrintWriter main = new PrintWriter(mainfile, StandardCharsets.UTF_8.name());
 					File vertexfile = new File(tmpdir, "vertex");
-					PrintWriter vertex = new PrintWriter(vertexfile);
+					PrintWriter vertex = new PrintWriter(vertexfile, StandardCharsets.UTF_8.name());
 					File normalfile = new File(tmpdir, "normal");
-					PrintWriter normal = new PrintWriter(normalfile);
+					PrintWriter normal = new PrintWriter(normalfile, StandardCharsets.UTF_8.name());
 					File uvfile = new File(tmpdir, "uv");
-					PrintWriter uv = new PrintWriter(uvfile);
+					PrintWriter uv = new PrintWriter(uvfile, StandardCharsets.UTF_8.name());
 
-					BufferedReader objin = new BufferedReader(new FileReader(objfile));
+					BufferedReader objin = Files.newBufferedReader(objfile.toPath(), StandardCharsets.UTF_8);
 
 					Map<String, FaceFile> faces = new HashMap<String, FaceFile>();
 					int facefilecount = 1;
@@ -265,7 +266,7 @@ public class ObjExporter {
 								current_ff.name = line;
 								current_ff.file = new File(tmpdir, "" + facefilecount);
 								facefilecount++;
-								current_ff.writer = new PrintWriter(current_ff.file);
+								current_ff.writer = new PrintWriter(current_ff.file, StandardCharsets.UTF_8.name());
 								faces.put(line, current_ff);
 							} else
 								current_ff = faces.get(line);
@@ -305,19 +306,19 @@ public class ObjExporter {
 						main.println();
 					}*///TODO fix single tex export
 
-					BufferedReader norm_reader = new BufferedReader(new FileReader(normalfile));
+					BufferedReader norm_reader = Files.newBufferedReader(normalfile.toPath(), StandardCharsets.UTF_8);
 					while ((line = norm_reader.readLine()) != null)
 						main.println(line);
 					norm_reader.close();
 					normalfile.delete();
 
-					BufferedReader uv_reader = new BufferedReader(new FileReader(uvfile));
+					BufferedReader uv_reader = Files.newBufferedReader(uvfile.toPath(), StandardCharsets.UTF_8);
 					while ((line = uv_reader.readLine()) != null)
 						main.println(line);
 					uv_reader.close();
 					uvfile.delete();
 
-					BufferedReader vertex_reader = new BufferedReader(new FileReader(vertexfile));
+					BufferedReader vertex_reader = Files.newBufferedReader(vertexfile.toPath(), StandardCharsets.UTF_8);
 					while ((line = vertex_reader.readLine()) != null)
 						main.println(line);
 					vertex_reader.close();
@@ -345,7 +346,7 @@ public class ObjExporter {
 							main.println();
 						}
 
-						BufferedReader reader = new BufferedReader(new FileReader(ff.file));
+						BufferedReader reader = Files.newBufferedReader(ff.file.toPath(), StandardCharsets.UTF_8);
 						while ((line = reader.readLine()) != null) {
 							if (Options.objectPerChunk && line.startsWith("g ")) {
 								if (Options.objectPerMaterial)
