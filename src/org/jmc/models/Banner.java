@@ -1,7 +1,8 @@
 package org.jmc.models;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -241,21 +242,14 @@ public class Banner extends BlockModel {
         // todo - do something with the basecolor here...
         // Log.info(" - Base Color: " + baseColorIndex);
 
-        int imageWidth = backgroundImage.getWidth();
-        int imageHeight = backgroundImage.getHeight();
-
         // create a new image (this one is the target!)
-        BufferedImage combined = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage combined = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         // get Graphics - to draw the layers
-        Graphics combinedGraphics = combined.getGraphics();
-        combinedGraphics.drawImage(backgroundImage, 0, 0, null);
+        combined.getGraphics().drawImage(backgroundImage, 0, 0, null);
         
         // each layer
         for (BannerPattern bp : patternList) {
-
-            // target of one layer
-            BufferedImage patternImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 
             // pattern source image
             BufferedImage patternSource;
@@ -266,13 +260,16 @@ public class Banner extends BlockModel {
             	Log.error("Cant read banner pattern " + bp.getPattern(), e, showReadErrorPopup());
                 return false;
             }
+            
+            // target of one layer
+            BufferedImage patternImage = new BufferedImage(patternSource.getWidth(), patternSource.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
             // draw into layer..
             Color layerColor = getColorById(bp.getColor());
             float layerComps[] = layerColor.getComponents(null);
             
-            for(int x=0; x<imageWidth; x++) {
-                for(int y=0; y<imageHeight; y++) {
+            for(int x=0; x<patternSource.getWidth(); x++) {
+                for(int y=0; y<patternSource.getHeight(); y++) {
                     Color patternColor = new Color(patternSource.getRGB(x, y), true);
                     float patternComps[] = patternColor.getComponents(null);
                     
@@ -283,8 +280,25 @@ public class Banner extends BlockModel {
                 }
             }
             
+            if (patternImage.getWidth() > combined.getWidth()) {
+            	AffineTransformOp scaleOp = new AffineTransformOp(AffineTransform.getScaleInstance((float)patternImage.getWidth()/combined.getWidth(), 1),
+            			AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            	combined = scaleOp.filter(combined, null);
+            }
+            if (patternImage.getHeight() > combined.getHeight()) {
+            	AffineTransformOp scaleOp = new AffineTransformOp(AffineTransform.getScaleInstance(1, (float)patternImage.getHeight()/combined.getHeight()),
+            			AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            	combined = scaleOp.filter(combined, null);
+            }
+            if (patternImage.getHeight() != combined.getHeight() || patternImage.getWidth() != combined.getWidth()) {
+            	AffineTransformOp scaleOp = new AffineTransformOp(
+            			AffineTransform.getScaleInstance((float)combined.getWidth()/patternImage.getWidth(), (float)combined.getHeight()/patternImage.getHeight()),
+            			AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            	patternImage = scaleOp.filter(patternImage, null);
+            }
+            
             // draw this layer into the main image
-            combinedGraphics.drawImage(patternImage, 0, 0, null);
+            combined.getGraphics().drawImage(patternImage, 0, 0, null);
             
             Log.debug(" - Pattern: " + bp.getPattern() + " / " + bp.getColor() + "");
         }
