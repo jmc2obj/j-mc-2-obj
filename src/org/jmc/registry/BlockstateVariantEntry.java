@@ -13,7 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class BlockstateVariantEntry extends BlockstateEntry {
-	private HashMap<Blockstate, ModelListWeighted> models = new HashMap<>();
+	private ArrayList<HashMap<Blockstate, ModelListWeighted>> modelsList = new ArrayList<>();
 	
 	public BlockstateVariantEntry(NamespaceID name) {
 		super(name);
@@ -21,6 +21,7 @@ public class BlockstateVariantEntry extends BlockstateEntry {
 	
 	@Override
 	protected void parseJson(JsonElement variantsElem) {
+		HashMap<Blockstate, ModelListWeighted> models = new HashMap<>();
 		JsonObject variantsObj = variantsElem.getAsJsonObject();
 		for (String variantKey : variantsObj.keySet()) {
 			Blockstate blockstate = new Blockstate();
@@ -40,15 +41,25 @@ public class BlockstateVariantEntry extends BlockstateEntry {
 				stateModels.addModel(model);
 			}
 		}
+		modelsList.add(models);
+	}
+	
+	public void addStates(JsonObject json) {
+		JsonElement variantsElem = json.get("variants");
+		if (variantsElem != null) {
+			parseJson(variantsElem);
+		}
 	}
 	
 	@Override
 	public List<ModelListWeighted> getModelsFor(Blockstate state) {
 		List<ModelListWeighted> stateModels = new ArrayList<>();
-		for (Entry<Blockstate, ModelListWeighted> modelEntry : models.entrySet()) {
-			if (modelEntry.getKey().maskMatches(state)) {
-				stateModels.add(modelEntry.getValue());
-				return stateModels;// Only 1 matching state for variant type
+		for (HashMap<Blockstate, ModelListWeighted> models : modelsList) {
+			for (Entry<Blockstate, ModelListWeighted> modelEntry : models.entrySet()) {
+				if (modelEntry.getKey().maskMatches(state)) {
+					stateModels.add(modelEntry.getValue());
+					return stateModels;// Only 1 matching state for variant type
+				}
 			}
 		}
 		return stateModels;
@@ -56,7 +67,7 @@ public class BlockstateVariantEntry extends BlockstateEntry {
 	
 	@Override
 	public String toString() {
-		return String.format("%s:%s", super.toString(), models.toString());
+		return String.format("%s:%s", super.toString(), modelsList.toString());
 	}
 	
 }

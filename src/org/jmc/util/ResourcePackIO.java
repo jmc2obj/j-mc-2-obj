@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -30,9 +31,23 @@ public class ResourcePackIO {
 	public static Reader loadText(String textPath) throws FileNotFoundException {
 		return new InputStreamReader(new BOMInputStream(loadResourceAsStream(textPath)));
 	}
+	public static List<Reader> loadAllText(String textPath) throws FileNotFoundException {
+		List<Reader> readers = new ArrayList<>();
+		for (InputStream stream : loadAllResourcesAsStreams(textPath)) {
+			readers.add(new InputStreamReader(new BOMInputStream(stream)));
+		}
+		return readers;
+	}
 	
 	public static InputStream loadResourceAsStream(String filePath) throws FileNotFoundException {
 		return new ByteArrayInputStream(loadResource(filePath));
+	}
+	public static List<InputStream> loadAllResourcesAsStreams(String filePath) throws FileNotFoundException {
+		List<InputStream> streams = new ArrayList<>();
+		for (byte[] resource : loadAllResources(filePath)) {
+			streams.add(new ByteArrayInputStream(resource));
+		}
+		return streams;
 	}
 	
 	/**
@@ -56,6 +71,31 @@ public class ResourcePackIO {
 			throw new FileNotFoundException(String.format("Couldn't find %s in current resource packs", filePath));
 		}
 		return data;
+	}
+	
+	/**
+	 *  tries to load the resource from all of the {@link Options#resourcePacks}
+	 *  @return the file/s as array of bytes
+	 */
+	public static List<byte[]> loadAllResources(String filePath) throws FileNotFoundException {
+		List<File> packs = Options.resourcePacks;
+		ArrayList<byte[]> resources = new ArrayList<>();
+		synchronized (packs) {
+			for (File pack : packs) {
+				try {
+					byte[] data = loadResource(pack, filePath);
+					if (data != null) {
+						resources.add(data);
+					}
+				} catch (IOException e) {
+					continue;
+				}
+			}
+		}
+		if (resources.isEmpty()) {
+			throw new FileNotFoundException(String.format("Couldn't find %s in current resource packs", filePath));
+		}
+		return resources;
 	}
 	
 	public static byte[] loadResource(File packPath, String filePath) throws IOException {

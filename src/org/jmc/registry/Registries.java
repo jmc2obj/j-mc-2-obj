@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.CheckForNull;
@@ -47,9 +48,20 @@ public class Registries {
 		blockstates = new CachedGetter<NamespaceID, BlockstateEntry>() {
 			@Override
 			public BlockstateEntry make(NamespaceID key) {
-				JsonObject json = null;
-				try (Reader reader = ResourcePackIO.loadText(getFilePath(key, RegType.BLOCKSTATE))){
-					json = new Gson().fromJson(reader, JsonObject.class);
+				try {
+					List<Reader> readers = ResourcePackIO.loadAllText(getFilePath(key, RegType.BLOCKSTATE));
+					BlockstateEntry entry = null;
+					for (Reader reader : readers) {
+						JsonObject json = null;
+						json = new Gson().fromJson(reader, JsonObject.class);
+						if (entry == null) {
+							entry = BlockstateEntry.parseJson(key, json);
+						} else if (entry instanceof BlockstateVariantEntry) {
+							((BlockstateVariantEntry)entry).addStates(json);
+						}
+						reader.close();
+					}
+					return entry;
 				} catch (FileNotFoundException e) {
 					Log.error(String.format("Couldn't find blockstate %s in any resource pack!", key), null, false);
 					return null;
@@ -57,7 +69,6 @@ public class Registries {
 					e.printStackTrace();
 					return null;
 				}
-				return BlockstateEntry.parseJson(key, json);
 			}
 		};
 		models = new CachedGetter<NamespaceID, ModelEntry>() {
