@@ -15,6 +15,7 @@ import org.jmc.ChunkDataBuffer;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.EmptyList;
 
 public class ThreadChunkDeligate {
@@ -44,6 +45,18 @@ public class ThreadChunkDeligate {
 	{
 		return xyBoundaries;
 	}
+	
+	public boolean isInBounds(int x, int y, int z) {
+		int xmin, xmax, ymin, ymax, zmin, zmax;
+		xmin = xyBoundaries.x;
+		xmax = xmin + xyBoundaries.width - 1;
+		ymin = xyBoundaries.y;
+		ymax = ymin + xyBoundaries.height - 1;
+		zmin = xzBoundaries.y;
+		zmax = zmin + xzBoundaries.height - 1;
+		
+		return x >= xmin && x <= xmax && y >= ymin && y <= ymax && z >= zmin && z <= zmax;
+	}
 
 	@CheckForNull
 	private Blocks getBlocks(Point p)
@@ -69,7 +82,9 @@ public class ThreadChunkDeligate {
 	@CheckForNull
 	public BlockData getBlockData(int x, int y, int z)
 	{
-		
+		if (!isInBounds(x, y, z)) {
+			return new BlockData(NamespaceID.EXPORTEDGE);
+		}
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		

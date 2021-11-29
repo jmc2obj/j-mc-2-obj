@@ -1,7 +1,5 @@
 package org.jmc.models;
 
-import java.awt.Rectangle;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -146,6 +144,9 @@ public abstract class BlockModel {
 			return true;
 
 		if (neighbourData == null || neighbourData.id == NamespaceID.NULL)
+			return true;
+
+		if (neighbourData.id == NamespaceID.EXPORTEDGE)
 			return Options.renderSides;
 
 		if (neighbourData.id.path.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
@@ -188,26 +189,15 @@ public abstract class BlockModel {
 	 *         EAST, DOWN
 	 */
 	protected boolean[] drawSides(ThreadChunkDeligate chunks, int x, int y, int z, BlockData data) {
-		int xmin, xmax, ymin, ymax, zmin, zmax;
-		Rectangle xy, xz;
-		xy = chunks.getXYBoundaries();
-		xz = chunks.getXZBoundaries();
-		xmin = xy.x;
-		xmax = xmin + xy.width - 1;
-		ymin = xy.y;
-		ymax = ymin + xy.height - 1;
-		zmin = xz.y;
-		zmax = zmin + xz.height - 1;
-
 		boolean sides[] = new boolean[6];
-
-		sides[0] = drawSide(Direction.UP, data, y == ymax ? null : chunks.getBlockData(x, y + 1, z));
-		sides[1] = drawSide(Direction.NORTH, data, z == zmin ? null : chunks.getBlockData(x, y, z - 1));
-		sides[2] = drawSide(Direction.SOUTH, data, z == zmax ? null : chunks.getBlockData(x, y, z + 1));
-		sides[3] = drawSide(Direction.WEST, data, x == xmin ? null : chunks.getBlockData(x - 1, y, z));
-		sides[4] = drawSide(Direction.EAST, data, x == xmax ? null : chunks.getBlockData(x + 1, y, z));
-		sides[5] = drawSide(Direction.DOWN, data, y == ymin ? null : chunks.getBlockData(x, y - 1, z));
-
+		
+		sides[0] = drawSide(Direction.UP, data, chunks.getBlockData(x, y + 1, z));
+		sides[1] = drawSide(Direction.NORTH, data, chunks.getBlockData(x, y, z - 1));
+		sides[2] = drawSide(Direction.SOUTH, data, chunks.getBlockData(x, y, z + 1));
+		sides[3] = drawSide(Direction.WEST, data, chunks.getBlockData(x - 1, y, z));
+		sides[4] = drawSide(Direction.EAST, data, chunks.getBlockData(x + 1, y, z));
+		sides[5] = drawSide(Direction.DOWN, data, chunks.getBlockData(x, y - 1, z));
+		
 		return sides;
 	}
 

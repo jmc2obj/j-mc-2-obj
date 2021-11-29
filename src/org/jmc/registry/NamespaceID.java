@@ -19,6 +19,8 @@ import com.google.gson.annotations.JsonAdapter;
 public class NamespaceID implements Comparable<NamespaceID> {
 	@Nonnull
 	public final static NamespaceID NULL = new NamespaceID("jmc2obj", "null");
+	@Nonnull
+	public final static NamespaceID EXPORTEDGE = new NamespaceID("jmc2obj", "export_edge");
 
 	public final String namespace;
 	public final String path;
