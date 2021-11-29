@@ -284,7 +284,23 @@ public class Chunk {
 						tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
 					}
 					
-					if (tagPalette == null || tagBlockStates == null) {
+					if (tagPalette == null) {
+						continue;
+					}
+					if (tagBlockStates == null) {
+						if (tagPalette.elements.length >= 1) {
+							TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[0];
+							String blockName = ((TAG_String)blockTag.getElement("Name")).value;
+							if (blockName == null) {
+								Log.debug("No block name!");
+								continue;
+							}
+							
+							BlockData block = new BlockData(NamespaceID.fromString(blockName));
+							for (int i = 0; i < 4096; i++) {
+								ret.data[base+i] = block;
+							}
+						}
 						continue;
 					}
 					
