@@ -26,11 +26,12 @@ public class Slime extends Entity {
 		
 		Transform rotate = Transform.rotation2(yaw+90, pitch ,0);
 		
-		int size = ((TAG_Int) entity.getElement("Size")).value;
+		float size = (((TAG_Int) entity.getElement("Size")).value + 1) * 0.51f;
 		
+		Transform offset = Transform.translation(0, 0.5f, 0);
 		Transform scale = Transform.scale(size, size, size);
 		
-		model.addEntity(obj, translate.multiply(rotate.multiply(scale)));
+		model.addEntity(obj, translate.multiply(scale.multiply(offset.multiply(rotate))));
 		
 	}
 	
