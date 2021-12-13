@@ -3,6 +3,8 @@ package org.jmc;
 import java.io.File;
 
 import org.jmc.Options.OffsetType;
+import org.jmc.util.Filesystem;
+import org.jmc.util.Log;
 
 
 /**
@@ -231,6 +233,14 @@ public class CmdLineParser
 			throw new CmdLineException(Options.worldDir + " is not a valid directory.");
 		if (!Options.outputDir.isDirectory())
 			throw new CmdLineException(Options.outputDir + " is not a valid directory.");
+		
+		if (Options.resourcePacks.isEmpty()) {
+			Log.info("No resource pack specified, attempting to find & use latest minecraft .jar");
+			File jar = Filesystem.getMinecraftJar();
+			if (jar != null) {
+				Options.resourcePacks.add(jar);
+			}
+		}
 	}
 	
 
@@ -266,9 +276,9 @@ public class CmdLineParser
 			"                                    What textures to export (any combination is\n" +
 			"                                    valid): base - base textures; alpha -\n" +
 			"                                    seperate alphas; norm - normal maps.\n" +
-			"     --texturepack=FILE             When exporting textures, use this texture\n" +
-			"                                    pack. If omitted will export the default\n" +
-			"                                    Minecraft textures.\n" +
+			"     --resourcepack=FILE            When exporting, use this resource\n" +
+			"                                    pack. If omitted will attempt to use the\n" +
+			"                                    default Minecraft models and textures.\n" +
 			"     --texturescale=SCALE           When exporting textures, scale the images\n" +
 			"                                    by this factor. Default is 1 (no scaling).\n" +
 			"     --objfile=NAME                 Name of geometry file to export. Default\n" +

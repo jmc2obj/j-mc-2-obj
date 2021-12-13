@@ -13,6 +13,8 @@ import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.annotation.CheckForNull;
+
 /**
  * File and directory related methods.
  */
@@ -88,6 +90,7 @@ public class Filesystem {
 	 * 
 	 * @return Path to the Minecraft .jar file.
 	 */
+	@CheckForNull
 	public static File getMinecraftJar() {
 		File mcdir = getMinecraftDir();
 		File versdir = new File(mcdir, "versions");
@@ -105,8 +108,15 @@ public class Filesystem {
 				return new File(best, best.getName() + ".jar");
 			}
 		}
+		
+		File jar = new File(mcdir, "bin/minecraft.jar");
+		
+		if (!jar.exists()) {
+			Log.debug("No minecraft jar found");
+			return null;
+		}
 
-		return new File(mcdir, "bin/minecraft.jar");
+		return jar;
 	}
 
 	/**

@@ -146,10 +146,14 @@ public class CloudsExporter {
 		}
 
 		File zipfile;
-		if (texturePack == null)
+		if (texturePack == null) {
 			zipfile = Filesystem.getMinecraftJar();
-		else
+			if (zipfile == null) {
+				throw new Exception("No resouce pack for cloud texture found!");
+			}
+		} else {
 			zipfile = texturePack;
+		}
 		if (!zipfile.canRead())
 			throw new Exception("Cannot open " + zipfile.getName());
 
