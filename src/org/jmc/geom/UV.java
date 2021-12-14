@@ -22,6 +22,18 @@ public class UV
 	}
 
 	/**
+	 * Convenience constructor, casts to float.
+	 * @param u u coordinate
+	 * @param v v coordinate
+	 */
+	public UV(double u, double v)
+	{
+		this.u = (float) u;
+		this.v = (float) v;
+		recalculated=false;
+	}
+
+	/**
 	 * Copy constructor
 	 * @param other
 	 */

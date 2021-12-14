@@ -211,7 +211,7 @@ public class ChunkProcessor
 					default: Log.debug("isPlanar returned an unknown value!"); break;
 				}
 				//Sort faces into planar groups so merging can be efficient
-				key += Float.toString(f.vertices[0].getByInt(planar));
+				key += Double.toString(f.vertices[0].getByInt(planar));
 				ArrayList<Face> faceList = faceAxisArray.getOrDefault(key, new ArrayList<Face>());
 				faceList.add(f);
 				faceAxisArray.put(key, faceList);
@@ -347,8 +347,8 @@ public class ChunkProcessor
 			
 			//mmdanggg2: if the face extends in the axis we are looking at
 			int extendingIn;
-			float xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
-			float xMin2, xMax2, yMin2, yMax2, zMin2, zMax2;
+			double xMin1, xMax1, yMin1, yMax1, zMin1, zMax1;
+			double xMin2, xMax2, yMin2, yMax2, zMin2, zMax2;
 			xMin1 = xMax1 = verts1[0].x;
 			yMin1 = yMax1 = verts1[0].y;
 			zMin1 = zMax1 = verts1[0].z;

@@ -20,10 +20,10 @@ public class Painting extends EntityModel
 	private void addObject(ChunkProcessor obj, Transform transform, NamespaceID mat)
 	{
 		Vertex[] vertices = new Vertex[4];
-		vertices[0] = new Vertex(-0.5f, -0.5f, -0.47f);
-		vertices[1] = new Vertex( 0.5f, -0.5f, -0.47f);
-		vertices[2] = new Vertex( 0.5f,  0.5f, -0.47f);
-		vertices[3] = new Vertex(-0.5f,  0.5f, -0.47f);
+		vertices[0] = new Vertex(-0.5d, -0.5d, -0.47d);
+		vertices[1] = new Vertex( 0.5d, -0.5d, -0.47d);
+		vertices[2] = new Vertex( 0.5d,  0.5d, -0.47d);
+		vertices[3] = new Vertex(-0.5d,  0.5d, -0.47d);
 		obj.addFace(vertices, null, transform, mat);
 	}
 

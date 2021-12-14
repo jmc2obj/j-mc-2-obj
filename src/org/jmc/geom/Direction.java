@@ -65,7 +65,7 @@ public enum Direction
 	}
 	
 	public static Direction fromVector(Vertex vector) {
-		float ax,ay,az;
+		double ax,ay,az;
 		ax = Math.abs(vector.x);
 		ay = Math.abs(vector.y);
 		az = Math.abs(vector.z);

@@ -26,9 +26,9 @@ public class Slime extends Entity {
 		
 		Transform rotate = Transform.rotation2(yaw+90, pitch ,0);
 		
-		float size = (((TAG_Int) entity.getElement("Size")).value + 1) * 0.51f;
+		double size = (((TAG_Int) entity.getElement("Size")).value + 1) * 0.51d;
 		
-		Transform offset = Transform.translation(0, 0.5f, 0);
+		Transform offset = Transform.translation(0, 0.5, 0);
 		Transform scale = Transform.scale(size, size, size);
 		
 		model.addEntity(obj, translate.multiply(scale.multiply(offset.multiply(rotate))));
@@ -38,9 +38,9 @@ public class Slime extends Entity {
 	@Override
 	public Vertex getPosition(TAG_Compound entity) {
 		TAG_List pos = (TAG_List) entity.getElement("Pos");
-		float ex=(float)((TAG_Double)pos.getElement(0)).value-0.5f;
-		float ey=(float)((TAG_Double)pos.getElement(1)).value-0.5f;
-		float ez=(float)((TAG_Double)pos.getElement(2)).value-0.5f;
+		double ex=((TAG_Double)pos.getElement(0)).value-0.5d;
+		double ey=((TAG_Double)pos.getElement(1)).value-0.5d;
+		double ez=((TAG_Double)pos.getElement(2)).value-0.5d;
 		return new Vertex(ex, ey, ez);
 	}
 }

@@ -53,9 +53,9 @@ public class Transform {
 			throw new RuntimeException("matrix multiply error: last row doesn't add to 1");
 
 		Vertex ret = new Vertex(0, 0, 0);
-		ret.x = (float) (vertex.x * matrix[0][0] + vertex.y * matrix[0][1] + vertex.z * matrix[0][2] + matrix[0][3]);
-		ret.y = (float) (vertex.x * matrix[1][0] + vertex.y * matrix[1][1] + vertex.z * matrix[1][2] + matrix[1][3]);
-		ret.z = (float) (vertex.x * matrix[2][0] + vertex.y * matrix[2][1] + vertex.z * matrix[2][2] + matrix[2][3]);
+		ret.x = vertex.x * matrix[0][0] + vertex.y * matrix[0][1] + vertex.z * matrix[0][2] + matrix[0][3];
+		ret.y = vertex.x * matrix[1][0] + vertex.y * matrix[1][1] + vertex.z * matrix[1][2] + matrix[1][3];
+		ret.z = vertex.x * matrix[2][0] + vertex.y * matrix[2][1] + vertex.z * matrix[2][2] + matrix[2][3];
 		return ret;
 	}
 
@@ -110,12 +110,13 @@ public class Transform {
 		invt[2][1] = (c * d - a * f) / det;
 		invt[2][2] = (a * e - b * d) / det;
 
-		return new Vertex((float) (norm.x * invt[0][0] + norm.y * invt[0][1] + norm.z * invt[0][2]),(float) (norm.x * invt[1][0] + norm.y
-				* invt[1][1] + norm.z * invt[1][2]),(float) (norm.x * invt[2][0] + norm.y * invt[2][1] + norm.z * invt[2][2]));
+		return new Vertex(	norm.x * invt[0][0] + norm.y * invt[0][1] + norm.z * invt[0][2], 
+							norm.x * invt[1][0] + norm.y * invt[1][1] + norm.z * invt[1][2], 
+							norm.x * invt[2][0] + norm.y * invt[2][1] + norm.z * invt[2][2]);
 	}
 
 	@Nonnull
-	public static Transform translation(float x, float y, float z) {
+	public static Transform translation(double x, double y, double z) {
 		Transform t = new Transform();
 
 		t.matrix[0][3] = x;
@@ -125,7 +126,7 @@ public class Transform {
 	}
 
 	@Nonnull
-	public static Transform scale(float x, float y, float z) {
+	public static Transform scale(double x, double y, double z) {
 		Transform t = new Transform();
 
 		t.matrix[0][0] = x;

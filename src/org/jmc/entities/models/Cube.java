@@ -83,7 +83,7 @@ public class Cube extends EntityModel
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides)
+	protected void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
@@ -136,8 +136,8 @@ public class Cube extends EntityModel
 	public void addEntity(ChunkProcessor obj, Transform transform) {
 		
 		addBox(obj,
-				 - 0.5f,  - 0.5f,  - 0.5f,
-				 + 0.5f,  + 0.5f,  + 0.5f, 
+				 - 0.5d,  - 0.5d,  - 0.5d,
+				 + 0.5d,  + 0.5d,  + 0.5d, 
 				transform, 
 				getMtlSides(), 
 				null);

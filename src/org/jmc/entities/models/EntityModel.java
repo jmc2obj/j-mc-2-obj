@@ -178,7 +178,7 @@ public abstract class EntityModel
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides, boolean[] drawSides)
+	protected void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides, boolean[] drawSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 

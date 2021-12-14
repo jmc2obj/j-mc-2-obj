@@ -153,9 +153,9 @@ public class FaceUtils {
 	// Bottom/Top Front/Back Left/Right
 	// BFL,BFR,BBL,BBR,TFL,TFR,TBL,TBR
 	// 0 1 2 3 4 5 6 7
-	private static Vertex OV[] = new Vertex[] { new Vertex(-0.5f, -0.5f, -0.5f), new Vertex(0.5f, -0.5f, -0.5f),
-			new Vertex(-0.5f, -0.5f, 0.5f), new Vertex(0.5f, -0.5f, 0.5f), new Vertex(-0.5f, 0.5f, -0.5f),
-			new Vertex(0.5f, 0.5f, -0.5f), new Vertex(-0.5f, 0.5f, 0.5f), new Vertex(0.5f, 0.5f, 0.5f) };
+	private static Vertex OV[] = new Vertex[] { new Vertex(-0.5d, -0.5d, -0.5d), new Vertex(0.5d, -0.5d, -0.5d),
+			new Vertex(-0.5d, -0.5d, 0.5d), new Vertex(0.5d, -0.5d, 0.5d), new Vertex(-0.5d, 0.5d, -0.5d),
+			new Vertex(0.5d, 0.5d, -0.5d), new Vertex(-0.5d, 0.5d, 0.5d), new Vertex(0.5d, 0.5d, 0.5d) };
 
 	private final static int ovBFL = 0;
 	private final static int ovBFR = 1;
@@ -278,7 +278,7 @@ public class FaceUtils {
 		return ret;
 	}
 
-	public static Face translate(Face face, float x, float y, float z) {
+	public static Face translate(Face face, double x, double y, double z) {
 		Face ret = new Face();
 
 		ret.mtl_idx = face.mtl_idx;
@@ -304,9 +304,9 @@ public class FaceUtils {
 		return ret;
 	}
 
-	private final static float e = 0.001f;
+	private final static double e = 0.001d;
 
-	public static boolean similar(float a, float b) {
+	public static boolean similar(double a, double b) {
 		if (Math.abs(a - b) < e)
 			return true;
 		else
@@ -335,30 +335,30 @@ public class FaceUtils {
 				z = false;
 		}
 
-		float val;
+		double val;
 
 		// occluded order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
 		// 0 1 2 3 4 5
 
 		if (x) {
 			val = face.vertices[0].x;
-			if (similar(val, -0.5f) && !drawSides[3])
+			if (similar(val, -0.5d) && !drawSides[3])
 				return true;
-			if (similar(val, 0.5f) && !drawSides[4])
+			if (similar(val, 0.5d) && !drawSides[4])
 				return true;
 			return false;
 		} else if (y) {
 			val = face.vertices[0].y;
-			if (similar(val, -0.5f) && !drawSides[5])
+			if (similar(val, -0.5d) && !drawSides[5])
 				return true;
-			if (similar(val, 0.5f) && !drawSides[0])
+			if (similar(val, 0.5d) && !drawSides[0])
 				return true;
 			return false;
 		} else if (z) {
 			val = face.vertices[0].z;
-			if (similar(val, -0.5f) && !drawSides[1])
+			if (similar(val, -0.5d) && !drawSides[1])
 				return true;
-			if (similar(val, 0.5f) && !drawSides[2])
+			if (similar(val, 0.5d) && !drawSides[2])
 				return true;
 			return false;
 		}
@@ -389,7 +389,7 @@ public class FaceUtils {
 		N.y = U.z * V.x - U.x * V.z;
 		N.z = U.x * V.y - U.y * V.x;
 
-		float u, v;
+		double u, v;
 
 		if (similar(N.y, 0) && similar(N.z, 0)) {
 			if (N.x > 0) {

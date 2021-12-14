@@ -19,7 +19,7 @@ import com.google.gson.annotations.JsonAdapter;
 @JsonAdapter(Vertex.VertexAdapter.class)
 public class Vertex implements Comparable<Vertex>
 {
-	public float x,y,z;
+	public double x,y,z;
 
 	/**
 	 * Vertex constructor.
@@ -27,7 +27,7 @@ public class Vertex implements Comparable<Vertex>
 	 * @param y y coordinate
 	 * @param z z coordinate
 	 */
-	public Vertex(float x, float y, float z)
+	public Vertex(double x, double y, double z)
 	{
 		this.x=x;
 		this.y=y;
@@ -50,7 +50,7 @@ public class Vertex implements Comparable<Vertex>
 	 * @param i should be 0, 1 or 2
 	 * @return The axis co-ordinate
 	 */
-	public float getByInt(int i)
+	public double getByInt(int i)
 	{
 		if (i == 0) return x;
 		if (i == 1) return y;
@@ -80,11 +80,11 @@ public class Vertex implements Comparable<Vertex>
 	public int hashCode()
 	{
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + Float.floatToIntBits(x);
-		result = prime * result + Float.floatToIntBits(y);
-		result = prime * result + Float.floatToIntBits(z);
-		return result;
+		long result = 1;
+		result = prime * result + Double.doubleToLongBits(x);
+		result = prime * result + Double.doubleToLongBits(y);
+		result = prime * result + Double.doubleToLongBits(z);
+		return (int) result;
 	}
 
 	/**
@@ -114,17 +114,17 @@ public class Vertex implements Comparable<Vertex>
 	
 	public static Vertex midpoint(Vertex v1, Vertex v2)
 	{
-		float x=(v1.x+v2.x)/2.0f;
-		float y=(v1.y+v2.y)/2.0f;
-		float z=(v1.z+v2.z)/2.0f;
+		double x=(v1.x+v2.x)/2.0f;
+		double y=(v1.y+v2.y)/2.0f;
+		double z=(v1.z+v2.z)/2.0f;
 		return new Vertex(x, y, z);
 	}
 	
 	public static Vertex subtract(Vertex a, Vertex b)
 	{
-		float x=a.x-b.x;
-		float y=a.y-b.y;
-		float z=a.z-b.z;
+		double x=a.x-b.x;
+		double y=a.y-b.y;
+		double z=a.z-b.z;
 		return new Vertex(x, y, z);
 	}
 	
@@ -140,9 +140,9 @@ public class Vertex implements Comparable<Vertex>
 		public Vertex deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			try {
 				JsonArray array = json.getAsJsonArray();
-				float x = array.get(0).getAsFloat();
-				float y = array.get(1).getAsFloat();
-				float z = array.get(2).getAsFloat();
+				double x = array.get(0).getAsDouble();
+				double y = array.get(1).getAsDouble();
+				double z = array.get(2).getAsDouble();
 				return new Vertex(x, y, z);
 			} catch (ClassCastException | IllegalStateException e) {
 				throw new JsonParseException("Tried to parse invalid json as Vertex", e);

@@ -95,7 +95,7 @@ public class Registry extends BlockModel {
 	// Get the transform for the blockstate
 	@Nonnull
 	private Transform getStateTrans(ModelInfo modelInfo) {
-		Transform t = Transform.translation(-0.5f, -0.5f, -0.5f);// offset cor to middle of block
+		Transform t = Transform.translation(-0.5d, -0.5d, -0.5d);// offset cor to middle of block
 		t = Transform.rotation(-modelInfo.x, 0, 0).multiply(t);// rotate -x ???
 		t = Transform.rotation(0, modelInfo.y, 0).multiply(t);// then y
 		return t;
@@ -187,12 +187,12 @@ public class Registry extends BlockModel {
 				UV d = new UV(faceUv[2]/16, 1-(faceUv[1]/16));
 				uvs = new UV[] {b, c, d, a};
 			}
-			float xs = elem.from.x/16;
-			float ys = elem.from.y/16;
-			float zs = elem.from.z/16;
-			float xe = elem.to.x/16;
-			float ye = elem.to.y/16;
-			float ze = elem.to.z/16;
+			double xs = elem.from.x/16;
+			double ys = elem.from.y/16;
+			double zs = elem.from.z/16;
+			double xe = elem.to.x/16;
+			double ye = elem.to.y/16;
+			double ze = elem.to.z/16;
 			
 			int rot = faceEntry.getValue().rotation;
 			

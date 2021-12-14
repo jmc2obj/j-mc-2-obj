@@ -69,7 +69,7 @@ public class WriterRunnable implements Runnable {
 	/**
 	 * Offsets of the file. Used to position the chunk in its right location.
 	 */
-	private float x_offset, y_offset, z_offset;
+	private double x_offset, y_offset, z_offset;
 
 	private float file_scale;
 	
@@ -158,7 +158,7 @@ public class WriterRunnable implements Runnable {
 	 * @param y y offset
 	 * @param z z offset
 	 */
-	public void setOffset(float x, float y, float z)
+	public void setOffset(double x, double y, double z)
 	{
 		x_offset=x;
 		y_offset=y;
@@ -222,9 +222,9 @@ public class WriterRunnable implements Runnable {
 	{
 		for (Vertex vertex : exportVertices)
 		{
-			float x = (vertex.x + x_offset) * file_scale;
-			float y = (vertex.y + y_offset) * file_scale;
-			float z = (vertex.z + z_offset) * file_scale;
+			double x = (vertex.x + x_offset) * file_scale;
+			double y = (vertex.y + y_offset) * file_scale;
+			double z = (vertex.z + z_offset) * file_scale;
 			BigDecimal xRound = new BigDecimal(x).setScale(3, RoundingMode.HALF_UP);
 			BigDecimal yRound = new BigDecimal(y).setScale(3, RoundingMode.HALF_UP);
 			BigDecimal zRound = new BigDecimal(z).setScale(3, RoundingMode.HALF_UP);
