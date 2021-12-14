@@ -191,8 +191,8 @@ public class WriterRunnable implements Runnable {
 	{		
 		for (UV uv : exportTexCoords)
 		{
-			BigDecimal uRound = new BigDecimal(uv.u).setScale(9, RoundingMode.HALF_UP);
-			BigDecimal vRound = new BigDecimal(uv.v).setScale(9, RoundingMode.HALF_UP);
+			BigDecimal uRound = new BigDecimal(uv.u).setScale(9, RoundingMode.HALF_UP).stripTrailingZeros();
+			BigDecimal vRound = new BigDecimal(uv.v).setScale(9, RoundingMode.HALF_UP).stripTrailingZeros();
 			out.print("vt " + uRound.toPlainString() + " " + vRound.toPlainString());
 			out.println();
 		}
@@ -206,9 +206,9 @@ public class WriterRunnable implements Runnable {
 	{
 		for (Vertex norm : exportNormals)
 		{
-			BigDecimal xRound = new BigDecimal(norm.x).setScale(3, RoundingMode.HALF_UP);
-			BigDecimal yRound = new BigDecimal(norm.y).setScale(3, RoundingMode.HALF_UP);
-			BigDecimal zRound = new BigDecimal(norm.z).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal xRound = new BigDecimal(norm.x).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
+			BigDecimal yRound = new BigDecimal(norm.y).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
+			BigDecimal zRound = new BigDecimal(norm.z).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
 			out.print("vn " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
 			out.println();
 		}
@@ -225,9 +225,9 @@ public class WriterRunnable implements Runnable {
 			double x = (vertex.x + x_offset) * file_scale;
 			double y = (vertex.y + y_offset) * file_scale;
 			double z = (vertex.z + z_offset) * file_scale;
-			BigDecimal xRound = new BigDecimal(x).setScale(3, RoundingMode.HALF_UP);
-			BigDecimal yRound = new BigDecimal(y).setScale(3, RoundingMode.HALF_UP);
-			BigDecimal zRound = new BigDecimal(z).setScale(3, RoundingMode.HALF_UP);
+			BigDecimal xRound = new BigDecimal(x).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
+			BigDecimal yRound = new BigDecimal(y).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
+			BigDecimal zRound = new BigDecimal(z).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
 			out.print("v " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
 			out.println();
 		}
