@@ -1,5 +1,7 @@
 package org.jmc;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +11,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jmc.BlockInfo.Occlusion;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
@@ -21,6 +24,7 @@ import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.RegistryBlockMaterial;
 import org.jmc.util.CachedGetter;
+import org.jmc.util.Filesystem;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Xml;
@@ -38,7 +42,7 @@ import org.w3c.dom.NodeList;
 public class BlockTypes
 {
 	private static final String CONFIG_FILE = "conf/blocks.conf";
-
+	private static final String CONFIG_FILE_EXTRA = "blocks-*.conf";
 
 	private final static CachedGetter<NamespaceID, BlockInfo> blockTable = new CachedGetter<NamespaceID, BlockInfo>() {
 		@Override
@@ -59,12 +63,12 @@ public class BlockTypes
 	private static BlockInfo nullBlock;
 
 
-	private static void readConfig(CachedGetter<NamespaceID, BlockInfo> blockTable) throws Exception
+	private static void readConfig(CachedGetter<NamespaceID, BlockInfo> blockTable, String filePath) throws Exception
 	{
 		Document doc;
-		try (JmcConfFile confFile = new JmcConfFile(CONFIG_FILE)) {
+		try (JmcConfFile confFile = new JmcConfFile(filePath)) {
 			if (!confFile.hasStream())
-				throw new Exception("Cannot open configuration file " + CONFIG_FILE);
+				throw new Exception("Cannot open configuration file " + filePath);
 			
 			doc = Xml.loadDocument(confFile.getInputStream());
 		}
@@ -443,7 +447,18 @@ public class BlockTypes
 		// create the blocks table
 		Log.info("Reading blocks configuration file...");
 
-		readConfig(blockTable);
+		readConfig(blockTable, CONFIG_FILE);
+		
+		try {
+			FileFilter ff = new WildcardFileFilter(CONFIG_FILE_EXTRA);
+			for (File file : new File(Filesystem.getDatafilesDir(), "conf").listFiles(ff)) {
+				String extraPath = Filesystem.getDatafilesDir().toPath().relativize(file.toPath()).toString();
+				Log.debug(String.format("Loading extra config file: %s", extraPath));
+				readConfig(blockTable, extraPath);
+			}
+		} catch (Exception e) {
+			Log.error("Error loading extra block configs!", e);
+		}
 
 		Log.info("Loaded " + blockTable.size() + " block definitions.");
 	}
