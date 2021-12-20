@@ -156,6 +156,7 @@ public class Registries {
 	}
 
 	public static void reloadResourcePacks() {
+		Log.resetSingles();
 		initialize();
 		try {
 			BlockTypes.initialize();

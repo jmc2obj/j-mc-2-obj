@@ -81,6 +81,7 @@ public class ObjExporter {
 
 		try {
 			Registries.objTextures.clear();
+			resetErrors();
 			
 			if (writeObj) {
 				if (Options.maxX - Options.minX == 0 || Options.maxY - Options.minY == 0
@@ -150,8 +151,6 @@ public class ObjExporter {
 					obj_writer.println();
 					writeRunner.setPrintUseMTL(false);
 				}*///TODO fix single tex export
-				
-				Banner.resetReadError();
 				
 				Log.info("Processing chunks...");
 				
@@ -396,6 +395,11 @@ public class ObjExporter {
 		} catch (Exception e) {
 			Log.error("Error while exporting OBJ:", e);
 		}
+	}
+
+	private static void resetErrors() {
+		Banner.resetReadError();
+		Log.resetSingles();
 	}
 }
 

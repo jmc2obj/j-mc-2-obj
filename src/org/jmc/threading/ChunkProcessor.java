@@ -187,9 +187,8 @@ public class ChunkProcessor
 						if (Boolean.parseBoolean(block.state.get("waterlogged"))) {
 							BlockTypes.get(new BlockData(new NamespaceID("minecraft", "water"))).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						}
-					}
-					catch (Exception ex) {
-						Log.error(String.format("Error rendering block '%s', skipping.", block.id), ex);
+					} catch (Exception ex) {
+						Log.errorOnce(String.format("Error rendering block '%s', skipping.", block.id), ex, true);
 					}
 				}
 			}

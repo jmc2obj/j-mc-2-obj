@@ -129,7 +129,7 @@ public class BlockInfo
 		try {
 			return te.getAverageColour();
 		} catch (IOException e) {
-			Log.error(e.getMessage(), null, false);
+			Log.errorOnce(e.getMessage(), null, false);
 			return Color.MAGENTA;
 		}
 	}

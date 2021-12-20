@@ -39,7 +39,7 @@ public class Registry extends BlockModel {
 		
 		BlockstateEntry bsEntry = Registries.getBlockstate(data.id);
 		if (bsEntry == null) {
-			Log.debug(String.format("Couldn't get blockstate to export %s", data.id.toString()));
+			Log.debugOnce(String.format("Couldn't get blockstate to export %s", data.id.toString()));
 			return;
 		}
 		List<ModelListWeighted> modelParts = bsEntry.getModelsFor(data.state);
@@ -50,7 +50,7 @@ public class Registry extends BlockModel {
 			ModelInfo modelInfo = modelList.getRandomModel();
 			ModelEntry modelEntry = Registries.getModel(modelInfo.id);
 			if (modelEntry == null) {
-				Log.debug(String.format("Couldn't get model %s to export %s", modelInfo.id, bsEntry.id));
+				Log.debugOnce(String.format("Couldn't get model %s to export %s", modelInfo.id, bsEntry.id));
 				continue;
 			}
 			RegistryModel model = modelEntry.generateModel();
@@ -130,7 +130,7 @@ public class Registry extends BlockModel {
 			t = rot.rescale ? Transform.scale(scale, scale, 1).multiply(t) : t;
 			break;
 		default:
-			Log.debug(String.format("Model for %s had invalid rotation axis!", blockId));
+			Log.debugOnce(String.format("Model for %s had invalid rotation axis!", blockId));
 			break;
 		}
 		if (rot.origin != null) {
@@ -166,7 +166,7 @@ public class Registry extends BlockModel {
 			case "down":
 				array[5] = texNs; break;
 			default:
-				Log.debug(String.format("Model for %s had invalid face direction!", blockId));
+				Log.debugOnce(String.format("Model for %s had invalid face direction!", blockId));
 				break;
 			}
 		}
@@ -223,7 +223,7 @@ public class Registry extends BlockModel {
 				rotateUVOrder(uvs, rot);
 				array[5] = uvs; break;
 			default:
-				Log.debug(String.format("Model for %s had invalid face direction!", blockId));
+				Log.debugOnce(String.format("Model for %s had invalid face direction!", blockId));
 				break;
 			}
 		}
@@ -301,7 +301,7 @@ public class Registry extends BlockModel {
 				rotateFaceUVs(array[5], 180);
 				break;
 			default:
-				Log.debug("Bad UV lock rotation!");
+				Log.debugOnce(String.format("Bad UV lock rotation in model for %s", blockId));
 				break;
 			}
 		}
@@ -350,7 +350,7 @@ public class Registry extends BlockModel {
 			try {
 				 faceIndex = Direction.valueOf(faceEntry.getKey().toUpperCase()).getArrIndex();
 			} catch (IllegalArgumentException e) {
-				Log.debug(String.format("Model for %s had invalid face direction '%s'!", blockId, faceEntry.getKey()));
+				Log.debugOnce(String.format("Model for %s had invalid face direction '%s'!", blockId, faceEntry.getKey()));
 				continue;
 			}
 			
@@ -381,7 +381,7 @@ public class Registry extends BlockModel {
 				dir = Direction.DOWN;
 				break;
 			default:
-				Log.debug(String.format("Model for %s had invalid cullface direction!", blockId));
+				Log.debugOnce(String.format("Model for %s had invalid cullface direction!", blockId));
 				continue;
 			}
 			dir = dir.rotate(rotation);
