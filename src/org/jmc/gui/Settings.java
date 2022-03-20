@@ -444,7 +444,11 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			prefs.putInt("LANGUAGE", cbLang.getSelectedIndex());
 			taRestart.setVisible(true);
 		}
-		prefs.put("RESOURCE_PACKS", listPacks.getPrefString());
+		try {
+			prefs.put("RESOURCE_PACKS", listPacks.getPrefString());
+		} catch (IllegalArgumentException e) {
+			Log.error("Resource pack list could not be saved!", e);
+		}
 		prefs.putBoolean("USE_DEFAULT_RESOURCE_PACK", chckbxUsePackDefault.isSelected());
 	}
 
