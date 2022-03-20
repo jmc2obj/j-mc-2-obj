@@ -77,7 +77,7 @@ public class BlockTypes
 		NodeList blockNodes = (NodeList)xpath.evaluate("/blocks/block", doc, XPathConstants.NODESET);
 		for (int i = 0; i < blockNodes.getLength(); i++)
 		{
-			Node blockNode = blockNodes.item(i);
+			Node blockNode = blockNodes.item(i).cloneNode(true);
 
 			String idAttr = Xml.getAttribute(blockNode, "id");
 			if (idAttr == null) {
