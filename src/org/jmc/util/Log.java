@@ -1,11 +1,18 @@
 package org.jmc.util;
 
+import java.awt.Dimension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import org.jmc.Options;
 import org.jmc.Options.UIMode;
@@ -85,23 +92,35 @@ public class Log
 		if (ex != null)
 			ex.printStackTrace();
 		
-		if (Options.uiMode == UIMode.GUI )
-		{
-			MainWindow.log("ERROR: "+msg, true);	
-			if (ex != null)
-			{
-				if(popup == true)
-					JOptionPane.showMessageDialog(MainWindow.main, msg + "\n" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
-				
+		if (Options.uiMode == UIMode.GUI ) {
+			MainWindow.log("ERROR: "+msg, true);
+			if (ex != null) {
 				// write the full stack trace to the message area
 				final StringWriter sw = new StringWriter();
 				ex.printStackTrace(new PrintWriter(sw));
 				MainWindow.log(sw.toString(), true);
-			}
-			else
-			{
+				
+				if(popup == true) {
+					Box panel = Box.createVerticalBox();
+					Box msgBox = Box.createHorizontalBox();
+					JLabel msgLabel = new JLabel(msg);
+					msgBox.add(msgLabel);
+					msgBox.add(Box.createGlue());
+					panel.add(msgBox);
+					JTextArea excArea = new JTextArea(sw.toString(), 5, 120);
+					excArea.setWrapStyleWord(true);
+					excArea.setLineWrap(true);
+					excArea.setOpaque(false);
+					excArea.setBorder(null);
+					excArea.setEditable(false);
+					excArea.setFocusable(false);
+					JScrollPane scrollPane = new JScrollPane(excArea);
+					panel.add(scrollPane);
+					JOptionPane.showMessageDialog(MainWindow.main, panel, Messages.getString("Log.ERROR"), JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
 				if(popup == true)
-					JOptionPane.showMessageDialog(MainWindow.main, msg);
+					JOptionPane.showMessageDialog(MainWindow.main, msg, Messages.getString("Log.ERROR"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
