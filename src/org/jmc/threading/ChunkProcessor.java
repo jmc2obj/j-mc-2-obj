@@ -232,10 +232,9 @@ public class ChunkProcessor
 			optimisedFaces.clear();//Clear out faces list because they have all been added so far
 		}
 		
-		if(Options.renderEntities)
-		{
-			for(TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z))
-			{
+		if (Options.renderEntities) {
+			for (TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z)) {
+				if (entity == null) continue;
 				Entity handler=EntityTypes.getEntity(entity);
 				if (handler!=null) {
 					try {
@@ -248,9 +247,9 @@ public class ChunkProcessor
 					}
 				}
 			}
-	
-			for(TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z))
-			{
+			
+			for (TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z)) {
+				if (entity == null) continue;
 				Entity handler=EntityTypes.getEntity(entity);
 				if(handler!=null) {
 					try {

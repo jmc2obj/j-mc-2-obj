@@ -4,25 +4,28 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 
 import org.jmc.BlockData;
+import org.jmc.OBJInputFile;
+import org.jmc.OBJInputFile.OBJGroup;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
-import org.jmc.geom.UV;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
+import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
 import com.google.gson.JsonElement;
@@ -112,48 +115,64 @@ public class Head extends BlockModel
 		rt = translate.multiply(rotate);
 		
 		NamespaceID[] mtlSides = getMtlSides(data, biome);
-		UV[][] uvSides = new UV[][] {
-				new UV[] { new UV(16/64f, 32/32f), new UV(8/64f, 32/32f), new UV(8/64f, 24/32f), new UV(16/64f, 24/32f) },
-				new UV[] { new UV(8/64f, 16/32f), new UV(16/64f, 16/32f), new UV(16/64f, 24/32f), new UV(8/64f, 24/32f) },
-				new UV[] { new UV(24/64f, 16/32f), new UV(32/64f, 16/32f), new UV(32/64f, 24/32f), new UV(24/64f, 24/32f) },
-				new UV[] { new UV(16/64f, 16/32f), new UV(24/64f, 16/32f), new UV(24/64f, 24/32f), new UV(16/64f, 24/32f) },
-				new UV[] { new UV(0/64f, 16/32f), new UV(8/64f, 16/32f), new UV(8/64f, 24/32f), new UV(0/64f, 24/32f) },
-				new UV[] { new UV(24/64f, 24/32f), new UV(16/64f, 24/32f), new UV(16/64f, 32/32f), new UV(24/64f, 32/32f) },
-			};
 		
 		TAG_Compound te = chunks.getTileEntity(x, y, z);
 		
 		if (te != null) {
 			NBT_Tag skullOwnerNbt = te.getElement("SkullOwner");
 			if (skullOwnerNbt instanceof TAG_Compound) {
-				TAG_Compound skullOwnerTag = (TAG_Compound)skullOwnerNbt;
-				String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
-				if (textureB64 != null) {
-					NBT_Tag nameNbt = skullOwnerTag.getElement("Name");
-					String name;
-					if (nameNbt != null) {
-						name = ((TAG_String)nameNbt).value;
-					} else {
-						String url = extractSkullOwnerTextureUrl(textureB64);
-						name = url.substring(url.lastIndexOf('/') + 1);
-					}
-					NamespaceID texId = new NamespaceID("jmc2obj", "head/player_" + name);
-					Arrays.fill(mtlSides, texId);
-					synchronized (addedMaterials) {
-						if (!addedMaterials.contains(texId)) {
-							Log.info("Downloading new player head texture: " + texId);
-							if (exportSkullOwnerTexture(skullOwnerTag, texId))
-								addedMaterials.add(texId);
-						}
-					}
-				}
+				addPlayerHead(obj, rt, (TAG_Compound)skullOwnerNbt, mtlSides[0]);
+				return;
 			}
 		}
 		
-		addBox(obj, -0.25f,-0.25f,-0.25f, 0.25f,0.25f,0.25f, rt, mtlSides, uvSides, null);
+		addHead(obj, rt, mtlSides[0]);
 	}
 
-	private String extractSkullOwnerTextureUrl(String textureB64) {
+	@ParametersAreNonnullByDefault
+	public static void addPlayerHead(ChunkProcessor obj, Transform rt, TAG_Compound skullOwnerTag, @CheckForNull NamespaceID texID) {
+		if (texID == null) {
+			texID = NamespaceID.fromString("entity/steve");
+		}
+		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
+		if (textureB64 != null) {
+			NBT_Tag nameNbt = skullOwnerTag.getElement("Name");
+			String name;
+			if (nameNbt != null) {
+				name = ((TAG_String)nameNbt).value;
+			} else {
+				String url = extractSkullOwnerTextureUrl(textureB64);
+				name = url.substring(url.lastIndexOf('/') + 1);
+			}
+			texID = new NamespaceID("jmc2obj", "head/player_" + name);
+			synchronized (addedMaterials) {
+				if (!addedMaterials.contains(texID)) {
+					Log.info("Downloading new player head texture: " + texID);
+					if (exportSkullOwnerTexture(skullOwnerTag, texID))
+						addedMaterials.add(texID);
+				}
+			}
+		}
+		addHead(obj, rt, texID);
+	}
+	
+	public static void addHead(ChunkProcessor obj, Transform t, NamespaceID texID) {
+		OBJInputFile objFile = new OBJInputFile();
+		
+		try (JmcConfFile objFileStream = new JmcConfFile("conf/models/player_head.obj")) {
+			objFile.loadFile(objFileStream, texID.getExportSafeString());
+		} catch (IOException e) {
+			Log.error("Cant read player_head.obj", e, true);
+			return;
+		}
+		
+		OBJGroup myObjGroup = objFile.getDefaultObject();
+		myObjGroup = objFile.overwriteMaterial(myObjGroup, texID);
+		
+		objFile.addObjectToOutput(myObjGroup, t, obj);
+	}
+
+	private static String extractSkullOwnerTextureUrl(String textureB64) {
 		String textureStr = new String(Base64.getDecoder().decode(textureB64));
 		try {
 			JsonElement textureJson = JsonParser.parseString(textureStr);
@@ -165,7 +184,7 @@ public class Head extends BlockModel
 
 	}
 
-	private boolean exportSkullOwnerTexture(TAG_Compound skullOwnerTag, NamespaceID texId) {
+	private static boolean exportSkullOwnerTexture(TAG_Compound skullOwnerTag, NamespaceID texId) {
 		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
 		if (textureB64 == null) {
 			Log.error("Couldn't read SkullOwner properties!", null, false);
@@ -176,11 +195,11 @@ public class Head extends BlockModel
 
 		try (InputStream inputStream = new URL(textureUrl).openStream()) {
 			BufferedImage texture = ImageIO.read(inputStream);
-			if (texture.getHeight() == 64) { // Crop new 64px high player textures to old 32px size
-				Log.debug("Cropping "+texId+" from 64px to 32px");
-				BufferedImage croppedTex = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
-				croppedTex.getGraphics().drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
-				texture = croppedTex;
+			if (texture.getHeight() == 32) { // Expand old 32px high player textures to new 64px size
+				Log.debug("Expanding "+texId+" from 32px to 64px");
+				BufferedImage expandedTex = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+				expandedTex.getGraphics().drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
+				texture = expandedTex;
 			}
 			TextureEntry texEntry = Registries.getTexture(texId);
 			texEntry.setImage(texture);
@@ -191,7 +210,7 @@ public class Head extends BlockModel
 		}
 	}
 	
-	private String getSkullOwnerTextureValue(TAG_Compound skullOwnerTag) {
+	private static String getSkullOwnerTextureValue(TAG_Compound skullOwnerTag) {
 		NBT_Tag propertiesNbt = skullOwnerTag.getElement("Properties");
 		if (propertiesNbt instanceof TAG_Compound) {
 			NBT_Tag texturesNbt = ((TAG_Compound)propertiesNbt).getElement("textures");

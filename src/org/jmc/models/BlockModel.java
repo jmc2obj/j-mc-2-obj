@@ -233,7 +233,7 @@ public abstract class BlockModel {
 	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
-	protected void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze,
+	protected static void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze,
 			@CheckForNull Transform trans, NamespaceID[] mtlSides, @CheckForNull UV[][] uvSides, @CheckForNull boolean[] drawSides) {
 		Vertex[] vertices = new Vertex[4];
 

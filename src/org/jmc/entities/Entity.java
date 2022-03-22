@@ -1,10 +1,13 @@
 package org.jmc.entities;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.models.EntityModel;
 import org.jmc.geom.Vertex;
 import org.jmc.threading.ChunkProcessor;
 
+@ParametersAreNonnullByDefault
 public abstract class Entity {
 	
 	protected EntityModel model;
