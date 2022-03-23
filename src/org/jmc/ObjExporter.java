@@ -211,7 +211,7 @@ public class ObjExporter {
 					progress.setProgress(1);
 				Log.info("Saved model to " + objfile.getAbsolutePath());
 
-				if (!Options.objectPerBlock && !Options.objectPerChunk) {
+				if (!Options.objectPerBlock && (!Options.objectPerChunk || Options.objectPerMaterial)) {
 					//mmdanggg2: in maya the obj importer does not recognise the same obj group appearing twice
 					//		so if we want to export per chunk, the current sorting will not work in maya.
 					Log.info("Sorting OBJ file...");
