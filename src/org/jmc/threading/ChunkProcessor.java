@@ -240,6 +240,8 @@ public class ChunkProcessor
 					try {
 						Vertex pos = handler.getPosition(entity);
 						if (pos.x > xmin && pos.y > ymin && pos.z > zmin && pos.x < xmax && pos.y < ymax && pos.z < zmax) {
+							if(Options.objectPerBlock)
+								chunk_idx_count++;
 							handler.addEntity(this, entity);
 						}
 					} catch (Exception ex) {
@@ -255,6 +257,8 @@ public class ChunkProcessor
 					try {
 						Vertex pos = handler.getPosition(entity);
 						if (pos.x > xmin && pos.y > ymin && pos.z > zmin && pos.x < xmax && pos.y < ymax && pos.z < zmax) {
+							if(Options.objectPerBlock)
+								chunk_idx_count++;
 							handler.addEntity(this, entity);
 						}
 					}

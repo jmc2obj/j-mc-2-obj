@@ -46,6 +46,8 @@ import org.jmc.ProgressCallback;
 import org.jmc.StopCallback;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
+import javax.swing.JSeparator;
+import java.awt.Insets;
 
 @SuppressWarnings("serial")
 public class ExportWindow extends JmcFrame implements ProgressCallback {
@@ -95,7 +97,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JPanel holderCloudExports;
 	private JPanel holderTexExport;
 	private JPanel holderMapScale;
-	private JPanel holderSepBlock;
 	private JPanel holderExportPanel;
 	private JPanel holderLeft;
 	private JPanel holderTop;
@@ -115,6 +116,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JPanel holderExtraMapsText;
 	private JPanel holderSingleTexOpts;
 	private JCheckBox chckbxExportTextures;
+	private JCheckBox chckbxSeparateBlockOccl;
 
 
 	/**
@@ -124,7 +126,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		super("Export...");
 
-		setBounds(100, 100, 500, 475);
+		setBounds(100, 100, 500, 500);
 
 		contentPane = new JPanel();
 		prefs = MainWindow.settings.getPreferences();
@@ -363,11 +365,15 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		chckbxConvertOreTo = new JCheckBox(Messages.getString("OBJExportOptions.CONVERTORES"));
 		pExportOptions.add(chckbxConvertOreTo);
+		
+		JSeparator separator = new JSeparator();
+		pExportOptions.add(separator);
 
 		chckbxSeparateMat = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_MTL"));
 		pExportOptions.add(chckbxSeparateMat);
 
 		chckbxSeparateMatOccl = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_MTL_OCCL"));
+		chckbxSeparateMatOccl.setMargin(new Insets(2, 12, 2, 2));
 		pExportOptions.add(chckbxSeparateMatOccl);
 
 		chckbxSeparateChunk = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_CHUNK"));
@@ -376,7 +382,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//##########################################################################################################
 		//SeperateBlocks
 		//##########################################################################################################
-		holderSepBlock = new JPanel();
+		JPanel holderSepBlock = new JPanel();
 		holderSepBlock.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderSepBlock);
 		holderSepBlock.setLayout(new BoxLayout(holderSepBlock, BoxLayout.X_AXIS));
@@ -389,6 +395,13 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		lblSepBlockWarn.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblSepBlockWarn.setToolTipText(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK_WARNING"));
 		lblSepBlockWarn.setForeground(Color.RED);
+		
+		chckbxSeparateBlockOccl = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK_OCCL"));
+		chckbxSeparateBlockOccl.setMargin(new Insets(2, 12, 2, 2));
+		pExportOptions.add(chckbxSeparateBlockOccl);
+		
+		JSeparator separator_1 = new JSeparator();
+		pExportOptions.add(separator_1);
 
 		//##########################################################################################################
 		//DoubleSidedFaces
@@ -827,6 +840,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateMatOccl.addActionListener(genericSaveAction);
 		chckbxSeparateChunk.addActionListener(genericSaveAction);
 		chckbxSeparateBlock.addActionListener(genericSaveAction);
+		chckbxSeparateBlockOccl.addActionListener(genericSaveAction);
 
 		chckbxDoubleSidedFaces.addActionListener(genericSaveAction);
 		chckbxOptimiseGeo.addActionListener(genericSaveAction);
@@ -893,6 +907,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateMatOccl.setSelected(prefs.getBoolean("OBJ_PER_MTL_OCCL", true));
 		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
+		chckbxSeparateBlockOccl.setSelected(prefs.getBoolean("OBJ_PER_BLOCK_OCCL", false));
 		chckbxDoubleSidedFaces.setSelected(prefs.getBoolean("DOUBLE_SINGLE_FACES", false));
 		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
@@ -968,12 +983,12 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("RENDER_UNKNOWN", Options.renderUnknown);
-		prefs.putBoolean("OBJ_PER_MTL", Options.objectPerMaterial);
+		prefs.putBoolean("OBJ_PER_MTL", chckbxSeparateMat.isSelected());
 		prefs.putBoolean("OBJ_PER_MTL_OCCL", Options.objectPerMaterialOcclusion);
-		prefs.putBoolean("OBJ_PER_CHUNK", Options.objectPerChunk);
+		prefs.putBoolean("OBJ_PER_CHUNK", chckbxSeparateChunk.isSelected());
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
 		prefs.putBoolean("DOUBLE_SINGLE_FACES", Options.doubleSidedFaces);
-		prefs.putBoolean("OPTIMISE_GEO", Options.optimiseGeometry);
+		prefs.putBoolean("OPTIMISE_GEO", chckbxOptimiseGeo.isSelected());
 		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
 		prefs.putBoolean("SINGLE_MTL", Options.singleMaterial);
 		prefs.putBoolean("REMOVE_DUPLICATES", Options.removeDuplicates);
@@ -1001,7 +1016,19 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			chckbxOptimiseGeo.setEnabled(true);
 		}
 
-		if (chckbxSeparateMat.isSelected()) {
+		if (chckbxSeparateBlock.isSelected()) {
+			chckbxSeparateBlockOccl.setEnabled(true);
+			chckbxSeparateMat.setEnabled(false);
+			chckbxSeparateChunk.setEnabled(false);
+			chckbxOptimiseGeo.setEnabled(false);
+		} else {
+			chckbxSeparateBlockOccl.setEnabled(false);
+			chckbxSeparateMat.setEnabled(true);
+			chckbxSeparateChunk.setEnabled(true);
+			chckbxOptimiseGeo.setEnabled(true);
+		}
+
+		if (chckbxSeparateMat.isSelected() && chckbxSeparateMat.isEnabled()) {
 			chckbxSeparateMatOccl.setEnabled(true);
 		} else {
 			chckbxSeparateMatOccl.setEnabled(false);
@@ -1040,10 +1067,11 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.renderBiomes = chckbxRenderBiomes.isSelected();
 		Options.renderEntities = chckbxRenderEntities.isSelected();
 		Options.renderUnknown = chckbxRenderUnknownBlocks.isSelected();
-		Options.objectPerMaterial = chckbxSeparateMat.isSelected();
+		Options.objectPerMaterial = chckbxSeparateMat.isSelected() && chckbxSeparateMat.isEnabled();
 		Options.objectPerMaterialOcclusion = chckbxSeparateMatOccl.isSelected();
-		Options.objectPerChunk = chckbxSeparateChunk.isSelected();
+		Options.objectPerChunk = chckbxSeparateChunk.isSelected() && chckbxSeparateChunk.isEnabled();
 		Options.objectPerBlock = chckbxSeparateBlock.isSelected();
+		Options.objectPerBlockOcclusion = chckbxSeparateBlockOccl.isSelected();
 		Options.doubleSidedFaces = chckbxDoubleSidedFaces.isSelected();
 		Options.optimiseGeometry = chckbxOptimiseGeo.isSelected() && chckbxOptimiseGeo.isEnabled();
 		Options.convertOres = chckbxConvertOreTo.isSelected();

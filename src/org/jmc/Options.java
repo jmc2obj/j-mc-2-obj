@@ -169,14 +169,20 @@ public class Options
 	public static boolean objectPerChunk = false;
 
 	/**
-	 * If true, will add extra faces to backside of standalone faces.
-	 */
-	public static boolean doubleSidedFaces = false;
-
-	/**
 	 * If true, will export a separate object for each block.
 	 */
 	public static boolean objectPerBlock = false;
+
+	/**
+	 * If false and objectPerBlock is true, will ignore occlusion rules
+	 * and always create faces for adjacent blocks.
+	 */
+	public static boolean objectPerBlockOcclusion = false;
+
+	/**
+	 * If true, will add extra faces to backside of standalone faces.
+	 */
+	public static boolean doubleSidedFaces = false;
 	
 	/**
 	 * If true, will convert ore blocks to stone.	

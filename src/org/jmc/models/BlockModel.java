@@ -140,7 +140,7 @@ public abstract class BlockModel {
 	 * @return true if side needs to be drawn
 	 */
 	protected boolean drawSide(Direction side, BlockData data, @CheckForNull BlockData neighbourData) {
-		if (Options.objectPerBlock)
+		if (Options.objectPerBlock && !Options.objectPerBlockOcclusion)
 			return true;
 
 		if (neighbourData == null || neighbourData.id == NamespaceID.NULL)
