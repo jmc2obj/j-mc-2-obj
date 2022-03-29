@@ -13,8 +13,6 @@ public class ChunkDataBuffer {
 	private Rectangle xyBoundaries;
 	Map<Point,Blocks> chunks;
 	Map<Point, Integer> chunkUsers;
-	
-	private boolean is_anvil;
 
 	public ChunkDataBuffer(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
 	{
@@ -53,8 +51,6 @@ public class ChunkDataBuffer {
 		synchronized (this) {
 			chunks.put(p, blocks);
 			addChunkUser(p);
-			
-			is_anvil=chunk.isAnvil();
 			return true;
 		}
 	}
@@ -110,9 +106,5 @@ public class ChunkDataBuffer {
 	public Rectangle getXYBoundaries()
 	{
 		return xyBoundaries;
-	}
-
-	public synchronized boolean isAnvil() {
-		return is_anvil;
 	}
 }

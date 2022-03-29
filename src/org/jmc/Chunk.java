@@ -61,7 +61,6 @@ public class Chunk {
 	 */
 	private final boolean is_anvil;
 
-
 	/**
 	 * 64x64 color image of topmost blocks in chunk.  
 	 */
@@ -627,10 +626,5 @@ public class Chunk {
 	public BufferedImage getHeightImage()
 	{
 		return height_image;
-	}
-
-	public boolean isAnvil()
-	{
-		return is_anvil;
 	}
 }
