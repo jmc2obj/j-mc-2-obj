@@ -20,6 +20,7 @@ import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_List;
 import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
+import org.jmc.geom.UV;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
@@ -125,8 +126,20 @@ public class Head extends BlockModel
 				return;
 			}
 		}
-		
-		addHead(obj, rt, mtlSides[0]);
+		String headType = getConfigNodeValue("headtype", 0);
+		if (headType != null && headType.equals("MobHalfTex")) {
+			UV[][] uvSides = new UV[][] {
+				new UV[] { new UV(16/64f, 32/32f), new UV(8/64f, 32/32f), new UV(8/64f, 24/32f), new UV(16/64f, 24/32f) },
+				new UV[] { new UV(8/64f, 16/32f), new UV(16/64f, 16/32f), new UV(16/64f, 24/32f), new UV(8/64f, 24/32f) },
+				new UV[] { new UV(24/64f, 16/32f), new UV(32/64f, 16/32f), new UV(32/64f, 24/32f), new UV(24/64f, 24/32f) },
+				new UV[] { new UV(16/64f, 16/32f), new UV(24/64f, 16/32f), new UV(24/64f, 24/32f), new UV(16/64f, 24/32f) },
+				new UV[] { new UV(0/64f, 16/32f), new UV(8/64f, 16/32f), new UV(8/64f, 24/32f), new UV(0/64f, 24/32f) },
+				new UV[] { new UV(24/64f, 24/32f), new UV(16/64f, 24/32f), new UV(16/64f, 32/32f), new UV(24/64f, 32/32f) },
+			};
+			addBox(obj, -0.25f,-0.25f,-0.25f, 0.25f,0.25f,0.25f, rt, mtlSides, uvSides, null);
+		} else {
+			addHead(obj, rt, mtlSides[0]);
+		}
 	}
 
 	@ParametersAreNonnullByDefault

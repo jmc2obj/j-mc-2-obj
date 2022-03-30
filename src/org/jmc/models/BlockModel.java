@@ -60,13 +60,15 @@ public abstract class BlockModel {
 	 * @param index
 	 * @return String
 	 */
+	@CheckForNull
 	public String getConfigNodeValue(String tagName, int index) {
 		XPath xpath = XPathFactory.newInstance().newXPath();
-		String configValue = "";
+		String configValue = null;
 		try {
 			NodeList configNode = (NodeList) xpath.evaluate(tagName, this.configNode, XPathConstants.NODESET);
 			Node currentItem = configNode.item(index);
-			configValue = currentItem.getTextContent();
+			if (currentItem != null)
+				configValue = currentItem.getTextContent();
 		} catch (Exception e) {
 			Log.error("Cant read config Node", e, true);
 		}

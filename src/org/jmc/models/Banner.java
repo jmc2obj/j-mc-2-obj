@@ -89,6 +89,8 @@ public class Banner extends BlockModel {
 
         // get banner type from block config
         String bannerType = getConfigNodeValue("bannertype", 0);
+        if (bannerType == null)
+            bannerType = "standing";
 
         // banner facing
         double rotation = 0;
