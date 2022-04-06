@@ -47,14 +47,18 @@ public abstract class CachedGetter <K, V> {
 			}
 		}
 		// we are the creator, add to map
-		V entry = make(key);
-		synchronized (this) {
-			entries.put(key, Optional.ofNullable(entry));
-			creatingStates.remove(key);
-			creatingState.set(false);
-			this.notifyAll();
-			return entry;
+		V entry = null;
+		try {
+			entry = make(key);
+		} finally {
+			synchronized (this) {
+				entries.put(key, Optional.ofNullable(entry));
+				creatingStates.remove(key);
+				creatingState.set(false);
+				this.notifyAll();
+			}
 		}
+		return entry;
 	}
 	
 	/** @return Unmodifiable map of the entries */

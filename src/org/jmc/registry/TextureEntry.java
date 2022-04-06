@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.io.FilenameUtils;
 import org.jmc.TextureExporter;
 import org.jmc.registry.Registries.RegType;
+import org.jmc.util.Log;
 import org.jmc.util.ResourcePackIO;
 
 import com.google.gson.Gson;
@@ -155,7 +156,7 @@ public class TextureEntry extends RegistryEntry {
 			}
 		} catch (IOException e) {
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			Log.errorOnce(String.format("Coudn't parse animation json for %s", getFilePath()), e, true);
 		}
 		return image;
 	}
