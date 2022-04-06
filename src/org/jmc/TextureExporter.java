@@ -127,7 +127,11 @@ public class TextureExporter {
 		if ((img.getType() == BufferedImage.TYPE_BYTE_INDEXED || img.getType() == BufferedImage.TYPE_BYTE_BINARY) && img.getColorModel() instanceof IndexColorModel) {
 			result = new BufferedImage(width, height, img.getType(), (IndexColorModel) img.getColorModel());
 		} else {
-			result = new BufferedImage(width, height, img.getType());
+			if (img.getType() == 0) {
+				result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			} else {
+				result = new BufferedImage(width, height, img.getType());
+			}
 		}
 		return result;
 	}
