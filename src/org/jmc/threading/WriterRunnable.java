@@ -2,8 +2,8 @@ package org.jmc.threading;
 
 import java.awt.Point;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.OBJFace;
 import org.jmc.Options;
 import org.jmc.ProgressCallback;
-import org.jmc.StopCallback;
 import org.jmc.UVRecalculate;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
@@ -22,6 +21,7 @@ import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
+import org.jmc.util.Log;
 
 public class WriterRunnable implements Runnable {
 
@@ -78,16 +78,14 @@ public class WriterRunnable implements Runnable {
 	private PrintWriter obj_writer;
 	
 	private ProgressCallback progress;
-	private StopCallback stop;
 	private int chunksToDo;
 	
-	public WriterRunnable(ThreadOutputQueue queue, PrintWriter writer, ProgressCallback progress, StopCallback stop, int chunksToDo) {
+	public WriterRunnable(ThreadOutputQueue queue, PrintWriter writer, ProgressCallback progress, int chunksToDo) {
 		super();
 		
 		outputQueue = queue;
 		obj_writer = writer;
 		this.progress = progress;
-		this.stop = stop;
 		this.chunksToDo = chunksToDo;
 		
 		x_offset = 0;
@@ -114,18 +112,12 @@ public class WriterRunnable implements Runnable {
 	public void run() {
 		ChunkOutput chunkOut;
 		int chunksDone = 0;
-		while (true) {
-			if (stop != null && stop.stopRequested())
-				break;
+		while (!Thread.interrupted()) {
 			//Check for chunks in queue
 			try {
-				chunkOut = outputQueue.getNext();
+				chunkOut = outputQueue.take();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-				break;
-			}
-			//if none left, kill thread
-			if (chunkOut == null) {
+				Log.debug(String.format("Writer %s interrupted!", Thread.currentThread().getName()));
 				break;
 			}
 			

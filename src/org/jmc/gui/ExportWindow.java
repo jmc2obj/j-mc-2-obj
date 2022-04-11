@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -43,18 +45,15 @@ import org.jmc.ObjExporter;
 import org.jmc.Options;
 import org.jmc.Options.OffsetType;
 import org.jmc.ProgressCallback;
-import org.jmc.StopCallback;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
-import javax.swing.JSeparator;
-import java.awt.Insets;
 
 @SuppressWarnings("serial")
 public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 	private Preferences prefs;
 
-	private boolean stop;
+	private Thread exportThread;
 
 	private JPanel contentPane;
 
@@ -709,24 +708,20 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 						btnStartExport.setEnabled(false);
 						btnForceStop.setEnabled(true);
 
-						Thread t = new Thread(new Runnable() {
+						if (exportThread != null) {
+							exportThread.interrupt();
+						}
+						exportThread = new Thread(new Runnable() {
 							@Override
 							public void run() {
-								stop = false;
-
-								ObjExporter.export(ExportWindow.this, new StopCallback() {
-									@Override
-									public boolean stopRequested() {
-										return stop;
-									}
-								}, true, true, Options.exportTex);
-
+								ObjExporter.export(ExportWindow.this, true, true, Options.exportTex);
+								
 								btnStartExport.setEnabled(true);
 								btnForceStop.setEnabled(false);
 							}
 						});
-						t.setName("ExportThread");
-						t.start();
+						exportThread.setName("ExportThread");
+						exportThread.start();
 
 					}
 
@@ -785,24 +780,20 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					btnStartExport.setEnabled(false);
 					btnForceStop.setEnabled(true);
 
-					Thread t = new Thread(new Runnable() {
+					if (exportThread != null) {
+						exportThread.interrupt();
+					}
+					exportThread = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							stop = false;
-
-							ObjExporter.export(ExportWindow.this, new StopCallback() {
-								@Override
-								public boolean stopRequested() {
-									return stop;
-								}
-							}, true, true, Options.exportTex);
-
+							ObjExporter.export(ExportWindow.this, true, true, Options.exportTex);
+							
 							btnStartExport.setEnabled(true);
 							btnForceStop.setEnabled(false);
 						}
 					});
-					t.setName("ExportThread");
-					t.start();
+					exportThread.setName("ExportThread");
+					exportThread.start();
 
 				} else {
 
@@ -855,7 +846,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		btnForceStop.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				stop = true;
+				if (exportThread != null) {
+					exportThread.interrupt();
+				}
 			}
 		});
 

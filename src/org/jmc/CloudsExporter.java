@@ -115,7 +115,11 @@ public class CloudsExporter {
 			}
 		}
 
-		queue.add(new ChunkOutput(null, faces));
+		try {
+			queue.put(new ChunkOutput(null, faces));
+		} catch (InterruptedException e) {
+			Log.error("CloudExporter interrupted!", e, false);
+		}
 	}
 	
 
@@ -183,8 +187,8 @@ public class CloudsExporter {
 			
 			writer = new PrintWriter(new FileWriter(new File(destination, outputFileName)));
 			
-			ThreadOutputQueue outputQueue = new ThreadOutputQueue();
-			WriterRunnable writeRunner = new WriterRunnable(outputQueue, writer, null, null, 1);
+			ThreadOutputQueue outputQueue = new ThreadOutputQueue(1);
+			WriterRunnable writeRunner = new WriterRunnable(outputQueue, writer, null, 1);
 			writeRunner.setPrintUseMTL(false);
 			writeRunner.setOffset(-image.getWidth()/2, 128f/12f, -image.getHeight()/2);
 			writeRunner.setScale(12.0f);
@@ -196,7 +200,8 @@ public class CloudsExporter {
 			writeThread.start();
 			
 			renderClouds(image, outputQueue);
-			outputQueue.finish();
+			outputQueue.waitUntilEmpty();
+			writeThread.interrupt();
 			writeThread.join();
 			
 			Log.info("Done.");

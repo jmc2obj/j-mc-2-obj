@@ -3,7 +3,6 @@ package org.jmc;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -48,15 +47,12 @@ public class ObjExporter {
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
-	 * @param stop
-	 *            If not null, the exporter will poll this callback to check if
-	 *            the operation should be cancelled.
 	 * @param writeObj
 	 *            Whether to write the .obj file
 	 * @param writeMtl
 	 *            Whether to write the .mtl file
 	 */
-	public static void export(@CheckForNull ProgressCallback progress, @CheckForNull StopCallback stop, boolean writeObj, boolean writeMtl, boolean writeTex) {
+	public static void export(@CheckForNull ProgressCallback progress, boolean writeObj, boolean writeMtl, boolean writeTex) {
 		File objfile = new File(Options.outputDir, Options.objFileName);
 		File mtlfile = new File(Options.outputDir, Options.mtlFileName);
 		File tmpdir = new File(Options.outputDir, "temp");
@@ -76,6 +72,9 @@ public class ObjExporter {
 			Log.error("Cannot write to the chosen location!", e);
 			return;
 		}
+		
+		Thread[] threads = new Thread[Options.exportThreads];
+		Thread writeThread = null;
 		
 		long exportTimer = System.nanoTime();
 
@@ -133,9 +132,9 @@ public class ObjExporter {
 						Options.maxY, Options.minZ, Options.maxZ);
 				
 				ThreadInputQueue inputQueue = new ThreadInputQueue();
-				ThreadOutputQueue outputQueue = new ThreadOutputQueue();
+				ThreadOutputQueue outputQueue = new ThreadOutputQueue(1);
 
-				WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, stop, chunksToDo);
+				WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
 				writeRunner.setOffset(oxs, oys, ozs);
 				writeRunner.setScale(Options.scale);
 
@@ -154,15 +153,14 @@ public class ObjExporter {
 				
 				Log.info("Processing chunks...");
 				
-				Thread[] threads = new Thread[Options.exportThreads];
 				for (int i = 0; i < Options.exportThreads; i++){
-					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue, stop));
+					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
 					threads[i].setName("ReadThread-" + i);
 					threads[i].setPriority(Thread.NORM_PRIORITY - 1);
 					threads[i].start();
 				}
 
-				Thread writeThread = new Thread(writeRunner);
+				writeThread = new Thread(writeRunner);
 				writeThread.setName("WriteThread");
 				writeThread.start();
 				
@@ -194,7 +192,8 @@ public class ObjExporter {
 				Log.debug("Reading Chunks:" + (System.nanoTime() - objTimer2)/1000000000d);
 				objTimer2 = System.nanoTime();
 				
-				outputQueue.finish();
+				outputQueue.waitUntilEmpty();
+				writeThread.interrupt();
 				writeThread.join();
 				
 				Log.debug("Writing File:" + (System.nanoTime() - objTimer2)/1000000000d);
@@ -204,7 +203,7 @@ public class ObjExporter {
 
 				obj_writer.close();
 				
-				if (stop != null && stop.stopRequested())
+				if (Thread.interrupted())
 					return;
 
 				if (progress != null)
@@ -392,8 +391,18 @@ public class ObjExporter {
 			}
 			Log.info("Export Time:" + (System.nanoTime() - exportTimer)/1000000000d);
 			Log.info("Done!");
+		} catch (InterruptedException e) {
+			Log.debug("Export interrupted!");
 		} catch (Exception e) {
 			Log.error("Error while exporting OBJ:", e);
+		} finally {
+			for (Thread t : threads) {
+				t.interrupt();
+			}
+			if (writeThread != null) {
+				writeThread.interrupt();
+			}
+			System.gc();
 		}
 	}
 

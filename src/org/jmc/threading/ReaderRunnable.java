@@ -4,9 +4,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import org.jmc.ChunkDataBuffer;
-import org.jmc.StopCallback;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
+import org.jmc.util.Log;
 
 public class ReaderRunnable implements Runnable {
 	private ChunkDataBuffer chunkBuffer;
@@ -15,9 +15,8 @@ public class ReaderRunnable implements Runnable {
 	private Point chunkEnd;
 	private ThreadInputQueue inputQueue;
 	private ThreadOutputQueue outputQueue;
-	private StopCallback stop;
 	
-	public ReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadOutputQueue outQueue, StopCallback stop) {
+	public ReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadOutputQueue outQueue) {
 		super();
 		this.chunkBuffer = chunk_buffer;
 		this.chunkDeligate = new ThreadChunkDeligate(chunk_buffer);
@@ -25,15 +24,12 @@ public class ReaderRunnable implements Runnable {
 		this.chunkEnd = chunkEnd;
 		this.inputQueue = inQueue;
 		this.outputQueue = outQueue;
-		this.stop = stop;
 	}
 
 	@Override
 	public void run() {
 		Point chunkCoord;
-		while (true) {
-			if (stop != null && stop.stopRequested())
-				break;
+		while (!Thread.interrupted()) {
 			try {
 				chunkCoord = inputQueue.getNext();
 			} catch (InterruptedException e) {
@@ -47,7 +43,12 @@ public class ReaderRunnable implements Runnable {
 			if (output == null){
 				continue;
 			}
-			outputQueue.add(output);
+			try {
+				outputQueue.put(output);
+			} catch (InterruptedException e) {
+				Log.debug(String.format("Reader %s interrupted!", Thread.currentThread().getName()));
+				break;
+			}
 		}
 	}
 	

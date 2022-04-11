@@ -2,14 +2,13 @@ package org.jmc.threading;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jmc.geom.FaceUtils.Face;
 
-public class ThreadOutputQueue {
-	private Queue<ChunkOutput> outputQueue = new LinkedList<ChunkOutput>();
-	private boolean finished = false;
+public class ThreadOutputQueue{
+	private final BlockingQueue<ChunkOutput> outputQueue;
 	
 	public static class ChunkOutput {
 		private Point chunkCoord;
@@ -29,24 +28,37 @@ public class ThreadOutputQueue {
 		}
 	}
 	
-	public synchronized void add(ChunkOutput outChunk){
-		outputQueue.add(outChunk);
-		notify();
-	}
-
-	public synchronized ChunkOutput getNext() throws InterruptedException {
-		while (true) {
-			if (!outputQueue.isEmpty()) {
-				return outputQueue.remove();
-			} else if (finished) {
-				return null;
-			}
-			wait();
-		}
+	public ThreadOutputQueue(int queueSize) {
+		outputQueue = new LinkedBlockingQueue<ChunkOutput>(queueSize);
 	}
 	
-	public synchronized void finish(){
-		finished = true;
+	/**
+	 * Calls {@link BlockingQueue#put()}
+	 * @param outChunk the {@link ChunkOutput chunk} to put in the queue
+	 * @throws InterruptedException
+	 */
+	public void put(ChunkOutput outChunk) throws InterruptedException {
+		outputQueue.put(outChunk);
+	}
+	
+	/**
+	 * Calls {@link BlockingQueue#take()} and notifies {@link #waitUntilEmpty()}
+	 * @throws InterruptedException
+	 */
+	public synchronized ChunkOutput take() throws InterruptedException {
+		ChunkOutput outChunk = outputQueue.take();
 		notifyAll();
+		return outChunk;
+	}
+	
+	
+	/**
+	 * Waits on this until take is called and queue is emptied
+	 * @throws InterruptedException
+	 */
+	public synchronized void waitUntilEmpty() throws InterruptedException {
+		while (!outputQueue.isEmpty()) {
+			wait();
+		}
 	}
 }
