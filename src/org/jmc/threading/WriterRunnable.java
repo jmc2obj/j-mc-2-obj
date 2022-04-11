@@ -2,7 +2,6 @@ package org.jmc.threading;
 
 import java.awt.Point;
 import java.io.PrintWriter;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -179,13 +178,10 @@ public class WriterRunnable implements Runnable {
 	 * Write texture coordinates. These will be shared by all chunks.
 	 * @param out writer of the OBJ file
 	 */
-	private void appendTextures(PrintWriter out)
-	{		
-		for (UV uv : exportTexCoords)
-		{
-			BigDecimal uRound = new BigDecimal(uv.u).setScale(9, RoundingMode.HALF_UP).stripTrailingZeros();
-			BigDecimal vRound = new BigDecimal(uv.v).setScale(9, RoundingMode.HALF_UP).stripTrailingZeros();
-			out.print("vt " + uRound.toPlainString() + " " + vRound.toPlainString());
+	private void appendTextures(PrintWriter out) {
+		DecimalFormat df = new DecimalFormat("0.000000000");
+		for (UV uv : exportTexCoords) {
+			out.print("vt " + df.format(uv.u) + " " + df.format(uv.v));
 			out.println();
 		}
 	}
@@ -194,14 +190,10 @@ public class WriterRunnable implements Runnable {
 	 * Write normals. These will be shared by all chunks.
 	 * @param out writer of the OBJ file
 	 */
-	private void appendNormals(PrintWriter out)
-	{
-		for (Vertex norm : exportNormals)
-		{
-			BigDecimal xRound = new BigDecimal(norm.x).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
-			BigDecimal yRound = new BigDecimal(norm.y).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
-			BigDecimal zRound = new BigDecimal(norm.z).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
-			out.print("vn " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
+	private void appendNormals(PrintWriter out) {
+		DecimalFormat df = new DecimalFormat("0.000");
+		for (Vertex norm : exportNormals) {
+			out.print("vn " + df.format(norm.x) + " " + df.format(norm.y) + " " + df.format(norm.z));
 			out.println();
 		}
 	}
@@ -210,17 +202,13 @@ public class WriterRunnable implements Runnable {
 	 * Appends vertices to the file.
 	 * @param out
 	 */
-	private void appendVertices(PrintWriter out)
-	{
-		for (Vertex vertex : exportVertices)
-		{
+	private void appendVertices(PrintWriter out) {
+		DecimalFormat df = new DecimalFormat("0.000");
+		for (Vertex vertex : exportVertices) {
 			double x = (vertex.x + x_offset) * file_scale;
 			double y = (vertex.y + y_offset) * file_scale;
 			double z = (vertex.z + z_offset) * file_scale;
-			BigDecimal xRound = new BigDecimal(x).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
-			BigDecimal yRound = new BigDecimal(y).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
-			BigDecimal zRound = new BigDecimal(z).setScale(3, RoundingMode.HALF_UP).stripTrailingZeros();
-			out.print("v " + xRound.toPlainString() + " " + yRound.toPlainString() + " " + zRound.toPlainString());
+			out.print("v " + df.format(x) + " " + df.format(y) + " " + df.format(z));
 			out.println();
 		}
 	}
@@ -306,13 +294,11 @@ public class WriterRunnable implements Runnable {
 				// add vertices
 				Vertex vert;
 				vert = verts[i];
-		
-				if (vertexMap.containsKey(vert))
-				{
-					face.vertices[i] = vertexMap.get(vert);
-				}
-				else 
-				{
+				
+				Integer vertId = vertexMap.get(vert); 
+				if (vertId != null) {
+					face.vertices[i] = vertId;
+				} else  {
 					exportVertices.add(vert);
 					vertexMap.put(vert, vertex_counter);
 					face.vertices[i] = vertex_counter;
@@ -320,17 +306,14 @@ public class WriterRunnable implements Runnable {
 				}
 		
 				// add normals
-				if (norms != null)
-				{
+				if (norms != null) {
 					Vertex norm;
 					norm = norms[i];
-		
-					if (normalsMap.containsKey(norm))
-					{
-						face.normals[i] = normalsMap.get(norm);
-					}
-					else
-					{
+					
+					Integer normId = normalsMap.get(norm);
+					if (normId != null) {
+						face.normals[i] = normId;
+					} else {
 						exportNormals.add(norm);
 						normalsMap.put(norm, norm_counter);
 						face.normals[i] = norm_counter;
@@ -339,14 +322,11 @@ public class WriterRunnable implements Runnable {
 				}
 		
 				// add texture coords
-				if (uv != null)
-				{
-					if (texCoordMap.containsKey(uv[i]))	
-					{
-						face.uv[i] = texCoordMap.get(uv[i]);
-					}
-					else
-					{
+				if (uv != null) {
+					Integer uvId = texCoordMap.get(uv[i]);
+					if (uvId != null)	 {
+						face.uv[i] = uvId;
+					} else {
 						exportTexCoords.add(uv[i]);
 						texCoordMap.put(uv[i], tex_counter);
 						face.uv[i] = tex_counter;
