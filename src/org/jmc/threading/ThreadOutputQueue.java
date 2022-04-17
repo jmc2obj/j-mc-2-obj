@@ -45,9 +45,11 @@ public class ThreadOutputQueue{
 	 * Calls {@link BlockingQueue#take()} and notifies {@link #waitUntilEmpty()}
 	 * @throws InterruptedException
 	 */
-	public synchronized ChunkOutput take() throws InterruptedException {
+	public ChunkOutput take() throws InterruptedException {
 		ChunkOutput outChunk = outputQueue.take();
-		notifyAll();
+		synchronized (this) {
+			notifyAll();
+		}
 		return outChunk;
 	}
 	
