@@ -50,6 +50,20 @@ public class FaceUtils {
 				return 3;
 			}
 		}
+		
+		public boolean isRectangular() {
+			Vertex V1 = Vertex.subtract(vertices[1], vertices[0]);
+			Vertex V2 = Vertex.subtract(vertices[3], vertices[0]);
+			if (!similar(Vertex.dot(V1, V2), 0)) {
+				return false;//first corner not at right angle
+			}
+			Vertex rectDiag = Vertex.add(V1, V2);
+			Vertex faceDiag = Vertex.subtract(vertices[2], vertices[0]);
+			if (!faceDiag.similar(rectDiag)) {
+				return false;//diagonal vertex not in expected position
+			}
+			return true;
+		}
 
 		public boolean isAnticlockwise() {
 			int a;

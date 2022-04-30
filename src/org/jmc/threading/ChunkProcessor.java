@@ -311,6 +311,9 @@ public class ChunkProcessor
 		if (face1.remove || face2.remove){
 			return false;
 		}
+		if (!face1.isRectangular() || !face2.isRectangular()) {
+			return false;//Must be rectangular faces
+		}
 		boolean isFacingEqual = true;
 		if (face1.isAnticlockwise() != face2.isAnticlockwise()){
 			isFacingEqual = false;

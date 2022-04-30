@@ -120,6 +120,14 @@ public class Vertex implements Comparable<Vertex>
 		return new Vertex(x, y, z);
 	}
 	
+	public static Vertex add(Vertex a, Vertex b)
+	{
+		double x=a.x+b.x;
+		double y=a.y+b.y;
+		double z=a.z+b.z;
+		return new Vertex(x, y, z);
+	}
+	
 	public static Vertex subtract(Vertex a, Vertex b)
 	{
 		double x=a.x-b.x;
@@ -132,6 +140,10 @@ public class Vertex implements Comparable<Vertex>
 	{
 		Vertex c = subtract(a, b);
 		return Math.sqrt(c.x * c.x + c.y * c.y + c.z * c.z);
+	}
+	
+	public static double dot(Vertex a, Vertex b) {
+		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 	
 	static class VertexAdapter implements JsonDeserializer<Vertex>, JsonSerializer<Vertex> {
