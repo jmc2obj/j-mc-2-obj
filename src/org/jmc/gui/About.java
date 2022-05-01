@@ -26,6 +26,7 @@ public class About {
         msg+="<div style='text-align:center;font-weight:bold; font-size:20pt;'>jMC2Obj</div>";
         msg+="<div style='text-align:center;font-weight:bold; font-size:16pt;'>"+Messages.getString("About.PROG_DESC")+"</div><p>";
         msg+="<table width=\"100%\" border=\"0\"><tr><td width=\"100px\">"+Messages.getString("About.VERSION")+":</td><td>"+Version.VERSION()+"</td></tr>"
+                +"<tr><td width=\"100px\">"+Messages.getString("About.COMMIT")+":</td><td>"+Version.COMMIT()+"</td></tr>"
                 +"<tr><td width=\"100px\">"+Messages.getString("About.BUILD")+":</td><td>"+Version.DATE().toString()+"</td></tr>"
                 + "</table><p>";
         List<String> developer_list=new LinkedList<String>();

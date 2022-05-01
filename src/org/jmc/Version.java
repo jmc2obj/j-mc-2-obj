@@ -24,7 +24,7 @@ public class Version
 	{	
 		synchronized(syncobj)
 		{
-			if(rev!=null && dateval!=null) return;
+			if(rev!=null && dateval!=null && commit!=null) return;
 
 			try{
 				SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd hhmm");
@@ -38,6 +38,7 @@ public class Version
 					XPath xpath = XPathFactory.newInstance().newXPath();            
 
 					rev=Integer.valueOf((String) xpath.evaluate("version/revision", doc, XPathConstants.STRING));
+					commit=(String) xpath.evaluate("version/commit", doc, XPathConstants.STRING);
 					String datestr=(String) xpath.evaluate("version/date", doc, XPathConstants.STRING);
 
 					if(datestr==null) datestr="";
@@ -47,6 +48,7 @@ public class Version
 				else
 				{
 					dateval=new Date(0);
+					commit="Unknown";
 					rev=0;
 				}
 
@@ -54,6 +56,7 @@ public class Version
 
 				Log.error("Cannot load program version 2", e, false);
 				dateval=new Date(0);
+				commit="Unknown";
 				rev=0;
 
 			}
@@ -66,6 +69,13 @@ public class Version
 	{
 		initialize();
 		return rev;
+	}
+	
+	private static String commit=null;
+	public static String COMMIT()
+	{
+		initialize();
+		return commit;
 	}
 
 	private static Date dateval=null;

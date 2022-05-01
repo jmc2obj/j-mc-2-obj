@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <version>
     <revision>${project.version}</revision>
+    <commit>${git.commit.id}</commit>
     <date>${timestamp}</date>
 </version>
