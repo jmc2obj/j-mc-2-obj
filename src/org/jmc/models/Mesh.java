@@ -177,7 +177,6 @@ public class Mesh extends BlockModel
 				}
 				long seed = new Random(x).nextLong() + new Random(y).nextLong() + new Random(z).nextLong();
 				float rand = new Random(seed).nextFloat()*maxWeight;
-				Log.debug(String.format("seed:%d, %f", seed, rand));
 				for (Mesh object : objects) {
 					if (rand < object.mesh_data.weight) {
 						object.addModel(obj, chunks, x, y, z, data, biome, trans);
