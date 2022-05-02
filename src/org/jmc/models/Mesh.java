@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.jmc.BlockData;
 import org.jmc.Blockstate;
@@ -29,9 +30,11 @@ public class Mesh extends BlockModel
 	{
 		public Blockstate state;
 		public Vertex offset;
-		public NamespaceID id;		
+		public NamespaceID id;
 		public Transform transform;
 		public boolean fallthrough;
+		public boolean random;
+		public float weight;
 
 		public MeshData()
 		{
@@ -40,6 +43,8 @@ public class Mesh extends BlockModel
 			offset=null;
 			transform=null;
 			fallthrough=false;
+			random=false;
+			weight=1;
 		}
 
 		public boolean matches(ThreadChunkDeligate chunks, int x, int y, int z, Blockstate state2)
@@ -165,9 +170,26 @@ public class Mesh extends BlockModel
 
 		if(mesh_data.fallthrough || match)
 		{
-			for(Mesh object:objects)
-			{
-				object.addModel(obj,chunks,x,y,z,data,biome,trans);
+			if (mesh_data.random) {
+				float maxWeight = 0;
+				for (Mesh object : objects) {
+					maxWeight += object.mesh_data.weight;
+				}
+				long seed = new Random(x).nextLong() + new Random(y).nextLong() + new Random(z).nextLong();
+				float rand = new Random(seed).nextFloat()*maxWeight;
+				Log.debug(String.format("seed:%d, %f", seed, rand));
+				for (Mesh object : objects) {
+					if (rand < object.mesh_data.weight) {
+						object.addModel(obj, chunks, x, y, z, data, biome, trans);
+						break;
+					}
+					rand -= object.mesh_data.weight;
+				}
+			} else {
+				for(Mesh object:objects)
+				{
+					object.addModel(obj,chunks,x,y,z,data,biome,trans);
+				}
 			}
 		}
 	}

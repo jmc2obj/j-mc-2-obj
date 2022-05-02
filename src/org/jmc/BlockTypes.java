@@ -297,6 +297,12 @@ public class BlockTypes
 					mat.put(new NamespaceID[] {NamespaceID.fromString(attrVal)});
 					mesh.setMaterials(mat);
 				}
+				else if (attrName.equalsIgnoreCase("jmc_random")) {
+					mesh.mesh_data.random = Boolean.parseBoolean(attrVal);
+				}
+				else if (attrName.equalsIgnoreCase("jmc_weight")) {
+					mesh.mesh_data.weight = Float.parseFloat(attrVal);
+				}
 				else {
 					//transform nodes have other attributes.
 					if (meshNode.getNodeName().equalsIgnoreCase("mesh"))
