@@ -343,7 +343,8 @@ public class BlockListWindow extends JmcFrame {
 			Options.excludeBlocks = getExcludedBlockIds();
 			
 		} catch (Exception e) {
-			Log.error("Error loading blocks selection", e);
+			Log.debug("Error loading blocks selection: " + e.getMessage());
+
 		}
 
 	}
