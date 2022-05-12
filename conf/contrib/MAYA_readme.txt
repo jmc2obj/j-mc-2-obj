@@ -5,6 +5,9 @@ Submitted by cptplutonic
 
 (http://www.reddit.com/r/jmc2obj/comments/smt0d/autodesk_maya_mel_script_to_batch_fix_your/)
 
+Updated by michal121345
+Added filtering for Redshift and Arnold file attributes
+
 
 Instructions
 ------------
@@ -79,7 +82,11 @@ global proc pixelFilter() {
     else {
         for($material in $materials){
             catch ( `select -r ($material + "F")` );
-            catch ( `setAttr ($material + "F.filterType") 0 ` );    
+            catch ( `setAttr ($material + "F.filterType") 0 ` );
+            //Arnold Filterfix
+            catchQuiet (`setAttr ($material + "F.aiFilter") 0 `);             
+            //Redshift Filterfix
+            catchQuiet (`setAttr ($material + "F.rsFilterEnable") 0 `); 
         }
     }    
 }
