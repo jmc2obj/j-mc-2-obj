@@ -15,7 +15,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import org.jmc.Chunk;
-import org.jmc.ChunkLoaderThread;
+import org.jmc.ChunkLoaderRunner;
 import org.jmc.Region;
 import org.jmc.util.Log;
 /**
@@ -23,7 +23,7 @@ import org.jmc.util.Log;
  * @author danijel
  *
  */
-public class FullChunkLoaderThread implements ChunkLoaderThread {
+public class FullChunkLoaderThread implements ChunkLoaderRunner {
 
 	/**
 	 * Reference to the preview panel used for image refreshing.
@@ -40,11 +40,6 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 	private final int REPAINT_FREQUENCY=100;
 	
 	/**
-	 * Variable used by isRunning and stopRunning.  
-	 */
-	private boolean running;
-	
-	/**
 	 * Constructor.
 	 * @param preview reference to preview panel
 	 * @param savepath path to the save
@@ -59,8 +54,6 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 	 */
 	@Override
 	public void run() {
-	
-		running=true;
 		
 		Vector<Region> regions=null;
 		try {
@@ -99,7 +92,7 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 					last_time=this_time;
 				}
 				
-				if(!running) return;
+				if(Thread.interrupted()) return;
 			}
 
 		}
@@ -108,24 +101,6 @@ public class FullChunkLoaderThread implements ChunkLoaderThread {
 			preview.redraw(false);
 		preview.repaint();
 		
-		running=false;
-		
-	}
-
-	/**
-	 * Implementation of interface method.
-	 */
-	@Override
-	public boolean isRunning() {
-		return running;
-	}
-
-	/**
-	 * Implementation of interface method.
-	 */
-	@Override
-	public void stopRunning() {
-		running=false;		
 	}
 
 	@Override

@@ -562,6 +562,9 @@ public class Chunk {
 			{
 				for(y = floor; y < ceiling; y++)
 				{
+					if (Thread.currentThread().isInterrupted())
+						return;
+					
 					BlockData blockData;
 					
 					blockBiome = bd.getBiome(x, y, z);
@@ -582,6 +585,9 @@ public class Chunk {
 		{
 			for(x = 0; x < 16; x++)
 			{
+				if (Thread.currentThread().isInterrupted())
+					return;
+				
 				BlockData blockData = topBlocks[z*16+x];
 				blockBiome = biome[z*16+x];
 				
@@ -600,6 +606,9 @@ public class Chunk {
 			{
 				for(x = 0; x < 16; x++)
 				{
+					if (Thread.currentThread().isInterrupted())
+						return;
+					
 					float a = himage[z*16+x] - drawYMin;
 					float b = drawYMax - drawYMin;
 					float r = Math.max(0, Math.min(1, a / b));

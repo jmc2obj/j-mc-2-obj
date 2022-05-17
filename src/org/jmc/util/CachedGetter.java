@@ -40,7 +40,8 @@ public abstract class CachedGetter <K, V> {
 					try {
 						this.wait();// wait until created
 					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
+						Thread.currentThread().interrupt();
+						return null;
 					}
 				}
 				return entries.get(key).orElse(null);

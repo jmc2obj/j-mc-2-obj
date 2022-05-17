@@ -20,7 +20,7 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jmc.Chunk;
-import org.jmc.ChunkLoaderThread;
+import org.jmc.ChunkLoaderRunner;
 import org.jmc.Options;
 import org.jmc.Region;
 import org.jmc.gui.PreviewPanel.ChunkImage;
@@ -33,12 +33,7 @@ import org.jmc.util.Hilbert.HilbertComparator;
  * @author danijel
  *
  */
-public class ViewChunkLoaderThread implements ChunkLoaderThread {
-
-	/**
-	 * Used by isRunning and stopRunning methods.
-	 */
-	private boolean running;
+public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 
 	/**
 	 * Reference to preview panel so we can change the preview.
@@ -78,6 +73,8 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 */
 	private int floor, ceiling;
 	private boolean yBoundsChanged;
+	
+	private ArrayList<Thread> imagerThreads = new ArrayList<Thread>();
 
 	/**
 	 * Main constructor.
@@ -85,7 +82,7 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	 * @param worldDir path to the world save
 	 * @param dimension Dimension to load chunks from.
 	 */
-	public ViewChunkLoaderThread(PreviewPanel preview) {
+	public ViewChunkLoaderRunner(PreviewPanel preview) {
 		this.preview = preview;
 		this.worldPath = Options.worldDir;
 		this.dimension = Options.dimension;
@@ -108,8 +105,6 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 	@Override
 	public void run() {
 
-		running = true;
-
 		Rectangle prevBounds = new Rectangle();
 
 		loadedChunks.clear();
@@ -118,124 +113,120 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		int threads = MainWindow.settings.getPreferences().getInt("PREVIEW_THREADS", 8);
 		for (int i = 0; i < threads; i++) {
 			Thread t = new Thread(new ChunkImager(chunkQueue));
+			imagerThreads.add(t);
 			t.setName("ChunkImager - " + i);
 			t.setPriority(Thread.MIN_PRIORITY);
 			t.start();
 		}
 
-		while (running)
-		{
-			
-			boolean drawn = false;
-			while (prevBounds.equals(preview.getChunkBounds()) && !yBoundsChanged) {
-				if (!running) {
-					return;
+		try {
+			while (!Thread.interrupted())
+			{
+				
+				boolean drawn = false;
+				while (prevBounds.equals(preview.getChunkBounds()) && !yBoundsChanged) {
+					if (Thread.interrupted()) {
+						return;
+					}
+					if (chunksToDo.get() == 0 && !drawn) {
+						preview.redraw(preview.fastrendermode);
+						drawn = true;
+					}
+					preview.repaint();
+					try {
+						Thread.sleep(REPAINT_FREQUENCY);
+					} catch (InterruptedException e) {
+						return;
+					}
 				}
-				if (chunksToDo.get() == 0 && !drawn) {
-					preview.redraw(preview.fastrendermode);
-					drawn = true;
+				
+				Rectangle bounds = preview.getChunkBounds();
+				boolean stopIter = false;
+				chunkQueue.clear();
+				chunksToDo = new AtomicInteger();
+				
+				int cxs = bounds.x;
+				int czs = bounds.y;
+				int cxe = bounds.x + bounds.width;
+				int cze = bounds.y + bounds.height;
+				
+				if (yBoundsChanged)
+				{
+					yBoundsChanged = false;
+					loadedChunks.clear();
+					chunkImages.clear();
 				}
+				
+				synchronized (chunkImages) {
+					Iterator<ChunkImage> iter = chunkImages.iterator();
+					while (iter.hasNext())
+					{
+						ChunkImage chunk_image = iter.next();
+						
+						int cx = chunk_image.x/64;
+						int cz = chunk_image.y/64;
+						
+						if (cx<cxs || cx>cxe || cz<czs || cz>cze)
+						{
+							loadedChunks.remove(new Point(cx,cz));
+							iter.remove();
+						}
+						
+						Rectangle new_bounds = preview.getChunkBounds();
+						if (!bounds.equals(new_bounds) || yBoundsChanged)
+						{
+							stopIter = true;
+							break;
+						}
+						
+						if (Thread.interrupted()) return;
+					}
+				}
+				
+				preview.redraw(true);
 				preview.repaint();
+				
+				
+				ArrayList<Point> chunkList = new ArrayList<Point>();
+				for (int cx=cxs; cx<=cxe && !stopIter; cx++)
+				{
+					for (int cz=czs; cz<=cze && !stopIter; cz++)
+					{
+						Point p = new Point(cx, cz);
+						
+						if (loadedChunks.contains(p) || emptyChunks.contains(p))
+							continue;
+						chunkList.add(p);
+					}
+				}
+				
+				chunkList.sort(new HilbertComparator(8));
+				
+				for (Point p : chunkList) {
+					Rectangle new_bounds=preview.getChunkBounds();
+					if (!bounds.equals(new_bounds) || yBoundsChanged)
+						stopIter = true;
+					
+					if (stopIter) break;
+					
+					chunksToDo.addAndGet(1);
+					chunkQueue.add(p);
+					
+					if (Thread.interrupted()) return;
+				}
+				
+				prevBounds = bounds;
+			}
+		} finally {
+			for (Thread t : imagerThreads) {
+				t.interrupt();
 				try {
-					Thread.sleep(REPAINT_FREQUENCY);
+					t.join();
 				} catch (InterruptedException e) {}
 			}
-
-			Rectangle bounds = preview.getChunkBounds();
-			boolean stopIter = false;
-			chunkQueue.clear();
-			chunksToDo = new AtomicInteger();
-			
-			int cxs = bounds.x;
-			int czs = bounds.y;
-			int cxe = bounds.x + bounds.width;
-			int cze = bounds.y + bounds.height;
-
-			if (yBoundsChanged)
-			{
-				yBoundsChanged = false;
-				loadedChunks.clear();
-				chunkImages.clear();
-			}
-
-			synchronized (chunkImages) {
-				Iterator<ChunkImage> iter = chunkImages.iterator();
-				while (iter.hasNext())
-				{
-					ChunkImage chunk_image = iter.next();
-
-					int cx = chunk_image.x/64;
-					int cz = chunk_image.y/64;
-
-					if (cx<cxs || cx>cxe || cz<czs || cz>cze)
-					{
-						loadedChunks.remove(new Point(cx,cz));
-						iter.remove();
-					}
-
-					Rectangle new_bounds = preview.getChunkBounds();
-					if (!bounds.equals(new_bounds) || yBoundsChanged)
-					{
-						stopIter = true;
-						break;
-					}
-
-					if (!running) return;
-				}
-			}
-
-			preview.redraw(true);
-			preview.repaint();
-			
-
-			ArrayList<Point> chunkList = new ArrayList<Point>();
-			for (int cx=cxs; cx<=cxe && !stopIter; cx++)
-			{
-				for (int cz=czs; cz<=cze && !stopIter; cz++)
-				{
-					Point p = new Point(cx, cz);
-
-					if (loadedChunks.contains(p) || emptyChunks.contains(p))
-						continue;
-					chunkList.add(p);
-				}
-			}
-			
-			chunkList.sort(new HilbertComparator(8));
-			
-			for (Point p : chunkList) {
-				Rectangle new_bounds=preview.getChunkBounds();
-				if (!bounds.equals(new_bounds) || yBoundsChanged)
-					stopIter = true;
-				
-				if (stopIter) break;
-				
-				chunksToDo.addAndGet(1);
-				chunkQueue.add(p);
-			
-				if (!running) return;
-			}
-
-			prevBounds = bounds;
+			imagerThreads.clear();
 		}
 
-	}
-
-	/**
-	 * Interface override.
-	 */
-	@Override
-	public boolean isRunning() {
-		return running;
-	}
-
-	/**
-	 * Interface override.
-	 */
-	@Override
-	public void stopRunning() {
-		chunkQueue.finish();
-		running=false;
 	}
 
 	/**
@@ -259,14 +250,13 @@ public class ViewChunkLoaderThread implements ChunkLoaderThread {
 		
 		@Override
 		public void run() {
-			while (running) {
+			while (!Thread.interrupted()) {
 				Point p;
 				AtomicInteger ctd;
 				try {
 					p = queue.getNext();
 					ctd = chunksToDo;
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 					break;
 				}
 				if (p == null)

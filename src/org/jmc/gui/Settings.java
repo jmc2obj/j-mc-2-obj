@@ -126,9 +126,14 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pButtons.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pButtons.setLayout(new BoxLayout(pButtons, BoxLayout.LINE_AXIS));
 		JButton bReset = new JButton(Messages.getString("Settings.RESTORE"));
+		bReset.setMargin(new Insets(2, 10, 2, 10));
 		JButton bRestart = new JButton(Messages.getString("Settings.RESTART_BTN"));
+		bRestart.setMargin(new Insets(2, 10, 2, 10));
+		JButton bReload = new JButton(Messages.getString("Settings.RELOAD_BTN"));
+		bReload.setMargin(new Insets(2, 10, 2, 10));
 		pButtons.add(bReset);
 		pButtons.add(bRestart);
+		pButtons.add(bReload);
 
 		bReset.addActionListener(new AbstractAction() {
 			@Override
@@ -161,7 +166,18 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				}
 			}
 		});
-
+		
+		bReload.addActionListener(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.main.stopPreviewLoader();
+				Registries.reloadResourcePacks();
+				if (MainWindow.main != null) {
+					MainWindow.main.reloadPreviewLoader();
+				}
+			}
+		});
+		
 		AbstractAction saveAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

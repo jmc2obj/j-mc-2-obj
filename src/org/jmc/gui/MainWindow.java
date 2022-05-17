@@ -129,6 +129,10 @@ public class MainWindow extends JmcFrame
 		if(main!=null) main.panel.updateSelectionOptions();
 	}
 
+	public void stopPreviewLoader() {
+		panel.stopPreviewLoader();
+	}
+
 	public void reloadPreviewLoader() {
 		panel.reloadPreviewLoader();
 	}

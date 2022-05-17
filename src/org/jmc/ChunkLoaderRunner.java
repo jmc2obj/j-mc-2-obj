@@ -11,17 +11,7 @@ package org.jmc;
  * @author danijel
  *
  */
-public interface ChunkLoaderThread extends Runnable {
-
-	/**
-	 * Is the thread still running?
-	 * @return if the thread is still running
-	 */
-	public boolean isRunning();
-	/**
-	 * Stops the thread.
-	 */
-	public void stopRunning();
+public interface ChunkLoaderRunner extends Runnable {
 	/**
 	 * Changes the Y-axis boundaries.
 	 * @param floor

@@ -46,7 +46,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jmc.ChunkLoaderThread;
+import org.jmc.ChunkLoaderRunner;
 import org.jmc.LevelDat;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Double;
@@ -152,7 +152,8 @@ public class MainPanel extends JPanel {
 	 * Thread object used for monitoring the state of the chunk loading thread.
 	 * Necessary for restarting the thread when loading a new map.
 	 */
-	private ChunkLoaderThread chunk_loader = null;
+	private ChunkLoaderRunner chunk_loader = null;
+	private Thread chunk_loader_thread = null;
 
 	/**
 	 * Panel constructor.
@@ -689,14 +690,29 @@ public class MainPanel extends JPanel {
 
 	}
 
+	void stopPreviewLoader() {
+		if (chunk_loader_thread != null) {
+			chunk_loader_thread.interrupt();
+			try {
+				chunk_loader_thread.join();
+			} catch (InterruptedException e) {
+				Log.error("Interrupted waiting for preview chunk loader to stop!", e);
+				Thread.currentThread().interrupt();
+				return;
+			}
+			chunk_loader = null;
+			chunk_loader_thread = null;
+		}
+	}
+	
 	void reloadPreviewLoader() {
+		stopPreviewLoader();
 		preview.clearChunks();
-		if (chunk_loader != null && chunk_loader.isRunning())
-			chunk_loader.stopRunning();
-
-		chunk_loader = new ViewChunkLoaderThread(preview);
+		
+		chunk_loader = new ViewChunkLoaderRunner(preview);
 		chunk_loader.setYBounds((int) minYSpinner.getValue(), (int) maxYSpinner.getValue());
-		(new Thread(chunk_loader, "ViewChunkLoader")).start();
+		chunk_loader_thread = new Thread(chunk_loader, "ViewChunkLoader");
+		chunk_loader_thread.start();
 	}
 
 }
