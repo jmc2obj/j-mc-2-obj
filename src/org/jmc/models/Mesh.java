@@ -24,7 +24,7 @@ import org.jmc.util.Log;
 public class Mesh extends BlockModel
 {
 
-	private static Map<String,OBJInputFile> files=null;
+	private static Map<String,OBJInputFile> objCache = new HashMap<String, OBJInputFile>();
 
 	public static class MeshData
 	{
@@ -79,7 +79,7 @@ public class Mesh extends BlockModel
 
 	public Mesh()
 	{
-		if(files==null) files=new HashMap<String, OBJInputFile>();
+		if(objCache==null) objCache=new HashMap<String, OBJInputFile>();
 		objects=new LinkedList<Mesh>();
 		mesh_data=new MeshData();
 
@@ -94,8 +94,8 @@ public class Mesh extends BlockModel
 		String [] tok=objectstr.trim().split("#");
 		String filename=tok[0];
 
-		if(files.containsKey(filename))
-			objin_file=files.get(filename);
+		if(objCache.containsKey(filename))
+			objin_file=objCache.get(filename);
 		else
 		{
 			objin_file=new OBJInputFile();
@@ -107,7 +107,7 @@ public class Mesh extends BlockModel
 				return;
 			}
 
-			files.put(filename, objin_file);
+			objCache.put(filename, objin_file);
 		}
 
 		if(tok.length>1)
@@ -191,6 +191,10 @@ public class Mesh extends BlockModel
 				}
 			}
 		}
+	}
+	
+	public static void clearCache() {
+		objCache.clear();
 	}
 
 	//DEBUG

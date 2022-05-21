@@ -18,6 +18,7 @@ import org.jmc.BlockTypes;
 import org.jmc.entities.ItemFrame;
 import org.jmc.models.Banner;
 import org.jmc.models.Head;
+import org.jmc.models.Mesh;
 import org.jmc.util.CachedGetter;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -166,5 +167,6 @@ public class Registries {
 		Banner.clearExported();
 		Head.clearExported();
 		ItemFrame.clearExported();
+		Mesh.clearCache();
 	}
 }
