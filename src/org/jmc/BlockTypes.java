@@ -252,7 +252,7 @@ public class BlockTypes
 					}
 				}
 				
-				mesh.propagateMaterials();
+				mesh.propagateProperties();
 			}
 			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged));
 		}
@@ -302,6 +302,9 @@ public class BlockTypes
 				}
 				else if (attrName.equalsIgnoreCase("jmc_weight")) {
 					mesh.mesh_data.weight = Float.parseFloat(attrVal);
+				}
+				else if (attrName.equalsIgnoreCase("jmc_optimize")) {
+					mesh.mesh_data.optimize = Boolean.parseBoolean(attrVal);
 				}
 				else {
 					//transform nodes have other attributes.

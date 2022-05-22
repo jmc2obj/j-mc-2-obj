@@ -182,7 +182,7 @@ public class Head extends BlockModel
 		OBJGroup myObjGroup = objFile.getDefaultObject();
 		myObjGroup = objFile.overwriteMaterial(myObjGroup, texID);
 		
-		objFile.addObjectToOutput(myObjGroup, t, obj);
+		objFile.addObjectToOutput(myObjGroup, t, obj, false);
 	}
 
 	private static String extractSkullOwnerTextureUrl(String textureB64) {

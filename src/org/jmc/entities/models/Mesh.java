@@ -101,7 +101,7 @@ public class Mesh extends EntityModel
 	{
 		if(objects.size()==0) return;
 		MeshObject object=objects.get(0);
-		object.file.addObjectToOutput(object.group, transform, obj);
+		object.file.addObjectToOutput(object.group, transform, obj, false);
 	}
 
 }

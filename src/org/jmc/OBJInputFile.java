@@ -308,7 +308,7 @@ public class OBJInputFile
 		return ret;
 	}
 
-	public void addObjectToOutput(OBJGroup group, Transform trans, ChunkProcessor out)
+	public void addObjectToOutput(OBJGroup group, Transform trans, ChunkProcessor out, boolean optimize)
 	{
 		for(OBJFace f:group.faces)
 		{
@@ -328,7 +328,7 @@ public class OBJInputFile
 			}
 
 			// Log.info("out OBJ file material: "+f.mtl+" / "+v+" / "+norm+" / "+uv+" / "+trans);
-			out.addFace(v, norm, uv, trans, f.tex, false);
+			out.addFace(v, norm, uv, trans, f.tex, optimize);
 		}
 	}
 }

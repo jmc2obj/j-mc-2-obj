@@ -34,6 +34,7 @@ public class Mesh extends BlockModel
 		public Transform transform;
 		public boolean fallthrough;
 		public boolean random;
+		public boolean optimize;
 		public float weight;
 
 		public MeshData()
@@ -44,6 +45,7 @@ public class Mesh extends BlockModel
 			transform=null;
 			fallthrough=false;
 			random=false;
+			optimize=false;
 			weight=1;
 		}
 
@@ -127,11 +129,12 @@ public class Mesh extends BlockModel
 		objects.add(mesh);
 	}
 
-	public void propagateMaterials() {
+	public void propagateProperties() {
 		for (Mesh mesh : objects) {
 			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, 0)[0].equals(Registries.UNKNOWN_TEX_ID))
 				mesh.setMaterials(materials);
-			mesh.propagateMaterials();
+			mesh.mesh_data.optimize = mesh_data.optimize;
+			mesh.propagateProperties();
 		}
 	}
 	
@@ -163,7 +166,7 @@ public class Mesh extends BlockModel
 					NamespaceID[] mats = materials.get(data.state, biome);
 					group_mod = objin_file.overwriteMaterial(group, mats[0]);
 				}
-				objin_file.addObjectToOutput(group_mod, trans, obj);
+				objin_file.addObjectToOutput(group_mod, trans, obj, mesh_data.optimize);
 			}
 		}
 

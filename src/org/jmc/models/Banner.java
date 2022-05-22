@@ -380,7 +380,7 @@ public class Banner extends BlockModel {
         translate = translate.multiply(tRotation);
 
         // do it so!
-        objFile.addObjectToOutput(myObjGroup, translate, obj);
+        objFile.addObjectToOutput(myObjGroup, translate, obj, false);
     }
     
     private static synchronized boolean showReadErrorPopup() {
