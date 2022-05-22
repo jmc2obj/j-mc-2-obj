@@ -1,5 +1,7 @@
 package org.jmc.geom;
 
+import java.util.Random;
+
 public class BlockPos {
 	public int x;
 	public int y;
@@ -13,6 +15,11 @@ public class BlockPos {
 	
 	public Transform getTransform() {
 		return Transform.translation(x, y, z);
+	}
+	
+	public Random getRandom() {
+		long seed = new Random(x).nextLong() + new Random(y).nextLong() + new Random(z).nextLong();
+		return new Random(seed);
 	}
 
 	@Override

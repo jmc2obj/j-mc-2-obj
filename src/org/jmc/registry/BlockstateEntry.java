@@ -7,6 +7,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.jmc.Blockstate;
+import org.jmc.Options;
+import org.jmc.geom.BlockPos;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -49,7 +51,7 @@ public abstract class BlockstateEntry extends RegistryEntry {
 		return map;
 	}
 	
-	public class ModelInfo {
+	public static class ModelInfo {
 		@SerializedName("model")
 		public NamespaceID id;
 		public int x, y = 0;
@@ -64,15 +66,28 @@ public abstract class BlockstateEntry extends RegistryEntry {
 		}
 	}
 	
-	public class ModelListWeighted {
+	public static class ModelListWeighted {
 		List<ModelInfo> models = new ArrayList<>();
 		
 		protected void addModel(ModelInfo model) {
 			models.add(model);
 		}
 		
-		public ModelInfo getRandomModel() {
-			//TODO random model
+		public ModelInfo getRandomModel(BlockPos pos) {
+			if (!Options.randBlockVariations) {
+				return models.get(0);
+			}
+			int maxWeight = 0;
+			for (ModelInfo object : models) {
+				maxWeight += object.weight;
+			}
+			float randVal = pos.getRandom().nextFloat()*maxWeight;
+			for (ModelInfo object : models) {
+				if (randVal < object.weight) {
+					return object;
+				}
+				randVal -= object.weight;
+			}
 			return models.get(0);
 		}
 	}

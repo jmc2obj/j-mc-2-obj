@@ -70,6 +70,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JCheckBox chckbxSeparateMat;
 	private JCheckBox chckbxSeparateMatOccl;
 	private JCheckBox chckbxSeparateChunk;
+	private JCheckBox chckbxRandBlockVariation;
 	private JCheckBox chckbxDoubleSidedFaces;
 	private JCheckBox chckbxSeparateBlock;
 	private JCheckBox chckbxOptimiseGeo;
@@ -401,6 +402,12 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		
 		JSeparator separator_1 = new JSeparator();
 		pExportOptions.add(separator_1);
+
+		//##########################################################################################################
+		//RandBlockVariation
+		//##########################################################################################################
+		chckbxRandBlockVariation = new JCheckBox(Messages.getString("OBJExportOptions.RANDBLOCKVARIATION"));
+		pExportOptions.add(chckbxRandBlockVariation);
 
 		//##########################################################################################################
 		//DoubleSidedFaces
@@ -833,6 +840,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateBlock.addActionListener(genericSaveAction);
 		chckbxSeparateBlockOccl.addActionListener(genericSaveAction);
 
+		chckbxRandBlockVariation.addActionListener(genericSaveAction);
 		chckbxDoubleSidedFaces.addActionListener(genericSaveAction);
 		chckbxOptimiseGeo.addActionListener(genericSaveAction);
 		chckbxMergeVerticies.addActionListener(genericSaveAction);
@@ -901,6 +909,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
 		chckbxSeparateBlockOccl.setSelected(prefs.getBoolean("OBJ_PER_BLOCK_OCCL", false));
+		chckbxRandBlockVariation.setSelected(prefs.getBoolean("RAND_BLOCK_VARIATION", false));
 		chckbxDoubleSidedFaces.setSelected(prefs.getBoolean("DOUBLE_SINGLE_FACES", false));
 		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
@@ -980,6 +989,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("OBJ_PER_MTL_OCCL", Options.objectPerMaterialOcclusion);
 		prefs.putBoolean("OBJ_PER_CHUNK", chckbxSeparateChunk.isSelected());
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
+		prefs.putBoolean("RAND_BLOCK_VARIATION", Options.randBlockVariations);
 		prefs.putBoolean("DOUBLE_SINGLE_FACES", Options.doubleSidedFaces);
 		prefs.putBoolean("OPTIMISE_GEO", chckbxOptimiseGeo.isSelected());
 		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
@@ -1065,6 +1075,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.objectPerChunk = chckbxSeparateChunk.isSelected() && chckbxSeparateChunk.isEnabled();
 		Options.objectPerBlock = chckbxSeparateBlock.isSelected();
 		Options.objectPerBlockOcclusion = chckbxSeparateBlockOccl.isSelected();
+		Options.randBlockVariations = chckbxRandBlockVariation.isSelected();
 		Options.doubleSidedFaces = chckbxDoubleSidedFaces.isSelected();
 		Options.optimiseGeometry = chckbxOptimiseGeo.isSelected() && chckbxOptimiseGeo.isEnabled();
 		Options.convertOres = chckbxConvertOreTo.isSelected();

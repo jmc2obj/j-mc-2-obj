@@ -12,6 +12,7 @@ import org.jmc.BlockData;
 import org.jmc.Blockstate;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
+import org.jmc.geom.BlockPos;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
@@ -144,13 +145,14 @@ public class Mesh extends BlockModel
 		//What did this do? if(data<0) data=(byte) (16+data);
 
 		Transform translate = Transform.translation(x, y, z);
+		BlockPos pos = new BlockPos(x, y, z);
 
-		addModel(obj,chunks,x,y,z,data,biome,translate);
+		addModel(obj,chunks,pos,data,biome,translate, pos.getRandom());
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z , BlockData data, int biome, Transform trans)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos , BlockData data, int biome, Transform trans, Random rand)
 	{
-		boolean match=mesh_data.matches(chunks, x, y, z, data.state);
+		boolean match=mesh_data.matches(chunks, pos.x, pos.y, pos.z, data.state);
 
 		if(match)
 		{
@@ -178,19 +180,18 @@ public class Mesh extends BlockModel
 				for (Mesh object : objects) {
 					maxWeight += object.mesh_data.weight;
 				}
-				long seed = new Random(x).nextLong() + new Random(y).nextLong() + new Random(z).nextLong();
-				float rand = new Random(seed).nextFloat()*maxWeight;
+				float randVal = rand.nextFloat()*maxWeight;
 				for (Mesh object : objects) {
-					if (rand < object.mesh_data.weight) {
-						object.addModel(obj, chunks, x, y, z, data, biome, trans);
+					if (randVal < object.mesh_data.weight) {
+						object.addModel(obj, chunks, pos, data, biome, trans, rand);
 						break;
 					}
-					rand -= object.mesh_data.weight;
+					randVal -= object.mesh_data.weight;
 				}
 			} else {
 				for(Mesh object:objects)
 				{
-					object.addModel(obj,chunks,x,y,z,data,biome,trans);
+					object.addModel(obj,chunks,pos,data,biome,trans, rand);
 				}
 			}
 		}

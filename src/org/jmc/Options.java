@@ -183,6 +183,11 @@ public class Options
 	 * If true, will add extra faces to backside of standalone faces.
 	 */
 	public static boolean doubleSidedFaces = false;
+
+	/**
+	 * If true, will randomly pick from blockstate models rather than just the first.
+	 */
+	public static boolean randBlockVariations = false;
 	
 	/**
 	 * If true, will convert ore blocks to stone.	

@@ -47,7 +47,7 @@ public class Registry extends BlockModel {
 		List<AddedElem> addedElems = new ArrayList<>();
 		
 		for (ModelListWeighted modelList : modelParts) {
-			ModelInfo modelInfo = modelList.getRandomModel();
+			ModelInfo modelInfo = modelList.getRandomModel(pos);
 			ModelEntry modelEntry = Registries.getModel(modelInfo.id);
 			if (modelEntry == null) {
 				Log.debugOnce(String.format("Couldn't get model %s to export %s", modelInfo.id, bsEntry.id));
