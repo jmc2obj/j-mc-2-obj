@@ -236,8 +236,7 @@ public class MainPanel extends JPanel {
 		holderPreviewOptions.setBorder(BorderFactory.createTitledBorder(holderPreviewOptions.getBorder(),
 				Messages.getString("MainPanel.PREVIEW_OPTIONS"), TitledBorder.CENTER, TitledBorder.TOP));
 
-		chckbxFastRender = new JCheckBox(Messages.getString("MainPanel.FAST_RENDER")); // TODO
-																						// Localization
+		chckbxFastRender = new JCheckBox(Messages.getString("MainPanel.FAST_RENDER"));
 		chckbxFastRender.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -246,8 +245,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		final JCheckBox chckbxShowChunks = new JCheckBox(Messages.getString("MainPanel.SHOW_CHUNKS")); // TODO
-																										// Localization
+		final JCheckBox chckbxShowChunks = new JCheckBox(Messages.getString("MainPanel.SHOW_CHUNKS"));
 		chckbxShowChunks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -257,8 +255,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		final JCheckBox chckbxSelectChunks = new JCheckBox(Messages.getString("MainPanel.SEL_CHUNKS")); // TODO
-																										// Localization
+		final JCheckBox chckbxSelectChunks = new JCheckBox(Messages.getString("MainPanel.SEL_CHUNKS"));
 		chckbxSelectChunks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -266,9 +263,22 @@ public class MainPanel extends JPanel {
 			}
 		});
 
+		final JCheckBox chckbxKeepChunks = new JCheckBox(Messages.getString("MainPanel.KEEP_CHUNKS"));
+		chckbxKeepChunks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				preview.keepChunks = chckbxKeepChunks.isSelected();
+				if (!preview.keepChunks) {
+					reloadPreviewLoader();
+				}
+			}
+		});
+		chckbxKeepChunks.setToolTipText(Messages.getString("MainPanel.KEEP_CHUNKS_HELP"));
+
 		holderPreviewOptions.add(chckbxFastRender);
 		holderPreviewOptions.add(chckbxShowChunks);
 		holderPreviewOptions.add(chckbxSelectChunks);
+		holderPreviewOptions.add(chckbxKeepChunks);
 
 		// Floor and Ceiling Panel
 		JPanel holderFloorCeil = new JPanel();

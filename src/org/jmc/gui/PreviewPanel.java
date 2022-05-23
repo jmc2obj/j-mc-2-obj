@@ -94,6 +94,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public boolean fastrendermode;
 	public boolean showchunks;
 	public boolean selectchunks;
+	public boolean keepChunks;
 
 	/**
 	 * Small internal class describing an image of a single chunk this preview is comprised of.

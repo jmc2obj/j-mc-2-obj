@@ -63,7 +63,7 @@ public class MainWindow extends JmcFrame
 		
 		main = this;
 		
-		setSize(1000,800);
+		setSize(1100,800);
 		setMinimumSize(new Dimension(400,400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("jMC2Obj");

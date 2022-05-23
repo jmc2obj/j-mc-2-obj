@@ -166,8 +166,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 						int cx = chunk_image.x/64;
 						int cz = chunk_image.y/64;
 						
-						if (cx<cxs || cx>cxe || cz<czs || cz>cze)
-						{
+						if ((cx<cxs || cx>cxe || cz<czs || cz>cze) && !preview.keepChunks) {
 							loadedChunks.remove(new Point(cx,cz));
 							iter.remove();
 						}
