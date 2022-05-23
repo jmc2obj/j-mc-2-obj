@@ -52,6 +52,9 @@ public class FaceUtils {
 		}
 		
 		public boolean isRectangular() {
+			if (vertices.length != 4) {
+				return false;
+			}
 			Vertex V1 = Vertex.subtract(vertices[1], vertices[0]);
 			Vertex V2 = Vertex.subtract(vertices[3], vertices[0]);
 			if (!similar(Vertex.dot(V1, V2), 0)) {
