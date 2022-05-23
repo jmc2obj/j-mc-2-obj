@@ -50,11 +50,11 @@ public class Liquid extends BlockModel
 		if (otherBlockData == null) 
 			return false;
 		NamespaceID otherID = otherBlockData.id;
-		if (data.id.equals(otherID))
+		if (data.id.equals(otherID) && !data.state.getBool("waterlogged", false))
 			return true;
 		if ((data.id.equals(new NamespaceID("minecraft", "flowing_water")) || data.id.equals(new NamespaceID("minecraft", "water"))) && 
 				otherID.equals(new NamespaceID("minecraft", "flowing_water")) || otherID.equals(new NamespaceID("minecraft", "water")) ||
-				otherID.equals(new NamespaceID("minecraft", "bubble_column")) || Boolean.parseBoolean(otherBlockData.state.get("waterlogged")))
+				otherID.equals(new NamespaceID("minecraft", "bubble_column")) || otherBlockData.state.getBool("waterlogged", false))
 			return true;
 		if ((data.id.equals(new NamespaceID("minecraft", "flowing_lava")) || data.id.equals(new NamespaceID("minecraft", "lava"))) && 
 				(otherID.equals(new NamespaceID("minecraft", "flowing_lava")) || otherID.equals(new NamespaceID("minecraft", "lava"))))
