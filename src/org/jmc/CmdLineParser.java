@@ -196,6 +196,9 @@ public class CmdLineParser
 				else if (a.equals("--object-per-block")) {
 					Options.objectPerBlock = true;
 				}
+				else if (a.equals("--block-randomization")) {
+					Options.randBlockVariations = true;
+				}
 				else if (a.equals("--remove-dup")) {
 					Options.removeDuplicates = true;
 				}
@@ -300,6 +303,8 @@ public class CmdLineParser
 			"     --object-per-mat               Export a separate object for each material.\n" +
 			"     --object-per-block             Export a separate object for each block.\n" +
 			"                                    WARNING: Will produce very large files.\n" +
+			"     --block-randomization          Allow resource pack models to randomly pick\n" +
+			"                                    from blockstate models instead of always the first\n" +
 			"     --remove-dup                   Try harder to merge vertexes that have the\n" +
 			"                                    same coordinates.\n" +
 			"     --optimize-geometry            Reduce size of exported files by joining\n" +
