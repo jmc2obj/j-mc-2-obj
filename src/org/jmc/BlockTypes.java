@@ -460,10 +460,13 @@ public class BlockTypes
 		
 		try {
 			FileFilter ff = new WildcardFileFilter(CONFIG_FILE_EXTRA);
-			for (File file : new File(Filesystem.getDatafilesDir(), "conf").listFiles(ff)) {
-				String extraPath = Filesystem.getDatafilesDir().toPath().relativize(file.toPath()).toString();
-				Log.debug(String.format("Loading extra config file: %s", extraPath));
-				readConfig(blockTable, extraPath);
+			File[] files = new File(Filesystem.getDatafilesDir(), "conf").listFiles(ff);
+			if (files != null) {
+				for (File file : files) {
+					String extraPath = Filesystem.getDatafilesDir().toPath().relativize(file.toPath()).toString();
+					Log.debug(String.format("Loading extra config file: %s", extraPath));
+					readConfig(blockTable, extraPath);
+				}
 			}
 		} catch (Exception e) {
 			Log.error("Error loading extra block configs!", e);
