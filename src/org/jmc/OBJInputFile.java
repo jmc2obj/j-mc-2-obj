@@ -125,23 +125,17 @@ public class OBJInputFile
 
 			if(line.startsWith("v "))
 			{
-				Scanner scanner=new Scanner(line.substring(2));
 				try {
-					float x,y,z;
-					scanner.useLocale(Locale.ROOT);
-					x=scanner.nextFloat();
-					y=scanner.nextFloat();
-					z=scanner.nextFloat();
-					Vertex v=new Vertex(x, y, z);
+					String[] parts = line.split("\\s+");
+					float x = Float.parseFloat(parts[1]);
+					float y = Float.parseFloat(parts[2]);
+					float z = Float.parseFloat(parts[3]);
 					
-					vertices.add(v);
+					vertices.add(new Vertex(x, y, z));
 					vertex_count++;
 				}
 				catch (Exception e) {
 					Log.info("ERROR vertex format exception in file "+objfile.getPath()+"["+line_count+"]: "+e);
-				}
-				finally {
-					scanner.close();
 				}
 				continue;
 			}
