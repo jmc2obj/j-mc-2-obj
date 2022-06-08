@@ -1,5 +1,6 @@
 package org.jmc.geom;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class BlockPos {
@@ -18,7 +19,7 @@ public class BlockPos {
 	}
 	
 	public Random getRandom() {
-		long seed = new Random(x).nextLong() + new Random(y).nextLong() + new Random(z).nextLong();
+		long seed = new Random(x).nextLong() + new Random(y).nextLong() + new Random(z).nextLong() + hashCode();
 		return new Random(seed);
 	}
 
@@ -26,7 +27,7 @@ public class BlockPos {
 	public boolean equals(Object obj) {
 		if (obj instanceof BlockPos) {
 			BlockPos other = (BlockPos)obj;
-			if (other.x == this.x && other.y == this.y && other.z == other.z) {
+			if (other.x == this.x && other.y == this.y && other.z == this.z) {
 				return true;
 			} else {
 				return false;
@@ -39,5 +40,10 @@ public class BlockPos {
 	@Override
 	public String toString() {
 		return String.format("[%d, %d, %d]", x, y, z);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y, z);
 	}
 }
