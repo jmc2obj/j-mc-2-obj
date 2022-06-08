@@ -196,7 +196,7 @@ public class BlockTypes
 			model.setMaterials(materials);
 			
 			
-			if(modelName.equals("Mesh"))
+			if(model instanceof Mesh)
 			{
 				Mesh mesh=(Mesh)model;
 				
@@ -269,7 +269,7 @@ public class BlockTypes
 				String attrName = attrib.getNodeName();
 				String attrVal = attrib.getNodeValue();
 				if (attrVal == null) break; 
-				if (attrName.equalsIgnoreCase("id")) {
+				if (attrName.equalsIgnoreCase("jmc_id")) {
 					mesh.mesh_data.id  = NamespaceID.fromString(attrVal);
 				}
 				else if (attrName.equalsIgnoreCase("jmc_offset")) {
