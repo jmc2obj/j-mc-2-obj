@@ -43,7 +43,7 @@ public class Registries {
 	private final static CachedGetter<NamespaceID, ModelEntry> models;
 	private final static CachedGetter<NamespaceID, TextureEntry> textures;
 	
-	public static Set<TextureEntry> objTextures = Collections.synchronizedSet(new HashSet<>());
+	public final static Set<TextureEntry> objTextures = Collections.synchronizedSet(new HashSet<>());
 	
 	static {
 		blockstates = new CachedGetter<NamespaceID, BlockstateEntry>() {

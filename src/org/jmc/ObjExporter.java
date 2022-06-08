@@ -51,8 +51,12 @@ public class ObjExporter {
 	 *            Whether to write the .obj file
 	 * @param writeMtl
 	 *            Whether to write the .mtl file
+	 * @param writeTex
+	 *            Whether to write the textures to the output folder.
 	 */
 	public static void export(@CheckForNull ProgressCallback progress, boolean writeObj, boolean writeMtl, boolean writeTex) {
+		Log.debug("Exporting world "+Options.worldDir);
+		
 		File objfile = new File(Options.outputDir, Options.objFileName);
 		File mtlfile = new File(Options.outputDir, Options.mtlFileName);
 		File tmpdir = new File(Options.outputDir, "temp");
@@ -73,7 +77,7 @@ public class ObjExporter {
 			return;
 		}
 		
-		Thread[] threads = new Thread[Options.exportThreads];
+		ArrayList<Thread> threads = new ArrayList<>(Options.exportThreads);
 		Thread writeThread = null;
 		
 		long exportTimer = System.nanoTime();
@@ -94,7 +98,7 @@ public class ObjExporter {
 				if (progress != null)
 					progress.setMessage(Messages.getString("Progress.OBJ"));
 
-				// Calculate the boundaries of the chunks selected by the user 
+				// Calculate the boundaries of the chunks selected by the user
 				Point cs = Chunk.getChunkPos(Options.minX, Options.minZ);
 				Point ce = Chunk.getChunkPos(Options.maxX + 15, Options.maxZ + 15);
 				int oxs, oys, ozs;
@@ -153,11 +157,12 @@ public class ObjExporter {
 				
 				Log.info("Processing chunks...");
 				
-				for (int i = 0; i < Options.exportThreads; i++){
-					threads[i] = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
-					threads[i].setName("ReadThread-" + i);
-					threads[i].setPriority(Thread.NORM_PRIORITY - 1);
-					threads[i].start();
+				for (int i = 0; i < Options.exportThreads; i++) {
+					Thread thread = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
+					thread.setName("ReadThread-" + i);
+					thread.setPriority(Thread.NORM_PRIORITY - 1);
+					threads.add(thread);
+					thread.start();
 				}
 
 				writeThread = new Thread(writeRunner);
@@ -165,9 +170,8 @@ public class ObjExporter {
 				writeThread.start();
 				
 				long objTimer = System.nanoTime();
-				long objTimer2 = objTimer;
 				
-				ArrayList<Point> chunkList = new ArrayList<Point>();
+				ArrayList<Point> chunkList = new ArrayList<>();
 				
 				// loop through the chunks selected by the user
 				for (int cx = cs.x; cx <= ce.x; cx++) {
@@ -184,7 +188,7 @@ public class ObjExporter {
 				
 				inputQueue.finish();
 				
-				objTimer2 = System.nanoTime();
+				long objTimer2 = System.nanoTime();
 				
 				for (Thread thread : threads){
 					thread.join();
@@ -233,7 +237,7 @@ public class ObjExporter {
 
 					BufferedReader objin = Files.newBufferedReader(objfile.toPath(), StandardCharsets.UTF_8);
 
-					Map<String, FaceFile> faces = new HashMap<String, FaceFile>();
+					Map<String, FaceFile> faces = new HashMap<>();
 					int facefilecount = 1;
 
 					FaceFile current_ff = null;
@@ -422,4 +426,4 @@ class FaceFile {
 	public String name;
 	public File file;
 	public PrintWriter writer;
-};
+}

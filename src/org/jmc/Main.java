@@ -87,8 +87,7 @@ public class Main
 			CmdLineParser.parse(args);
 		}
 		catch (CmdLineParser.CmdLineException e) {
-			System.out.println("Error: " + e.getMessage());
-			CmdLineParser.printUsage();
+			Log.error("Error: " + e.getMessage(), null);
 			System.exit(-1);
 		}
 		
