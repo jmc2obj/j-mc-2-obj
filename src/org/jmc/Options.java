@@ -242,21 +242,9 @@ public class Options
 	public static boolean exportWorld = false;
 	
 	/**
-	 * Whether to export the .obj file.
-	 * Only used in console mode.
-	 */
-	public static boolean exportObj = true;
-	
-	/**
 	 * If true, will export to the last location and name that was used.
 	 */
 	public static boolean useLastSaveLoc = true;
-
-	/**
-	 * Whether to export the .mtl file.
-	 * Only used in console mode.
-	 */
-	public static boolean exportMtl = true;
 
 	/**
 	 * Whether to overwrite .OBJ files on export.

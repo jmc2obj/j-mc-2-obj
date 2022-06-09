@@ -36,9 +36,6 @@ public class CmdLineParser {
 			.numberOfArgs(2).valueSeparator(',').argName("MINY,MAXY")
 			.desc("Minimum and maximum height to export. Default is -64,320.").build();
 	private static final Option optDimension = Option.builder("d").longOpt("dimension").hasArg().argName("ID").desc("World dimension to export. Dimension ids are: 0 - Overworld; -1 - Nether; 1 - The End. Mods may add more dimensions. Default is 0.").build();
-	private static final Option optExport = Option.builder("e").longOpt("export")
-			.numberOfArgs(2).valueSeparator(',').argName("obj[,mtl]")
-			.desc("What files to export (any combination is valid): obj - geometry file (.obj); mtl - materials file (.mtl). Default is obj,mtl.").build();
 	private static final Option optTexExport = Option.builder("t").longOpt("tex-export")
 			.numberOfArgs(4).valueSeparator(',').argName("base[,alpha][,norm][,spec]").optionalArg(true)
 			.desc("What textures to export (any combination is valid): base - base textures; alpha - separate alphas; norm - normal maps. Default is base.").build();
@@ -75,7 +72,6 @@ public class CmdLineParser {
 		options.addOptionGroup(selectionGroup);
 		options.addOption(optHeight);
 		options.addOption(optDimension);
-		options.addOption(optExport);
 		options.addOption(optTexExport);
 		options.addOption(optResourcePack);
 		options.addOption(optTexScale);
@@ -145,23 +141,6 @@ public class CmdLineParser {
 			}
 			if (checkOption(cmdLine, optDimension)) {
 				Options.dimension = Integer.parseInt(cmdLine.getOptionValue(optDimension));
-			}
-			if (checkOption(cmdLine, optExport)) {
-				Options.exportWorld = true;
-				Options.exportObj = false;
-				Options.exportMtl = false;
-				for (String part : cmdLine.getOptionValues(optExport)) {
-					switch (part) {
-						case "obj":
-							Options.exportObj = true;
-							break;
-						case "mtl":
-							Options.exportMtl = true;
-							break;
-						default:
-							throw new CmdLineException("Invalid argument to option -t: " + part);
-					}
-				}
 			}
 			if (checkOption(cmdLine, optTexExport)) {
 				Options.exportTex = true;

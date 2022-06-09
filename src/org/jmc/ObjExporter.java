@@ -47,14 +47,10 @@ public class ObjExporter {
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
-	 * @param writeObj
-	 *            Whether to write the .obj file
-	 * @param writeMtl
-	 *            Whether to write the .mtl file
 	 * @param writeTex
 	 *            Whether to write the textures to the output folder.
 	 */
-	public static void export(@CheckForNull ProgressCallback progress, boolean writeObj, boolean writeMtl, boolean writeTex) {
+	public static void export(@CheckForNull ProgressCallback progress, boolean writeTex) {
 		Log.debug("Exporting world "+Options.worldDir);
 		
 		File objfile = new File(Options.outputDir, Options.objFileName);
@@ -67,11 +63,8 @@ public class ObjExporter {
 		}
 
 		try {
-			if (writeObj)
-				objfile.createNewFile();
-
-			if (writeMtl)
-				mtlfile.createNewFile();
+			objfile.createNewFile();
+			mtlfile.createNewFile();
 		} catch (IOException e) {
 			Log.error("Cannot write to the chosen location!", e);
 			return;
@@ -86,300 +79,296 @@ public class ObjExporter {
 			Registries.objTextures.clear();
 			resetErrors();
 			
-			if (writeObj) {
-				if (Options.maxX - Options.minX == 0 || Options.maxY - Options.minY == 0
-						|| Options.maxZ - Options.minZ == 0) {
-					Log.error(Messages.getString("MainPanel.SEL_ERR"), null, true);
+			if (Options.maxX - Options.minX == 0 || Options.maxY - Options.minY == 0
+					|| Options.maxZ - Options.minZ == 0) {
+				Log.error(Messages.getString("MainPanel.SEL_ERR"), null, true);
+				return;
+			}
+
+			PrintWriter obj_writer = new PrintWriter(objfile, StandardCharsets.UTF_8.name());
+			
+			if (progress != null)
+				progress.setMessage(Messages.getString("Progress.OBJ"));
+
+			// Calculate the boundaries of the chunks selected by the user
+			Point cs = Chunk.getChunkPos(Options.minX, Options.minZ);
+			Point ce = Chunk.getChunkPos(Options.maxX + 15, Options.maxZ + 15);
+			int oxs, oys, ozs;
+
+			if (Options.offsetType == OffsetType.CENTER) {
+				oxs = -(Options.minX + (Options.maxX - Options.minX) / 2);
+				oys = -Options.minY;
+				ozs = -(Options.minZ + (Options.maxZ - Options.minZ) / 2);
+				Log.info("Center offset: " + oxs + "/" + oys + "/" + ozs);
+			} else if (Options.offsetType == OffsetType.CUSTOM) {
+				oxs = Options.offsetX;
+				oys = 0;
+				ozs = Options.offsetZ;
+				Log.info("Custom offset: " + oxs + "/" + oys + "/" + ozs);
+			} else {
+				oxs = 0;
+				oys = 0;
+				ozs = 0;
+			}
+
+			/*if (Options.useUVFile) {
+				Log.info("Using file to recalculate UVs: " + Options.UVFile.getAbsolutePath());
+				try {
+					UVRecalculate.load(Options.UVFile);
+				} catch (Exception e) {
+					Log.error("Cannot load UV file!", e);
+					obj_writer.close();
 					return;
 				}
+			}*/// TODO fix single tex export
+			
+			int chunksToDo = (ce.x - cs.x + 1) * (ce.y - cs.y + 1);
 
-				PrintWriter obj_writer = new PrintWriter(objfile, StandardCharsets.UTF_8.name());
-				
-				if (progress != null)
-					progress.setMessage(Messages.getString("Progress.OBJ"));
+			ChunkDataBuffer chunk_buffer = new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY,
+					Options.maxY, Options.minZ, Options.maxZ);
+			
+			ThreadInputQueue inputQueue = new ThreadInputQueue();
+			ThreadOutputQueue outputQueue = new ThreadOutputQueue(1);
 
-				// Calculate the boundaries of the chunks selected by the user
-				Point cs = Chunk.getChunkPos(Options.minX, Options.minZ);
-				Point ce = Chunk.getChunkPos(Options.maxX + 15, Options.maxZ + 15);
-				int oxs, oys, ozs;
+			WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
+			writeRunner.setOffset(oxs, oys, ozs);
+			writeRunner.setScale(Options.scale);
 
-				if (Options.offsetType == OffsetType.CENTER) {
-					oxs = -(Options.minX + (Options.maxX - Options.minX) / 2);
-					oys = -Options.minY;
-					ozs = -(Options.minZ + (Options.maxZ - Options.minZ) / 2);
-					Log.info("Center offset: " + oxs + "/" + oys + "/" + ozs);
-				} else if (Options.offsetType == OffsetType.CUSTOM) {
-					oxs = Options.offsetX;
-					oys = 0;
-					ozs = Options.offsetZ;
-					Log.info("Custom offset: " + oxs + "/" + oys + "/" + ozs);
-				} else {
-					oxs = 0;
-					oys = 0;
-					ozs = 0;
-				}
-
-				/*if (Options.useUVFile) {
-					Log.info("Using file to recalculate UVs: " + Options.UVFile.getAbsolutePath());
-					try {
-						UVRecalculate.load(Options.UVFile);
-					} catch (Exception e) {
-						Log.error("Cannot load UV file!", e);
-						obj_writer.close();
-						return;
-					}
-				}*/// TODO fix single tex export
-				
-				int chunksToDo = (ce.x - cs.x + 1) * (ce.y - cs.y + 1);
-
-				ChunkDataBuffer chunk_buffer = new ChunkDataBuffer(Options.minX, Options.maxX, Options.minY,
-						Options.maxY, Options.minZ, Options.maxZ);
-				
-				ThreadInputQueue inputQueue = new ThreadInputQueue();
-				ThreadOutputQueue outputQueue = new ThreadOutputQueue(1);
-
-				WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
-				writeRunner.setOffset(oxs, oys, ozs);
-				writeRunner.setScale(Options.scale);
-
-				obj_writer.println("mtllib " + mtlfile.getName());
+			obj_writer.println("mtllib " + mtlfile.getName());
+			obj_writer.println();
+			if (!Options.objectPerMaterial && !Options.objectPerBlock && !Options.objectPerChunk){
+				obj_writer.println("g minecraft");
 				obj_writer.println();
-				if (!Options.objectPerMaterial && !Options.objectPerBlock && !Options.objectPerChunk){
-					obj_writer.println("g minecraft");
-					obj_writer.println();
-				}
+			}
 
-				/*if (Options.singleMaterial) {
-					obj_writer.println("usemtl minecraft_material");
-					obj_writer.println();
-					writeRunner.setPrintUseMTL(false);
-				}*///TODO fix single tex export
-				
-				Log.info("Processing chunks...");
-				
-				for (int i = 0; i < Options.exportThreads; i++) {
-					Thread thread = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
-					thread.setName("ReadThread-" + i);
-					thread.setPriority(Thread.NORM_PRIORITY - 1);
-					threads.add(thread);
-					thread.start();
-				}
+			/*if (Options.singleMaterial) {
+				obj_writer.println("usemtl minecraft_material");
+				obj_writer.println();
+				writeRunner.setPrintUseMTL(false);
+			}*///TODO fix single tex export
+			
+			Log.info("Processing chunks...");
+			
+			for (int i = 0; i < Options.exportThreads; i++) {
+				Thread thread = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
+				thread.setName("ReadThread-" + i);
+				thread.setPriority(Thread.NORM_PRIORITY - 1);
+				threads.add(thread);
+				thread.start();
+			}
 
-				writeThread = new Thread(writeRunner);
-				writeThread.setName("WriteThread");
-				writeThread.start();
-				
-				long objTimer = System.nanoTime();
-				
-				ArrayList<Point> chunkList = new ArrayList<>();
-				
-				// loop through the chunks selected by the user
-				for (int cx = cs.x; cx <= ce.x; cx++) {
-					for (int cz = cs.y; cz <= ce.y; cz++) {
-						chunkList.add(new Point(cx, cz));
-					}
-				}
-				
-				chunkList.sort(new HilbertComparator(Math.max(ce.x - cs.x, ce.y - cs.y)));
-				
-				for (Point chunk : chunkList) {
-					inputQueue.add(chunk);
-				}
-				
-				inputQueue.finish();
-				
-				long objTimer2 = System.nanoTime();
-				
-				for (Thread thread : threads){
-					thread.join();
-				}
-				Log.debug("Reading Chunks:" + (System.nanoTime() - objTimer2)/1000000000d);
-				objTimer2 = System.nanoTime();
-				
-				outputQueue.waitUntilEmpty();
-				writeThread.interrupt();
-				writeThread.join();
-				
-				Log.debug("Writing File:" + (System.nanoTime() - objTimer2)/1000000000d);
-				Log.info("OBJ Export Time:" + (System.nanoTime() - objTimer)/1000000000d);
-				
-				chunk_buffer.removeAllChunks();
-
-				obj_writer.close();
-				
-				if (Thread.interrupted())
-					return;
-
-				if (progress != null)
-					progress.setProgress(1);
-				Log.info("Saved model to " + objfile.getAbsolutePath());
-
-				if (!Options.objectPerBlock && (!Options.objectPerChunk || Options.objectPerMaterial)) {
-					//mmdanggg2: in maya the obj importer does not recognise the same obj group appearing twice
-					//		so if we want to export per chunk, the current sorting will not work in maya.
-					Log.info("Sorting OBJ file...");
-					if (progress != null)
-						progress.setMessage(Messages.getString("Progress.OBJ_SORT"));
-
-					if (!tmpdir.mkdir()) {
-						Log.error("Cannot temp create directory: " + tmpdir.getAbsolutePath(), null);
-						return;
-					}
-
-					File mainfile = new File(tmpdir, "main");
-					PrintWriter main = new PrintWriter(mainfile, StandardCharsets.UTF_8.name());
-					File vertexfile = new File(tmpdir, "vertex");
-					PrintWriter vertex = new PrintWriter(vertexfile, StandardCharsets.UTF_8.name());
-					File normalfile = new File(tmpdir, "normal");
-					PrintWriter normal = new PrintWriter(normalfile, StandardCharsets.UTF_8.name());
-					File uvfile = new File(tmpdir, "uv");
-					PrintWriter uv = new PrintWriter(uvfile, StandardCharsets.UTF_8.name());
-
-					BufferedReader objin = Files.newBufferedReader(objfile.toPath(), StandardCharsets.UTF_8);
-
-					Map<String, FaceFile> faces = new HashMap<>();
-					int facefilecount = 1;
-
-					FaceFile current_ff = null;
-					String current_g = "g default";
-
-					int maxcount = (int) objfile.length();
-					if (maxcount == 0)
-						maxcount = 1;
-					int count = 0;
-
-					String line;
-					while ((line = objin.readLine()) != null) {
-						if (line.length() == 0)
-							continue;
-
-						count += line.length() + 1;
-						if (count > maxcount)
-							count = maxcount;
-
-						if (progress != null)
-							progress.setProgress(0.5f * (float) count / (float) maxcount);
-
-						if (line.startsWith("usemtl ")) {
-							line = line.substring(7).trim();
-
-							if (!faces.containsKey(line)) {
-								current_ff = new FaceFile();
-								current_ff.name = line;
-								current_ff.file = new File(tmpdir, "" + facefilecount);
-								facefilecount++;
-								current_ff.writer = new PrintWriter(current_ff.file, StandardCharsets.UTF_8.name());
-								faces.put(line, current_ff);
-							} else
-								current_ff = faces.get(line);
-
-							if (Options.objectPerChunk) {
-								current_ff.writer.println();
-								current_ff.writer.println(current_g);
-								current_ff.writer.println();
-							}
-						} else if (line.startsWith("f ")) {
-							if (current_ff != null) {
-								current_ff.writer.println(line);
-							}
-						} else if (line.startsWith("v ")) {
-							vertex.println(line);
-						} else if (line.startsWith("vn ")) {
-							normal.println(line);
-						} else if (line.startsWith("vt ")) {
-							uv.println(line);
-						} else if (line.startsWith("g ")) {
-							current_g = line;
-						} else {
-							main.println(line);
-							if (line.startsWith("mtllib"))
-								main.println();
-						}
-					}
-
-					objin.close();
-
-					vertex.close();
-					normal.close();
-					uv.close();
-
-					/*if (Options.singleMaterial) {
-						main.println("usemtl minecraft_material");
-						main.println();
-					}*///TODO fix single tex export
-
-					BufferedReader norm_reader = Files.newBufferedReader(normalfile.toPath(), StandardCharsets.UTF_8);
-					while ((line = norm_reader.readLine()) != null)
-						main.println(line);
-					norm_reader.close();
-					normalfile.delete();
-
-					BufferedReader uv_reader = Files.newBufferedReader(uvfile.toPath(), StandardCharsets.UTF_8);
-					while ((line = uv_reader.readLine()) != null)
-						main.println(line);
-					uv_reader.close();
-					uvfile.delete();
-
-					BufferedReader vertex_reader = Files.newBufferedReader(vertexfile.toPath(), StandardCharsets.UTF_8);
-					while ((line = vertex_reader.readLine()) != null)
-						main.println(line);
-					vertex_reader.close();
-					vertexfile.delete();
-
-					count = 0;
-					maxcount = faces.size();
-
-					for (FaceFile ff : faces.values()) {
-						String current_mat = ff.name;
-
-						ff.writer.close();
-
-						count++;
-						if (progress != null)
-							progress.setProgress(0.5f + 0.5f * (float) count / (float) maxcount);
-
-						vertex.println();
-						if (Options.objectPerMaterial && !Options.objectPerChunk)
-							main.println("g " + ff.name);
-						main.println();
-
-						/*if (!Options.singleMaterial)TODO fix single tex export*/ {
-							main.println("usemtl " + ff.name);
-							main.println();
-						}
-
-						BufferedReader reader = Files.newBufferedReader(ff.file.toPath(), StandardCharsets.UTF_8);
-						while ((line = reader.readLine()) != null) {
-							if (Options.objectPerChunk && line.startsWith("g ")) {
-								if (Options.objectPerMaterial)
-									main.println(line + "_" + current_mat);
-								else
-									main.println(line);
-							} else
-								main.println(line);
-						}
-						reader.close();
-
-						ff.file.delete();
-					}
-
-					main.close();
-
-					Filesystem.moveFile(mainfile, objfile);
-
-					if (progress != null)
-						progress.setProgress(1);
-
-					if (!tmpdir.delete())
-						Log.error("Failed to erase temp dir: " + tmpdir.getAbsolutePath()
-								+ "\nPlease remove it yourself!", null);
+			writeThread = new Thread(writeRunner);
+			writeThread.setName("WriteThread");
+			writeThread.start();
+			
+			long objTimer = System.nanoTime();
+			
+			ArrayList<Point> chunkList = new ArrayList<>();
+			
+			// loop through the chunks selected by the user
+			for (int cx = cs.x; cx <= ce.x; cx++) {
+				for (int cz = cs.y; cz <= ce.y; cz++) {
+					chunkList.add(new Point(cx, cz));
 				}
 			}
 			
-			if (writeMtl) {
-				Log.info(String.format("Writing materials to %s...", mtlfile.getAbsolutePath()));
-				Materials.writeMTLFile(mtlfile, progress);
+			chunkList.sort(new HilbertComparator(Math.max(ce.x - cs.x, ce.y - cs.y)));
+			
+			for (Point chunk : chunkList) {
+				inputQueue.add(chunk);
 			}
+			
+			inputQueue.finish();
+			
+			long objTimer2 = System.nanoTime();
+			
+			for (Thread thread : threads){
+				thread.join();
+			}
+			Log.debug("Reading Chunks:" + (System.nanoTime() - objTimer2)/1000000000d);
+			objTimer2 = System.nanoTime();
+			
+			outputQueue.waitUntilEmpty();
+			writeThread.interrupt();
+			writeThread.join();
+			
+			Log.debug("Writing File:" + (System.nanoTime() - objTimer2)/1000000000d);
+			Log.info("OBJ Export Time:" + (System.nanoTime() - objTimer)/1000000000d);
+			
+			chunk_buffer.removeAllChunks();
+
+			obj_writer.close();
+			
+			if (Thread.interrupted())
+				return;
+
+			if (progress != null)
+				progress.setProgress(1);
+			Log.info("Saved model to " + objfile.getAbsolutePath());
+
+			if (!Options.objectPerBlock && (!Options.objectPerChunk || Options.objectPerMaterial)) {
+				//mmdanggg2: in maya the obj importer does not recognise the same obj group appearing twice
+				//		so if we want to export per chunk, the current sorting will not work in maya.
+				Log.info("Sorting OBJ file...");
+				if (progress != null)
+					progress.setMessage(Messages.getString("Progress.OBJ_SORT"));
+
+				if (!tmpdir.mkdir()) {
+					Log.error("Cannot temp create directory: " + tmpdir.getAbsolutePath(), null);
+					return;
+				}
+
+				File mainfile = new File(tmpdir, "main");
+				PrintWriter main = new PrintWriter(mainfile, StandardCharsets.UTF_8.name());
+				File vertexfile = new File(tmpdir, "vertex");
+				PrintWriter vertex = new PrintWriter(vertexfile, StandardCharsets.UTF_8.name());
+				File normalfile = new File(tmpdir, "normal");
+				PrintWriter normal = new PrintWriter(normalfile, StandardCharsets.UTF_8.name());
+				File uvfile = new File(tmpdir, "uv");
+				PrintWriter uv = new PrintWriter(uvfile, StandardCharsets.UTF_8.name());
+
+				BufferedReader objin = Files.newBufferedReader(objfile.toPath(), StandardCharsets.UTF_8);
+
+				Map<String, FaceFile> faces = new HashMap<>();
+				int facefilecount = 1;
+
+				FaceFile current_ff = null;
+				String current_g = "g default";
+
+				int maxcount = (int) objfile.length();
+				if (maxcount == 0)
+					maxcount = 1;
+				int count = 0;
+
+				String line;
+				while ((line = objin.readLine()) != null) {
+					if (line.length() == 0)
+						continue;
+
+					count += line.length() + 1;
+					if (count > maxcount)
+						count = maxcount;
+
+					if (progress != null)
+						progress.setProgress(0.5f * (float) count / (float) maxcount);
+
+					if (line.startsWith("usemtl ")) {
+						line = line.substring(7).trim();
+
+						if (!faces.containsKey(line)) {
+							current_ff = new FaceFile();
+							current_ff.name = line;
+							current_ff.file = new File(tmpdir, "" + facefilecount);
+							facefilecount++;
+							current_ff.writer = new PrintWriter(current_ff.file, StandardCharsets.UTF_8.name());
+							faces.put(line, current_ff);
+						} else
+							current_ff = faces.get(line);
+
+						if (Options.objectPerChunk) {
+							current_ff.writer.println();
+							current_ff.writer.println(current_g);
+							current_ff.writer.println();
+						}
+					} else if (line.startsWith("f ")) {
+						if (current_ff != null) {
+							current_ff.writer.println(line);
+						}
+					} else if (line.startsWith("v ")) {
+						vertex.println(line);
+					} else if (line.startsWith("vn ")) {
+						normal.println(line);
+					} else if (line.startsWith("vt ")) {
+						uv.println(line);
+					} else if (line.startsWith("g ")) {
+						current_g = line;
+					} else {
+						main.println(line);
+						if (line.startsWith("mtllib"))
+							main.println();
+					}
+				}
+
+				objin.close();
+
+				vertex.close();
+				normal.close();
+				uv.close();
+
+				/*if (Options.singleMaterial) {
+					main.println("usemtl minecraft_material");
+					main.println();
+				}*///TODO fix single tex export
+
+				BufferedReader norm_reader = Files.newBufferedReader(normalfile.toPath(), StandardCharsets.UTF_8);
+				while ((line = norm_reader.readLine()) != null)
+					main.println(line);
+				norm_reader.close();
+				normalfile.delete();
+
+				BufferedReader uv_reader = Files.newBufferedReader(uvfile.toPath(), StandardCharsets.UTF_8);
+				while ((line = uv_reader.readLine()) != null)
+					main.println(line);
+				uv_reader.close();
+				uvfile.delete();
+
+				BufferedReader vertex_reader = Files.newBufferedReader(vertexfile.toPath(), StandardCharsets.UTF_8);
+				while ((line = vertex_reader.readLine()) != null)
+					main.println(line);
+				vertex_reader.close();
+				vertexfile.delete();
+
+				count = 0;
+				maxcount = faces.size();
+
+				for (FaceFile ff : faces.values()) {
+					String current_mat = ff.name;
+
+					ff.writer.close();
+
+					count++;
+					if (progress != null)
+						progress.setProgress(0.5f + 0.5f * (float) count / (float) maxcount);
+
+					vertex.println();
+					if (Options.objectPerMaterial && !Options.objectPerChunk)
+						main.println("g " + ff.name);
+					main.println();
+
+					/*if (!Options.singleMaterial)TODO fix single tex export*/ {
+						main.println("usemtl " + ff.name);
+						main.println();
+					}
+
+					BufferedReader reader = Files.newBufferedReader(ff.file.toPath(), StandardCharsets.UTF_8);
+					while ((line = reader.readLine()) != null) {
+						if (Options.objectPerChunk && line.startsWith("g ")) {
+							if (Options.objectPerMaterial)
+								main.println(line + "_" + current_mat);
+							else
+								main.println(line);
+						} else
+							main.println(line);
+					}
+					reader.close();
+
+					ff.file.delete();
+				}
+
+				main.close();
+
+				Filesystem.moveFile(mainfile, objfile);
+
+				if (progress != null)
+					progress.setProgress(1);
+
+				if (!tmpdir.delete())
+					Log.error("Failed to erase temp dir: " + tmpdir.getAbsolutePath()
+							+ "\nPlease remove it yourself!", null);
+			}
+			
+			Log.info(String.format("Writing materials to %s...", mtlfile.getAbsolutePath()));
+			Materials.writeMTLFile(mtlfile, progress);
 			
 			if (writeTex) {
 				Log.info("Exporting textures...");
