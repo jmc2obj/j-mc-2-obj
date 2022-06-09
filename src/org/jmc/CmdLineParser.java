@@ -41,7 +41,7 @@ public class CmdLineParser {
 			.desc("What files to export (any combination is valid): obj - geometry file (.obj); mtl - materials file (.mtl). Default is obj,mtl.").build();
 	private static final Option optTexExport = Option.builder("t").longOpt("tex-export")
 			.numberOfArgs(4).valueSeparator(',').argName("base[,alpha][,norm][,spec]").optionalArg(true)
-			.desc("What textures to export (any combination is valid): base - base textures; alpha - seperate alphas; norm - normal maps. Default is base.").build();
+			.desc("What textures to export (any combination is valid): base - base textures; alpha - separate alphas; norm - normal maps. Default is base.").build();
 	private static final Option optResourcePack = Option.builder("r").longOpt("resource-pack").hasArg().argName("FILE").desc("Resource pack to use for textures and models. Can be specified multiple times. If omitted, will attempt to use the default Minecraft pack.").build();
 	private static final Option optTexScale = Option.builder().longOpt("texturescale").hasArg().argName("SCALE").desc("When exporting textures, scale the images by this factor. Default is 1 (no scaling).").build();
 	private static final Option optObjFile = Option.builder().longOpt("objfile").hasArg().argName("NAME").desc("Name of geometry file to export. Default is minecraft.obj.").build();
@@ -54,9 +54,12 @@ public class CmdLineParser {
 	private static final Option optRenderEntities = new Option(null, "render-entities", false, "Render entities.");
 	private static final Option optIncludeUnknown = new Option(null, "include-unknown", false, "Include unknown blocks in the exported geometry.");
 	private static final Option optIgnoreBiomes = new Option(null, "ignore-biomes", false, "Don't render biomes.");
+	private static final Option optConvertOres = new Option(null, "convert-ores", false, "Convert ore blocks to stone.");
 	private static final Option optObjectPerChunk = new Option(null, "object-per-chunk", false, "Export a separate object for each chunk.");
 	private static final Option optObjectPerMaterial = new Option(null, "object-per-mat", false, "Export a separate object for each material.");
+	private static final Option optObjectPerMaterialOcclusion = new Option(null, "object-per-mat-occl", false, "Enables occlusion testing for adjacent blocks with different materials. Only effective with object-per-mat.");
 	private static final Option optObjectPerBlock = new Option(null, "object-per-block", false, "Export a separate object for each block. WARNING: will produce very large files.");
+	private static final Option optObjectPerBlockOcclusion = new Option(null, "object-per-block-occl", false, "Enables occlusion testing for adjacent blocks. Only effective with object-per-block.");
 	private static final Option optBlockRandomization = new Option(null, "block-randomization", false, "Allow resource pack models to randomly pick from blockstate models instead of always the first.");
 	private static final Option optRemoveDuplicates = new Option(null, "remove-dup", false, "Try harder to merge vertexes that have the same coordinates.");
 	private static final Option optOptimizeGeometry = new Option(null, "optimize-geometry", false, "Reduce size of exported files by joining adjacent faces together when possible.");
@@ -84,9 +87,12 @@ public class CmdLineParser {
 		options.addOption(optRenderEntities);
 		options.addOption(optIncludeUnknown);
 		options.addOption(optIgnoreBiomes);
+		options.addOption(optConvertOres);
 		options.addOption(optObjectPerChunk);
 		options.addOption(optObjectPerMaterial);
+		options.addOption(optObjectPerMaterialOcclusion);
 		options.addOption(optObjectPerBlock);
+		options.addOption(optObjectPerBlockOcclusion);
 		options.addOption(optBlockRandomization);
 		options.addOption(optRemoveDuplicates);
 		options.addOption(optOptimizeGeometry);
@@ -228,6 +234,9 @@ public class CmdLineParser {
 			if (checkOption(cmdLine, optIgnoreBiomes)) {
 				Options.renderBiomes = false;
 			}
+			if (checkOption(cmdLine, optConvertOres)) {
+				Options.convertOres = true;
+			}
 			if (checkOption(cmdLine, optRenderEntities)) {
 				Options.renderEntities = true;
 			}
@@ -237,8 +246,14 @@ public class CmdLineParser {
 			if (checkOption(cmdLine, optObjectPerMaterial)) {
 				Options.objectPerMaterial = true;
 			}
+			if (checkOption(cmdLine, optObjectPerMaterialOcclusion)) {
+				Options.objectPerMaterialOcclusion = true;
+			}
 			if (checkOption(cmdLine, optObjectPerBlock)) {
 				Options.objectPerBlock = true;
+			}
+			if (checkOption(cmdLine, optObjectPerBlockOcclusion)) {
+				Options.objectPerBlockOcclusion = true;
 			}
 			if (checkOption(cmdLine, optBlockRandomization)) {
 				Options.randBlockVariations = true;
