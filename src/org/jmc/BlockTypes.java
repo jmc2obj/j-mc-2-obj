@@ -50,7 +50,7 @@ public class BlockTypes
 			BlockstateEntry bs = Registries.getBlockstate(key);
 			if (bs != null) {
 				Log.info(String.format("Found unknown block '%s', using default properties.", key));
-				return new BlockInfo(key, key.toString(), new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false);
+				return new BlockInfo(key, key.toString(), new RegistryBlockMaterial(bs.id), Occlusion.FULL, new Registry(), false, null);
 			} else {
 				return null;
 			}
@@ -126,6 +126,9 @@ public class BlockTypes
 			if (waterlogged == null) {
 				waterlogged = false;
 			}
+			
+			String oreBaseStr = (String) xpath.evaluate("ore", blockNode, XPathConstants.STRING);
+			NamespaceID oreBase = oreBaseStr == null || oreBaseStr.isEmpty() ? null : NamespaceID.fromString(oreBaseStr);
 			
 			boolean hasMtl = false;
 			NodeList matNodes = (NodeList)xpath.evaluate("materials", blockNode, XPathConstants.NODESET);
@@ -254,7 +257,7 @@ public class BlockTypes
 				
 				mesh.propagateProperties();
 			}
-			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged));
+			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged, oreBase));
 		}
 	}
 

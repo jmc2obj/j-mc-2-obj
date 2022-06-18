@@ -56,6 +56,10 @@ public class BlockInfo
 	/** Force this block to always have the waterlogged tag set*/
 	protected boolean actWaterlogged;
 	
+	/** If not null, this is an ore and, this block id is what the base of the ore is */
+	@CheckForNull
+	protected NamespaceID oreBase;
+	
 
 	/** @return Block id */
 	public NamespaceID getId() {
@@ -85,10 +89,15 @@ public class BlockInfo
 	public boolean getActWaterlogged() {
 		return actWaterlogged;
 	}
+	
+	@CheckForNull
+	public NamespaceID getOreBase() {
+		return oreBase;
+	}
 
 	
 	/** Convenience constructor */
-	BlockInfo(NamespaceID id, String name, @CheckForNull BlockMaterial materials, Occlusion occlusion, @CheckForNull BlockModel model, boolean alwaysWaterlogged)
+	BlockInfo(NamespaceID id, String name, @CheckForNull BlockMaterial materials, Occlusion occlusion, @CheckForNull BlockModel model, boolean alwaysWaterlogged, NamespaceID oreBase)
 	{
 		this.id = id;
 		this.name = name;
@@ -104,6 +113,7 @@ public class BlockInfo
 			this.model = new None();
 		}
 		this.actWaterlogged = alwaysWaterlogged;
+		this.oreBase = oreBase;
 	}
 	
 

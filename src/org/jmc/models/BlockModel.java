@@ -7,10 +7,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.jmc.BlockData;
-import org.jmc.BlockMaterial;
-import org.jmc.BlockTypes;
-import org.jmc.Options;
+import org.jmc.*;
 import org.jmc.geom.Direction;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
@@ -134,9 +131,8 @@ public abstract class BlockModel {
 	 * the occlusion type of the neighbouring block and whether or not the block
 	 * is at the world (or selection) edge.
 	 * 
-	 * @param neighbourId
+	 * @param neighbourData
 	 *            The neighbouring block, or null if there is no neighbour
-	 *            (because the block is at the world edge)
 	 * @param side
 	 *            Side to check
 	 * @return true if side needs to be drawn
@@ -154,8 +150,11 @@ public abstract class BlockModel {
 		if (neighbourData.id.path.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
 			return true;
 
-		if (Options.objectPerMaterial && !Options.objectPerMaterialOcclusion && (!neighbourData.id.equals(data.id)))
-			return true;
+		if (Options.objectPerMaterial && !Options.objectPerMaterialOcclusion && (!neighbourData.id.equals(data.id))) {
+			NamespaceID neighbourOre = BlockTypes.get(neighbourData).getOreBase();
+			if (!(Options.convertOres && neighbourOre != null && neighbourOre.equals(data.id)))
+				return true;
+		}
 
 		switch (BlockTypes.get(neighbourData).getOcclusion()) {
 		case FULL:
@@ -288,12 +287,6 @@ public abstract class BlockModel {
 	 * 
 	 * @param obj
 	 *            OBJFile to add to
-	 * @param x
-	 *            Block x coordinate
-	 * @param y
-	 *            Block y coordinate
-	 * @param z
-	 *            Block z coordinate
 	 * @param xs
 	 *            Start x coordinate
 	 * @param ys

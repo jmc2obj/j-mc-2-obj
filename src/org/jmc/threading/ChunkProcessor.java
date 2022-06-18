@@ -12,10 +12,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.jmc.BlockData;
-import org.jmc.BlockTypes;
-import org.jmc.EntityTypes;
-import org.jmc.Options;
+import org.jmc.*;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.entities.Entity;
 import org.jmc.geom.FaceUtils;
@@ -45,7 +42,7 @@ public class ChunkProcessor
 	}
 	
 	/**
-	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String, boolean) addFace}
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, NamespaceID, boolean) addFace}
 	 */
 	public void addFace(Vertex[] verts, Vertex[] norms, UV[] uv, Transform trans, NamespaceID tex)
 	{
@@ -53,7 +50,7 @@ public class ChunkProcessor
 	}
 
 	/**
-	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, String) addFace}
+	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, NamespaceID) addFace}
 	 */
 	public void addDoubleSidedFace(Vertex[] verts, UV[] uv, Transform trans, NamespaceID tex) {
 		addDoubleSidedFace(verts, null, uv, trans, tex);
@@ -173,9 +170,13 @@ public class ChunkProcessor
 					if(Options.excludeBlocks.contains(block.id))
 						continue;
 					
-					if(Options.convertOres){
-						if(block.id.path.endsWith("ore")){
-							block.id = new NamespaceID("minecraft", "stone");
+					BlockInfo blockInfo = BlockTypes.get(block);
+					
+					if(Options.convertOres) {
+						NamespaceID oreBase = blockInfo.getOreBase();
+						if (oreBase != null) {
+							block.id = oreBase;
+							blockInfo = BlockTypes.get(block);
 						}
 					}
 					
@@ -183,7 +184,7 @@ public class ChunkProcessor
 						chunk_idx_count++;
 					
 					try {
-						BlockTypes.get(block).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
+						blockInfo.getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						if (Boolean.parseBoolean(block.state.get("waterlogged"))) {
 							BlockTypes.get(new BlockData(new NamespaceID("minecraft", "water"))).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						}

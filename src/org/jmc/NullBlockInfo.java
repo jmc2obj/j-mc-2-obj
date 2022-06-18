@@ -16,7 +16,7 @@ public class NullBlockInfo extends BlockInfo
 
 	NullBlockInfo()
 	{
-		super(NamespaceID.NULL, "unknown", null, Occlusion.NONE, null, false);
+		super(NamespaceID.NULL, "unknown", null, Occlusion.NONE, null, false, null);
 
 		noneModel = new None();
 	}
