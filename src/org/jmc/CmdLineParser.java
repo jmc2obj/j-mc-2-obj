@@ -36,7 +36,7 @@ public class CmdLineParser {
 			.numberOfArgs(2).valueSeparator(',').argName("MINY,MAXY")
 			.desc("Minimum and maximum height to export. Default is -64,320.").build();
 	private static final Option optDimension = Option.builder("d").longOpt("dimension").hasArg().argName("ID").desc("World dimension to export. Dimension ids are: 0 - Overworld; -1 - Nether; 1 - The End. Mods may add more dimensions. Default is 0.").build();
-	private static final Option optTexExport = Option.builder("t").longOpt("tex-export")
+	private static final Option optTexExport = Option.builder().longOpt("tex-export")
 			.numberOfArgs(4).valueSeparator(',').argName("base[,alpha][,norm][,spec]").optionalArg(true)
 			.desc("What textures to export (any combination is valid): base - base textures; alpha - separate alphas; norm - normal maps. Default is base.").build();
 	private static final Option optResourcePack = Option.builder("r").longOpt("resource-pack").hasArg().argName("FILE").desc("Resource pack to use for textures and models. Can be specified multiple times. If omitted, will attempt to use the default Minecraft pack.").build();
@@ -60,6 +60,7 @@ public class CmdLineParser {
 	private static final Option optBlockRandomization = new Option(null, "block-randomization", false, "Allow resource pack models to randomly pick from blockstate models instead of always the first.");
 	private static final Option optRemoveDuplicates = new Option(null, "remove-dup", false, "Try harder to merge vertexes that have the same coordinates.");
 	private static final Option optOptimizeGeometry = new Option(null, "optimize-geometry", false, "Reduce size of exported files by joining adjacent faces together when possible.");
+	private static final Option optThreads = Option.builder("t").longOpt("threads").hasArg().argName("NUM").desc("Number of threads to use. Default is 8.").build();
 	private static final Option optHelp = new Option("?", "help", false, "Displays this help");
 	
 	private static final org.apache.commons.cli.Options options = new org.apache.commons.cli.Options();
@@ -92,6 +93,7 @@ public class CmdLineParser {
 		options.addOption(optBlockRandomization);
 		options.addOption(optRemoveDuplicates);
 		options.addOption(optOptimizeGeometry);
+		options.addOption(optThreads);
 		options.addOption(optHelp);
 	}
 	
@@ -242,6 +244,9 @@ public class CmdLineParser {
 			}
 			if (checkOption(cmdLine, optOptimizeGeometry)) {
 				Options.optimiseGeometry = true;
+			}
+			if (checkOption(cmdLine, optThreads)) {
+				Options.exportThreads = Integer.parseInt(cmdLine.getOptionValue(optThreads));
 			}
 			Options.exportWorld = true;
 			List<String> remainingArgs = cmdLine.getArgList();
