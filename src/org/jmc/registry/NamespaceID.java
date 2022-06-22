@@ -1,7 +1,10 @@
 package org.jmc.registry;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,6 +20,9 @@ import com.google.gson.annotations.JsonAdapter;
 
 @JsonAdapter(NamespaceID.NamespaceIDAdapter.class)
 public class NamespaceID implements Comparable<NamespaceID> {
+	private static final Map<String, String> nsStringPool = new ConcurrentHashMap<>();
+	private static final Map<String, String> pathStringPool = new ConcurrentHashMap<>();
+	
 	@Nonnull
 	public final static NamespaceID NULL = new NamespaceID("jmc2obj", "null");
 	@Nonnull
@@ -28,8 +34,18 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	public NamespaceID(String namespace, String path) {
 		if (namespace == null) throw new IllegalArgumentException("NamespaceID namespace can't be null!");
 		if (path == null) throw new IllegalArgumentException("NamespaceID path can't be null!");
-		this.namespace = namespace.intern();
-		this.path = path.intern();
+		String ns = nsStringPool.get(namespace);
+		if (ns == null) {
+			ns = namespace;
+			nsStringPool.put(namespace, namespace);
+		}
+		this.namespace = ns;
+		String pth = pathStringPool.get(path);
+		if (pth == null) {
+			pth = path;
+			pathStringPool.put(path, path);
+		}
+		this.path = pth;
 	}
 	
 	@Nonnull
@@ -40,7 +56,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 		if (splitName.length > 2) {
 			throw new IllegalArgumentException("NamespaceID name can't contain more than 1 colon!");
 		} else if (splitName.length == 1) {
-			splitName = new String[] {"minecraft", name};
+			return new NamespaceID("minecraft", name);
 		}
 		
 		return new NamespaceID(splitName[0], splitName[1]);
