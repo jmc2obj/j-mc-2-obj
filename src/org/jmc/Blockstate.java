@@ -6,6 +6,9 @@ import org.jmc.geom.Direction;
 
 @SuppressWarnings("serial")
 public class Blockstate extends HashMap<String, String> {
+	public Blockstate() {
+		super(8);
+	}
 
 	/**
 	 * Uses dataMask state as a mask applied to this state 
