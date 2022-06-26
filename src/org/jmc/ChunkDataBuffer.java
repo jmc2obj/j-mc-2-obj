@@ -2,90 +2,46 @@ package org.jmc;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.ref.WeakReference;
 
 import org.jmc.Chunk.Blocks;
+import org.jmc.util.CachedGetter;
 
 public class ChunkDataBuffer {
 
-	private Rectangle xzBoundaries;
-	private Rectangle xyBoundaries;
-	Map<Point,Blocks> chunks;
-	Map<Point, Integer> chunkUsers;
+	private final Rectangle xzBoundaries;
+	private final Rectangle xyBoundaries;
+	private final CachedGetter<Point, WeakeningReference<Blocks>> chunks;
 
 	public ChunkDataBuffer(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
 	{
 		xzBoundaries = new Rectangle(xmin, zmin, xmax-xmin, zmax-zmin);
 		xyBoundaries = new Rectangle(xmin, ymin, xmax-xmin, ymax-ymin);
 		
-		chunks=new HashMap<Point, Blocks>();
-		chunkUsers=new HashMap<Point, Integer>();
-	}
-	
-	public boolean addChunk(int x, int z)
-	{
-		Point p=new Point(x, z);
-		
-		synchronized (this) {
-			if (chunks.containsKey(p)) {
-				addChunkUser(p);
-				return true;
+		chunks = new CachedGetter<Point, WeakeningReference<Blocks>>() {
+			@Override
+			public WeakeningReference<Blocks> make(Point p) {
+				Chunk chunk;
+				try {// if chunk exists
+					Region region = Region.findRegion(Options.worldDir, Options.dimension, p.x, p.y);
+					if (region == null)
+						return null;
+					
+					chunk = region.getChunk(p.x, p.y);
+					if (chunk == null)
+						return null;
+				} catch (Exception e) {
+					return null;
+				}
+				
+				return new WeakeningReference<>(chunk.getBlocks());
 			}
-		}
-		
-		Chunk chunk;
-		try {// if chunk exists
-			Region region = Region.findRegion(Options.worldDir, Options.dimension, x, z);
-			if (region == null)
-				return false;
-	
-			chunk = region.getChunk(x, z);
-			if (chunk == null)
-				return false;
-		} catch (Exception e) {
-			return false;
-		}
-		
-		Blocks blocks = chunk.getBlocks();
-		synchronized (this) {
-			chunks.put(p, blocks);
-			addChunkUser(p);
-			return true;
-		}
-	}
-	
-	public synchronized void removeChunk(int x, int z)
-	{
-		Point p=new Point(x, z);
-		Integer currUsers = chunkUsers.get(p);
-		if (currUsers != null && currUsers > 0) {
-			currUsers--;
-		} else {
-			currUsers = 0;
-		}
-		chunkUsers.put(p, currUsers);
-		if (currUsers == 0) {
-			chunks.remove(p);
-		}
-	}
-	
-	private synchronized int addChunkUser(Point p)
-	{
-		Integer currUsers = chunkUsers.get(p);
-		if (currUsers != null) {
-			currUsers++;
-		} else {
-			currUsers = 1;
-		}
-		chunkUsers.put(p, currUsers);
-		return currUsers;
+		};
 	}
 	
 	public synchronized void removeAllChunks()
 	{
 		chunks.clear();
-		chunkUsers.clear();
 	}
 	
 	public synchronized int getChunkCount()
@@ -93,9 +49,18 @@ public class ChunkDataBuffer {
 		return chunks.size();
 	}
 
-	public synchronized Blocks getBlocks(Point p)
+	public Blocks getBlocks(Point p)
 	{
-		return chunks.get(p);
+		WeakeningReference<Blocks> ref = chunks.get(p);
+		if (ref == null)
+			return null;
+		Blocks blocks = ref.get();
+		if (blocks == null) { // there was a reference, but it was garbage collected
+			chunks.remove(p); // remove the dead ref and generate a new one
+			ref = chunks.get(p);
+			blocks = ref.get();
+		}
+		return blocks;
 	}
 	
 	public Rectangle getXZBoundaries()
@@ -106,5 +71,22 @@ public class ChunkDataBuffer {
 	public Rectangle getXYBoundaries()
 	{
 		return xyBoundaries;
+	}
+	
+	/** Weak ref that holds a strong reference until {@link #get()} is called for the first time
+	 * stops it being gc'd until use */
+	static private class WeakeningReference<T> extends WeakReference<T> {
+		private T strongRef;
+		public WeakeningReference(T b) {
+			super(b);
+			strongRef = b;
+		}
+		
+		@Override
+		public T get() {
+			T ref = super.get();
+			strongRef = null;
+			return ref;
+		}
 	}
 }

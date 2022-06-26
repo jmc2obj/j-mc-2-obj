@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.CheckForNull;
 
 public abstract class CachedGetter <K, V> {
-	private final Map<K, Optional<V>> entries = new ConcurrentHashMap<>(new HashMap<>());
+	private final Map<K, Optional<V>> entries = new ConcurrentHashMap<>();
 	private final Map<K, AtomicBoolean> creatingStates = new HashMap<>();
 	
 	/**Gets the cached value for {@code key}.
@@ -73,6 +73,7 @@ public abstract class CachedGetter <K, V> {
 		return Collections.unmodifiableMap(map);
 	}
 	
+	/** Waits for any keys to be created then removes all values from the cache */
 	public synchronized void clear() {
 		entries.clear();
 		creatingStates.clear();
@@ -80,6 +81,22 @@ public abstract class CachedGetter <K, V> {
 	
 	/** Waits if key is being created then puts value into the map*/
 	public synchronized void put(K key, V value) {
+		waitForCreating(key);
+		entries.put(key, Optional.ofNullable(value));
+	}
+	
+	/** Waits if key is being created then removes value from the map*/
+	public synchronized void remove(K key) {
+		waitForCreating(key);
+		entries.remove(key);
+		creatingStates.remove(key);
+	}
+	
+	public synchronized int size() {
+		return entries.size();
+	}
+	
+	private synchronized void waitForCreating(K key) {
 		AtomicBoolean creatingState = creatingStates.get(key);
 		if (creatingState != null) {
 			while (creatingState.get()) {
@@ -90,11 +107,6 @@ public abstract class CachedGetter <K, V> {
 				}
 			}
 		}
-		entries.put(key, Optional.ofNullable(value));
-	}
-	
-	public synchronized int size() {
-		return entries.size();
 	}
 	
 	/** creates a {@code value} for the given {@code key} */

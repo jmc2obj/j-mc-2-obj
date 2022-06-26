@@ -423,9 +423,8 @@ public class Registry extends BlockModel {
 			return newSides;
 		}
 		
-		public boolean matches(@CheckForNull AddedElem obj) {
-			if (obj instanceof AddedElem) {
-				AddedElem otherElem = (AddedElem)obj;
+		public boolean matches(@CheckForNull AddedElem otherElem) {
+			if (otherElem != null) {
 				boolean equal = stateTrans.equals(otherElem.stateTrans);
 				equal &= elemTrans.equals(otherElem.elemTrans);
 				equal &= elem.from.equals(otherElem.elem.from);

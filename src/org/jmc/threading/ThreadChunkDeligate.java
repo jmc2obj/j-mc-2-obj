@@ -20,13 +20,13 @@ import org.jmc.util.EmptyList;
 
 public class ThreadChunkDeligate {
 
-	private ChunkDataBuffer chunkBuffer;
+	private final ChunkDataBuffer chunkBuffer;
 	
-	private Point cached_chunkp;
-	private Blocks cached_chunkb;
-	private Rectangle xzBoundaries;
-	private Rectangle xyBoundaries;
-	private Map<Point,Blocks> auxChunks;
+	private Point currChunkPoint;
+	private Blocks currChunkBlocks;
+	private final Rectangle xzBoundaries;
+	private final Rectangle xyBoundaries;
+	private final Map<Point,Blocks> auxChunks;
 	
 	public ThreadChunkDeligate(ChunkDataBuffer chunkBuffer) {
 		super();
@@ -59,24 +59,16 @@ public class ThreadChunkDeligate {
 	}
 
 	@CheckForNull
-	private Blocks getBlocks(Point p)
-	{
-		if (cached_chunkp == null) {
-			cached_chunkp = p;
-			cached_chunkb = chunkBuffer.getBlocks(p);
-		}
-		if ((cached_chunkp.x != p.x) || (cached_chunkp.y != p.y))
-		{
-			if (auxChunks.containsKey(p)){
-				return auxChunks.get(p);
-			} else {
-				Blocks blks = chunkBuffer.getBlocks(p);
-				auxChunks.put(p, blks);
-				return blks;
+	private Blocks getBlocks(Point p) {
+		if (!p.equals(currChunkPoint)) {
+			Blocks blocks = auxChunks.get(p);
+			if (blocks == null) {
+				blocks = chunkBuffer.getBlocks(p);
+				auxChunks.put(p, blocks);
 			}
+			return blocks;
 		}
-		
-		return cached_chunkb;
+		return currChunkBlocks;
 	}
 	
 	@CheckForNull
@@ -152,8 +144,8 @@ public class ThreadChunkDeligate {
 	}
 	
 	public void setCurrentChunk(Point p) {
+		currChunkPoint = p;
+		currChunkBlocks = chunkBuffer.getBlocks(p);
 		auxChunks.clear();
-		cached_chunkp = p;
-		cached_chunkb = chunkBuffer.getBlocks(p);
 	}
 }
