@@ -15,10 +15,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jmc.BlockInfo.Occlusion;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
-import org.jmc.models.BlockModel;
-import org.jmc.models.Cube;
-import org.jmc.models.Mesh;
-import org.jmc.models.Registry;
+import org.jmc.models.*;
 import org.jmc.registry.BlockstateEntry;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
@@ -191,7 +188,9 @@ public class BlockTypes
 				if (model instanceof Registry) {
 					materials = new RegistryBlockMaterial(id);
 				} else {
-					Log.debug("Block " + id + " has no materials. Using default.");
+					if (!(model instanceof None || model instanceof Mesh)) {
+						Log.debug("Block " + id + " has no materials. Using default.");
+					}
 					materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
 				}
 			}
