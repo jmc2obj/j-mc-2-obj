@@ -96,6 +96,9 @@ public class Registry extends BlockModel {
 	@Nonnull
 	private Transform getStateTrans(ModelInfo modelInfo) {
 		Transform t = Transform.translation(-0.5d, -0.5d, -0.5d);// offset cor to middle of block
+		if (modelInfo.x == 0 && modelInfo.y == 0) {
+			return t;
+		}
 		t = Transform.rotation(-modelInfo.x, 0, 0).multiply(t);// rotate -x ???
 		t = Transform.rotation(0, modelInfo.y, 0).multiply(t);// then y
 		return t;

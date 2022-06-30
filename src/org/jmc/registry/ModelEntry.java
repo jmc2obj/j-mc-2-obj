@@ -29,16 +29,22 @@ public class ModelEntry extends RegistryEntry {
 		return entry;
 	}
 	
-	public synchronized RegistryModel generateModel() {
+	public RegistryModel generateModel() {
+		//fast path
 		if (generatedModel != null) {
 			return generatedModel;
 		}
-		generatedModel = new Gson().fromJson(new Gson().toJson(model), model.getClass());// clone via serialisation
-		generatedModel.parentEntry = model.parentEntry;
-		if (generatedModel.parentEntry != null) {
-			generatedModel.parentEntry.propagateToChild(generatedModel);
+		synchronized (this) {
+			if (generatedModel != null) {
+				return generatedModel;
+			}
+			generatedModel = new Gson().fromJson(new Gson().toJson(model), model.getClass());// clone via serialisation
+			generatedModel.parentEntry = model.parentEntry;
+			if (generatedModel.parentEntry != null) {
+				generatedModel.parentEntry.propagateToChild(generatedModel);
+			}
+			return generatedModel;
 		}
-		return generatedModel;
 	}
 	
 	private void propagateToChild(RegistryModel childModel) {
@@ -65,7 +71,7 @@ public class ModelEntry extends RegistryEntry {
 		return new Gson().toJson(this);
 	}
 	
-	public static class RegistryModel implements Cloneable {
+	public static class RegistryModel {
 		private transient ModelEntry parentEntry;
 		private NamespaceID parent;
 		@Nonnull
@@ -80,7 +86,7 @@ public class ModelEntry extends RegistryEntry {
 			return new Gson().toJson(this);
 		}
 		
-		public class ModelElement {
+		public static class ModelElement {
 			public Vertex from;
 			public Vertex to;
 			public ElementRotation rotation;
@@ -92,7 +98,7 @@ public class ModelEntry extends RegistryEntry {
 				return new Gson().toJson(this);
 			}
 			
-			public class ElementRotation {
+			public static class ElementRotation {
 				public Vertex origin;
 				public String axis;
 				public float angle = 0;
@@ -103,7 +109,7 @@ public class ModelEntry extends RegistryEntry {
 				}
 			}
 			
-			public class ElementFace {
+			public static class ElementFace {
 				public float[] uv;
 				public String texture;
 				public String cullface;
