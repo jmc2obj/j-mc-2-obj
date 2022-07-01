@@ -128,7 +128,7 @@ public class Transform {
 	@Nonnull
 	public static Transform scale(double x, double y, double z) {
 		Transform t = new Transform();
-
+		
 		t.matrix[0][0] = x;
 		t.matrix[1][1] = y;
 		t.matrix[2][2] = z;
@@ -144,29 +144,41 @@ public class Transform {
 
 		Transform ret = new Transform();
 		Transform trans = new Transform();
+		
+		if (a != 0) {
+			double ca = Math.cos(a);
+			double sa = Math.sin(a);
+			trans.matrix[1][1] = ca;
+			trans.matrix[1][2] = -sa;
+			trans.matrix[2][1] = sa;
+			trans.matrix[2][2] = ca;
+			
+			ret = ret.multiply(trans);
+		}
+		if (b != 0) {
+			double cb = Math.cos(b);
+			double sb = Math.sin(b);
+			trans.identity();
+			trans.matrix[0][0] = cb;
+			trans.matrix[0][2] = -sb;
+			trans.matrix[2][0] = sb;
+			trans.matrix[2][2] = cb;
+			
+			ret = ret.multiply(trans);
+		}
+		if (g != 0) {
+			double cg = Math.cos(g);
+			double sg = Math.sin(g);
+			trans.identity();
+			trans.matrix[0][0] = cg;
+			trans.matrix[0][1] = -sg;
+			trans.matrix[1][0] = sg;
+			trans.matrix[1][1] = cg;
+			
+			ret = ret.multiply(trans);
+		}
 
-		trans.matrix[1][1] = Math.cos(a);
-		trans.matrix[1][2] = -Math.sin(a);
-		trans.matrix[2][1] = Math.sin(a);
-		trans.matrix[2][2] = Math.cos(a);
-
-		ret = ret.multiply(trans);
-
-		trans.identity();
-		trans.matrix[0][0] = Math.cos(b);
-		trans.matrix[0][2] = -Math.sin(b);
-		trans.matrix[2][0] = Math.sin(b);
-		trans.matrix[2][2] = Math.cos(b);
-
-		ret = ret.multiply(trans);
-
-		trans.identity();
-		trans.matrix[0][0] = Math.cos(g);
-		trans.matrix[0][1] = -Math.sin(g);
-		trans.matrix[1][0] = Math.sin(g);
-		trans.matrix[1][1] = Math.cos(g);
-
-		return ret.multiply(trans);
+		return ret;
 	}
 	
 	/*
