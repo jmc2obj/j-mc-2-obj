@@ -51,15 +51,16 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public static NamespaceID fromString(String name) {
-		String[] splitName = name.split(":");
-		
-		if (splitName.length > 2) {
-			throw new IllegalArgumentException("NamespaceID name can't contain more than 1 colon!");
-		} else if (splitName.length == 1) {
+		int colonInd = name.indexOf(':');
+		if (colonInd == -1) {
 			return new NamespaceID("minecraft", name);
 		}
-		
-		return new NamespaceID(splitName[0], splitName[1]);
+		String namespace = name.substring(0, colonInd);
+		String path = name.substring(colonInd + 1);
+		if (path.indexOf(':') != -1) {
+			throw new IllegalArgumentException("NamespaceID name can't contain more than 1 colon!");
+		}
+		return new NamespaceID(namespace, path);
 	}
 	
 	@Override
