@@ -36,6 +36,7 @@ public class Registry extends BlockModel {
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
 		BlockPos pos = new BlockPos(x, y, z);
+		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
 		
 		BlockstateEntry bsEntry = Registries.getBlockstate(data.id);
 		if (bsEntry == null) {
@@ -57,7 +58,7 @@ public class Registry extends BlockModel {
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {
 					if (element != null)
-						addElement(obj, chunks, pos, data, modelInfo, model, element, addedElems);
+						addElement(obj, pos, ds, modelInfo, model, element, addedElems);
 				}
 			}
 		}
@@ -65,21 +66,21 @@ public class Registry extends BlockModel {
 	}
 	
 	// Add the element 
-	private void addElement(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos, BlockData data, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<AddedElem> prevElems) {
+	private void addElement(ChunkProcessor obj, BlockPos pos, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<AddedElem> prevElems) {
 		Transform baseTrans = pos.getTransform();
 		Transform stateTrans = getStateTrans(modelInfo);
 		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
-		boolean[] drawSides = getSidesCulling(chunks, pos, data, element.faces, stateTrans);
+		boolean[] elemDrawSides = getSidesCulling(drawSides, element.faces, stateTrans);
 		Transform elementTrans = getElemTrans(element);
 		
 		// if element in the same position was added before then don't add another on top (grass_block overlay)
-		AddedElem elem = new AddedElem(stateTrans, elementTrans, element, drawSides);
+		AddedElem elem = new AddedElem(stateTrans, elementTrans, element, elemDrawSides);
 		boolean add = true;
 		for (@Nonnull AddedElem prevElem : prevElems) {
 			if (elem.matches(prevElem)) {
 				if (elem.hasNew(prevElem)) {// same elem but new faces that weren't added before
-					drawSides = elem.getNew(prevElem);
+					elemDrawSides = elem.getNew(prevElem);
 					prevElem.addSides(elem);
 					add = false;
 				} else {
@@ -89,7 +90,7 @@ public class Registry extends BlockModel {
 			}
 		}
 		if (add) prevElems.add(elem);
-		addBox(obj, element.from.x/16, element.from.y/16, element.from.z/16, element.to.x/16, element.to.y/16, element.to.z/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, drawSides);
+		addBox(obj, element.from.x/16, element.from.y/16, element.from.z/16, element.to.x/16, element.to.y/16, element.to.z/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, elemDrawSides);
 	}
 	
 	// Get the transform for the blockstate
@@ -344,9 +345,8 @@ public class Registry extends BlockModel {
 	
 	// Calculate the culling of each face
 	@Nonnull
-	private boolean[] getSidesCulling(ThreadChunkDeligate chunks, BlockPos pos, BlockData data, Map<String, ElementFace> faces, Transform stateTrans) {
+	private boolean[] getSidesCulling(boolean[] ds, Map<String, ElementFace> faces, Transform stateTrans) {
 		boolean[] array = new boolean[6];
-		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
 		Transform rotation = stateTrans.multiply(Transform.translation(0.5f, 0.5f, 0.5f));
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			int faceIndex;
