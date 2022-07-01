@@ -128,7 +128,7 @@ public class ObjExporter {
 					Options.maxY, Options.minZ, Options.maxZ);
 			
 			ThreadInputQueue inputQueue = new ThreadInputQueue();
-			ThreadOutputQueue outputQueue = new ThreadOutputQueue(1);
+			ThreadOutputQueue outputQueue = new ThreadOutputQueue(Options.exportThreads);
 
 			WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
 			writeRunner.setOffset(oxs, oys, ozs);
