@@ -2,6 +2,7 @@ package org.jmc;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.jmc.Chunk.Blocks;
@@ -12,6 +13,7 @@ public class ChunkDataBuffer {
 	private final Rectangle xzBoundaries;
 	private final Rectangle xyBoundaries;
 	private final CachedGetter<Point, WeakeningReference<Blocks>> chunks;
+	private final CachedGetter<Point, Region> regions;
 
 	public ChunkDataBuffer(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax)
 	{
@@ -21,20 +23,17 @@ public class ChunkDataBuffer {
 		chunks = new CachedGetter<Point, WeakeningReference<Blocks>>() {
 			@Override
 			public WeakeningReference<Blocks> make(Point p) {
-				Chunk chunk;
-				try {// if chunk exists
-					Region region = Region.findRegion(Options.worldDir, Options.dimension, p.x, p.y);
-					if (region == null)
-						return null;
-					
-					chunk = region.getChunk(p.x, p.y);
-					if (chunk == null)
-						return null;
+				return new WeakeningReference<>(makeBlocks(p));
+			}
+		};
+		regions = new CachedGetter<Point, Region>() {
+			@Override
+			public Region make(Point p) {
+				try {
+					return Region.findRegion(Options.worldDir, Options.dimension, p);
 				} catch (Exception e) {
 					return null;
 				}
-				
-				return new WeakeningReference<>(chunk.getBlocks());
 			}
 		};
 	}
@@ -54,13 +53,31 @@ public class ChunkDataBuffer {
 		WeakeningReference<Blocks> ref = chunks.get(p);
 		if (ref == null)
 			return null;
-		Blocks blocks = ref.get();
-		if (blocks == null) { // there was a reference, but it was garbage collected
-			chunks.remove(p); // remove the dead ref and generate a new one
-			ref = chunks.get(p);
-			blocks = ref.get();
+		synchronized (ref) {
+			Blocks blocks = ref.get();
+			if (blocks == null) {
+				blocks = makeBlocks(p);
+				ref.set(blocks);
+			}
+			return blocks;
 		}
-		return blocks;
+	}
+	
+	private Blocks makeBlocks(Point p) {
+		Chunk chunk;
+		try {// if chunk exists
+			Point regionCoord = Region.getRegionCoord(p);
+			Region region = regions.get(regionCoord);
+			if (region == null)
+				return null;
+			
+			chunk = region.getChunk(p.x, p.y);
+			if (chunk == null)
+				return null;
+		} catch (Exception e) {
+			return null;
+		}
+		return chunk.getBlocks();
 	}
 	
 	public Rectangle getXZBoundaries()
@@ -75,18 +92,27 @@ public class ChunkDataBuffer {
 	
 	/** Weak ref that holds a strong reference until {@link #get()} is called for the first time
 	 * stops it being gc'd until use */
-	static private class WeakeningReference<T> extends WeakReference<T> {
+	static private class WeakeningReference<T> {
 		private T strongRef;
+		private WeakReference<T> weakRef;
 		public WeakeningReference(T b) {
-			super(b);
 			strongRef = b;
+			weakRef = new WeakReference<>(b);
 		}
 		
-		@Override
 		public T get() {
-			T ref = super.get();
+			T ref = weakRef.get();
 			strongRef = null;
 			return ref;
+		}
+		
+		public void set(T b, boolean strengthen) {
+			if (strengthen || strongRef != null) strongRef = b;
+			weakRef = new WeakReference<>(b);
+		}
+		
+		public void set(T b) {
+			set(b, false);
 		}
 	}
 }

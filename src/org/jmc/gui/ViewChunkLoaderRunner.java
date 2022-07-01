@@ -79,8 +79,6 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	/**
 	 * Main constructor.
 	 * @param preview reference to the preview panel
-	 * @param worldDir path to the world save
-	 * @param dimension Dimension to load chunks from.
 	 */
 	public ViewChunkLoaderRunner(PreviewPanel preview) {
 		this.preview = preview;
@@ -264,7 +262,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 				Chunk chunk;
 				Region region;
 				try {
-					region = Region.findRegion(worldPath, dimension, p.x, p.y);
+					region = Region.findRegion(worldPath, dimension, Region.getRegionCoord(p));
 					chunk = region.getChunk(p.x, p.y);
 				} catch (Exception e) {
 					emptyChunks.add(p);

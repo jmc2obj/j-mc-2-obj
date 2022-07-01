@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.jmc;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,36 +91,43 @@ public class Region implements Iterable<Chunk> {
 			fis.close();
 		}
 
-	}	
+	}
 	
 	/**
-	 * Find a region file containing the chunk with given coordinates.
+	 * Find a region file with given coordinates.
 	 * @param saveFolder path to the world save
 	 * @param dimension Dimension to load chunks from.
-	 * @param chunk_x x coordinate of chunk
-	 * @param chunk_z z coordinate of chunk
+	 * @param regionCoord coordinate of the region
 	 * @return region file object
 	 * @throws IOException of error occurs
 	 */
-	public static Region findRegion(File saveFolder, int dimension, int chunk_x, int chunk_z) throws IOException
+	public static Region findRegion(File saveFolder, int dimension, Point regionCoord) throws IOException
 	{
-		int rx,rz;
-
-		//equivalent to dividing by 32
-		rx = chunk_x >> 5;
-		rz = chunk_z >> 5;
-
 		File dir;
 		if(dimension == 0)
 			dir=new File(saveFolder.getAbsolutePath(), "region");
 		else
 			dir=new File(saveFolder.getAbsolutePath(), "DIM"+dimension+"/region");
 		
-		File file= new File(dir, "/r."+rx+"."+rz+".mca");
+		File file= new File(dir, "/r."+regionCoord.x+"."+regionCoord.y+".mca");
 		if(!file.exists())
-			file= new File(dir, "/r."+rx+"."+rz+".mcr");
-
+			file= new File(dir, "/r."+regionCoord.x+"."+regionCoord.y+".mcr");
+		
 		return new Region(file);
+	}
+	
+	/**
+	 * Get the region coordinate for the given chunk coordinate.
+	 * @param chunkCoord coordinate of chunk
+	 * @return region coordinate
+	 */
+	public static Point getRegionCoord(Point chunkCoord) throws IOException
+	{
+		//equivalent to dividing by 32
+		int rx = chunkCoord.x >> 5;
+		int rz = chunkCoord.y >> 5;
+
+		return new Point(rx, rz);
 	}
 	
 	/**

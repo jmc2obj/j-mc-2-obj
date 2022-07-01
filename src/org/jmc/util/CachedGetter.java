@@ -27,8 +27,9 @@ public abstract class CachedGetter <K, V> {
 		} 
 		AtomicBoolean creatingState;
 		synchronized (this) {
-			if (entries.containsKey(key)) {// check again, in case
-				return entries.get(key).orElse(null);// if it exists then just return
+			entryOpt = entries.get(key);
+			if (entryOpt != null) {// check again, in case
+				return entryOpt.orElse(null);// if it exists then just return
 			}
 			creatingState = creatingStates.get(key);
 			if (creatingState == null) {
@@ -44,7 +45,14 @@ public abstract class CachedGetter <K, V> {
 						return null;
 					}
 				}
-				return entries.get(key).orElse(null);
+				entryOpt = entries.get(key);
+				if (entryOpt != null) {
+					return entryOpt.orElse(null);
+				} else {// entry was removed just after creation, we still want to get it.
+					assert (creatingStates.get(key) == null);
+					creatingState = new AtomicBoolean(true);
+					creatingStates.put(key, creatingState);// become new creator
+				}
 			}
 		}
 		// we are the creator, add to map
@@ -53,10 +61,14 @@ public abstract class CachedGetter <K, V> {
 			entry = make(key);
 		} finally {
 			synchronized (this) {
-				entries.put(key, Optional.ofNullable(entry));
-				creatingStates.remove(key);
-				creatingState.set(false);
-				this.notifyAll();
+				if (!creatingState.get()) { // someone else created or put while we were making, use theirs.
+					entry = entries.get(key).orElse(null);
+				} else {
+					entries.put(key, Optional.ofNullable(entry));
+					creatingStates.remove(key);
+					creatingState.set(false);
+					this.notifyAll();
+				}
 			}
 		}
 		return entry;
@@ -73,42 +85,48 @@ public abstract class CachedGetter <K, V> {
 		return Collections.unmodifiableMap(map);
 	}
 	
-	/** Waits for any keys to be created then removes all values from the cache */
+	/** Waits for any keys to be created then removes all values from the cache.
+	 * Other threads may still be waiting in {@link #get(K)} after this and immediately create the key again.*/
 	public synchronized void clear() {
+		for (K key : creatingStates.keySet()) {
+			waitForCreating(key);
+		}
 		entries.clear();
 		creatingStates.clear();
 	}
 	
-	/** Waits if key is being created then puts value into the map*/
+	/** Waits if key is being created then puts value into the map.
+	 * Will override a key even if it is mid creation*/
 	public synchronized void put(K key, V value) {
-		waitForCreating(key);
+		AtomicBoolean creatingState = creatingStates.get(key);
+		if (creatingState != null) { // If it is being created, set as done and notify.
+			creatingStates.remove(key);
+			creatingState.set(false);
+			this.notifyAll();
+		}
 		entries.put(key, Optional.ofNullable(value));
-	}
-	
-	/** Waits if key is being created then removes value from the map*/
-	public synchronized void remove(K key) {
-		waitForCreating(key);
-		entries.remove(key);
-		creatingStates.remove(key);
 	}
 	
 	public synchronized int size() {
 		return entries.size();
 	}
 	
-	private synchronized void waitForCreating(K key) {
+	protected synchronized void waitForCreating(K key) {
 		AtomicBoolean creatingState = creatingStates.get(key);
 		if (creatingState != null) {
-			while (creatingState.get()) {
-				try {
-					this.wait();
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
-				}
+			waitForCreating(creatingState);
+		}
+	}
+	protected synchronized void waitForCreating(AtomicBoolean creatingState) {
+		while (creatingState.get()) {
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
 	
-	/** creates a {@code value} for the given {@code key} */
+	/** Creates a {@code value} for the given {@code key} */
 	public abstract V make(K key);
 }
