@@ -1,6 +1,7 @@
 package org.jmc.geom;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -79,12 +80,7 @@ public class Vertex implements Comparable<Vertex>
 	@Override
 	public int hashCode()
 	{
-		final int prime = 31;
-		long result = 1;
-		result = prime * result + Double.doubleToLongBits(x);
-		result = prime * result + Double.doubleToLongBits(y);
-		result = prime * result + Double.doubleToLongBits(z);
-		return (int) result;
+		return Objects.hash(x, y, z);
 	}
 
 	/**
