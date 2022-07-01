@@ -179,10 +179,8 @@ public class WriterRunnable implements Runnable {
 	 * @param out writer of the OBJ file
 	 */
 	private void appendTextures(PrintWriter out) {
-		DecimalFormat df = new DecimalFormat("0.000000000");
 		for (UV uv : exportTexCoords) {
-			out.print("vt " + df.format(uv.u) + " " + df.format(uv.v));
-			out.println();
+			out.println("vt " + formatDouble(uv.u, 9) + " " + formatDouble(uv.v, 9));
 		}
 	}
 
@@ -191,10 +189,8 @@ public class WriterRunnable implements Runnable {
 	 * @param out writer of the OBJ file
 	 */
 	private void appendNormals(PrintWriter out) {
-		DecimalFormat df = new DecimalFormat("0.000");
 		for (Vertex norm : exportNormals) {
-			out.print("vn " + df.format(norm.x) + " " + df.format(norm.y) + " " + df.format(norm.z));
-			out.println();
+			out.println("vn " + formatDouble(norm.x, 3) + " " + formatDouble(norm.y, 3) + " " + formatDouble(norm.z, 3));
 		}
 	}
 
@@ -203,13 +199,11 @@ public class WriterRunnable implements Runnable {
 	 * @param out
 	 */
 	private void appendVertices(PrintWriter out) {
-		DecimalFormat df = new DecimalFormat("0.000");
 		for (Vertex vertex : exportVertices) {
 			double x = (vertex.x + x_offset) * file_scale;
 			double y = (vertex.y + y_offset) * file_scale;
 			double z = (vertex.z + z_offset) * file_scale;
-			out.print("v " + df.format(x) + " " + df.format(y) + " " + df.format(z));
-			out.println();
+			out.println("v " + formatDouble(x, 3) + " " + formatDouble(y, 3) + " " + formatDouble(z, 3));
 		}
 	}
 
@@ -355,5 +349,25 @@ public class WriterRunnable implements Runnable {
 		exportTexCoords.clear();
 		exportNormals.clear();
 		exportFaces.clear();
+	}
+	
+	// fast double format from https://stackoverflow.com/a/10554128/5233018
+	private static final int[] POW10 = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+	
+	public static String formatDouble(double val, int precision) {
+		StringBuilder sb = new StringBuilder();
+		if (val < 0) {
+			sb.append('-');
+			val = -val;
+		}
+		int exp = POW10[precision];
+		long lval = (long)(val * exp + 0.5);
+		sb.append(lval / exp).append('.');
+		long fval = lval % exp;
+		for (int p = precision - 1; p > 0 && fval < POW10[p]; p--) {
+			sb.append('0');
+		}
+		sb.append(fval);
+		return sb.toString();
 	}
 }
