@@ -358,12 +358,12 @@ public class Registry extends BlockModel {
 			}
 			
 			array[faceIndex] = true;
-			
-			if (faceEntry.getValue().cullface == null) {
+			String cullFace = faceEntry.getValue().cullface;
+			if (cullFace == null) {
 				continue;
 			}
 			Direction dir;
-			switch (faceEntry.getValue().cullface) {
+			switch (cullFace) {
 			case "up":
 				dir = Direction.UP;
 				break;
