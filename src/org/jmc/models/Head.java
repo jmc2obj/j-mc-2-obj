@@ -42,7 +42,7 @@ public class Head extends BlockModel
 	private static Set<NamespaceID> addedMaterials = new HashSet<>();
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean onWall = false;
 		String facing = "";

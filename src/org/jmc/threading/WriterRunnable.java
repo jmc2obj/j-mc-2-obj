@@ -130,7 +130,7 @@ public class WriterRunnable implements Runnable {
 			appendNormals(obj_writer);
 			appendVertices(obj_writer);
 			if (Options.objectPerChunk && !Options.objectPerBlock && chunkCoord != null)
-				obj_writer.println("g chunk_" + chunkCoord.x + "_" + chunkCoord.y);
+				obj_writer.println("o chunk_" + chunkCoord.x + "_" + chunkCoord.y);
 			appendFaces(obj_writer);
 			clearData();
 			
@@ -230,7 +230,7 @@ public class WriterRunnable implements Runnable {
 			
 			if(!f.obj_idx.equals(last_obj_idx))
 			{
-				out.println("g o"+f.obj_idx);
+				out.println("o o"+f.obj_idx);
 				last_obj_idx=f.obj_idx;
 			}
 

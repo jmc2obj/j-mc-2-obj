@@ -134,7 +134,7 @@ public class BlockTypes
 				Node matNode = matNodes.item(j);
 				
 				Blockstate state = new Blockstate();
-				int biome = -1;
+				NamespaceID biome = NamespaceID.NULL;
 				
 				NamedNodeMap matAttribs = matNode.getAttributes();
 				
@@ -143,7 +143,7 @@ public class BlockTypes
 					String attrName = attrib.getNodeName();
 					String attrVal = attrib.getNodeValue();
 					if (attrName.equalsIgnoreCase("jmc_biome")) {
-						biome = Integer.parseInt(attrVal, 10);
+						biome = NamespaceID.fromString(attrVal);
 					} else {
 						state.put(attrName, attrVal);
 					}
@@ -152,7 +152,7 @@ public class BlockTypes
 				BlockData data = new BlockData(id, state);
 				
 				String mats = matNode.getTextContent();
-				if (mats.trim().isEmpty() || biome < -1 || biome > 255 )//TODO biome 255 id limit needed?
+				if (mats.trim().isEmpty())
 				{
 					Log.info("Block " + id + " has invalid material. Ignoring.");
 					continue;
@@ -168,7 +168,7 @@ public class BlockTypes
 						nsMats[k] = NamespaceID.fromString(mat);
 				}
 				
-				if(biome >= 0)
+				if(biome != NamespaceID.NULL)
 				{
 					materials.put(nsMats, data.state, biome);
 				}

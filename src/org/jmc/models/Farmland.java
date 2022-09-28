@@ -14,7 +14,7 @@ public class Farmland extends BlockModel
 {
 	
 	@Override
-	protected NamespaceID[] getMtlSides(BlockData data, int biome)
+	protected NamespaceID[] getMtlSides(BlockData data, NamespaceID biome)
 	{
 		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
@@ -30,7 +30,7 @@ public class Farmland extends BlockModel
 	
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		

@@ -18,7 +18,7 @@ public class TripwireHook extends BlockModel
 {
 
 	@Nonnull
-	private NamespaceID[] getMtlSides(BlockData data, int biome, int i)
+	private NamespaceID[] getMtlSides(BlockData data, NamespaceID biome, int i)
 	{
 		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
@@ -34,7 +34,7 @@ public class TripwireHook extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		String dir = data.state.get("facing");
 		boolean connected = data.state.get("attached").equals("true");

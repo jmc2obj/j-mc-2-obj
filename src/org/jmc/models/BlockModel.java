@@ -77,7 +77,7 @@ public abstract class BlockModel {
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
 	@Nonnull
-	protected NamespaceID[] getMtlSides(BlockData data, int biome) {
+	protected NamespaceID[] getMtlSides(BlockData data, NamespaceID biome) {
 		NamespaceID[] abbrMtls = materials.get(data.state, biome);
 
 		NamespaceID[] mtlSides = new NamespaceID[6];
@@ -337,6 +337,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome);
+	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome);
 
 }

@@ -137,7 +137,7 @@ public class ObjExporter {
 			obj_writer.println("mtllib " + mtlfile.getName());
 			obj_writer.println();
 			if (!Options.objectPerMaterial && !Options.objectPerBlock && !Options.objectPerChunk){
-				obj_writer.println("g minecraft");
+				obj_writer.println("o minecraft");
 				obj_writer.println();
 			}
 
@@ -233,7 +233,7 @@ public class ObjExporter {
 				int facefilecount = 1;
 
 				FaceFile current_ff = null;
-				String current_g = "g default";
+				String current_o = "o default";
 
 				int maxcount = (int) objfile.length();
 				if (maxcount == 0)
@@ -267,7 +267,7 @@ public class ObjExporter {
 
 						if (Options.objectPerChunk) {
 							current_ff.writer.println();
-							current_ff.writer.println(current_g);
+							current_ff.writer.println(current_o);
 							current_ff.writer.println();
 						}
 					} else if (line.startsWith("f ")) {
@@ -280,8 +280,8 @@ public class ObjExporter {
 						normal.println(line);
 					} else if (line.startsWith("vt ")) {
 						uv.println(line);
-					} else if (line.startsWith("g ")) {
-						current_g = line;
+					} else if (line.startsWith("o ")) {
+						current_o = line;
 					} else {
 						main.println(line);
 						if (line.startsWith("mtllib"))
@@ -332,7 +332,7 @@ public class ObjExporter {
 
 					vertex.println();
 					if (Options.objectPerMaterial && !Options.objectPerChunk)
-						main.println("g " + ff.name);
+						main.println("o " + ff.name);
 					main.println();
 
 					/*if (!Options.singleMaterial)TODO fix single tex export*/ {
@@ -342,7 +342,7 @@ public class ObjExporter {
 
 					BufferedReader reader = Files.newBufferedReader(ff.file.toPath(), StandardCharsets.UTF_8);
 					while ((line = reader.readLine()) != null) {
-						if (Options.objectPerChunk && line.startsWith("g ")) {
+						if (Options.objectPerChunk && line.startsWith("o ")) {
 							if (Options.objectPerMaterial)
 								main.println(line + "_" + current_mat);
 							else

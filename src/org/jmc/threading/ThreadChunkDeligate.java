@@ -88,12 +88,12 @@ public class ThreadChunkDeligate {
 		return blocks.getBlockData(rx, y, rz);
 	}
 	
-	public int getBlockBiome(int x, int y, int z)
+	public NamespaceID getBlockBiome(int x, int y, int z)
 	{
 		Point chunk_p=Chunk.getChunkPos(x, z);
 		Blocks blocks=getBlocks(chunk_p);
 		
-		if(blocks==null) return 255;
+		if(blocks==null) return NamespaceID.NULL;
 		
 		int rx=x-(chunk_p.x*16);
 		int rz=z-(chunk_p.y*16);

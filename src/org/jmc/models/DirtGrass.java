@@ -15,7 +15,7 @@ public class DirtGrass extends BlockModel
 {
 	
 	@Nonnull
-	protected NamespaceID[] getMtlSides(BlockData data, int biome, boolean snow)
+	protected NamespaceID[] getMtlSides(BlockData data, NamespaceID biome, boolean snow)
 	{
 		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 		
@@ -32,7 +32,7 @@ public class DirtGrass extends BlockModel
 	
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		BlockData above = chunks.getBlockData(x, y+1, z);
 		boolean snow = above != null && above.id.equals(new NamespaceID("minecraft", "snow"));

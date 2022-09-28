@@ -15,7 +15,7 @@ public class RedstoneWire extends BlockModel
 {
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean on = Integer.parseInt(data.state.get("power")) > 0;
 		NamespaceID mtlCross = on ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[2];

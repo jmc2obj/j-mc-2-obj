@@ -16,7 +16,7 @@ public class WoodLog extends BlockModel
 {
 
 	@Nonnull
-	protected NamespaceID[] getMtlSides(BlockData data, int biome, int dir)
+	protected NamespaceID[] getMtlSides(BlockData data, NamespaceID biome, int dir)
 	{
 		NamespaceID[] mat = materials.get(data.state, biome);
 		
@@ -45,7 +45,7 @@ public class WoodLog extends BlockModel
 
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		int dir;
 		// 0 - upright

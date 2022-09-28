@@ -14,7 +14,7 @@ public class Painting extends EntityModel
 	@Override
 	public void addEntity(ChunkProcessor obj, Transform transform) 
 	{
-		addObject(obj, transform, materials.get(null, -1)[0]);		
+		addObject(obj, transform, materials.get(null, NamespaceID.NULL)[0]);
 	}
 	
 	private void addObject(ChunkProcessor obj, Transform transform, NamespaceID mat)

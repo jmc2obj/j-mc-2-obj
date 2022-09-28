@@ -22,7 +22,7 @@ public class BlockMaterial
 	@Nonnull
 	private Map<Blockstate, NamespaceID[]> dataMaterials = new LinkedHashMap<>();
 
-	private Map<Integer, Map<Blockstate, NamespaceID[]>> biomeMaterials = new LinkedHashMap<>();
+	private Map<NamespaceID, Map<Blockstate, NamespaceID[]>> biomeMaterials = new LinkedHashMap<>();
 
 	public boolean isEmpty() {
 		return biomeMaterials.isEmpty() && dataMaterials.isEmpty() && (baseMaterials == null || baseMaterials.length < 1);
@@ -31,8 +31,6 @@ public class BlockMaterial
 	/**
 	 * Sets the materials to use by default, i.e., when there isn't a specific material 
 	 * for the block's data value.
-	 * 
-	 * @param mtlNames 
 	 */
 	public void put(NamespaceID[] mtlNames)
 	{
@@ -42,8 +40,6 @@ public class BlockMaterial
 
 	/**
 	 * Sets the materials to use when the block has a specific data value.
-	 * @param mtlNames 
-	 * @param dataValue
 	 */
 	public void put(NamespaceID[] mtlNames, Blockstate state)
 	{
@@ -56,11 +52,8 @@ public class BlockMaterial
 	/**
 	 * Sets the materials to use when the block has a biome defined. If dataValue isn't defined
 	 * for the block, simply use -1 for its value.
-	 * @param mtlNames
-	 * @param state
-	 * @param biomeValue
 	 */
-	public void put(NamespaceID[] mtlNames, Blockstate state, int biomeValue)
+	public void put(NamespaceID[] mtlNames, Blockstate state, NamespaceID biomeValue)
 	{		
 		if (mtlNames.length == 0)
 			throw new IllegalArgumentException("mtlNames must not be empty");
@@ -92,7 +85,7 @@ public class BlockMaterial
 	 * @return Array of material names.
 	 */
 	@Nonnull
-	public NamespaceID[] get(@CheckForNull Blockstate state, int biomeValue)
+	public NamespaceID[] get(@CheckForNull Blockstate state, NamespaceID biomeValue)
 	{
 		if (state == null)
 			state = new Blockstate();

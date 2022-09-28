@@ -17,7 +17,7 @@ public class Door extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean top = data.state.get("half").equals("upper");
 		int open = Boolean.parseBoolean(data.state.get("open")) ? 1 : 0;

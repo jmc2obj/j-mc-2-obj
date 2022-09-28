@@ -17,7 +17,7 @@ public class Lever extends BlockModel
 {
 
 	@Nonnull
-	private NamespaceID[] getMtlSidesBase(BlockData data, int biome)
+	private NamespaceID[] getMtlSidesBase(BlockData data, NamespaceID biome)
 	{
 		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
@@ -32,7 +32,7 @@ public class Lever extends BlockModel
 	}
 
 	@Nonnull
-	private NamespaceID[] getMtlSidesLever(BlockData data, int biome)
+	private NamespaceID[] getMtlSidesLever(BlockData data, NamespaceID biome)
 	{
 		NamespaceID[] abbrMtls = materials.get(data.state,biome);
 
@@ -48,7 +48,7 @@ public class Lever extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean on = data.state.get("powered").equals("true");
 		String dir = data.state.get("facing");

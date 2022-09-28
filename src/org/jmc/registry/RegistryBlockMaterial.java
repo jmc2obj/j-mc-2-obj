@@ -8,6 +8,8 @@ import org.jmc.registry.BlockstateEntry.ModelInfo;
 import org.jmc.registry.BlockstateEntry.ModelListWeighted;
 import org.jmc.registry.ModelEntry.RegistryModel;
 
+import javax.annotation.Nonnull;
+
 public class RegistryBlockMaterial extends BlockMaterial {
 	private NamespaceID id;
 	
@@ -16,8 +18,9 @@ public class RegistryBlockMaterial extends BlockMaterial {
 		this.id = id;
 	}
 	
+	@Nonnull
 	@Override
-	public NamespaceID[] get(Blockstate state, int biomeValue) {
+	public NamespaceID[] get(Blockstate state, NamespaceID biomeValue) {
 		if (isEmpty()) {
 			NamespaceID[] mats = new NamespaceID[1];
 			HashMap<String, Integer> textureCount = new HashMap<>();

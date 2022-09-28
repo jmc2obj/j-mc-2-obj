@@ -22,7 +22,7 @@ public class Tripwire extends BlockModel
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		NamespaceID mtl = materials.get(data.state,biome)[0];
 		

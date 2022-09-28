@@ -16,7 +16,7 @@ public class CocoaPlant extends BlockModel
 {
 
 	@Override
-	protected NamespaceID[] getMtlSides(BlockData data, int biome)
+	protected NamespaceID[] getMtlSides(BlockData data, NamespaceID biome)
 	{
 		int growth = Integer.parseInt(data.state.get("age"));
 		
@@ -34,7 +34,7 @@ public class CocoaPlant extends BlockModel
 
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		String dir = data.state.get("facing");
 		int growth = Integer.parseInt(data.state.get("age"));

@@ -82,7 +82,7 @@ public class Banner extends BlockModel {
     }
 
     @Override
-    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome) {
+    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
 
         //Log.info("Banner ***************************");
 
@@ -341,15 +341,6 @@ public class Banner extends BlockModel {
 
     /**
      * Add Banner to Outputfile
-     *
-     * @param objFileName
-     * @param material
-     * @param obj
-     * @param x
-     * @param y
-     * @param z
-     * @param scale
-     * @param rotation
      */
     public void addBanner(String bannerType, NamespaceID material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
     	String objFileName = "conf/models/banner_"+bannerType+".obj";

@@ -23,7 +23,7 @@ public class Cube extends EntityModel
 	 */
 	protected NamespaceID[] getMtlSides()
 	{
-		NamespaceID[] abbrMtls = materials.get(null, -1);
+		NamespaceID[] abbrMtls = materials.get(null, NamespaceID.NULL);
 
 		NamespaceID[] mtlSides = new NamespaceID[6];
 		if (abbrMtls.length < 2)
@@ -81,7 +81,6 @@ public class Cube extends EntityModel
 	 * @param mtlSides Material for each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM
 	 * @param uvSides Texture coordinates for each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, uses default
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
-	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
 	protected void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides)
 	{

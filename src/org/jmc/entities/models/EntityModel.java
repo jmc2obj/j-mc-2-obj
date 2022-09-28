@@ -46,7 +46,7 @@ public abstract class EntityModel
 	/**
 	 * Expand the materials to the full 6 side definition used by addBox
 	 */
-	protected NamespaceID[] getMtlSides(BlockData data, byte biome)
+	protected NamespaceID[] getMtlSides(BlockData data, NamespaceID biome)
 	{
 		NamespaceID[] abbrMtls = materials.get(data.state, biome);
 		

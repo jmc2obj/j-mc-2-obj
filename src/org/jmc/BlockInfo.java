@@ -124,7 +124,7 @@ public class BlockInfo
 	 * @param blockData Block data
 	 * @return Block color
 	 */
-	public Color getPreviewColor(BlockData blockData, int biome)
+	public Color getPreviewColor(BlockData blockData, NamespaceID biome)
 	{
 		BlockMaterial mat = getMaterials();
 		NamespaceID[] mtlNames = mat == null ? null : mat.get(blockData.state,biome);

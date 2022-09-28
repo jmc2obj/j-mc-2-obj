@@ -132,7 +132,7 @@ public class Mesh extends BlockModel
 
 	public void propagateProperties() {
 		for (Mesh mesh : objects) {
-			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, 0)[0].equals(Registries.UNKNOWN_TEX_ID))
+			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, NamespaceID.NULL)[0].equals(Registries.UNKNOWN_TEX_ID))
 				mesh.setMaterials(materials);
 			mesh.mesh_data.optimize = mesh_data.optimize;
 			mesh.propagateProperties();
@@ -140,7 +140,7 @@ public class Mesh extends BlockModel
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		//What did this do? if(data<0) data=(byte) (16+data);
 
@@ -150,7 +150,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,pos,data,biome,translate, pos.getRandom());
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos , BlockData data, int biome, Transform trans, Random rand)
+	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos , BlockData data, NamespaceID biome, Transform trans, Random rand)
 	{
 		boolean match=mesh_data.matches(chunks, pos.x, pos.y, pos.z, data.state);
 
@@ -217,7 +217,7 @@ public class Mesh extends BlockModel
 		ret+="MESH ("+this.hashCode()+"), ";
 		ret+="STR "+obj_str+", ";
 		if (!materials.isEmpty())
-			ret+="MAT "+Arrays.toString(materials.get(null, 0))+", ";
+			ret+="MAT "+Arrays.toString(materials.get(null, NamespaceID.NULL))+", ";
 		ret+="STATE "+mesh_data.state+", ";
 		if (mesh_data.transform != null)
 			ret+="TRANS "+mesh_data.transform.toString()+", ";

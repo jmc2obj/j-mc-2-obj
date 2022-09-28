@@ -165,15 +165,16 @@ public class Chunk {
 	{
 		/**
 		 * Main constructor.
-		 * @param num number of blocks to allocate
+		 * @param ymin minimum y level
+		 * @param ymax maximum y level
 		 */
 		public Blocks(int ymin, int ymax)
 		{
 			int block_num = 16*16*Math.abs(ymax - ymin);
 			size = block_num;
 			data=new BlockData[block_num];
-			biome=new int[block_num];
-			Arrays.fill(biome, 1);//default to plains
+			biome=new NamespaceID[block_num];
+			Arrays.fill(biome, new NamespaceID("minecraft", "plains"));//default to plains
 			entities=new LinkedList<TAG_Compound>();
 			tile_entities=new LinkedList<TAG_Compound>();
 			this.ymin = ymin;
@@ -202,12 +203,12 @@ public class Chunk {
 		/**
 		 * Biome IDSs.
 		 */
-		public int [] biome;
+		public NamespaceID[] biome;
 		
-		public int getBiome(int x, int y, int z) { 
+		public NamespaceID getBiome(int x, int y, int z) {
 			int index = getIndex(x, y, z);
 			if (index == -1) {
-				return -1;
+				return NamespaceID.NULL;
 			} else {
 				return biome[index];
 			}
@@ -269,26 +270,26 @@ public class Chunk {
 				int base=((yval.value*16)-ymin)*16*16;
 				
 				if (chunkVer >= 1451) {// >= 1.13/17w47a
-					TAG_List tagPalette;
+					TAG_List tagBlockPalette;
 					TAG_Long_Array tagBlockStates;
 					if (chunkVer >= 2834) {// >= 21w37a
 						TAG_Compound tagBlockStatesComp = (TAG_Compound) c_section.getElement("block_states");
 						if (tagBlockStatesComp == null) {
 							continue;
 						}
-						tagPalette = (TAG_List) tagBlockStatesComp.getElement("palette");
+						tagBlockPalette = (TAG_List) tagBlockStatesComp.getElement("palette");
 						tagBlockStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
 					} else {
-						tagPalette = (TAG_List) c_section.getElement("Palette");
+						tagBlockPalette = (TAG_List) c_section.getElement("Palette");
 						tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
 					}
 					
-					if (tagPalette == null) {
+					if (tagBlockPalette == null) {
 						continue;
 					}
 					if (tagBlockStates == null) {
-						if (tagPalette.elements.length >= 1) {
-							TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[0];
+						if (tagBlockPalette.elements.length >= 1) {
+							TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[0];
 							String blockName = ((TAG_String)blockTag.getElement("Name")).value;
 							if (blockName == null) {
 								Log.debug("No block name!");
@@ -303,7 +304,7 @@ public class Chunk {
 						continue;
 					}
 					
-					int blockBits = Math.max((tagBlockStates.data.length * 64) / 4096, 4); // Minimum of 4 bits.
+					int blockBits = Math.max(bitsForInt(tagBlockPalette.elements.length - 1), 4); // Minimum of 4 bits.
 					for (int i = 0; i < 4096; i++) {
 						long blockPid;
 						if (chunkVer >= 2529) {// >= 20w17a
@@ -323,7 +324,7 @@ public class Chunk {
 							}
 						}
 						
-						TAG_Compound blockTag = (TAG_Compound)tagPalette.elements[(int)blockPid];
+						TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[(int)blockPid];
 						String blockName = ((TAG_String)blockTag.getElement("Name")).value;
 						if (blockName == null) {
 							Log.debug("No block name!");
@@ -345,6 +346,50 @@ public class Chunk {
 						}
 						
 						ret.data[base+i] = block;
+					}
+					
+					if (chunkVer >= 2834) {// >= 21w37a Biomes changed format
+						TAG_Compound tagBlockStatesComp = (TAG_Compound) c_section.getElement("biomes");
+						if (tagBlockStatesComp == null) {
+							continue;
+						}
+						TAG_List tagBiomePalette = (TAG_List) tagBlockStatesComp.getElement("palette");
+						TAG_Long_Array tagBiomeStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
+						if (tagBiomePalette == null) {
+							continue;
+						}
+						if (tagBiomeStates == null) {
+							if (tagBiomePalette.elements.length >= 1) {
+								String biomeName = ((TAG_String) tagBiomePalette.elements[0]).value;
+								NamespaceID biome = NamespaceID.fromString(biomeName);
+								for (int i = 0; i < 4096; i++) {
+									ret.biome[base+i] = biome;
+								}
+							}
+							continue;
+						}
+						int biomeBits = bitsForInt(tagBiomePalette.elements.length - 1);
+						for (int i = 0; i < 64; i++) {
+							int perLong = 64 / biomeBits;
+							int longInd = i / perLong;
+							int longSubInd = i % perLong;
+							long lvalue = tagBiomeStates.data[longInd];
+							long shifted = lvalue >>> (longSubInd * biomeBits);
+							long biomePid = shifted & (-1l >>> (64 - biomeBits));
+							
+							String biomeName = ((TAG_String) tagBiomePalette.elements[(int) biomePid]).value;
+							NamespaceID biome = NamespaceID.fromString(biomeName);
+							//Copy biome into 4x4x4 cube
+							for (int x = 0; x < 4; x++) {
+								for (int y = 0; y < 4; y++) {
+									for (int z = 0; z< 4; z++) {
+										int baseInd = base + ((i%4)*4) + ((i/4)*16*4)%(16*16) + ((i/(4*4))*16*16*4);
+										int index = baseInd + (x + z*16 + y*16*16);
+										ret.biome[index] = biome;
+									}
+								}
+							}
+						}
 					}
 				} else {// <= 1.12
 					short[] oldIDs = new short[ret.size];
@@ -381,7 +426,7 @@ public class Chunk {
 				}
 			}
 			
-			if (chunkVer < 2844) {// < 21w43a
+			if (chunkVer < 2834) {// < 21w37a newer biomes are in pallet format same as blocks
 				TAG_Compound level = (TAG_Compound) root.getElement("Level");
 				TAG_Int_Array tagBiomes;
 				if (chunkVer >= 1466) {// >= 18w06a
@@ -405,7 +450,8 @@ public class Chunk {
 								} else {
 									biome = tagBiomes.data[x+z*16];
 								}
-								ret.biome[x + z*16 + y*16*16] = biome;
+								//TODO old format conversion
+								//ret.biome[x + z*16 + y*16*16] = biome;
 							}
 						}
 					}
@@ -470,6 +516,15 @@ public class Chunk {
 		}
 
 		return ret;
+	}
+	
+	private int bitsForInt(int value) {
+		int bits = 0;
+		while (value > 0) {
+			bits++;
+			value = value >> 1;
+		}
+		return bits;
 	}
 	
 	public int getYMin() {
@@ -538,7 +593,6 @@ public class Chunk {
 		gh.setColor(Color.black);
 		gh.fillRect(0, 0, width, height);
 
-		int blockBiome=0;
 		Blocks bd=getBlocks();
 
 		int drawYMax = ceiling;
@@ -552,8 +606,8 @@ public class Chunk {
 
 
 		BlockData[] topBlocks = new BlockData[16*16];
-		int biome[] = new int[16*16];
-		int himage[] = new int[16*16];
+		NamespaceID[] biome = new NamespaceID[16*16];
+		int[] himage = new int[16*16];
 		
 		Arrays.fill(himage, drawYMin);
 		
@@ -567,10 +621,8 @@ public class Chunk {
 					if (Thread.currentThread().isInterrupted())
 						return;
 					
-					BlockData blockData;
-					
-					blockBiome = bd.getBiome(x, y, z);
-					blockData = bd.getBlockData(x, y, z);
+					NamespaceID blockBiome = bd.getBiome(x, y, z);
+					BlockData blockData = bd.getBlockData(x, y, z);
 					
 					if(blockData != null && !BlockTypes.get(blockData).getOcclusion().equals(Occlusion.NONE))
 					{
@@ -591,7 +643,7 @@ public class Chunk {
 					return;
 				
 				BlockData blockData = topBlocks[z*16+x];
-				blockBiome = biome[z*16+x];
+				NamespaceID blockBiome = biome[z*16+x];
 				
 				if(blockData != null) {
 					BlockInfo type = BlockTypes.get(blockData);

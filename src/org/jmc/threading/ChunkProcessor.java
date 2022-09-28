@@ -162,7 +162,7 @@ public class ChunkProcessor
 				for(int y = ymin; y < ymax; y++)
 				{
 					BlockData block=chunk.getBlockData(x, y, z);
-					int blockBiome=chunk.getBlockBiome(x, y, z);
+					NamespaceID blockBiome=chunk.getBlockBiome(x, y, z);
 					
 					if(block == null || block.id == NamespaceID.NULL)
 						continue;

@@ -13,7 +13,7 @@ public class Fence extends BlockModel
 {
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, int biome)
+	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		NamespaceID[] mtls = getMtlSides(data, biome);
 		UV[] uvTop, uvSide;
