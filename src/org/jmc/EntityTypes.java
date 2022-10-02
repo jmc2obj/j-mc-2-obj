@@ -82,7 +82,7 @@ public class EntityTypes {
 			if (!hasMtl) {
 				// Log.info("Entity " + id +
 				// " has no materials. Using default.");
-				materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
+				materials.put(new NamespaceID[] { NamespaceID.UNKNOWN });
 			}
 
 			EntityModel entityModel;

@@ -37,8 +37,6 @@ public class Registries {
 		BLOCKSTATE, MODEL, TEXTURE
 	}
 
-	public static final NamespaceID UNKNOWN_TEX_ID = new NamespaceID("jmc2obj", "unknown");
-
 	private final static CachedGetter<NamespaceID, BlockstateEntry> blockstates;
 	private final static CachedGetter<NamespaceID, ModelEntry> models;
 	private final static CachedGetter<NamespaceID, TextureEntry> textures;
@@ -128,8 +126,8 @@ public class Registries {
 		models.clear();
 		textures.clear();
 		objTextures.clear();
-		TextureEntry unkTexEntry = new TextureEntry(UNKNOWN_TEX_ID);
-		textures.put(UNKNOWN_TEX_ID, unkTexEntry);
+		TextureEntry unkTexEntry = new TextureEntry(NamespaceID.UNKNOWN);
+		textures.put(NamespaceID.UNKNOWN, unkTexEntry);
 		BufferedImage unkTex = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		unkTex.setRGB(0, 0, Color.MAGENTA.getRGB());
 		unkTexEntry.setImage(unkTex);

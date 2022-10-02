@@ -132,7 +132,7 @@ public class BlockInfo
 		if (mtlNames == null || mtlNames.length == 0)
 		{
 			Log.debug("block " + getId() + " (" + getName() + ") has no mtl for data="+blockData);
-			te = Registries.getTexture(Registries.UNKNOWN_TEX_ID);
+			te = Registries.getTexture(NamespaceID.UNKNOWN);
 		} else {
 			te = Registries.getTexture(mtlNames[0]);
 		}

@@ -47,7 +47,7 @@ public class RegistryBlockMaterial extends BlockMaterial {
 				}
 			}
 			if (mats[0] == null)
-				mats[0] = Registries.UNKNOWN_TEX_ID;
+				mats[0] = NamespaceID.UNKNOWN;
 			return mats;
 		} else {
 			return super.get(state, biomeValue);

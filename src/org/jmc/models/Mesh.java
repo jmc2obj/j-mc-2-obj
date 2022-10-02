@@ -132,7 +132,7 @@ public class Mesh extends BlockModel
 
 	public void propagateProperties() {
 		for (Mesh mesh : objects) {
-			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, NamespaceID.NULL)[0].equals(Registries.UNKNOWN_TEX_ID))
+			if (!materials.isEmpty() && mesh.materials.isEmpty() && !materials.get(null, NamespaceID.NULL)[0].equals(NamespaceID.UNKNOWN))
 				mesh.setMaterials(materials);
 			mesh.mesh_data.optimize = mesh_data.optimize;
 			mesh.propagateProperties();

@@ -22,7 +22,7 @@ public class UnknownBlockInfo extends BlockInfo
 		super(NamespaceID.NULL, "unknown", null, Occlusion.NONE, null, false, null);
 
 		materials = new BlockMaterial();
-		materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
+		materials.put(new NamespaceID[] { NamespaceID.UNKNOWN });
 
 		cubeModel = new Cube();
 		cubeModel.setMaterials(materials);

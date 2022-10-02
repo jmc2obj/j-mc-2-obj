@@ -191,7 +191,7 @@ public class BlockTypes
 					if (!(model instanceof None || model instanceof Mesh)) {
 						Log.debug("Block " + id + " has no materials. Using default.");
 					}
-					materials.put(new NamespaceID[] { Registries.UNKNOWN_TEX_ID });
+					materials.put(new NamespaceID[] { NamespaceID.UNKNOWN });
 				}
 			}
 			

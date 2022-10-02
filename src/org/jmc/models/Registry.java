@@ -147,7 +147,7 @@ public class Registry extends BlockModel {
 	@Nonnull
 	private NamespaceID[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures) {
 		NamespaceID[] array = new NamespaceID[6];
-		Arrays.fill(array, Registries.UNKNOWN_TEX_ID);
+		Arrays.fill(array, NamespaceID.UNKNOWN);
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			String tex = faceEntry.getValue().texture;
 			if (tex != null && tex.startsWith("#")) {

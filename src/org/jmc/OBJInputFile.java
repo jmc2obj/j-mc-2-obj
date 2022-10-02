@@ -249,7 +249,7 @@ public class OBJInputFile
 				if(material != null) {
 					f.tex=NamespaceID.fromString(material);
 				} else {
-					f.tex=Registries.UNKNOWN_TEX_ID;
+					f.tex=NamespaceID.UNKNOWN;
 				}
 				
 				if (group==null)
