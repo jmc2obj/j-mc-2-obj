@@ -21,7 +21,7 @@ public class Liquid extends BlockModel
 	 * Gets the block height (from -0.5 to 0.5) corresponding to the fluid level.
 	 * Fluid level goes from 0 (highest) to 7 (lowest)
 	 */
-	private static float heigthForLevel(int level)
+	private static float heightForLevel(int level)
 	{
 		return 0.375f - 0.12f * (float)level;
 	}
@@ -108,7 +108,7 @@ public class Liquid extends BlockModel
 		}
 		else if (level == 0)
 		{
-			h_nw = h_ne = h_se = h_sw = heigthForLevel(0);
+			h_nw = h_ne = h_se = h_sw = heightForLevel(0);
 			if (same_up_nw || same_up_n || same_up_w) h_nw = 0.5f;
 			if (same_up_ne || same_up_n || same_up_e) h_ne = 0.5f;
 			if (same_up_se || same_up_s || same_up_e) h_se = 0.5f;
@@ -150,30 +150,30 @@ public class Liquid extends BlockModel
 			if (same_up_nw || same_up_n || same_up_w)
 				h_nw = 0.5f;
 			else if (same_nw || same_n || same_w || !same_down)
-				h_nw = heigthForLevel(min(level, lvl_nw, lvl_n, lvl_w));
+				h_nw = heightForLevel(min(level, lvl_nw, lvl_n, lvl_w));
 			else
-				h_nw = heigthForLevel(7);
+				h_nw = heightForLevel(7);
 
 			if (same_up_ne || same_up_n || same_up_e)
 				h_ne = 0.5f;
 			else if (same_ne || same_n || same_e || !same_down)
-				h_ne = heigthForLevel(min(level, lvl_ne, lvl_n, lvl_e));
+				h_ne = heightForLevel(min(level, lvl_ne, lvl_n, lvl_e));
 			else
-				h_ne = heigthForLevel(7);
+				h_ne = heightForLevel(7);
 
 			if (same_up_se || same_up_s || same_up_e)
 				h_se = 0.5f;
 			else if (same_se || same_s || same_e || !same_down)
-				h_se = heigthForLevel(min(level, lvl_se, lvl_s, lvl_e));
+				h_se = heightForLevel(min(level, lvl_se, lvl_s, lvl_e));
 			else
-				h_se = heigthForLevel(7);
+				h_se = heightForLevel(7);
 			
 			if (same_up_sw || same_up_s || same_up_w)
 				h_sw = 0.5f;
 			else if (same_sw || same_s || same_w || !same_down)
-				h_sw = heigthForLevel(min(level, lvl_sw, lvl_s, lvl_w));
+				h_sw = heightForLevel(min(level, lvl_sw, lvl_s, lvl_w));
 			else
-				h_sw = heigthForLevel(7);
+				h_sw = heightForLevel(7);
 			
 			/*
 			 * Calculate flow direction
