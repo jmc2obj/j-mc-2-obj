@@ -7,31 +7,21 @@
  ******************************************************************************/
 package org.jmc;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import org.jmc.BlockInfo.Occlusion;
+import org.jmc.NBT.*;
+import org.jmc.models.None;
+import org.jmc.registry.NamespaceID;
+import org.jmc.util.IDConvert;
+import org.jmc.util.Log;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.jmc.BlockInfo.Occlusion;
-import org.jmc.NBT.NBT_Tag;
-import org.jmc.NBT.TAG_Byte;
-import org.jmc.NBT.TAG_Byte_Array;
-import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_Int_Array;
-import org.jmc.NBT.TAG_List;
-import org.jmc.NBT.TAG_Long_Array;
-import org.jmc.NBT.TAG_String;
-import org.jmc.models.None;
-import org.jmc.registry.NamespaceID;
-import org.jmc.util.Log;
 /**
  * Class describing a chunk. A chunk is a 16x16 group of blocks of 
  * varying heights (in Anvil) or 128 (in Region).
@@ -96,7 +86,7 @@ public class Chunk {
 			if (root.getElement("DataVersion") != null && root.getElement("DataVersion").ID() == 3) {
 				chunkVer = ((TAG_Int)root.getElement("DataVersion")).value;
 			} else {
-				Log.debug(String.format("Couldn't get chunk DataVersion!"));
+				//Log.debug(String.format("Couldn't get chunk DataVersion!"));
 				chunkVer = 0;//Integer.MAX_VALUE;
 			}
 		} else {
@@ -392,37 +382,37 @@ public class Chunk {
 						}
 					}
 				} else {// <= 1.12
-					short[] oldIDs = new short[ret.size];
-					byte[] oldData = new byte[ret.size];
+					short[] oldIDs = new short[4096];
+					byte[] oldData = new byte[4096];
 					TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
 					TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
 					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
 					for(int i=0; i<tagBlocks.data.length; i++)
-						oldIDs[base+i] = (short)(tagBlocks.data[i]&0xff);	// convert signed to unsigned
+						oldIDs[i] = (short) Byte.toUnsignedInt(tagBlocks.data[i]);
 					
 					if(tagAdd!=null)
 					{
 						for(int i=0; i<tagAdd.data.length; i++)
 						{
-							short add = (short)(tagAdd.data[i]&0xff);	// convert signed to unsigned
-							short add1 = (short)(add&0x0f);
-							short add2 = (short)(add>>4);
-							oldIDs[base+2*i] += (add1<<8);
-							oldIDs[base+2*i+1] += (add2<<8);
+							int val = Byte.toUnsignedInt(tagAdd.data[i]);
+							short add1 = (short)(val&0x0f);
+							short add2 = (short)(val>>>4);
+							oldIDs[2*i] += (add1<<8);
+							oldIDs[2*i+1] += (add2<<8);
 						}
 					}
 					
 					for(int i=0; i<tagData.data.length; i++)
 					{
-						byte add1=(byte)(tagData.data[i]&0x0f);
-						byte add2=(byte)(tagData.data[i]>>4);
-						oldData[base+2*i]=add1;
-						oldData[base+2*i+1]=add2;
-						//TODO old format conversion
+						int val = Byte.toUnsignedInt(tagData.data[i]);
+						byte add1=(byte)(val&0x0f);
+						byte add2=(byte)(val>>>4);
+						oldData[2*i]=add1;
+						oldData[2*i+1]=add2;
 					}
-					
-					Log.info("Chunk is old version (pre 1.13), skipping! " + pos_x + " " + pos_z);
-					break;
+					for (int i = 0; i < 4096; i++) {
+						ret.data[base + i] = IDConvert.convertBlock(oldIDs[i], oldData[i]);
+					}
 				}
 			}
 			
@@ -450,8 +440,7 @@ public class Chunk {
 								} else {
 									biome = tagBiomes.data[x+z*16];
 								}
-								//TODO old format conversion
-								//ret.biome[x + z*16 + y*16*16] = biome;
+								ret.biome[ret.getIndex(x, y+ymin, z)] = IDConvert.convertBiome(biome);
 							}
 						}
 					}
@@ -464,24 +453,31 @@ public class Chunk {
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
-			byte add1,add2;
-			ret=new Blocks(0, 256);
+			ret=new Blocks(0, 128);
 			short[] oldIDs = new short[ret.size];
 			byte[] oldData = new byte[ret.size];
 			
 			for(int i=0; i<blocks.data.length; i++)
-				oldIDs[i] = blocks.data[i];
+				oldIDs[i] = (short) Byte.toUnsignedInt(blocks.data[i]);
 			
 			for(int i=0; i<data.data.length; i++)
 			{
-				add1=(byte) (data.data[i]&0x0f);
-				add2=(byte) (data.data[i]>>4);
+				int val = Byte.toUnsignedInt(data.data[i]);
+				byte add1=(byte)(val&0x0f);
+				byte add2=(byte)(val>>>4);
 				oldData[2*i]=add1;
 				oldData[2*i+1]=add2;
-				//TODO old format conversion
 			}
-			Log.info("Chunk is old version (pre 1.2.1), skipping! " + pos_x + " " + pos_z);
-			
+			// reorder index from YZX to XZY
+			for (int x = 0; x < 16; x++) {
+				for (int z = 0; z < 16; z++) {
+					for (int y = 0; y < 128; y++) {
+						int oldInd = y+z*128+x*128*16;
+						int newInd = ret.getIndex(x, y, z);
+						ret.data[newInd] = IDConvert.convertBlock(oldIDs[oldInd], oldData[oldInd]);
+					}
+				}
+			}
 		}
 		
 		if (chunkVer < 2844) {// < 21w43a
@@ -568,7 +564,7 @@ public class Chunk {
 			yMinMax = new int[] {ymin, ymax};
 			return yMinMax;
 		} else {
-			yMinMax = new int[] {0, 256};
+			yMinMax = new int[] {0, 128};
 			return yMinMax;
 		}
 	}

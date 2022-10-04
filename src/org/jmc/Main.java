@@ -9,6 +9,7 @@ import org.jmc.Options.UIMode;
 import org.jmc.gui.MainWindow;
 import org.jmc.gui.Settings;
 import org.jmc.registry.Registries;
+import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 
 
@@ -67,6 +68,7 @@ public class Main
 			Configuration.initialize();
 			Registries.initialize();
 			BlockTypes.initialize();
+			IDConvert.initialize();
 			EntityTypes.initialize();
 			
 			MainWindow.main.loadingFinished();
@@ -95,6 +97,7 @@ public class Main
 			Configuration.initialize();
 			Registries.initialize();
 			BlockTypes.initialize();
+			IDConvert.initialize();
 			EntityTypes.initialize();
 		}
 		catch (Exception e) {

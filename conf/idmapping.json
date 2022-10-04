@@ -1,0 +1,638 @@
+{
+  "blocks": {
+    "0": "minecraft:air",
+    "1": {
+      "dataValues": {
+        "0": "minecraft:stone",
+        "1": "minecraft:granite",
+        "2": "minecraft:polished_granite",
+        "3": "minecraft:diorite",
+        "4": "minecraft:polished_diorite",
+        "5": "minecraft:andesite",
+        "6": "minecraft:polished_andesite"
+      }
+    },
+    "2": "minecraft:grass_block",
+    "3": {
+      "dataValues": {
+        "0": "minecraft:dirt",
+        "1": "minecraft:coarse_dirt",
+        "2": "minecraft:podzol"
+      }
+    },
+    "4": "minecraft:cobblestone",
+    "5": {
+      "dataValues": {
+        "0": "minecraft:oak_planks",
+        "1": "minecraft:spruce_planks",
+        "2": "minecraft:birch_planks",
+        "3": "minecraft:jungle_planks",
+        "4": "minecraft:acacia_planks",
+        "5": "minecraft:dark_oak_planks"
+      }
+    },
+    "6": {
+      "dataValues": {
+        "0": {
+          "id": "minecraft:oak_sapling",
+          "state": {"stage": 0}
+        },
+        "1": {
+          "id": "minecraft:spruce_sapling",
+          "state": {"stage": 0}
+        },
+        "2": {
+          "id": "minecraft:birch_sapling",
+          "state": {"stage": 0}
+        },
+        "3": {
+          "id": "minecraft:jungle_sapling",
+          "state": {"stage": 0}
+        },
+        "4": {
+          "id": "minecraft:acacia_sapling",
+          "state": {"stage": 0}
+        },
+        "5": {
+          "id": "minecraft:dark_oak_sapling",
+          "state": {"stage": 0}
+        },
+        "8": {
+          "id": "minecraft:oak_sapling",
+          "state": {"stage": 1}
+        },
+        "9": {
+          "id": "minecraft:spruce_sapling",
+          "state": {"stage": 1}
+        },
+        "10": {
+          "id": "minecraft:birch_sapling",
+          "state": {"stage": 1}
+        },
+        "11": {
+          "id": "minecraft:jungle_sapling",
+          "state": {"stage": 1}
+        },
+        "12": {
+          "id": "minecraft:acacia_sapling",
+          "state": {"stage": 1}
+        },
+        "13": {
+          "id": "minecraft:dark_oak_sapling",
+          "state": {"stage": 1}
+        }
+      }
+    },
+    "7": "minecraft:bedrock",
+    "8": {
+      "id": "minecraft:flowing_water",
+      "dataValues": {
+        "0": { "state": {"level": 0} },
+        "1": { "state": {"level": 1} },
+        "2": { "state": {"level": 2} },
+        "3": { "state": {"level": 3} },
+        "4": { "state": {"level": 4} },
+        "5": { "state": {"level": 5} },
+        "6": { "state": {"level": 6} },
+        "7": { "state": {"level": 7} },
+        "8": { "state": {"level": 8} },
+        "9": { "state": {"level": 9} },
+        "10": { "state": {"level": 10} },
+        "11": { "state": {"level": 11} },
+        "12": { "state": {"level": 12} },
+        "13": { "state": {"level": 13} },
+        "14": { "state": {"level": 14} },
+        "15": { "state": {"level": 15} }
+      }
+    },
+    "9": {
+      "id": "minecraft:water",
+      "dataValues": {
+        "0": { "state": {"level": 0} },
+        "1": { "state": {"level": 1} },
+        "2": { "state": {"level": 2} },
+        "3": { "state": {"level": 3} },
+        "4": { "state": {"level": 4} },
+        "5": { "state": {"level": 5} },
+        "6": { "state": {"level": 6} },
+        "7": { "state": {"level": 7} },
+        "8": { "state": {"level": 8} },
+        "9": { "state": {"level": 9} },
+        "10": { "state": {"level": 10} },
+        "11": { "state": {"level": 11} },
+        "12": { "state": {"level": 12} },
+        "13": { "state": {"level": 13} },
+        "14": { "state": {"level": 14} },
+        "15": { "state": {"level": 15} }
+      }
+    },
+    "10": {
+      "id": "minecraft:flowing_lava",
+      "dataValues": {
+        "0": { "state": {"level": 0} },
+        "1": { "state": {"level": 1} },
+        "2": { "state": {"level": 2} },
+        "3": { "state": {"level": 3} },
+        "4": { "state": {"level": 4} },
+        "5": { "state": {"level": 5} },
+        "6": { "state": {"level": 6} },
+        "7": { "state": {"level": 7} },
+        "8": { "state": {"level": 8} },
+        "9": { "state": {"level": 9} },
+        "10": { "state": {"level": 10} },
+        "11": { "state": {"level": 11} },
+        "12": { "state": {"level": 12} },
+        "13": { "state": {"level": 13} },
+        "14": { "state": {"level": 14} },
+        "15": { "state": {"level": 15} }
+      }
+    },
+    "11": {
+      "id": "minecraft:lava",
+      "dataValues": {
+        "0": { "state": {"level": 0} },
+        "1": { "state": {"level": 1} },
+        "2": { "state": {"level": 2} },
+        "3": { "state": {"level": 3} },
+        "4": { "state": {"level": 4} },
+        "5": { "state": {"level": 5} },
+        "6": { "state": {"level": 6} },
+        "7": { "state": {"level": 7} },
+        "8": { "state": {"level": 8} },
+        "9": { "state": {"level": 9} },
+        "10": { "state": {"level": 10} },
+        "11": { "state": {"level": 11} },
+        "12": { "state": {"level": 12} },
+        "13": { "state": {"level": 13} },
+        "14": { "state": {"level": 14} },
+        "15": { "state": {"level": 15} }
+      }
+    },
+    "12": {
+      "dataValues": {
+        "0": "minecraft:sand",
+        "1": "minecraft:red_sand"
+      }
+    },
+    "13": "minecraft:gravel",
+    "14": "minecraft:gold_ore",
+    "15": "minecraft:iron_ore",
+    "16": "minecraft:coal_ore",
+    "17": {
+      "dataValues": {
+        "0": {
+          "id": "minecraft:oak_log",
+          "state": {"axis": "y"}
+        },
+        "4": {
+          "id": "minecraft:oak_log",
+          "state": {"axis": "x"}
+        },
+        "8": {
+          "id": "minecraft:oak_log",
+          "state": {"axis": "z"}
+        },
+        "12": {
+          "id": "minecraft:oak_wood",
+          "state": {"axis": "y"}
+        },
+        "1": {
+          "id": "minecraft:spruce_log",
+          "state": {"axis": "y"}
+        },
+        "5": {
+          "id": "minecraft:spruce_log",
+          "state": {"axis": "x"}
+        },
+        "9": {
+          "id": "minecraft:spruce_log",
+          "state": {"axis": "z"}
+        },
+        "13": {
+          "id": "minecraft:spruce_wood",
+          "state": {"axis": "y"}
+        },
+        "2": {
+          "id": "minecraft:birch_log",
+          "state": {"axis": "y"}
+        },
+        "6": {
+          "id": "minecraft:birch_log",
+          "state": {"axis": "x"}
+        },
+        "10": {
+          "id": "minecraft:birch_log",
+          "state": {"axis": "z"}
+        },
+        "14": {
+          "id": "minecraft:birch_wood",
+          "state": {"axis": "y"}
+        },
+        "3": {
+          "id": "minecraft:jungle_log",
+          "state": {"axis": "y"}
+        },
+        "7": {
+          "id": "minecraft:jungle_log",
+          "state": {"axis": "x"}
+        },
+        "11": {
+          "id": "minecraft:jungle_log",
+          "state": {"axis": "z"}
+        },
+        "15": {
+          "id": "minecraft:jungle_wood",
+          "state": {"axis": "y"}
+        }
+      }
+    },
+    "18": {
+      "dataValues": {
+        "0,8": "minecraft:oak_leaves",
+        "1,9": "minecraft:spruce_leaves",
+        "2,10": "minecraft:birch_leaves",
+        "3,11": "minecraft:jungle_leaves",
+        "4,12": {
+          "id": "minecraft:oak_leaves",
+          "state": {"persistent": "true"}
+        },
+        "5,13": {
+          "id": "minecraft:spruce_leaves",
+          "state": {"persistent": "true"}
+        },
+        "6,14": {
+          "id": "minecraft:birch_leaves",
+          "state": {"persistent": "true"}
+        },
+        "7,15": {
+          "id": "minecraft:jungle_leaves",
+          "state": {"persistent": "true"}
+        }
+      }
+    },
+    "19": {
+      "dataValues": {
+        "0": "minecraft:sponge",
+        "1": "minecraft:wet_sponge"
+      }
+    },
+    "20": "minecraft:glass",
+    "21": "minecraft:lapis_ore",
+    "22": "minecraft:lapis_block",
+    "23": {
+      "id": "minecraft:dispenser",
+      "dataValues": {
+        "0": { "state": {"triggered": "false", "facing": "down"} },
+        "1": { "state": {"triggered": "false", "facing": "up"} },
+        "2": { "state": {"triggered": "false", "facing": "north"} },
+        "3": { "state": {"triggered": "false", "facing": "south"} },
+        "4": { "state": {"triggered": "false", "facing": "west"} },
+        "5": { "state": {"triggered": "false", "facing": "east"} },
+        "8":  { "state": {"triggered": "true", "facing": "down"} },
+        "9":  { "state": {"triggered": "true", "facing": "up"} },
+        "10": { "state": {"triggered": "true", "facing": "north"} },
+        "11": { "state": {"triggered": "true", "facing": "south"} },
+        "12": { "state": {"triggered": "true", "facing": "west"} },
+        "13": { "state": {"triggered": "true", "facing": "east"} }
+      }
+    },
+    "24": {
+      "dataValues": {
+        "0": "minecraft:sandstone",
+        "1": "minecraft:chiseled_sandstone",
+        "2": "minecraft:cut_sandstone"
+      }
+    },
+    "25": "minecraft:noteblock",
+    "26": {
+      "id": "minecraft:bed",
+      "dataValues": {
+        "0,4": { "state": {"part": "foot", "facing": "south"} },
+        "1,5": { "state": {"part": "foot", "facing": "west"} },
+        "2,6": { "state": {"part": "foot", "facing": "north"} },
+        "3,7": { "state": {"part": "foot", "facing": "east"} },
+        "8,12":  { "state": {"part": "head", "facing": "south"} },
+        "9,13":  { "state": {"part": "head", "facing": "west"} },
+        "10,14": { "state": {"part": "head", "facing": "north"} },
+        "11,15": { "state": {"part": "head", "facing": "east"} }
+      }
+    },
+    "27": {
+      "id": "minecraft:powered_rail",
+      "dataValues": {
+        "0": { "state": {"powered": "false", "shape": "north_south"} },
+        "1": { "state": {"powered": "false", "shape": "east_west"} },
+        "2": { "state": {"powered": "false", "shape": "ascending_east"} },
+        "3": { "state": {"powered": "false", "shape": "ascending_west"} },
+        "4": { "state": {"powered": "false", "shape": "ascending_north"} },
+        "5": { "state": {"powered": "false", "shape": "ascending_south"} },
+        "8":  { "state": {"powered": "true", "shape": "north_south"} },
+        "9":  { "state": {"powered": "true", "shape": "east_west"} },
+        "10": { "state": {"powered": "true", "shape": "ascending_east"} },
+        "11": { "state": {"powered": "true", "shape": "ascending_west"} },
+        "12": { "state": {"powered": "true", "shape": "ascending_north"} },
+        "13": { "state": {"powered": "true", "shape": "ascending_south"} }
+      }
+    },
+    "28": {
+      "id": "minecraft:detector_rail",
+      "dataValues": {
+        "0": { "state": {"powered": "false", "shape": "north_south"} },
+        "1": { "state": {"powered": "false", "shape": "east_west"} },
+        "2": { "state": {"powered": "false", "shape": "ascending_east"} },
+        "3": { "state": {"powered": "false", "shape": "ascending_west"} },
+        "4": { "state": {"powered": "false", "shape": "ascending_north"} },
+        "5": { "state": {"powered": "false", "shape": "ascending_south"} },
+        "8":  { "state": {"powered": "true", "shape": "north_south"} },
+        "9":  { "state": {"powered": "true", "shape": "east_west"} },
+        "10": { "state": {"powered": "true", "shape": "ascending_east"} },
+        "11": { "state": {"powered": "true", "shape": "ascending_west"} },
+        "12": { "state": {"powered": "true", "shape": "ascending_north"} },
+        "13": { "state": {"powered": "true", "shape": "ascending_south"} }
+      }
+    },
+    "29": {
+      "id": "minecraft:sticky_piston",
+      "dataValues": {
+        "0": { "state": {"extended": "false", "facing": "down"} },
+        "1": { "state": {"extended": "false", "facing": "up"} },
+        "2": { "state": {"extended": "false", "facing": "north"} },
+        "3": { "state": {"extended": "false", "facing": "south"} },
+        "4": { "state": {"extended": "false", "facing": "west"} },
+        "5": { "state": {"extended": "false", "facing": "east"} },
+        "8":  { "state": {"extended": "true", "facing": "down"} },
+        "9":  { "state": {"extended": "true", "facing": "up"} },
+        "10": { "state": {"extended": "true", "facing": "north"} },
+        "11": { "state": {"extended": "true", "facing": "south"} },
+        "12": { "state": {"extended": "true", "facing": "west"} },
+        "13": { "state": {"extended": "true", "facing": "east"} }
+      }
+    },
+    "30": "minecraft:cobweb",
+    "31": {
+      "id": "minecraft:dead_bush",
+      "dataValues": {
+        "1": "minecraft:grass",
+        "2": "minecraft:fern"
+      }
+    },
+    "32": "minecraft:dead_bush",
+    "33": {
+      "id": "minecraft:piston",
+      "dataValues": {
+        "0": { "state": {"extended": "false", "facing": "down"} },
+        "1": { "state": {"extended": "false", "facing": "up"} },
+        "2": { "state": {"extended": "false", "facing": "north"} },
+        "3": { "state": {"extended": "false", "facing": "south"} },
+        "4": { "state": {"extended": "false", "facing": "west"} },
+        "5": { "state": {"extended": "false", "facing": "east"} },
+        "8":  { "state": {"extended": "true", "facing": "down"} },
+        "9":  { "state": {"extended": "true", "facing": "up"} },
+        "10": { "state": {"extended": "true", "facing": "north"} },
+        "11": { "state": {"extended": "true", "facing": "south"} },
+        "12": { "state": {"extended": "true", "facing": "west"} },
+        "13": { "state": {"extended": "true", "facing": "east"} }
+      }
+    },
+    "34": {
+      "id": "minecraft:piston_head",
+      "dataValues": {
+        "0": { "state": {"type": "normal", "facing": "down"} },
+        "1": { "state": {"type": "normal", "facing": "up"} },
+        "2": { "state": {"type": "normal", "facing": "north"} },
+        "3": { "state": {"type": "normal", "facing": "south"} },
+        "4": { "state": {"type": "normal", "facing": "west"} },
+        "5": { "state": {"type": "normal", "facing": "east"} },
+        "8":  { "state": {"type": "sticky", "facing": "down"} },
+        "9":  { "state": {"type": "sticky", "facing": "up"} },
+        "10": { "state": {"type": "sticky", "facing": "north"} },
+        "11": { "state": {"type": "sticky", "facing": "south"} },
+        "12": { "state": {"type": "sticky", "facing": "west"} },
+        "13": { "state": {"type": "sticky", "facing": "east"} }
+      }
+    },
+    "35": {
+      "dataValues": {
+        "0": "minecraft:white_wool",
+        "1": "minecraft:orange_wool",
+        "2": "minecraft:magenta_wool",
+        "3": "minecraft:light_blue_wool",
+        "4": "minecraft:yellow_wool",
+        "5": "minecraft:lime_wool",
+        "6": "minecraft:pink_wool",
+        "7": "minecraft:gray_wool",
+        "8": "minecraft:light_gray_wool",
+        "9": "minecraft:cyan_wool",
+        "10": "minecraft:purple_wool",
+        "11": "minecraft:blue_wool",
+        "12": "minecraft:brown_wool",
+        "13": "minecraft:green_wool",
+        "14": "minecraft:red_wool",
+        "15": "minecraft:black_wool"
+      }
+    },
+    "36": "minecraft:moving_piston",
+    "37": "minecraft:dandelion",
+    "38": {
+      "dataValues": {
+        "0": "minecraft:poppy",
+        "1": "minecraft:blue_orchid",
+        "2": "minecraft:allium",
+        "3": "minecraft:azure_bluet",
+        "4": "minecraft:red_tulip",
+        "5": "minecraft:orange_tulip",
+        "6": "minecraft:white_tulip",
+        "7": "minecraft:pink_tulip",
+        "8": "minecraft:oxeye_daisy"
+      }
+    },
+    "39": "minecraft:brown_mushroom",
+    "40": "minecraft:red_mushroom",
+    "41": "minecraft:gold_block",
+    "42": "minecraft:iron_block",
+    "43": {
+      "dataValues": {
+        "0": {
+          "id": "minecraft:smooth_stone_slab",
+          "state": {"type": "double"}
+        },
+        "1": {
+          "id": "minecraft:sandstone_slab",
+          "state": {"type": "double"}
+        },
+        "2": {
+          "id": "minecraft:petrified_oak_slab",
+          "state": {"type": "double"}
+        },
+        "3": {
+          "id": "minecraft:cobblestone_slab",
+          "state": {"type": "double"}
+        },
+        "4": {
+          "id": "minecraft:brick_slab",
+          "state": {"type": "double"}
+        },
+        "5": {
+          "id": "minecraft:stone_brick_slab",
+          "state": {"type": "double"}
+        },
+        "6": {
+          "id": "minecraft:nether_brick_slab",
+          "state": {"type": "double"}
+        },
+        "7": {
+          "id": "minecraft:quartz_slab",
+          "state": {"type": "double"}
+        }
+      }
+    },
+    "44": {
+      "dataValues": {
+        "0": {
+          "id": "minecraft:smooth_stone_slab",
+          "state": {"type": "bottom"}
+        },
+        "1": {
+          "id": "minecraft:sandstone_slab",
+          "state": {"type": "bottom"}
+        },
+        "2": {
+          "id": "minecraft:petrified_oak_slab",
+          "state": {"type": "bottom"}
+        },
+        "3": {
+          "id": "minecraft:cobblestone_slab",
+          "state": {"type": "bottom"}
+        },
+        "4": {
+          "id": "minecraft:brick_slab",
+          "state": {"type": "bottom"}
+        },
+        "5": {
+          "id": "minecraft:stone_brick_slab",
+          "state": {"type": "bottom"}
+        },
+        "6": {
+          "id": "minecraft:nether_brick_slab",
+          "state": {"type": "bottom"}
+        },
+        "7": {
+          "id": "minecraft:quartz_slab",
+          "state": {"type": "bottom"}
+        },
+        "8": {
+          "id": "minecraft:smooth_stone_slab",
+          "state": {"type": "top"}
+        },
+        "9": {
+          "id": "minecraft:sandstone_slab",
+          "state": {"type": "top"}
+        },
+        "10": {
+          "id": "minecraft:petrified_oak_slab",
+          "state": {"type": "top"}
+        },
+        "11": {
+          "id": "minecraft:cobblestone_slab",
+          "state": {"type": "top"}
+        },
+        "12": {
+          "id": "minecraft:brick_slab",
+          "state": {"type": "top"}
+        },
+        "13": {
+          "id": "minecraft:stone_brick_slab",
+          "state": {"type": "top"}
+        },
+        "14": {
+          "id": "minecraft:nether_brick_slab",
+          "state": {"type": "top"}
+        },
+        "15": {
+          "id": "minecraft:quartz_slab",
+          "state": {"type": "top"}
+        }
+      }
+    },
+    "45": "minecraft:bricks",
+    "46": "minecraft:tnt",
+    "47": "minecraft:bookshelf",
+    "48": "minecraft:mossy_cobblestone",
+    "49": "minecraft:obsidian",
+    "50": {
+      "dataValues": {
+        "0,5": "minecraft:torch",
+        "1": {"id": "minecraft:wall_torch", "state": {"facing": "east"}},
+        "2": {"id": "minecraft:wall_torch", "state": {"facing": "west"}},
+        "3": {"id": "minecraft:wall_torch", "state": {"facing": "south"}},
+        "4": {"id": "minecraft:wall_torch", "state": {"facing": "north"}}
+      }
+    },
+    "51": "minecraft:fire",
+    "52": "minecraft:spawner"
+  },
+  "biomes": {
+    "0": "minecraft:ocean",
+    "1": "minecraft:plains",
+    "2": "minecraft:desert",
+    "3": "minecraft:extreme_hills",
+    "4": "minecraft:forest",
+    "5": "minecraft:taiga",
+    "6": "minecraft:swampland",
+    "7": "minecraft:river",
+    "8": "minecraft:hell",
+    "9": "minecraft:sky",
+    "10": "minecraft:frozen_ocean",
+    "11": "minecraft:frozen_river",
+    "12": "minecraft:ice_flats",
+    "13": "minecraft:ice_mountains",
+    "14": "minecraft:mushroom_island",
+    "15": "minecraft:mushroom_island_shore",
+    "16": "minecraft:beaches",
+    "17": "minecraft:desert_hills",
+    "18": "minecraft:forest_hills",
+    "19": "minecraft:taiga_hills",
+    "20": "minecraft:smaller_extreme_hills",
+    "21": "minecraft:jungle",
+    "22": "minecraft:jungle_hills",
+    "23": "minecraft:jungle_edge",
+    "24": "minecraft:deep_ocean",
+    "25": "minecraft:stone_beach",
+    "26": "minecraft:cold_beach",
+    "27": "minecraft:birch_forest",
+    "28": "minecraft:birch_forest_hills",
+    "29": "minecraft:roofed_forest",
+    "30": "minecraft:taiga_cold",
+    "31": "minecraft:taiga_cold_hills",
+    "32": "minecraft:redwood_taiga",
+    "33": "minecraft:redwood_taiga_hills",
+    "34": "minecraft:extreme_hills_with_trees",
+    "35": "minecraft:savanna",
+    "36": "minecraft:savanna_rock",
+    "37": "minecraft:mesa",
+    "38": "minecraft:mesa_rock",
+    "39": "minecraft:mesa_clear_rock",
+    "127": "minecraft:void",
+    "129": "minecraft:mutated_plains",
+    "130": "minecraft:mutated_desert",
+    "131": "minecraft:mutated_extreme_hills",
+    "132": "minecraft:mutated_forest",
+    "133": "minecraft:mutated_taiga",
+    "134": "minecraft:mutated_swampland",
+    "140": "minecraft:mutated_ice_flats",
+    "149": "minecraft:mutated_jungle",
+    "151": "minecraft:mutated_jungle_edge",
+    "155": "minecraft:mutated_birch_forest",
+    "156": "minecraft:mutated_birch_forest_hills",
+    "157": "minecraft:mutated_roofed_forest",
+    "158": "minecraft:mutated_taiga_cold",
+    "160": "minecraft:mutated_redwood_taiga",
+    "161": "minecraft:mutated_redwood_taiga_hills",
+    "162": "minecraft:mutated_extreme_hills_with_trees",
+    "163": "minecraft:mutated_savanna",
+    "164": "minecraft:mutated_savanna_rock",
+    "165": "minecraft:mutated_mesa",
+    "166": "minecraft:mutated_mesa_rock",
+    "167": "minecraft:mutated_mesa_clear_rock"
+  }
+}

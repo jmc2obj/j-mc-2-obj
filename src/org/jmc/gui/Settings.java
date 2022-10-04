@@ -48,6 +48,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jmc.Options;
 import org.jmc.registry.Registries;
 import org.jmc.util.Filesystem;
+import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -171,6 +172,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				MainWindow.main.stopPreviewLoader();
+				IDConvert.initialize();
 				Registries.reloadResourcePacks();
 				if (MainWindow.main != null) {
 					MainWindow.main.reloadPreviewLoader();
