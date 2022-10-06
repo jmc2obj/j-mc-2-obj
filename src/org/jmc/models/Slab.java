@@ -4,7 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Direction;
 import org.jmc.geom.UV;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
 
@@ -15,7 +15,7 @@ public class Slab extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
+	public void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean[] drawSides = drawSides(chunks, x, y, z, data);
 		UV[] uvSide;

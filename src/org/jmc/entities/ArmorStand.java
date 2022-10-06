@@ -16,7 +16,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.models.Head;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
@@ -55,7 +55,7 @@ public class ArmorStand extends Entity {
 
 	
 	@Override
-	public void addEntity(ChunkProcessor obj, TAG_Compound entity) {
+	public void addEntity(ObjChunkProcessor obj, TAG_Compound entity) {
 		model.addEntity(obj, getTranslate(entity).multiply(getRotate(entity, 90)));
 		
 		// equipment
@@ -158,7 +158,7 @@ public class ArmorStand extends Entity {
 		
 	}
 
-	public void addArmor(String objFileName, NamespaceID material, ChunkProcessor obj, TAG_Compound entity, double x, double y, double z, double scale, double rotation) {
+	public void addArmor(String objFileName, NamespaceID material, ObjChunkProcessor obj, TAG_Compound entity, double x, double y, double z, double scale, double rotation) {
 		
 		OBJInputFile objFile = new OBJInputFile();
 		

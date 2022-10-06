@@ -40,11 +40,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.jmc.CloudsExporter;
-import org.jmc.ObjExporter;
-import org.jmc.Options;
+import org.jmc.*;
 import org.jmc.Options.OffsetType;
-import org.jmc.ProgressCallback;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -721,7 +718,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 						exportThread = new Thread(new Runnable() {
 							@Override
 							public void run() {
-								ObjExporter.export(ExportWindow.this, Options.exportTex);
+								Exporter exporter = new ObjExporter();
+								exporter.export(ExportWindow.this);
 								
 								btnStartExport.setEnabled(true);
 								btnForceStop.setEnabled(false);
@@ -793,7 +791,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					exportThread = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							ObjExporter.export(ExportWindow.this, Options.exportTex);
+							Exporter exporter = new ObjExporter();
+							exporter.export(ExportWindow.this);
 							
 							btnStartExport.setEnabled(true);
 							btnForceStop.setEnabled(false);

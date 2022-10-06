@@ -16,8 +16,7 @@ import org.jmc.geom.BlockPos;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.registry.Registries;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -140,7 +139,7 @@ public class Mesh extends BlockModel
 	}
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
+	public void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		//What did this do? if(data<0) data=(byte) (16+data);
 
@@ -150,7 +149,7 @@ public class Mesh extends BlockModel
 		addModel(obj,chunks,pos,data,biome,translate, pos.getRandom());
 	}
 
-	private void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos , BlockData data, NamespaceID biome, Transform trans, Random rand)
+	private void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, BlockPos pos , BlockData data, NamespaceID biome, Transform trans, Random rand)
 	{
 		boolean match=mesh_data.matches(chunks, pos.x, pos.y, pos.z, data.state);
 

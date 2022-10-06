@@ -11,7 +11,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
 
@@ -178,7 +178,7 @@ public abstract class EntityModel
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 * @param drawSides Whether to draw each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, draws all sides.
 	 */
-	protected void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides, boolean[] drawSides)
+	protected void addBox(ObjChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides, boolean[] drawSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
@@ -239,6 +239,6 @@ public abstract class EntityModel
 	 * @param obj OBJFile to add the model to.
 	 * @param transform transform applied to the given model
 	 */
-	public abstract void addEntity(ChunkProcessor obj, Transform transform);
+	public abstract void addEntity(ObjChunkProcessor obj, Transform transform);
 	
 }

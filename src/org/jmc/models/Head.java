@@ -24,7 +24,7 @@ import org.jmc.geom.UV;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -42,7 +42,7 @@ public class Head extends BlockModel
 	private static Set<NamespaceID> addedMaterials = new HashSet<>();
 	
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
+	public void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		boolean onWall = false;
 		String facing = "";
@@ -143,7 +143,7 @@ public class Head extends BlockModel
 	}
 
 	@ParametersAreNonnullByDefault
-	public static void addPlayerHead(ChunkProcessor obj, Transform rt, TAG_Compound skullOwnerTag, @CheckForNull NamespaceID texID) {
+	public static void addPlayerHead(ObjChunkProcessor obj, Transform rt, TAG_Compound skullOwnerTag, @CheckForNull NamespaceID texID) {
 		if (texID == null) {
 			texID = NamespaceID.fromString("entity/steve");
 		}
@@ -169,7 +169,7 @@ public class Head extends BlockModel
 		addHead(obj, rt, texID);
 	}
 	
-	public static void addHead(ChunkProcessor obj, Transform t, NamespaceID texID) {
+	public static void addHead(ObjChunkProcessor obj, Transform t, NamespaceID texID) {
 		OBJInputFile objFile = new OBJInputFile();
 		
 		try (JmcConfFile objFileStream = new JmcConfFile("conf/models/player_head.obj")) {

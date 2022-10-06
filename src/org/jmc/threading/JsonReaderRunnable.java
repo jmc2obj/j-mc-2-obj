@@ -1,22 +1,22 @@
 package org.jmc.threading;
 
-import java.awt.Point;
-import java.util.ArrayList;
-
+import com.google.gson.JsonObject;
+import org.jmc.BlockDataPos;
 import org.jmc.ChunkDataBuffer;
-import org.jmc.geom.FaceUtils.Face;
-import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
 import org.jmc.util.Log;
 
-public class ReaderRunnable implements Runnable {
+import java.awt.*;
+import java.util.ArrayList;
+
+public class JsonReaderRunnable implements Runnable {
 	private ChunkDataBuffer chunkBuffer;
 	private ThreadChunkDeligate chunkDeligate;
 	private Point chunkStart;
 	private Point chunkEnd;
 	private ThreadInputQueue inputQueue;
-	private ThreadOutputQueue outputQueue;
+	private ThreadJsonOutputQueue outputQueue;
 	
-	public ReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadOutputQueue outQueue) {
+	public JsonReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadJsonOutputQueue outQueue) {
 		super();
 		this.chunkBuffer = chunk_buffer;
 		this.chunkDeligate = new ThreadChunkDeligate(chunk_buffer);
@@ -39,7 +39,7 @@ public class ReaderRunnable implements Runnable {
 			if (chunkCoord == null) {
 				break;
 			}
-			ChunkOutput output = exportChunk(chunkCoord);
+			ThreadJsonOutputQueue.ChunkOutput output = exportChunk(chunkCoord);
 			if (output == null){
 				continue;
 			}
@@ -52,17 +52,17 @@ public class ReaderRunnable implements Runnable {
 		}
 	}
 	
-	private ChunkOutput exportChunk(Point chunkCoord){
+	private ThreadJsonOutputQueue.ChunkOutput exportChunk(Point chunkCoord){
 		int chunkX = chunkCoord.x;
 		int chunkZ = chunkCoord.y;
 		
 		chunkDeligate.setCurrentChunk(chunkCoord);
 
 		// export the chunk to the OBJ
-		ChunkProcessor proc = new ChunkProcessor();
-		ArrayList<Face> faces = proc.process(chunkDeligate, chunkX, chunkZ);
+		JsonChunkProcessor proc = new JsonChunkProcessor();
+		ArrayList<BlockDataPos> objects = proc.process(chunkDeligate, chunkX, chunkZ);
 		
-		ChunkOutput output = new ChunkOutput(chunkCoord, faces);
+		ThreadJsonOutputQueue.ChunkOutput output = new ThreadJsonOutputQueue.ChunkOutput(chunkCoord, objects);
 		return output;
 	}
 }

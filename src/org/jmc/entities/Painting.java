@@ -9,7 +9,7 @@ import org.jmc.geom.BlockPos;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.util.Log;
 
 
@@ -25,7 +25,7 @@ public class Painting extends Entity
 	}
 
 	@Override
-	public void addEntity(ChunkProcessor obj, TAG_Compound entity)
+	public void addEntity(ObjChunkProcessor obj, TAG_Compound entity)
 	{
 		/*
 		Example of a painting entity as of MC 1.8:

@@ -6,7 +6,7 @@ import org.jmc.NBT.TAG_Float;
 import org.jmc.NBT.TAG_List;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 
 public class SimpleEntity extends Entity {
 	
@@ -16,7 +16,7 @@ public class SimpleEntity extends Entity {
 	}
 
 	@Override
-	public void addEntity(ChunkProcessor obj, TAG_Compound entity) {
+	public void addEntity(ObjChunkProcessor obj, TAG_Compound entity) {
 		Vertex pos = getPosition(entity);
 		Transform translate = Transform.translation(pos.x, pos.y, pos.z);
 		

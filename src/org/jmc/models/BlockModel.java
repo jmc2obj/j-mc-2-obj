@@ -13,7 +13,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 import org.w3c.dom.Node;
@@ -234,8 +234,8 @@ public abstract class BlockModel {
 	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
-	protected static void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze,
-			@CheckForNull Transform trans, NamespaceID[] mtlSides, @CheckForNull UV[][] uvSides, @CheckForNull boolean[] drawSides) {
+	protected static void addBox(ObjChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze,
+								 @CheckForNull Transform trans, NamespaceID[] mtlSides, @CheckForNull UV[][] uvSides, @CheckForNull boolean[] drawSides) {
 		Vertex[] vertices = new Vertex[4];
 
 		if (drawSides == null || drawSides[0]) { // top
@@ -309,8 +309,8 @@ public abstract class BlockModel {
 	 *            Whether to draw each side, in order UP, NORTH, SOUTH, WEST,
 	 *            EAST, DOWN. If null, draws all sides.
 	 */
-	protected void addBoxCubeUV(ChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
-			Transform trans, NamespaceID[] mtlSides, @CheckForNull boolean[] drawSides) {
+	protected void addBoxCubeUV(ObjChunkProcessor obj, float xs, float ys, float zs, float xe, float ye, float ze,
+								Transform trans, NamespaceID[] mtlSides, @CheckForNull boolean[] drawSides) {
 		UV[] uvU = new UV[] { new UV(xs+0.5f, -ze+0.5f), new UV(xe+0.5f, -ze+0.5f), new UV(xe+0.5f, -zs+0.5f), new UV(xs+0.5f, -zs+0.5f) };
 		UV[] uvN = new UV[] { new UV(-xe+0.5f, ys+0.5f), new UV(-xs+0.5f, ys+0.5f), new UV(-xs+0.5f, ye+0.5f), new UV(-xe+0.5f, ye+0.5f) };
 		UV[] uvS = new UV[] { new UV(xs+0.5f, ys+0.5f), new UV(xe+0.5f, ys+0.5f), new UV(xe+0.5f, ye+0.5f), new UV(xs+0.5f, ye+0.5f) };
@@ -337,6 +337,6 @@ public abstract class BlockModel {
 	 * @param data
 	 *            Block data value
 	 */
-	public abstract void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome);
+	public abstract void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome);
 
 }

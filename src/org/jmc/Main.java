@@ -106,7 +106,8 @@ public class Main
 		}
 		
 		if (Options.exportWorld) {
-			ObjExporter.export(new ConsoleProgress(), Options.exportTex);
+			Exporter exporter = new JsonExporter();
+			exporter.export(new ConsoleProgress());
 		}
 	}
 
