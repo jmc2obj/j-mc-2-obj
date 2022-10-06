@@ -2,7 +2,6 @@ package org.jmc.threading;
 
 import java.awt.Point;
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,16 +12,15 @@ import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.FaceUtils.OBJFace;
 import org.jmc.Options;
 import org.jmc.ProgressCallback;
-import org.jmc.UVRecalculate;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
-import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
+import org.jmc.threading.ThreadObjOutputQueue.ChunkOutput;
 import org.jmc.util.Log;
 
-public class WriterRunnable implements Runnable {
+public class ObjWriterRunnable implements Runnable {
 
 	/**
 	 * List of vertices currently being exported.
@@ -72,14 +70,14 @@ public class WriterRunnable implements Runnable {
 
 	private float file_scale;
 	
-	private ThreadOutputQueue outputQueue;
+	private ThreadObjOutputQueue outputQueue;
 	
 	private PrintWriter obj_writer;
 	
 	private ProgressCallback progress;
 	private int chunksToDo;
 	
-	public WriterRunnable(ThreadOutputQueue queue, PrintWriter writer, ProgressCallback progress, int chunksToDo) {
+	public ObjWriterRunnable(ThreadObjOutputQueue queue, PrintWriter writer, ProgressCallback progress, int chunksToDo) {
 		super();
 		
 		outputQueue = queue;

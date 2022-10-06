@@ -4,7 +4,7 @@ import org.jmc.BlockData;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
 
@@ -15,7 +15,7 @@ public class Ladder extends BlockModel
 {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
+	public void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
 	{
 		Transform rotate = new Transform();
 		Transform translate = new Transform();
@@ -46,7 +46,7 @@ public class Ladder extends BlockModel
 		addObject(obj, rt, materials.get(data.state,biome)[0]);
 	}
 	
-	private void addObject(ChunkProcessor obj, Transform transform, NamespaceID mat)
+	private void addObject(ObjChunkProcessor obj, Transform transform, NamespaceID mat)
 	{
 		Vertex[] vertices = new Vertex[4];
 		vertices[0] = new Vertex(-0.5f, -0.5f, -0.47f);

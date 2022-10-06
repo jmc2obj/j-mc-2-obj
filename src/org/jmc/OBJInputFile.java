@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 
 import javax.annotation.CheckForNull;
 
@@ -18,8 +16,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.registry.Registries;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 
@@ -302,7 +299,7 @@ public class OBJInputFile
 		return ret;
 	}
 
-	public void addObjectToOutput(OBJGroup group, Transform trans, ChunkProcessor out, boolean optimize)
+	public void addObjectToOutput(OBJGroup group, Transform trans, ObjChunkProcessor out, boolean optimize)
 	{
 		for(OBJFace f:group.faces)
 		{

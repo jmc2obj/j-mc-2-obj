@@ -18,10 +18,10 @@ import org.jmc.Options.OffsetType;
 import org.jmc.geom.Vertex;
 import org.jmc.models.Banner;
 import org.jmc.registry.Registries;
-import org.jmc.threading.ReaderRunnable;
+import org.jmc.threading.ObjReaderRunnable;
 import org.jmc.threading.ThreadInputQueue;
-import org.jmc.threading.ThreadOutputQueue;
-import org.jmc.threading.WriterRunnable;
+import org.jmc.threading.ThreadObjOutputQueue;
+import org.jmc.threading.ObjWriterRunnable;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Hilbert.HilbertComparator;
 import org.jmc.util.Log;
@@ -31,7 +31,7 @@ import org.jmc.util.Messages;
  * Handles the export of Minecraft world geometry to an .OBJ file (with matching
  * .MTL file)
  */
-public class ObjExporter {
+public class ObjExporter extends Exporter {
 	/**
 	 * Do the export. Export settings are taken from the global Options.
 	 * <p>
@@ -49,10 +49,9 @@ public class ObjExporter {
 	 * @param progress
 	 *            If not null, the exporter will invoke this callback to inform
 	 *            on the operation's progress.
-	 * @param writeTex
-	 *            Whether to write the textures to the output folder.
 	 */
-	public static void export(@CheckForNull ProgressCallback progress, boolean writeTex) {
+	@Override
+	public void export(@CheckForNull ProgressCallback progress) {
 		Log.debug("Exporting world "+Options.worldDir);
 		
 		File objfile = new File(Options.outputDir, Options.objFileName);
@@ -130,9 +129,9 @@ public class ObjExporter {
 					Options.maxY, Options.minZ, Options.maxZ);
 			
 			ThreadInputQueue inputQueue = new ThreadInputQueue();
-			ThreadOutputQueue outputQueue = new ThreadOutputQueue(Options.exportThreads);
+			ThreadObjOutputQueue outputQueue = new ThreadObjOutputQueue(Options.exportThreads);
 
-			WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
+			ObjWriterRunnable writeRunner = new ObjWriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
 			writeRunner.setOffset(oxs, oys, ozs);
 			writeRunner.setScale(Options.scale);
 			
@@ -154,7 +153,7 @@ public class ObjExporter {
 			Log.info("Processing chunks...");
 			
 			for (int i = 0; i < Options.exportThreads; i++) {
-				Thread thread = new Thread(new ReaderRunnable(chunk_buffer, inputQueue, outputQueue));
+				Thread thread = new Thread(new ObjReaderRunnable(chunk_buffer, inputQueue, outputQueue));
 				thread.setName("ReadThread-" + i);
 				thread.setPriority(Thread.NORM_PRIORITY - 1);
 				threads.add(thread);
@@ -374,7 +373,7 @@ public class ObjExporter {
 			Log.info(String.format("Writing materials to %s...", mtlfile.getAbsolutePath()));
 			Materials.writeMTLFile(mtlfile, progress);
 			
-			if (writeTex) {
+			if (Options.exportTex) {
 				Log.info("Exporting textures...");
 				synchronized (Registries.objTextures) {
 					/*if (Options.textureMerge) {
@@ -428,21 +427,16 @@ public class ObjExporter {
 		objWriter.println("# COMMON_MC_OBJ_END");
 		objWriter.println();
 	}
-	
-	private static void resetErrors() {
-		Banner.resetReadError();
-		Log.resetSingles();
-	}
-}
 
-/**
- * Little helper class for the map used in sorting.
- * 
- * @author danijel
- * 
- */
-class FaceFile {
-	public String name;
-	public File file;
-	public PrintWriter writer;
+	/**
+	 * Little helper class for the map used in sorting.
+	 *
+	 * @author danijel
+	 *
+	 */
+	class FaceFile {
+		public String name;
+		public File file;
+		public PrintWriter writer;
+	}
 }

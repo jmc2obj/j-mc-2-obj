@@ -5,15 +5,15 @@ import java.util.ArrayList;
 
 import org.jmc.ChunkDataBuffer;
 import org.jmc.geom.FaceUtils.Face;
-import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
+import org.jmc.threading.ThreadObjOutputQueue.ChunkOutput;
 import org.jmc.util.Log;
 
-public class ReaderRunnable implements Runnable {
+public class ObjReaderRunnable implements Runnable {
 	private final ThreadChunkDeligate chunkDeligate;
 	private final ThreadInputQueue inputQueue;
-	private final ThreadOutputQueue outputQueue;
+	private final ThreadObjOutputQueue outputQueue;
 	
-	public ReaderRunnable(ChunkDataBuffer chunk_buffer, ThreadInputQueue inQueue, ThreadOutputQueue outQueue) {
+	public ObjReaderRunnable(ChunkDataBuffer chunk_buffer, ThreadInputQueue inQueue, ThreadObjOutputQueue outQueue) {
 		super();
 		this.chunkDeligate = new ThreadChunkDeligate(chunk_buffer);
 		this.inputQueue = inQueue;
@@ -53,7 +53,7 @@ public class ReaderRunnable implements Runnable {
 		chunkDeligate.setCurrentChunk(chunkCoord);
 
 		// export the chunk to the OBJ
-		ChunkProcessor proc = new ChunkProcessor();
+		ObjChunkProcessor proc = new ObjChunkProcessor();
 		ArrayList<Face> faces = proc.process(chunkDeligate, chunkX, chunkZ);
 		
 		ChunkOutput output = new ChunkOutput(chunkCoord, faces);

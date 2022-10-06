@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jmc.geom.FaceUtils.Face;
 
-public class ThreadOutputQueue{
+public class ThreadObjOutputQueue {
 	private final BlockingQueue<ChunkOutput> outputQueue;
 	
 	public static class ChunkOutput {
@@ -28,7 +28,7 @@ public class ThreadOutputQueue{
 		}
 	}
 	
-	public ThreadOutputQueue(int queueSize) {
+	public ThreadObjOutputQueue(int queueSize) {
 		outputQueue = new LinkedBlockingQueue<ChunkOutput>(queueSize);
 	}
 	

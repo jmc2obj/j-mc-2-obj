@@ -14,9 +14,9 @@ import javax.imageio.ImageIO;
 import org.jmc.geom.FaceUtils.Face;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ThreadOutputQueue;
-import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
-import org.jmc.threading.WriterRunnable;
+import org.jmc.threading.ThreadObjOutputQueue;
+import org.jmc.threading.ThreadObjOutputQueue.ChunkOutput;
+import org.jmc.threading.ObjWriterRunnable;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 
@@ -49,7 +49,7 @@ public class CloudsExporter {
 		return a > 127;
 	}
 	
-	private static void renderClouds(BufferedImage image, ThreadOutputQueue queue) {
+	private static void renderClouds(BufferedImage image, ThreadObjOutputQueue queue) {
 		int image_w = image.getWidth();
 		int image_h = image.getHeight();
 		
@@ -187,8 +187,8 @@ public class CloudsExporter {
 			
 			writer = new PrintWriter(new FileWriter(new File(destination, outputFileName)));
 			
-			ThreadOutputQueue outputQueue = new ThreadOutputQueue(1);
-			WriterRunnable writeRunner = new WriterRunnable(outputQueue, writer, null, 1);
+			ThreadObjOutputQueue outputQueue = new ThreadObjOutputQueue(1);
+			ObjWriterRunnable writeRunner = new ObjWriterRunnable(outputQueue, writer, null, 1);
 			writeRunner.setPrintUseMTL(false);
 			writeRunner.setOffset(-image.getWidth()/2, 128f/12f, -image.getHeight()/2);
 			writeRunner.setScale(12.0f);

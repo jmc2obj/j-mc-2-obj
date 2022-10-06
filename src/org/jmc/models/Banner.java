@@ -22,7 +22,7 @@ import org.jmc.geom.Transform;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.TextureEntry;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
@@ -82,7 +82,7 @@ public class Banner extends BlockModel {
     }
 
     @Override
-    public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
+    public void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
 
         //Log.info("Banner ***************************");
 
@@ -346,7 +346,7 @@ public class Banner extends BlockModel {
     /**
      * Add Banner to Outputfile
      */
-    public void addBanner(String bannerType, NamespaceID material, ChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
+    public void addBanner(String bannerType, NamespaceID material, ObjChunkProcessor obj, double x, double y, double z, double scale, double rotation) {
     	String objFileName = "conf/models/banner_"+bannerType+".obj";
     	
         OBJInputFile objFile = new OBJInputFile();

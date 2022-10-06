@@ -5,7 +5,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 
 public class Cube extends EntityModel
 {
@@ -82,7 +82,7 @@ public class Cube extends EntityModel
 	 * @param uvSides Texture coordinates for each side, in order TOP, FRONT, BACK, LEFT, RIGHT, BOTTOM. If null, uses default
 	 * coordinates for all sides. If an individual side is null, uses default coordinates for that side.
 	 */
-	protected void addBox(ChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides)
+	protected void addBox(ObjChunkProcessor obj, double xs, double ys, double zs, double xe, double ye, double ze, Transform trans, NamespaceID[] mtlSides, UV[][] uvSides)
 	{
 		Vertex[] vertices = new Vertex[4];
 
@@ -132,7 +132,7 @@ public class Cube extends EntityModel
 
 
 	@Override
-	public void addEntity(ChunkProcessor obj, Transform transform) {
+	public void addEntity(ObjChunkProcessor obj, Transform transform) {
 		
 		addBox(obj,
 				 - 0.5d,  - 0.5d,  - 0.5d,

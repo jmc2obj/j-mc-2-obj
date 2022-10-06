@@ -25,7 +25,7 @@ import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementFace;
 import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementRotation;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
-import org.jmc.threading.ChunkProcessor;
+import org.jmc.threading.ObjChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
 
@@ -33,7 +33,7 @@ import org.jmc.util.Log;
 public class Registry extends BlockModel {
 
 	@Override
-	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
+	public void addModel(ObjChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
 		BlockPos pos = new BlockPos(x, y, z);
 		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
 
@@ -88,7 +88,7 @@ public class Registry extends BlockModel {
 	}
 
 	// Add the element
-	private void addElement(ChunkProcessor obj, Transform baseTrans, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<ComputedElem> prevElems) {
+	private void addElement(ObjChunkProcessor obj, Transform baseTrans, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<ComputedElem> prevElems) {
 		Transform stateTrans = getStateTrans(modelInfo);
 		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
@@ -477,7 +477,7 @@ public class Registry extends BlockModel {
 
 		public ArrayList<Face> getFaces(Transform baseTrans) {
 			Transform trans = baseTrans.multiply(stateTrans.multiply(elemTrans));
-			ChunkProcessor obj = new ChunkProcessor();
+			ObjChunkProcessor obj = new ObjChunkProcessor();
 			addBox(obj, elem.from.x/16, elem.from.y/16, elem.from.z/16, elem.to.x/16, elem.to.y/16, elem.to.z/16, trans, textures, uvs, drawSides);
 			return obj.getAllFaces();
 		}

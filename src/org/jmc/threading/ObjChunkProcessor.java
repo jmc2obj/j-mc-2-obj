@@ -27,7 +27,7 @@ import org.jmc.util.Log;
 /**
  * ChunkProcessor reads through the given chunk and outputs faces
  */
-public class ChunkProcessor
+public class ObjChunkProcessor
 {
 	private int chunk_idx_count=-1;
 	
