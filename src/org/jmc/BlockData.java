@@ -2,6 +2,7 @@ package org.jmc;
 
 import java.lang.reflect.Type;
 import java.util.AbstractMap;
+import java.util.Map;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -67,6 +68,15 @@ public class BlockData {
 	@Override
 	public String toString() {
 		return String.format("id=%s %s", id, state.toString());
+	}
+	
+	public String toIdString() {
+		StringBuilder blockId = new StringBuilder(id.toString());
+		for (Map.Entry<String, String> entry : state.entrySet()) {
+			assert ((!entry.getValue().contains("-")) && (!entry.getKey().contains("-")));
+			blockId.append(String.format("-%s=%s", entry.getKey(), entry.getValue()));
+		}
+		return blockId.toString();
 	}
 	
 	static class BlockDataAdapter implements JsonDeserializer<BlockData> {

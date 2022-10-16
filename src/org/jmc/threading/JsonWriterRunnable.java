@@ -103,15 +103,11 @@ public class JsonWriterRunnable implements Runnable {
 	private JsonElement addObjects(ArrayList<BlockDataPos> chunkBlocks) {
 		Map<String, JsonArray> blocks = new HashMap<>();
 		for (BlockDataPos block : chunkBlocks) {
-			StringBuilder blockId = new StringBuilder(block.id.toString());
-			for (Map.Entry<String, String> entry : block.state.entrySet()) {
-				assert ((!entry.getValue().contains("-")) && (!entry.getKey().contains("-")));
-				blockId.append(String.format("-%s=%s", entry.getKey(), entry.getValue()));
-			}
-			JsonArray blockArr = blocks.get(blockId.toString());
+			String blockId = block.toIdString();
+			JsonArray blockArr = blocks.get(blockId);
 			if (blockArr == null) {
 				blockArr = new JsonArray();
-				blocks.put(blockId.toString(), blockArr);
+				blocks.put(blockId, blockArr);
 			}
 			JsonObject elem = new JsonObject();
 			elem.addProperty("x", block.pos.x);
