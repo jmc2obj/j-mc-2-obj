@@ -41,7 +41,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jmc.CloudsExporter;
-import org.jmc.ObjExporter;
+import org.jmc.UsdExporter;
 import org.jmc.Exporter;
 import org.jmc.Options;
 import org.jmc.Options.OffsetType;
@@ -884,7 +884,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		}
 		exportThread = new Thread(() -> {
 			MainWindow.main.pausePreview(true);
-			Exporter exporter = new ObjExporter();
+			Exporter exporter = new UsdExporter();
 			exporter.export(ExportWindow.this);
 
 			btnStartExport.setEnabled(true);
