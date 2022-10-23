@@ -1,6 +1,10 @@
 package org.jmc;
 
 import java.lang.reflect.Type;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap;
 import java.util.Map;
 
@@ -70,13 +74,28 @@ public class BlockData {
 		return String.format("id=%s %s", id, state.toString());
 	}
 	
-	public String toIdString() {
-		StringBuilder blockId = new StringBuilder(id.toString());
+	public String toFullIdString() {
+		StringBuilder blockId = new StringBuilder(id.getExportSafeString());
 		for (Map.Entry<String, String> entry : state.entrySet()) {
 			assert ((!entry.getValue().contains("-")) && (!entry.getKey().contains("-")));
 			blockId.append(String.format("-%s=%s", entry.getKey(), entry.getValue()));
 		}
 		return blockId.toString();
+	}
+	
+	public String toHashedId() {
+		String fullId = toFullIdString();
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		byte[] hash = digest.digest(fullId.getBytes(StandardCharsets.UTF_8));
+		
+		BigInteger hashNum = new BigInteger(1, hash);
+		String hashStr = hashNum.toString(36).substring(0, 10);
+		return id.getExportSafeString() + "_" + hashStr;
 	}
 	
 	static class BlockDataAdapter implements JsonDeserializer<BlockData> {
