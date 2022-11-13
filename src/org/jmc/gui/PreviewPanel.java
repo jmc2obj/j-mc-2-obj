@@ -63,7 +63,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Offset of the map, as set by dragging the map around.
 	 */
-	private int shift_x,shift_y;
+	private float shift_x,shift_y;
 	/**
 	 * Zoom level of the map.
 	 */
@@ -449,8 +449,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	{
 		Rectangle ret=new Rectangle();
 
-		ret.x=(-shift_x/64)-1;
-		ret.y=(-shift_y/64)-1;
+		ret.x=((int)-shift_x/64)-1;
+		ret.y=((int)-shift_y/64)-1;
 		ret.width=(int) Math.ceil((getWidth()/zoom_level)/64.0)+1;
 		ret.height=(int) Math.ceil((getHeight()/zoom_level)/64.0)+1;
 
@@ -771,8 +771,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		if(moving_map)
 		{		
-			shift_x+=(x-last_x)/zoom_level;
-			shift_y+=(y-last_y)/zoom_level;
+			shift_x+=(float)(x-last_x)/zoom_level;
+			shift_y+=(float)(y-last_y)/zoom_level;
 
 			last_x=x;
 			last_y=y;
