@@ -41,6 +41,10 @@ public abstract class EntityModel
 	{
 		this.materials = val;
 	}
+	
+	public BlockMaterial getMaterials() {
+		return this.materials;
+	}
 
 
 	/**

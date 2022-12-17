@@ -91,6 +91,7 @@ public class ItemFrame extends Entity
 		translate = Transform.translation(pos.x, pos.y, pos.z);
 		rt = translate.multiply(rotate);
 		
+		NamespaceID baseTexture = model.getMaterials().get(null, -1)[0];
 		
 		BlockMaterial materials=new BlockMaterial();
 		
@@ -125,7 +126,7 @@ public class ItemFrame extends Entity
 				break;
 			default:
 				// Log.info("Unsupported FrameItem: '" + item_id + "'");
-				NamespaceID[] matname1={NamespaceID.fromString("block/item_frame")};
+				NamespaceID[] matname1={baseTexture};
 				materials.put(matname1);
 				break;
 		}
