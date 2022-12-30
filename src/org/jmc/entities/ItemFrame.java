@@ -91,7 +91,7 @@ public class ItemFrame extends Entity
 		translate = Transform.translation(pos.x, pos.y, pos.z);
 		rt = translate.multiply(rotate);
 		
-		NamespaceID baseTexture = model.getMaterials().get(null, -1)[0];
+		NamespaceID baseTexture = model.getMaterials().get(null, NamespaceID.NULL)[0];
 		
 		BlockMaterial materials=new BlockMaterial();
 		
