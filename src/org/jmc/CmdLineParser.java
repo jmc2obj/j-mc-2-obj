@@ -62,6 +62,7 @@ public class CmdLineParser {
 	private static final Option optObjectPerMaterialOcclusion = new Option(null, "object-per-mat-occl", false, "Enables occlusion testing for adjacent blocks with different materials. Only effective with object-per-mat.");
 	private static final Option optObjectPerBlock = new Option(null, "object-per-block", false, "Export a separate object for each block. WARNING: will produce very large files.");
 	private static final Option optObjectPerBlockOcclusion = new Option(null, "object-per-block-occl", false, "Enables occlusion testing for adjacent blocks. Only effective with object-per-block.");
+	private static final Option optObjUseGroup = new Option(null, "obj-use-group", false, "Export objects as obj groups instead of objects (Maya compatible)");
 	private static final Option optBlockRandomization = new Option(null, "block-randomization", false, "Allow resource pack models to randomly pick from blockstate models instead of always the first.");
 	private static final Option optRemoveDuplicates = new Option(null, "remove-dup", false, "Try harder to merge vertexes that have the same coordinates.");
 	private static final Option optOptimizeGeometry = new Option(null, "optimize-geometry", false, "Reduce size of exported files by joining adjacent faces together when possible.");
@@ -99,6 +100,7 @@ public class CmdLineParser {
 		options.addOption(optObjectPerMaterialOcclusion);
 		options.addOption(optObjectPerBlock);
 		options.addOption(optObjectPerBlockOcclusion);
+		options.addOption(optObjUseGroup);
 		options.addOption(optBlockRandomization);
 		options.addOption(optRemoveDuplicates);
 		options.addOption(optOptimizeGeometry);
@@ -260,6 +262,9 @@ public class CmdLineParser {
 			}
 			if (checkOption(cmdLine, optObjectPerBlockOcclusion)) {
 				Options.objectPerBlockOcclusion = true;
+			}
+			if (checkOption(cmdLine, optObjUseGroup)) {
+				Options.objUseGroup = true;
 			}
 			if (checkOption(cmdLine, optBlockRandomization)) {
 				Options.randBlockVariations = true;

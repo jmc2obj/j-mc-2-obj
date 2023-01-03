@@ -193,7 +193,7 @@ public class CloudsExporter {
 			writeRunner.setOffset(-image.getWidth()/2, 128f/12f, -image.getHeight()/2);
 			writeRunner.setScale(12.0f);
 			
-			writer.println("o clouds");
+			writer.println(Options.getObjObject() + " clouds");
 			writer.println();
 			
 			Thread writeThread = new Thread(writeRunner);

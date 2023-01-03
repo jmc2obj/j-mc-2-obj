@@ -286,4 +286,12 @@ public class Options
 	 * How many threads to use when exporting.
 	 */
 	public static int exportThreads = 8;
+	
+	/**
+	 * Export objects as obj groups instead of objects (Maya compatible)
+	 */
+	public static boolean objUseGroup = false;
+	public static char getObjObject() {
+		return objUseGroup ? 'g' : 'o';
+	}
 }

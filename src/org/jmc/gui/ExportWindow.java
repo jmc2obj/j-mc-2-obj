@@ -117,6 +117,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JPanel holderSingleTexOpts;
 	private JCheckBox chckbxExportTextures;
 	private JCheckBox chckbxSeparateBlockOccl;
+	private JPanel holderObjUseGroup;
+	private JCheckBox chckbxObjUseGroup;
+	private JSeparator separator_2;
 
 
 	/**
@@ -433,7 +436,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderThreads = new JPanel();
 		holderThreads.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderThreads);
-		holderThreads.setLayout(new FlowLayout(FlowLayout.LEFT));
+		FlowLayout fl_holderThreads = new FlowLayout(FlowLayout.LEFT);
+		fl_holderThreads.setVgap(1);
+		holderThreads.setLayout(fl_holderThreads);
 		
 		SpinnerNumberModel threadSpinnerModel = new SpinnerNumberModel(8, 1, 512, 1);
 		spinnerThreads = new JSpinner(threadSpinnerModel);
@@ -453,6 +458,25 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		lblThreadsWarn.setToolTipText(Messages.getString("OBJExportOptions.EXPORT_THREADS_WARN"));
 		lblThreadsWarn.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblThreadsWarn.setForeground(Color.RED);
+		
+		separator_2 = new JSeparator();
+		pExportOptions.add(separator_2);
+
+		//##########################################################################################################
+		//Object format
+		//##########################################################################################################
+		holderObjUseGroup = new JPanel();
+		holderObjUseGroup.setAlignmentX(Component.LEFT_ALIGNMENT);
+		pExportOptions.add(holderObjUseGroup);
+		holderObjUseGroup.setLayout(new BoxLayout(holderObjUseGroup, BoxLayout.X_AXIS));
+		chckbxObjUseGroup = new JCheckBox(Messages.getString("OBJExportOptions.OBJ_USE_GROUP"));
+		holderObjUseGroup.add(chckbxObjUseGroup);
+		
+		JLabel lblObjUseGroupHelp = new JLabel("???");
+		holderObjUseGroup.add(lblObjUseGroupHelp);
+		lblObjUseGroupHelp.setToolTipText("<html>" + Messages.getString("OBJExportOptions.OBJ_USE_GROUP_HELP").replace("\n", "<br/>") + "</html>");
+		lblObjUseGroupHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblObjUseGroupHelp.setForeground(Color.RED);
 
 		//##########################################################################################################
 		//Export
@@ -848,6 +872,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSingleMat.addActionListener(genericSaveAction);
 		
 		spinnerThreads.addChangeListener(genericSaveChange);
+		
+		chckbxObjUseGroup.addActionListener(genericSaveAction);
 
 		chckbxUseLastSaveLoc.addActionListener(genericSaveAction);
 		btnStartExport.addActionListener(startExport);
@@ -926,6 +952,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSingleMat.setSelected(prefs.getBoolean("SINGLE_MTL", false));
 		
 		spinnerThreads.setValue(prefs.getInt("EXPORT_THREADS", 8));
+		
+		chckbxObjUseGroup.setSelected(prefs.getBoolean("OBJ_USE_GROUP", false));
 		
 		updateEnabledSettings();
 
@@ -1006,6 +1034,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("TEXTURE_MERGE", Options.textureMerge);
 		
 		prefs.putInt("EXPORT_THREADS", Options.exportThreads);
+		
+		prefs.putBoolean("OBJ_USE_GROUP", Options.objUseGroup);
 	}
 
 	private void updateEnabledSettings() {
@@ -1103,6 +1133,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		Options.singleMaterial = chckbxSingleMat.isSelected() && chckbxSingleMat.isEnabled();
 		
 		Options.exportThreads = (Integer)spinnerThreads.getValue();
+		
+		Options.objUseGroup = chckbxObjUseGroup.isSelected();
 	}
 
 	private void ExportCloudsOBJ(final File destination, final File file, final File texturepack) {
