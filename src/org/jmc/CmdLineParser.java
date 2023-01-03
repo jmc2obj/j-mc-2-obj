@@ -1,10 +1,13 @@
 package org.jmc;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.cli.*;
 import org.jmc.Options.OffsetType;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 
@@ -50,6 +53,8 @@ public class CmdLineParser {
 	private static final Option optRenderSides = new Option("s", "render-sides", false, "Render world sides and bottom.");
 	private static final Option optRenderEntities = new Option(null, "render-entities", false, "Render entities.");
 	private static final Option optIncludeUnknown = new Option(null, "include-unknown", false, "Include unknown blocks in the exported geometry.");
+	private static final Option optBlacklistBlocks = Option.builder().longOpt("blacklist").hasArg().argName("BLOCK IDS").desc("Specify a comma separated list of block id's to exclude from the export.").build();
+	private static final Option optWhitelistBlocks = Option.builder().longOpt("whitelist").hasArg().argName("BLOCK IDS").desc("Specify a comma separated list of block id's to include in the export, only these blocks will be exported.").build();
 	private static final Option optIgnoreBiomes = new Option(null, "ignore-biomes", false, "Don't render biomes.");
 	private static final Option optConvertOres = new Option(null, "convert-ores", false, "Convert ore blocks to stone.");
 	private static final Option optObjectPerChunk = new Option(null, "object-per-chunk", false, "Export a separate object for each chunk.");
@@ -83,6 +88,10 @@ public class CmdLineParser {
 		options.addOption(optRenderSides);
 		options.addOption(optRenderEntities);
 		options.addOption(optIncludeUnknown);
+		OptionGroup excludeGroup = new OptionGroup();
+		excludeGroup.addOption(optBlacklistBlocks);
+		excludeGroup.addOption(optWhitelistBlocks);
+		options.addOptionGroup(excludeGroup);
 		options.addOption(optIgnoreBiomes);
 		options.addOption(optConvertOres);
 		options.addOption(optObjectPerChunk);
@@ -211,6 +220,22 @@ public class CmdLineParser {
 			}
 			if (checkOption(cmdLine, optIncludeUnknown)) {
 				Options.renderUnknown = true;
+			}
+			if (cmdLine.hasOption(optBlacklistBlocks) || cmdLine.hasOption(optWhitelistBlocks)) {
+				String arg;
+				if (checkOption(cmdLine, optWhitelistBlocks)) {
+					arg = cmdLine.getOptionValue(optWhitelistBlocks);
+					Options.excludeBlocksIsWhitelist = true;
+				} else {
+					checkOption(cmdLine, optBlacklistBlocks);
+					arg = cmdLine.getOptionValue(optBlacklistBlocks);
+				}
+				
+				Set<NamespaceID> blocks = new HashSet<>();
+				for (String str : arg.split(",")) {
+					blocks.add(NamespaceID.fromString(str));
+				}
+				Options.excludeBlocks = blocks;
 			}
 			if (checkOption(cmdLine, optIgnoreBiomes)) {
 				Options.renderBiomes = false;

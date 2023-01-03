@@ -234,6 +234,20 @@ public class Options
 	 * List of block ids to exclude.
 	 */
 	public static Set<NamespaceID> excludeBlocks = new HashSet<>();
+	
+	/**
+	 * If true, use the excludeBlock set as a whitelist of the only blocks to include
+	 */
+	public static boolean excludeBlocksIsWhitelist = false;
+	
+	/**
+	 * Returns true if the block is in the {@link #excludeBlocks excluded blocks} list or if {@link #excludeBlocksIsWhitelist whitelisting} is on,
+	 * if the block is not in the {@link #excludeBlocks excluded blocks} list
+	 */
+	public static boolean isBlockExcluded(NamespaceID block) {
+		boolean contains = excludeBlocks.contains(block);
+		return !excludeBlocksIsWhitelist == contains;
+	}
 
 	/**
 	 * Whether to export the world.

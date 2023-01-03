@@ -167,7 +167,7 @@ public class ChunkProcessor
 					if(block == null || block.id == NamespaceID.NULL)
 						continue;
 					
-					if(Options.excludeBlocks.contains(block.id))
+					if(Options.isBlockExcluded(block.id))
 						continue;
 					
 					BlockInfo blockInfo = BlockTypes.get(block);

@@ -147,7 +147,7 @@ public abstract class BlockModel {
 		if (neighbourData.id == NamespaceID.EXPORTEDGE)
 			return Options.renderSides;
 
-		if (neighbourData.id.path.endsWith("air") || Options.excludeBlocks.contains(neighbourData.id))
+		if (neighbourData.id.path.endsWith("air") || Options.isBlockExcluded(neighbourData.id))
 			return true;
 
 		if (Options.objectPerMaterial && !Options.objectPerMaterialOcclusion && (!neighbourData.id.equals(data.id))) {
