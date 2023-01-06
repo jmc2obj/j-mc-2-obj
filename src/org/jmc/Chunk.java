@@ -9,6 +9,7 @@ package org.jmc;
 
 import org.jmc.BlockInfo.Occlusion;
 import org.jmc.NBT.*;
+import org.jmc.geom.BlockPos;
 import org.jmc.models.None;
 import org.jmc.registry.NamespaceID;
 import org.jmc.util.IDConvert;
@@ -574,7 +575,7 @@ public class Chunk {
 	 * @param floor floor boundary
 	 * @param ceiling ceiling boundary
 	 */
-	public void renderImages(int floor, int ceiling, boolean fastmode)
+	public BlockDataPos[] renderImages(int floor, int ceiling, boolean fastmode)
 	{
 		int width = 4 * 16;
 		int height = 4 * 16;
@@ -594,15 +595,15 @@ public class Chunk {
 		int drawYMax = ceiling;
 		int drawYMin = floor;
 		if(floor>bd.ymax)
-			return;
+			return null;
 		if(ceiling>bd.ymax)
 			ceiling=bd.ymax;
 		if(floor>=ceiling)
 			floor=ceiling-1;
 
 
-		BlockData[] topBlocks = new BlockData[16*16];
-		NamespaceID[] biome = new NamespaceID[16*16];
+		BlockDataPos[] topBlocks = new BlockDataPos[16*16];
+		//NamespaceID[] biome = new NamespaceID[16*16];
 		int[] himage = new int[16*16];
 		
 		Arrays.fill(himage, drawYMin);
@@ -615,15 +616,14 @@ public class Chunk {
 				for(y = floor; y < ceiling; y++)
 				{
 					if (Thread.currentThread().isInterrupted())
-						return;
+						return null;
 					
 					NamespaceID blockBiome = bd.getBiome(x, y, z);
 					BlockData blockData = bd.getBlockData(x, y, z);
 					
 					if(blockData != null && !BlockTypes.get(blockData).getOcclusion().equals(Occlusion.NONE))
 					{
-						topBlocks[z*16+x] = blockData;
-						biome[z*16+x]=blockBiome;
+						topBlocks[z*16+x] = new BlockDataPos(new BlockPos((this.pos_x*16) + x, y, (this.pos_z*16) + z), blockData, blockBiome);
 						himage[z*16+x]=y;
 					}
 				}
@@ -636,15 +636,14 @@ public class Chunk {
 			for(x = 0; x < 16; x++)
 			{
 				if (Thread.currentThread().isInterrupted())
-					return;
+					return null;
 				
-				BlockData blockData = topBlocks[z*16+x];
-				NamespaceID blockBiome = biome[z*16+x];
+				BlockDataPos block = topBlocks[z*16+x];
 				
-				if(blockData != null) {
-					BlockInfo type = BlockTypes.get(blockData);
+				if(block != null) {
+					BlockInfo type = BlockTypes.get(block.data);
 					if (type.getModel().getClass() != None.class) {
-						gb.setColor(type.getPreviewColor(blockData,blockBiome));
+						gb.setColor(type.getPreviewColor(block.data,block.biome));
 						gb.fillRect(x*4, z*4, 4, 4);
 					}
 				}
@@ -657,7 +656,7 @@ public class Chunk {
 				for(x = 0; x < 16; x++)
 				{
 					if (Thread.currentThread().isInterrupted())
-						return;
+						return null;
 					
 					float a = himage[z*16+x] - drawYMin;
 					float b = drawYMax - drawYMin;
@@ -667,6 +666,7 @@ public class Chunk {
 				}
 			}
 		}
+		return topBlocks;
 	}
 
 	/**

@@ -19,10 +19,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jmc.Chunk;
-import org.jmc.ChunkLoaderRunner;
-import org.jmc.Options;
-import org.jmc.Region;
+import org.jmc.*;
 import org.jmc.gui.PreviewPanel.ChunkImage;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.util.Hilbert.HilbertComparator;
@@ -161,8 +158,8 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 					{
 						ChunkImage chunk_image = iter.next();
 						
-						int cx = chunk_image.x/64;
-						int cz = chunk_image.y/64;
+						int cx = chunk_image.x;
+						int cz = chunk_image.y;
 						
 						if ((cx<cxs || cx>cxe || cz<czs || cz>cze) && !preview.keepChunks) {
 							loadedChunks.remove(new Point(cx,cz));
@@ -275,13 +272,13 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 					continue;
 				}
 				
-				chunk.renderImages(floor,ceiling,preview.fastrendermode);
+				BlockDataPos[] topBlocks = chunk.renderImages(floor, ceiling, preview.fastrendermode);
 				BufferedImage heightImg = null;
 				if (!preview.fastrendermode)
 					heightImg=chunk.getHeightImage();
 				BufferedImage img=chunk.getBlockImage();
 			
-				preview.addImage(img, heightImg, p.x*64, p.y*64);
+				preview.addImage(img, heightImg, p.x, p.y, topBlocks);
 				ctd.addAndGet(-1);
 			}
 		}

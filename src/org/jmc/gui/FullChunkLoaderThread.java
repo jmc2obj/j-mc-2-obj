@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.jmc.BlockDataPos;
 import org.jmc.Chunk;
 import org.jmc.ChunkLoaderRunner;
 import org.jmc.Region;
@@ -67,23 +68,23 @@ public class FullChunkLoaderThread implements ChunkLoaderRunner {
 		for(Region region:regions)
 		{
 			for(Chunk chunk:region)
-			{											
+			{
 				if(chunk==null)
 				{
 					Log.error("Chunk couldn't be loaded.", null);
 					return;
 				}
 
-				chunk.renderImages(0,Integer.MAX_VALUE,preview.fastrendermode); //this ignores the GUI, but the class is unused anyway...
+				BlockDataPos[] topBlocks = chunk.renderImages(0,Integer.MAX_VALUE,preview.fastrendermode); //this ignores the GUI, but the class is unused anyway...
 				BufferedImage height_img=null;
 				if(!preview.fastrendermode)
-					chunk.getHeightImage();
-				BufferedImage img=chunk.getBlockImage();										
+					height_img = chunk.getHeightImage();
+				BufferedImage img=chunk.getBlockImage();
 
 				int ix=chunk.getPosX();
 				int iy=chunk.getPosZ();
 				
-				preview.addImage(img, height_img, ix*64, iy*64);
+				preview.addImage(img, height_img, ix, iy, topBlocks);
 				
 				this_time=System.currentTimeMillis();
 				if(this_time-last_time>REPAINT_FREQUENCY)

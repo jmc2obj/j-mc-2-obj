@@ -28,6 +28,8 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
+import org.jmc.BlockDataPos;
+import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
 
@@ -72,7 +74,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Back buffers used for drawing the preview.
 	 */
-	private BufferedImage main_img,base_img,height_img;
+	private BufferedImage main_img,height_img;
 
 	/**
 	 * Font used in the preview.
@@ -106,6 +108,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		public BufferedImage image;
 		public BufferedImage height_map;
 		public int x, y;
+		public BlockDataPos[] blocks;
 	}
 
 	/**
@@ -134,7 +137,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public PreviewPanel() {
 
 		main_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
-		base_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		height_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
 
 		setMaximumSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
@@ -272,12 +274,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		int win_h=getHeight();
 		
 		synchronized (main_img) {
-			BufferedImage ckln=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D bg=base_img.createGraphics();	
+			Graphics2D mg=main_img.createGraphics();
 			if(!fast)
-				bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);			
-			bg.setColor(Color.black);			
-			bg.clearRect(0, 0, win_w, win_h);			
+				mg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			mg.setColor(Color.black);
+			mg.clearRect(0, 0, win_w, win_h);
 
 			Graphics2D hg=height_img.createGraphics();
 			if(!fast)
@@ -286,26 +287,13 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				hg.setColor(Color.black);
 				hg.clearRect(0, 0, win_w, win_h);
 			}
+			BufferedImage ckln=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D cklng = ckln.createGraphics();
 
 			synchronized (chunks) {
 				for(ChunkImage chunk:chunks)
 				{
-					int x=(int) ((chunk.x+shift_x)*zoom_level);
-					int y=(int) ((chunk.y+shift_y)*zoom_level);
-					int w=(int) (chunk.image.getWidth()*zoom_level);
-					int h=(int) (chunk.image.getHeight()*zoom_level);
-
-					if(x>win_w || y>win_h) continue;
-					if(x+w<0 || y+h<0) continue;
-					
-					if(showchunks){
-						ckln.createGraphics().drawLine(x, y, x+w, y);
-						ckln.createGraphics().drawLine(x+w, y, x+w, y+h);
-					}
-
-					bg.drawImage(chunk.image, x, y, w, h, null);
-					if(!fast)
-						hg.drawImage(chunk.height_map, x, y, w, h, null);
+					redrawChunk(chunk, fast, cklng);
 				}		
 			}					
 
@@ -326,12 +314,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 						height_raster.setSample(x, y, 0, h);
 					}
-			}
-
-			Graphics2D mg=main_img.createGraphics();
-			mg.drawImage(base_img,0,0,null);
-			if(!fast)
-			{
 				mg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
 				mg.drawImage(height_img,0,0,null);
 			}
@@ -342,24 +324,31 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	}
 
 	/**
-	 * Draws a single chunk. Does not draw height map.
+	 * Draws a single chunk.
 	 */
-	private void redrawChunk(ChunkImage chunk)
+	private void redrawChunk(ChunkImage chunk, boolean fast, Graphics2D cklng)
 	{
 		int win_w=getWidth();
 		int win_h=getHeight();
 
-		int x=(int) ((chunk.x+shift_x)*zoom_level);
-		int y=(int) ((chunk.y+shift_y)*zoom_level);
+		int x=(int) (((chunk.x*64)+shift_x)*zoom_level);
+		int y=(int) (((chunk.y*64)+shift_y)*zoom_level);
 		int w=(int) (chunk.image.getWidth()*zoom_level);
 		int h=(int) (chunk.image.getHeight()*zoom_level);
 
 		if(x>win_w || y>win_h) return;
 		if(x+w<0 || y+h<0) return;
+		
+		if(cklng != null && showchunks){
+			cklng.drawLine(x, y, x+w, y);
+			cklng.drawLine(x+w, y, x+w, y+h);
+		}
 
 		synchronized (main_img) {
 			Graphics2D mg=main_img.createGraphics();
 			mg.drawImage(chunk.image, x, y, w, h, null);
+			if(!fast)
+				height_img.createGraphics().drawImage(chunk.height_map, x, y, w, h, null);
 		}
 	}
 	
@@ -370,17 +359,18 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * @param x x location of the chunk on the screen
 	 * @param y y location of the chunk on the screen
 	 */
-	public void addImage(BufferedImage img, BufferedImage height, int x, int y)
+	public void addImage(BufferedImage img, BufferedImage height, int x, int y, BlockDataPos[] topBlocks)
 	{		
 		ChunkImage chunk=new ChunkImage();
 		chunk.image=img;
 		chunk.height_map=height;
 		chunk.x=x;
 		chunk.y=y;
+		chunk.blocks = topBlocks;
 		synchronized (chunks) {			
 			chunks.add(chunk);
 		}
-		redrawChunk(chunk);
+		redrawChunk(chunk, true, null);
 	}
 
 	/**
@@ -592,6 +582,38 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		int x=e.getX();
 		int y=e.getY();
+		
+		if (e.isAltDown() && e.getButton() == MouseEvent.BUTTON1) {
+			selecting_area=false;
+			int posx=(int) Math.floor((e.getX()/zoom_level-shift_x)/4);
+			int posz=(int) Math.floor((e.getY()/zoom_level-shift_y)/4);
+			int chunkx = posx;
+			int chunkz = posz;
+			chunkx = Math.floorDiv(chunkx, 16);
+			chunkz = Math.floorDiv(chunkz, 16);
+			
+			ChunkImage clickedChunk = null;
+			synchronized (chunks) {
+				for (ChunkImage chunk : chunks) {
+					if (chunkx == chunk.x && chunkz == chunk.y) {
+						clickedChunk = chunk;
+						break;
+					}
+				}
+			}
+			if (clickedChunk != null && clickedChunk.blocks != null) {
+				int index = posx - (chunkx*16);
+				index += 16 * (posz - (chunkz*16));
+				BlockDataPos block = clickedChunk.blocks[index];
+				if (block == null)
+					Log.info("No block at location");
+				else
+					Log.info(block.toString());
+			} else {
+				Log.info("No chunk found!");
+			}
+			return;
+		}
 
 		if(isPerformingAction(e, MainWindow.settings.getSelectAction()))
 		{
