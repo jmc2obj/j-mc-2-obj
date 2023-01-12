@@ -13,12 +13,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 
 import org.jmc.BlockData;
+import org.jmc.NBT.*;
 import org.jmc.OBJInputFile;
 import org.jmc.OBJInputFile.OBJGroup;
-import org.jmc.NBT.NBT_Tag;
-import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_List;
-import org.jmc.NBT.TAG_String;
 import org.jmc.geom.Transform;
 import org.jmc.geom.UV;
 import org.jmc.registry.NamespaceID;
@@ -51,8 +48,16 @@ public class Head extends BlockModel
 		if (data.state.containsKey("facing")) { //If it has a "facing" state, then it's a wall skull
 			onWall = true;
 			facing = data.state.get("facing");
-		} else {
+		} else if (data.state.containsKey("rotation")) {
 			rot = Integer.parseInt(data.state.get("rotation"));
+		} else {
+			// get the information from the tile entity
+			TAG_Compound tag = chunks.getTileEntity(x,y,z);
+			if (tag != null) {
+				for (NBT_Tag subtag : tag.elements) {
+					if (subtag.getName().equals("Rot")) rot = ((TAG_Byte) subtag).value;
+				}
+			}
 		}
 		
 		

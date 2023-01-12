@@ -7,12 +7,25 @@ import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 
+import javax.annotation.CheckForNull;
+
 
 /**
  * Model for redstone wires
  */
 public class RedstoneWire extends BlockModel
 {
+	private boolean isConnectable(@CheckForNull BlockData otherBlock, boolean sameLevel)
+	{
+		if (otherBlock == null)
+			return false;
+		NamespaceID otherBlockId = otherBlock.id;
+		if (blockId.equals(otherBlockId))
+			return true;
+		if (sameLevel && (otherBlockId.toString().equals("minecraft:redstone_torch") || otherBlockId.toString().equals("minecraft:redstone_wall_torch")))
+			return true;
+		return false;
+	}
 	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)
@@ -21,18 +34,33 @@ public class RedstoneWire extends BlockModel
 		NamespaceID mtlCross = on ? materials.get(data.state,biome)[0] : materials.get(data.state,biome)[2];
 		NamespaceID mtlLine  = on ? materials.get(data.state,biome)[1] : materials.get(data.state,biome)[3];
 		
-		boolean conn_n_up = data.state.get("north").equals("up");
-		boolean conn_s_up = data.state.get("south").equals("up");
-		boolean conn_e_up = data.state.get("east").equals("up");
-		boolean conn_w_up = data.state.get("west").equals("up");
-		//boolean conn_n_down = isConnectable(chunks.getBlockID(x, y-1, z-1), false);
-		//boolean conn_s_down = isConnectable(chunks.getBlockID(x, y-1, z+1), false);
-		//boolean conn_e_down = isConnectable(chunks.getBlockID(x+1, y-1, z), false);
-		//boolean conn_w_down = isConnectable(chunks.getBlockID(x-1, y-1, z), false);
-		boolean conn_n = data.state.get("north").equals("side");
-		boolean conn_s = data.state.get("south").equals("side");
-		boolean conn_e = data.state.get("east").equals("side");
-		boolean conn_w = data.state.get("west").equals("side");
+		boolean conn_n_up, conn_s_up, conn_e_up, conn_w_up;
+		boolean conn_n, conn_s, conn_e, conn_w;
+		
+		if (data.state.containsKey("north") && data.state.containsKey("south") && data.state.containsKey("east") && data.state.containsKey("west")) {
+			conn_n_up = data.state.get("north").equals("up");
+			conn_s_up = data.state.get("south").equals("up");
+			conn_e_up = data.state.get("east").equals("up");
+			conn_w_up = data.state.get("west").equals("up");
+			conn_n = data.state.get("north").equals("side");
+			conn_s = data.state.get("south").equals("side");
+			conn_e = data.state.get("east").equals("side");
+			conn_w = data.state.get("west").equals("side");
+		} else {
+			conn_n_up = isConnectable(chunks.getBlockData(x, y + 1, z - 1), false);
+			conn_s_up = isConnectable(chunks.getBlockData(x, y + 1, z + 1), false);
+			conn_e_up = isConnectable(chunks.getBlockData(x + 1, y + 1, z), false);
+			conn_w_up = isConnectable(chunks.getBlockData(x - 1, y + 1, z), false);
+			boolean conn_n_down = isConnectable(chunks.getBlockData(x, y - 1, z - 1), false);
+			boolean conn_s_down = isConnectable(chunks.getBlockData(x, y - 1, z + 1), false);
+			boolean conn_e_down = isConnectable(chunks.getBlockData(x + 1, y - 1, z), false);
+			boolean conn_w_down = isConnectable(chunks.getBlockData(x - 1, y - 1, z), false);
+			conn_n = conn_n_up || conn_n_down || isConnectable(chunks.getBlockData(x, y, z - 1), true);
+			conn_s = conn_s_up || conn_s_down || isConnectable(chunks.getBlockData(x, y, z + 1), true);
+			conn_e = conn_e_up || conn_e_down || isConnectable(chunks.getBlockData(x + 1, y, z), true);
+			conn_w = conn_w_up || conn_w_down || isConnectable(chunks.getBlockData(x - 1, y, z), true);
+		}
+		
 		
 		int nconn = (conn_n ? 1:0) + (conn_s ? 1:0) + (conn_e ? 1:0) + (conn_w ? 1:0) +
 				    (conn_n_up ? 1:0) + (conn_s_up ? 1:0) + (conn_e_up ? 1:0) + (conn_w_up ? 1:0);
