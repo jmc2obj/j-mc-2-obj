@@ -1,10 +1,7 @@
 package org.jmc.entities;
 
 import org.jmc.BlockMaterial;
-import org.jmc.NBT.TAG_Byte;
-import org.jmc.NBT.TAG_Compound;
-import org.jmc.NBT.TAG_Int;
-import org.jmc.NBT.TAG_String;
+import org.jmc.NBT.*;
 import org.jmc.geom.BlockPos;
 import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
@@ -65,9 +62,22 @@ public class Painting extends Entity
 
 		BlockPos pos = getBlockPosition(entity);
 		
-		byte facing = ((TAG_Byte)entity.getElement("Facing")).value;
-
-		String motiv=((TAG_String)entity.getElement("Motive")).value;
+		NBT_Tag facingTag = entity.getElement("facing");
+		byte facing;
+		if (facingTag != null) {
+			facing = ((TAG_Byte) facingTag).value;
+		} else {
+			facing = ((TAG_Byte) entity.getElement("Facing")).value;
+		}
+		
+		NBT_Tag variantTag = entity.getElement("variant");
+		String motiv = null;
+		if (variantTag != null) {
+			motiv = ((TAG_String) variantTag).value;
+		} else {
+			motiv = ((TAG_String) entity.getElement("Motive")).value;
+		}
+		
 		if (motiv == null) {
 			Log.debug(String.format("Painting at %s has no 'Motive'", pos.toString()));
 			return;
