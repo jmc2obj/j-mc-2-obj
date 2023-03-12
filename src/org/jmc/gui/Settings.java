@@ -318,7 +318,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				List<File> selectedFilesList = Arrays.asList(selectedFiles);
 				selectedFilesList.removeIf(Objects::isNull);
 
-				listPacks.getModel().addAll(selectedFilesList);
+				listPacks.getModel().addAll(0, selectedFilesList);
 
 				listPacks.setSelectedIndex(0);
 				saveSettings();
