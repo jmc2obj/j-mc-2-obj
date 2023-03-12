@@ -249,7 +249,8 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			@Override
 			public boolean canImport(TransferSupport support) {
 				if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-					support.setDropAction(LINK);
+					if ((support.getSourceDropActions() & LINK) != 0)
+						support.setDropAction(LINK);
 					return true;
 				}
 				return false;
