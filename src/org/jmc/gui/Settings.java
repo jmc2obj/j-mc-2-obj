@@ -15,9 +15,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -26,6 +24,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -313,12 +312,16 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				jfc.setCurrentDirectory(Filesystem.getMinecraftDir());
 				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
 
+				DefaultListModel<File> listPacksModel = listPacks.getModel();
 				File[] selectedFiles = jfc.getSelectedFiles();
 
-				List<File> selectedFilesList = Arrays.asList(selectedFiles);
-				selectedFilesList.removeIf(Objects::isNull);
-
-				listPacks.getModel().addAll(0, selectedFilesList);
+				for (File selectedFile : selectedFiles) {
+					if (selectedFile == null) {
+						return;
+					}
+					
+					listPacksModel.add(0, selectedFile);
+				}
 
 				listPacks.setSelectedIndex(0);
 				saveSettings();
