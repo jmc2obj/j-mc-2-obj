@@ -302,7 +302,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
-				// Only files currently supported, remove when support for directories added
+				// Only files currently supported, uncomment when support for directories is added
 				//jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				jfc.setMultiSelectionEnabled(true);
 				jfc.addChoosableFileFilter(new FileFilter() {
