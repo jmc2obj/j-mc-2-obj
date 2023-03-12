@@ -15,7 +15,9 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -300,7 +302,9 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		btnPackAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
+				// Only files currently supported, remove when support for directories added
 				//jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				jfc.setMultiSelectionEnabled(true);
 				jfc.addChoosableFileFilter(new FileFilter() {
 					@Override public String getDescription() {return "Extracted pack.mcmeta";}
 					@Override public boolean accept(File f) {return f.isDirectory() || f.getName().equals("pack.mcmeta");}
@@ -308,11 +312,14 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
 				jfc.setCurrentDirectory(Filesystem.getMinecraftDir());
 				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
-				File path = jfc.getSelectedFile();
-				if (path == null) {
-					return;
-				}
-				listPacks.getModel().add(0, path);
+
+				File[] selectedFiles = jfc.getSelectedFiles();
+
+				List<File> selectedFilesList = Arrays.asList(selectedFiles);
+				selectedFilesList.removeIf(Objects::isNull);
+
+				listPacks.getModel().addAll(selectedFilesList);
+
 				listPacks.setSelectedIndex(0);
 				saveSettings();
 				updateResourcePacks(true);
