@@ -606,6 +606,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 						super.approveSelection();
 					}
 				};
+				jfc.setFileHidingEnabled(false);
 				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
 				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
 				if (retval != JFileChooser.APPROVE_OPTION)
@@ -620,6 +621,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			public void actionPerformed(ActionEvent arg0) {
 
 				JFileChooser jfcRP = new JFileChooser(MainWindow.settings.getLastExportPath());
+				jfcRP.setFileHidingEnabled(false);
 				jfcRP.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
 				int retval = jfcRP.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
 				if (retval != JFileChooser.APPROVE_OPTION)
@@ -655,6 +657,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					}
 				};
 
+				jfc.setFileHidingEnabled(false);
 				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
 				retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
 				if (retval != JFileChooser.APPROVE_OPTION)
@@ -757,6 +760,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					}
 
 				};
+
+				jfc.setFileHidingEnabled(false);
 
 				if (Options.useLastSaveLoc && !prefs.get("LAST_EXPORT_PATH", "not here").equals("not here")
 						&& new File(prefs.get("LAST_EXPORT_PATH", "not here")).exists()) {

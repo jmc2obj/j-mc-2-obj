@@ -301,6 +301,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
 				//jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				jfc.setFileHidingEnabled(false);
 				jfc.addChoosableFileFilter(new FileFilter() {
 					@Override public String getDescription() {return "Extracted pack.mcmeta";}
 					@Override public boolean accept(File f) {return f.isDirectory() || f.getName().equals("pack.mcmeta");}
