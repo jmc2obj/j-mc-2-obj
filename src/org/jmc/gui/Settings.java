@@ -304,6 +304,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastExportPath());
 				// Only files currently supported, uncomment when support for directories is added
 				//jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				jfc.setFileHidingEnabled(false);
 				jfc.setMultiSelectionEnabled(true);
 				jfc.addChoosableFileFilter(new FileFilter() {
 					@Override public String getDescription() {return "Extracted pack.mcmeta";}
@@ -320,7 +321,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 					if (selectedFile == null) {
 						return;
 					}
-					
+
 					listPacksModel.add(0, selectedFile);
 				}
 

@@ -480,6 +480,7 @@ public class MainPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 
 				JFileChooser jfc = new JFileChooser(MainWindow.settings.getLastVisitedDir());
+				jfc.setFileHidingEnabled(false);
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				if (jfc.showDialog(MainPanel.this,
 						Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER")) == JFileChooser.APPROVE_OPTION) {
