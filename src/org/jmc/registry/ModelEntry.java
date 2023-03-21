@@ -38,11 +38,12 @@ public class ModelEntry extends RegistryEntry {
 			if (generatedModel != null) {
 				return generatedModel;
 			}
-			generatedModel = new Gson().fromJson(new Gson().toJson(model), model.getClass());// clone via serialisation
-			generatedModel.parentEntry = model.parentEntry;
-			if (generatedModel.parentEntry != null) {
-				generatedModel.parentEntry.propagateToChild(generatedModel);
+			RegistryModel newModel = new Gson().fromJson(new Gson().toJson(model), model.getClass());// clone via serialisation
+			newModel.parentEntry = model.parentEntry;
+			if (newModel.parentEntry != null) {
+				newModel.parentEntry.propagateToChild(newModel);
 			}
+			generatedModel = newModel;
 			return generatedModel;
 		}
 	}
