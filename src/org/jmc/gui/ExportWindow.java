@@ -970,6 +970,10 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		Log.debug("Saving export settings");
 
+		updateEnabledSettings();
+
+		updateOptions();
+
 		prefs.putFloat("DEFAULT_SCALE", Options.scale);
 		prefs.putInt("OFFSET_X", Options.offsetX);
 		prefs.putInt("OFFSET_Z", Options.offsetZ);
@@ -1009,10 +1013,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			prefs.putInt("MTL_OVERWRITE", 2);
 			break;
 		}
-		
-		updateEnabledSettings();
-
-		updateOptions();
 
 		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
 		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
