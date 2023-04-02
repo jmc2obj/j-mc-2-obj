@@ -141,8 +141,19 @@ public class Vertex implements Comparable<Vertex>
 	public static double dot(Vertex a, Vertex b) {
 		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
-	
-	static class VertexAdapter implements JsonDeserializer<Vertex>, JsonSerializer<Vertex> {
+
+	public static Vertex cross(Vertex a, Vertex b) {
+		double newX = a.y * b.z - a.z * b.y;
+		double newY = a.z * b.x - a.x * b.z;
+		double newZ = a.x * b.y - a.y * b.x;
+		return new Vertex(newX, newY, newZ);
+	}
+
+	public static Vertex opposite(Vertex v) {
+		return new Vertex(-v.x, -v.y, -v.z);
+	}
+
+    static class VertexAdapter implements JsonDeserializer<Vertex>, JsonSerializer<Vertex> {
 
 		@Override
 		public Vertex deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

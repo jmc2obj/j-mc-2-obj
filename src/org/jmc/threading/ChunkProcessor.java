@@ -31,8 +31,8 @@ public class ChunkProcessor
 {
 	private int chunk_idx_count=-1;
 	
-	private ArrayList<Face> optimisedFaces = new ArrayList<Face>();
-	private ArrayList<Face> faces = new ArrayList<Face>();
+	private final ArrayList<Face> optimisedFaces = new ArrayList<Face>();
+	private final ArrayList<Face> faces = new ArrayList<Face>();
 
 	/**
 	 * See: {@link #addFace(Vertex[], Vertex[], UV[], Transform, NamespaceID) addFace}
@@ -117,12 +117,42 @@ public class ChunkProcessor
 		if (trans != null){
 			face = trans.multiply(face);
 		}
+		addFace(face, canOptimise);
+	}
+
+	/**
+	 *
+	 * @param newFaces
+	 * @param canOptimise
+	 */
+	public void addFaces(ArrayList<Face> newFaces, boolean canOptimise) {
+		for (Face face : newFaces) {
+			addFace(face, canOptimise);
+		}
+	}
+
+	/**
+	 * Adds an already constructed face to this processor
+	 * @param face The face to add
+	 * @param canOptimise Allows this face to be optimised
+	 */
+	public void addFace(Face face, boolean canOptimise) {
 		face.chunk_idx = chunk_idx_count;
 		if (Options.optimiseGeometry && canOptimise) {
 			optimisedFaces.add(face);
 		} else {
 			faces.add(face);
 		}
+	}
+
+	/**
+	 * Gets all the faces contained in this processor
+	 * @return a combined shallow copy of faces and optimisedFaces
+	 */
+	public ArrayList<Face> getAllFaces() {
+		ArrayList<Face> allFaces = new ArrayList<>(faces);
+		allFaces.addAll(optimisedFaces);
+		return allFaces;
 	}
 
 	/**
@@ -133,7 +163,6 @@ public class ChunkProcessor
 	 */
 	public ArrayList<Face> process(ThreadChunkDeligate chunk, int chunk_x, int chunk_z)
 	{
-		optimisedFaces = new ArrayList<Face>();
 		int xmin,xmax,ymin,ymax,zmin,zmax;
 		Rectangle xy,xz;
 		xy=chunk.getXYBoundaries();
@@ -198,7 +227,7 @@ public class ChunkProcessor
 		if (Options.optimiseGeometry ) {
 			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
 			for (Face f : optimisedFaces){
-				int planar = f.isPlanar();
+				int planar = f.getPlanarAxis();
 				if (planar == 3){
 					faces.add(f);
 					continue;
@@ -271,6 +300,7 @@ public class ChunkProcessor
 		}
 		
 		faces.addAll(optimisedFaces);//Add any left over faces from not optimising and entities.
+		optimisedFaces.clear();
 		return faces;
 	}
 	

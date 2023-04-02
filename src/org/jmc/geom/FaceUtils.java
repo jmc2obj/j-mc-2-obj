@@ -36,7 +36,7 @@ public class FaceUtils {
 		/**
 		 * @return 0 if x, 1 if y, 2 if z, 3 if none.
 		 */
-		public int isPlanar(){
+		public int getPlanarAxis(){
 			if (vertices[0].x == vertices[1].x && vertices[0].x == vertices[2].x && vertices[0].x == vertices[3].x){
 				return 0;
 			}
@@ -71,7 +71,7 @@ public class FaceUtils {
 		public boolean isAnticlockwise() {
 			int a;
 			int b;
-			switch(isPlanar()){
+			switch(getPlanarAxis()){
 			case 0: a = 1; b = 2; break;
 			case 1: a = 0; b = 2; break;
 			case 2: a = 0; b = 1; break;
@@ -122,6 +122,35 @@ public class FaceUtils {
 		        }
 			}
             return false;
+		}
+
+		public boolean haveSameVertices(Face otherFace, boolean checkUV) {
+			for (int i = 0; i < vertices.length; i++) {
+				Vertex v1 = vertices[i];
+				boolean found = false;
+				for (int j = 0; j < vertices.length; j++) {
+					Vertex v2 = otherFace.vertices[j];
+					if (v1.similar(v2)) {
+						if (!checkUV || uvs[i].similar(otherFace.uvs[j])) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found) return false;
+			}
+			return true;
+		}
+
+		public Vertex getNormal() {
+			Vertex v1 = vertices[0];
+			Vertex v2 = vertices[1];
+			Vertex v3 = vertices[2];
+
+			Vertex u = Vertex.subtract(v2, v1);
+			Vertex v = Vertex.subtract(v2, v3);
+
+			return Vertex.cross(u, v);
 		}
 
 		@Override

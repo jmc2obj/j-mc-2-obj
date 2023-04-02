@@ -12,10 +12,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.jmc.BlockData;
-import org.jmc.geom.BlockPos;
-import org.jmc.geom.Direction;
-import org.jmc.geom.Transform;
-import org.jmc.geom.UV;
+import org.jmc.Options;
+import org.jmc.geom.*;
+import org.jmc.geom.FaceUtils.Face;
 import org.jmc.registry.BlockstateEntry;
 import org.jmc.registry.BlockstateEntry.ModelInfo;
 import org.jmc.registry.BlockstateEntry.ModelListWeighted;
@@ -37,16 +36,18 @@ public class Registry extends BlockModel {
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
 		BlockPos pos = new BlockPos(x, y, z);
 		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
-		
+
 		BlockstateEntry bsEntry = Registries.getBlockstate(data.id);
 		if (bsEntry == null) {
 			Log.debugOnce(String.format("Couldn't get blockstate to export %s", data.id.toString()));
 			return;
 		}
 		List<ModelListWeighted> modelParts = bsEntry.getModelsFor(data.state);
-		
-		List<AddedElem> addedElems = new ArrayList<>();
-		
+
+		List<ComputedElem> addedElems = new ArrayList<>();
+
+		Transform baseTrans = pos.getTransform();
+
 		for (ModelListWeighted modelList : modelParts) {
 			ModelInfo modelInfo = modelList.getRandomModel(pos);
 			ModelEntry modelEntry = Registries.getModel(modelInfo.id);
@@ -58,29 +59,48 @@ public class Registry extends BlockModel {
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {
 					if (element != null)
-						addElement(obj, pos, ds, modelInfo, model, element, addedElems);
+						addElement(obj, baseTrans, ds, modelInfo, model, element, addedElems);
 				}
 			}
 		}
+
+		ArrayList<Face> faces = new ArrayList<>();
+		for (ComputedElem cElem : addedElems) {
+			faces.addAll(cElem.getFaces(baseTrans));
+		}
+		if (!Options.doubleSidedFaces) {
+			for (int i = 0; i < faces.size(); i++) {
+				Face face = faces.get(i);
+				Vertex n1 = face.getNormal();
+				for (int j = i + 1; j < faces.size(); j++) {
+					Face face2 = faces.get(j);
+					if (face2.remove) continue;
+					if (!face.texture.equals(face2.texture)) continue;
+					if (!n1.similar(Vertex.opposite(face2.getNormal()))) continue;
+					if (!face.haveSameVertices(face2, false)) continue;
+					face2.remove = true;
+				}
+			}
+		}
+		faces.removeIf(face -> face.remove);
+		obj.addFaces(faces, true);
 		//Log.debug(String.format("Models for %s: %s", data.toString(), String.valueOf(models)));
 	}
-	
-	// Add the element 
-	private void addElement(ChunkProcessor obj, BlockPos pos, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<AddedElem> prevElems) {
-		Transform baseTrans = pos.getTransform();
+
+	// Add the element
+	private void addElement(ChunkProcessor obj, Transform baseTrans, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<ComputedElem> prevElems) {
 		Transform stateTrans = getStateTrans(modelInfo);
 		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
 		boolean[] elemDrawSides = getSidesCulling(drawSides, element.faces, stateTrans);
 		Transform elementTrans = getElemTrans(element);
-		
-		// if element in the same position was added before then don't add another on top (grass_block overlay)
-		AddedElem elem = new AddedElem(stateTrans, elementTrans, element, elemDrawSides);
+
+		// If element in the same position was added before then don't add another on top (grass_block overlay)
+		ComputedElem elem = new ComputedElem(stateTrans, elementTrans, element, elemDrawSides, textures, uvs);
 		boolean add = true;
-		for (@Nonnull AddedElem prevElem : prevElems) {
+		for (@Nonnull ComputedElem prevElem : prevElems) {
 			if (elem.matches(prevElem)) {
-				if (elem.hasNew(prevElem)) {// same elem but new faces that weren't added before
-					elemDrawSides = elem.getNew(prevElem);
+				if (elem.hasNewSides(prevElem)) {// same elem but new faces that weren't added before
 					prevElem.addSides(elem);
 					add = false;
 				} else {
@@ -90,7 +110,6 @@ public class Registry extends BlockModel {
 			}
 		}
 		if (add) prevElems.add(elem);
-		addBox(obj, element.from.x/16, element.from.y/16, element.from.z/16, element.to.x/16, element.to.y/16, element.to.z/16, baseTrans.multiply(stateTrans.multiply(elementTrans)), textures, uvs, elemDrawSides);
 	}
 	
 	// Get the transform for the blockstate
@@ -351,7 +370,7 @@ public class Registry extends BlockModel {
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			int faceIndex;
 			try {
-				 faceIndex = Direction.valueOf(faceEntry.getKey().toUpperCase()).getArrIndex();
+				faceIndex = Direction.valueOf(faceEntry.getKey().toUpperCase()).getArrIndex();
 			} catch (IllegalArgumentException e) {
 				Log.debugOnce(String.format("Model for %s had invalid face direction '%s'!", blockId, faceEntry.getKey()));
 				continue;
@@ -392,41 +411,45 @@ public class Registry extends BlockModel {
 		}
 		return array;
 	}
-	
-	private class AddedElem {
-		private Transform stateTrans;
-		private Transform elemTrans;
-		private ModelElement elem;
-		private boolean[] drawnSides;
-		
-		private AddedElem(Transform stateTrans, Transform elemTrans, ModelElement elem, boolean[] drawnSides) {
+
+	private static class ComputedElem {
+		private final NamespaceID[] textures;
+		private final UV[][] uvs;
+		private final Transform stateTrans;
+		private final Transform elemTrans;
+		private final ModelElement elem;
+		private final boolean[] drawSides;
+
+		private ComputedElem(Transform stateTrans, Transform elemTrans, ModelElement elem, boolean[] drawnSides, NamespaceID[] textures, UV[][] uvs) {
 			this.stateTrans = stateTrans;
 			this.elemTrans = elemTrans;
 			this.elem = elem;
-			this.drawnSides = drawnSides;
+			this.drawSides = drawnSides;
+			this.textures = textures;
+			this.uvs = uvs;
 		}
-		
-		public boolean hasNew(AddedElem prevElem) {
-			for (boolean side : getNew(prevElem)) {
+
+		public boolean hasNewSides(ComputedElem prevElem) {
+			for (boolean side : getNewSides(prevElem)) {
 				if (side) {
 					return true;
 				}
 			}
 			return false;
 		}
-		
-		public boolean[] getNew(AddedElem prevElem) {
-			if (prevElem.drawnSides.length != drawnSides.length) {
+
+		public boolean[] getNewSides(ComputedElem prevElem) {
+			if (prevElem.drawSides.length != drawSides.length) {
 				throw new IllegalArgumentException("Sides array length mismatch!");
 			}
-			boolean[] newSides = new boolean[drawnSides.length];
-			for (int i = 0; i < drawnSides.length; i++) {
-				newSides[i] = !prevElem.drawnSides[i] && drawnSides[i];
+			boolean[] newSides = new boolean[drawSides.length];
+			for (int i = 0; i < drawSides.length; i++) {
+				newSides[i] = !prevElem.drawSides[i] && drawSides[i];
 			}
 			return newSides;
 		}
-		
-		public boolean matches(@CheckForNull AddedElem otherElem) {
+
+		public boolean matches(@CheckForNull ComputedElem otherElem) {
 			if (otherElem != null) {
 				boolean equal = stateTrans.equals(otherElem.stateTrans);
 				equal &= elemTrans.equals(otherElem.elemTrans);
@@ -436,14 +459,25 @@ public class Registry extends BlockModel {
 			}
 			return false;
 		}
-		
-		public void addSides(AddedElem elem) {
-			if (elem.drawnSides.length != drawnSides.length) {
+
+		public void addSides(ComputedElem elem) {
+			if (elem.drawSides.length != drawSides.length) {
 				throw new IllegalArgumentException("Sides array length mismatch!");
 			}
-			for (int i = 0; i < drawnSides.length; i++) {
-				drawnSides[i] |= elem.drawnSides[i];
+			for (int i = 0; i < drawSides.length; i++) {
+				if (!drawSides[i] && elem.drawSides[i]) {
+					textures[i] = elem.textures[i];
+					uvs[i] = elem.uvs[i];
+					drawSides[i] = true;
+				}
 			}
+		}
+
+		public ArrayList<Face> getFaces(Transform baseTrans) {
+			Transform trans = baseTrans.multiply(stateTrans.multiply(elemTrans));
+			ChunkProcessor obj = new ChunkProcessor();
+			addBox(obj, elem.from.x/16, elem.from.y/16, elem.from.z/16, elem.to.x/16, elem.to.y/16, elem.to.z/16, trans, textures, uvs, drawSides);
+			return obj.getAllFaces();
 		}
 	}
 }
