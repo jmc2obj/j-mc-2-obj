@@ -18,4 +18,9 @@ public interface ChunkLoaderRunner extends Runnable {
 	 * @param ceiling
 	 */
 	public void setYBounds(int floor, int ceiling);
+
+	/**
+	 * Pauses and resumes the chunk loader if paused is true/false.
+	 */
+	public void pause(boolean paused);
 }

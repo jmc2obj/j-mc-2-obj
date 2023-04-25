@@ -726,4 +726,7 @@ public class MainPanel extends JPanel {
 		chunk_loader_thread.start();
 	}
 
+	void pausePreviewLoader(boolean paused) {
+		chunk_loader.pause(paused);
+	}
 }

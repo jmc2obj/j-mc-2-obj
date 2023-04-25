@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jmc.*;
@@ -35,19 +36,19 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	/**
 	 * Reference to preview panel so we can change the preview.
 	 */
-	private PreviewPanel preview;
+	private final PreviewPanel preview;
 	/**
 	 * Path to world save.
 	 */
-	private File worldPath;
+	private final File worldPath;
 	/**
 	 * Dimension id
 	 */
-	private int dimension;
+	private final int dimension;
 	/**
 	 * Collection of chunk images from the preview panel.
 	 */
-	private Vector<ChunkImage> chunkImages;
+	private final Vector<ChunkImage> chunkImages;
 
 	/**
 	 * Frequency of repainting in ms.
@@ -62,8 +63,10 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	// Chunks that we checked do not exist in this world.
 	Set<Point> emptyChunks;
 	
-	private ThreadInputQueue chunkQueue;
+	private final ThreadInputQueue chunkQueue;
 	private AtomicInteger chunksToDo;
+
+	private final AtomicBoolean paused = new AtomicBoolean(false);
 
 	/**
 	 * Variables defining the Y-axis boundaries of the current preview. 
@@ -71,7 +74,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	private int floor, ceiling;
 	private boolean yBoundsChanged;
 	
-	private ArrayList<Thread> imagerThreads = new ArrayList<Thread>();
+	private final ArrayList<Thread> imagerThreads = new ArrayList<Thread>();
 
 	/**
 	 * Main constructor.
@@ -130,6 +133,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 					preview.repaint();
 					try {
 						Thread.sleep(REPAINT_FREQUENCY);
+						waitIfPaused();
 					} catch (InterruptedException e) {
 						return;
 					}
@@ -228,15 +232,36 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	 * @param floor
 	 * @param ceiling
 	 */
+	@Override
 	public void setYBounds(int floor, int ceiling)
 	{
 		this.floor=floor;
 		this.ceiling=ceiling;
 		yBoundsChanged=true;
 	}
+
+	@Override
+	public void pause(boolean p) {
+		paused.set(p);
+		if (!p) {
+			synchronized (paused) {
+				paused.notifyAll();
+			}
+		}
+	}
+
+	private void waitIfPaused() throws InterruptedException {
+		if (paused.get()) {
+			synchronized (paused) {
+				while (paused.get()) {
+					paused.wait();
+				}
+			}
+		}
+	}
 	
 	private class ChunkImager implements Runnable {
-		private ThreadInputQueue queue;
+		private final ThreadInputQueue queue;
 		
 		ChunkImager(ThreadInputQueue chunkQueue) {
 			this.queue = chunkQueue;
@@ -248,6 +273,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 				Point p;
 				AtomicInteger ctd;
 				try {
+					waitIfPaused();
 					p = queue.getNext();
 					ctd = chunksToDo;
 				} catch (InterruptedException e) {

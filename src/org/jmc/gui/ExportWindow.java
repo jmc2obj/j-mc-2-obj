@@ -739,23 +739,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 						MainWindow.settings.setLastExportPath(savePath.toString());
 						MainWindow.updateSelectionOptions();
-						btnStartExport.setEnabled(false);
-						btnForceStop.setEnabled(true);
-
-						if (exportThread != null) {
-							exportThread.interrupt();
-						}
-						exportThread = new Thread(new Runnable() {
-							@Override
-							public void run() {
-								ObjExporter.export(ExportWindow.this, Options.exportTex);
-								
-								btnStartExport.setEnabled(true);
-								btnForceStop.setEnabled(false);
-							}
-						});
-						exportThread.setName("ExportThread");
-						exportThread.start();
+						runExport();
 
 					}
 
@@ -813,23 +797,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					}
 
 					MainWindow.updateSelectionOptions();
-					btnStartExport.setEnabled(false);
-					btnForceStop.setEnabled(true);
-
-					if (exportThread != null) {
-						exportThread.interrupt();
-					}
-					exportThread = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							ObjExporter.export(ExportWindow.this, Options.exportTex);
-							
-							btnStartExport.setEnabled(true);
-							btnForceStop.setEnabled(false);
-						}
-					});
-					exportThread.setName("ExportThread");
-					exportThread.start();
+					runExport();
 
 				} else {
 
@@ -903,6 +871,25 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		btnFromResourcePack.addActionListener(exportCloudsFromRP);
 		btnMinecraftTextures.addActionListener(exportCloudsFromMC);
 
+	}
+
+	private void runExport() {
+		btnStartExport.setEnabled(false);
+		btnForceStop.setEnabled(true);
+
+		if (exportThread != null) {
+			exportThread.interrupt();
+		}
+		exportThread = new Thread(() -> {
+			MainWindow.main.pausePreview(true);
+			ObjExporter.export(ExportWindow.this, Options.exportTex);
+
+			btnStartExport.setEnabled(true);
+			btnForceStop.setEnabled(false);
+			MainWindow.main.pausePreview(false);
+		});
+		exportThread.setName("ExportThread");
+		exportThread.start();
 	}
 
 	private void loadSettings() {

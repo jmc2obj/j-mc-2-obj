@@ -136,4 +136,8 @@ public class MainWindow extends JmcFrame
 	public void reloadPreviewLoader() {
 		panel.reloadPreviewLoader();
 	}
+
+	public void pausePreview(boolean paused) {
+		panel.pausePreviewLoader(paused);
+	}
 }

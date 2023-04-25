@@ -110,4 +110,9 @@ public class FullChunkLoaderThread implements ChunkLoaderRunner {
 		
 	}
 
+	@Override
+	public void pause(boolean p) {
+		//THIS METHOD IS NOT YET IMPLEMENTED
+	}
+
 }
