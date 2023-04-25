@@ -507,7 +507,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		progressBar = new JProgressBar() {
 			@Override
 			public String getString() {
-				String percent = NumberFormat.getPercentInstance().format(new Double(getPercentComplete()));
+				String percent = NumberFormat.getPercentInstance().format(Double.valueOf(getPercentComplete()));
 				if (progressString != null) {
 					return progressString + " " + percent;
 				} else {
