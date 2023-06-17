@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class BlockstateMultipartEntry extends BlockstateEntry {
-	private List<MultipartCase> multi = new ArrayList<>();
+	private final List<MultipartCase> multi = new ArrayList<>();
 	
 	public BlockstateMultipartEntry(NamespaceID name) {
 		super(name);
@@ -42,9 +42,14 @@ public class BlockstateMultipartEntry extends BlockstateEntry {
 		return String.format("%s:%s", super.toString(), multi.toString());
 	}
 	
-	private class MultipartCase {
-		private ModelListWeighted models = new ModelListWeighted();
-		private List<ConditionalBlockstate> conditions = new ArrayList<>();
+	private static class MultipartCase {
+		enum ConditionType {
+			AND, OR, SINGLE, NONE
+		}
+		
+		private final ModelListWeighted models = new ModelListWeighted();
+		private final List<ConditionalBlockstate> conditions = new ArrayList<>();
+		private final ConditionType conditionType;
 		
 		private MultipartCase(JsonObject multiCase) {
 			JsonElement applyElem = multiCase.get("apply");
@@ -62,14 +67,26 @@ public class BlockstateMultipartEntry extends BlockstateEntry {
 			JsonObject when = multiCase.getAsJsonObject("when");
 			if (when != null) {
 				JsonElement orElem = when.get("OR");
+				JsonElement andElem = when.get("AND");
+				assert !(orElem != null && andElem != null);
 				if (orElem != null && orElem.isJsonArray()) {
 					JsonArray orArr = orElem.getAsJsonArray();
+					conditionType = ConditionType.OR;
 					for (JsonElement stateElem : orArr) {
+						conditions.add(parseConditionalState(stateElem.getAsJsonObject()));
+					}
+				} else if (andElem != null && andElem.isJsonArray()) {
+					JsonArray andArr = andElem.getAsJsonArray();
+					conditionType = ConditionType.AND;
+					for (JsonElement stateElem : andArr) {
 						conditions.add(parseConditionalState(stateElem.getAsJsonObject()));
 					}
 				} else {
 					conditions.add(parseConditionalState(when));
+					conditionType = ConditionType.SINGLE;
 				}
+			} else {
+				conditionType = ConditionType.NONE;
 			}
 		}
 	
@@ -82,23 +99,37 @@ public class BlockstateMultipartEntry extends BlockstateEntry {
 		}
 		
 		public boolean matches(Blockstate state) {
-			if (conditions.isEmpty()) {
-				return true;
-			}
-			for (ConditionalBlockstate condition : conditions) {
-				if (condition.maskMatches(state)) {
+			switch (conditionType) {
+				case AND:
+					for (ConditionalBlockstate condition : conditions) {
+						if (!condition.maskMatches(state)) {
+							return false;
+						}
+					}
 					return true;
-				}
+				case OR:
+					for (ConditionalBlockstate condition : conditions) {
+						if (condition.maskMatches(state)) {
+							return true;
+						}
+					}
+					return false;
+				case SINGLE:
+					assert conditions.size() == 1;
+					return conditions.get(0).maskMatches(state);
+				case NONE:
+					assert conditions.isEmpty();
+					return true;
+				default:
+					throw new RuntimeException(String.format("Invalid condition type! %s", conditionType));
 			}
-			return false;
 		}
 		
 		public ModelListWeighted getModels() {
 			return models;
 		}
 		
-		@SuppressWarnings("serial")
-		private class ConditionalBlockstate extends Blockstate {
+		private static class ConditionalBlockstate extends Blockstate {
 			/**
 			 * Uses this state as a mask applied to data 
 			 * @param data
