@@ -150,7 +150,7 @@ public class Head extends BlockModel
 	@ParametersAreNonnullByDefault
 	public static void addPlayerHead(ChunkProcessor obj, Transform rt, TAG_Compound skullOwnerTag, @CheckForNull NamespaceID texID) {
 		if (texID == null) {
-			texID = NamespaceID.fromString("entity/steve");
+			texID = NamespaceID.fromString("entity/player/wide/steve");
 		}
 		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
 		if (textureB64 != null) {
