@@ -1111,8 +1111,14 @@
         "3": "minecraft:chiseled_stone_bricks"
       }
     },
-    "99": "minecraft:brown_mushroom_block",
-    "100": "minecraft:red_mushroom_block",
+    "99": {
+      "id": "minecraft:brown_mushroom_block",
+      "state": {"east": "true", "down": "true", "north": "true", "south": "true", "up": "true", "west": "true"}
+    },
+    "100": {
+      "id": "minecraft:red_mushroom_block",
+      "state": {"east": "true", "down": "true", "north": "true", "south": "true", "up": "true", "west": "true"}
+    },
     "101": "minecraft:iron_bars",
     "102": "minecraft:glass_pane",
     "103": "minecraft:melon",
@@ -1210,7 +1216,10 @@
         "7": {"state": {"facing": "north", "half": "top", "shape": "straight"}}
       }
     },
-    "110": "minecraft:mycelium",
+    "110": {
+      "id": "minecraft:mycelium",
+      "state": {"snowy": "false"}
+    },
     "111": "minecraft:lily_pad",
     "112": "minecraft:nether_bricks",
     "113": "minecraft:nether_brick_fence",
