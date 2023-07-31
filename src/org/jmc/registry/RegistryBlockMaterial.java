@@ -7,6 +7,7 @@ import org.jmc.Blockstate;
 import org.jmc.registry.BlockstateEntry.ModelInfo;
 import org.jmc.registry.BlockstateEntry.ModelListWeighted;
 import org.jmc.registry.ModelEntry.RegistryModel;
+import org.jmc.util.Log;
 
 import javax.annotation.Nonnull;
 
@@ -46,8 +47,10 @@ public class RegistryBlockMaterial extends BlockMaterial {
 					}
 				}
 			}
-			if (mats[0] == null)
+			if (mats[0] == null) {
+				Log.debugOnce(String.format("Found no material for registry block %s and state %s", id.toString(), state.toString()));
 				mats[0] = NamespaceID.UNKNOWN;
+			}
 			return mats;
 		} else {
 			return super.get(state, biomeValue);
