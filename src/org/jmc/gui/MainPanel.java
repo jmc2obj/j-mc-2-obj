@@ -520,7 +520,7 @@ public class MainPanel extends JPanel {
 					return;
 				}
 
-				Log.debug(levelDat.toString());
+				//Log.debug(levelDat.toString());
 
 				int player_x = 0;
 				int player_z = 0;
