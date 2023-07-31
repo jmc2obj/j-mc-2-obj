@@ -2481,12 +2481,12 @@
         "3": {"state": {"facing": "south", "powered": "false"}},
         "4": {"state": {"facing": "west", "powered": "false"}},
         "5": {"state": {"facing": "east", "powered": "false"}},
-        "6": {"state": {"facing": "down", "powered": "true"}},
-        "7": {"state": {"facing": "up", "powered": "true"}},
-        "8": {"state": {"facing": "north", "powered": "true"}},
-        "9": {"state": {"facing": "south", "powered": "true"}},
-        "10": {"state": {"facing": "west", "powered": "true"}},
-        "11": {"state": {"facing": "east", "powered": "true"}}
+        "8": {"state": {"facing": "down", "powered": "true"}},
+        "9": {"state": {"facing": "up", "powered": "true"}},
+        "10": {"state": {"facing": "north", "powered": "true"}},
+        "11": {"state": {"facing": "south", "powered": "true"}},
+        "12": {"state": {"facing": "west", "powered": "true"}},
+        "13": {"state": {"facing": "east", "powered": "true"}}
       }
     },
     "219": {
