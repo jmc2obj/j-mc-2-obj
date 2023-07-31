@@ -59,7 +59,7 @@ public class ModelEntry extends RegistryEntry {
 				assert refTex != null;
 				childModel.textures.putIfAbsent(textureEntry.getKey(), refTex);
 			} else {
-				childModel.textures.put(textureEntry.getKey(), textureEntry.getValue());
+				childModel.textures.putIfAbsent(textureEntry.getKey(), textureEntry.getValue());
 			}
 		}
 		if (model.parentEntry != null) {
