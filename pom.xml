@@ -17,6 +17,9 @@
 			<resource>
 				<directory>conf</directory>
 				<targetPath>conf</targetPath>
+				<excludes>
+					<exclude>blockselection.dat</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>data</directory>
