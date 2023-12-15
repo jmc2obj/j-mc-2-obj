@@ -42,7 +42,6 @@ import org.jmc.NBT.TAG_Byte;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.registry.NamespaceID;
 import org.jmc.util.Filesystem;
-import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -147,7 +146,11 @@ public class BlockListWindow extends JmcFrame {
 			loadButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					loadList("Preset" + presetnum);
+					if (loadList("Preset" + presetnum)) {
+						saveList("CurSelection");
+					} else {
+						Log.info("Preset" + presetnum + " did not load!");
+					}
 					revalidate();
 					repaint();
 				}
@@ -253,19 +256,17 @@ public class BlockListWindow extends JmcFrame {
 		repaint();
 	}
 
-	public void saveList(String group) {
-
+	public boolean saveList(String group) {
 		File confFile = new File(Filesystem.getDatafilesDir(),
 				"conf/blockselection.dat");
 		
-		Log.info("Saving BlockList: " + group);
-		Log.info(Filesystem.getDatafilesDir().toString());
+		Log.debug("Saving BlockList: " + group);
 
 		try {
 			Options.excludeBlocks = getExcludedBlockIds();
 
 			TAG_Compound root;
-			if (!confFile.exists()) {
+			if (!confFile.isFile()) {
 				confFile.createNewFile();
 				root = new TAG_Compound("");
 			} else {
@@ -300,53 +301,52 @@ public class BlockListWindow extends JmcFrame {
 			root.save(new FileOutputStream(confFile));
 
 		} catch (Exception e) {
-			Log.error("Error saving blocks selection", e);
+			Log.error("Error saving blocks selection to " + confFile.getAbsolutePath(), e);
+			return false;
 		}
-
+		return true;
 	}
 
-	public void loadList(String group) {
+	public boolean loadList(String group) {
 		
-		try (JmcConfFile confFile = new JmcConfFile("conf/blockselection.dat")) {
-
+		File confFile = new File(Filesystem.getDatafilesDir(),
+				"conf/blockselection.dat");
+		
+		try {
 			TAG_Compound root;
-			if (!confFile.hasStream()) {
-				saveList(group);
-				loadList(group);
-				return;
+			if (!confFile.isFile()) {
+				return false;
 			} else {
-				root = (TAG_Compound) NBT_Tag.make(confFile.getInputStream());
-				confFile.close();
+				FileInputStream is = new FileInputStream(confFile);
+				root = (TAG_Compound) NBT_Tag.make(is);
+				is.close();
 			}
 
 			TAG_Compound presetgroup = (TAG_Compound) root.getElement(group);
 			if (presetgroup == null) {
-				saveList(group);
-				loadList(group);
-				return;
+				return false;
 			}
 
 			for (int i = 0; i < labelList.getModel().getSize(); i++) {
-
 				BlockInfo labelElement = (BlockInfo) labelList.getModel()
 						.getElementAt(i).getItem();
 				TAG_Byte byteElement = (TAG_Byte) presetgroup
 						.getElement(labelElement.getName());
 
 				if (byteElement != null)
-					labelList.getModel().getElementAt(i).setSelected(byteElement.value == 1 ? true : false);
+					labelList.getModel().getElementAt(i).setSelected(byteElement.value == 1);
 				//else// if the model isn't in the file
 				//	labelList.getModel().getElementAt(i).setSelected(false);
-
 			}
 
 			Options.excludeBlocks = getExcludedBlockIds();
 			
 		} catch (Exception e) {
-			Log.debug("Error loading blocks selection: " + e.getMessage());
-
+			Log.error("Error loading blocks selection from " + confFile.getAbsolutePath(), e);
+			return false;
 		}
-
+		
+		return true;
 	}
 
 	private Set<NamespaceID> getExcludedBlockIds() {
