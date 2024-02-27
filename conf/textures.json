@@ -10,6 +10,7 @@
 	{"id": "minecraft:block/large_fern_bottom", "tint": "47B418"},
 	{"id": "minecraft:block/large_fern_top", "tint": "47B418"},
 	{"id": "minecraft:block/grass", "tint": "47B418"},
+	{"id": "minecraft:block/short_grass", "tint": "47B418"},
 	{"id": "minecraft:block/tall_grass_bottom", "tint": "47B418"},
 	{"id": "minecraft:block/tall_grass_top", "tint": "47B418"},
 	{"id": "minecraft:block/grass_block_top", "tint": "A2FF65"},
