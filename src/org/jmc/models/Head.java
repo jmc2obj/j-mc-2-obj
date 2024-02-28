@@ -36,7 +36,7 @@ import com.google.gson.JsonParser;
  */
 public class Head extends BlockModel
 {
-	private static Set<NamespaceID> addedMaterials = new HashSet<>();
+	private static final Set<NamespaceID> addedMaterials = new HashSet<>();
 	
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome)

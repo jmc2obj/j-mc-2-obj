@@ -180,7 +180,7 @@ public class Chunk {
 		/**
 		 * Block meta-data.
 		 */
-		private BlockData[] data;
+		private final BlockData[] data;
 		
 		public BlockData getBlockData(int x, int y, int z) { 
 			int index = getIndex(x, y, z);
@@ -304,11 +304,11 @@ public class Chunk {
 							int longSubInd = i%perLong;
 							long lvalue = tagBlockStates.data[longInd];
 							long shifted = lvalue >>> (longSubInd * blockBits);
-							blockPid = shifted & (-1l >>> (64 - blockBits));
+							blockPid = shifted & (-1L >>> (64 - blockBits));
 						}
 						else {
 							BitSet blockBitArr = BitSet.valueOf(tagBlockStates.data).get(i*blockBits, (i+1)*blockBits);
-							if (blockBitArr.length() < 1) {
+							if (blockBitArr.isEmpty()) {
 								blockPid = 0;
 							} else {
 								blockPid = blockBitArr.toLongArray()[0];
@@ -366,7 +366,7 @@ public class Chunk {
 							int longSubInd = i % perLong;
 							long lvalue = tagBiomeStates.data[longInd];
 							long shifted = lvalue >>> (longSubInd * biomeBits);
-							long biomePid = shifted & (-1l >>> (64 - biomeBits));
+							long biomePid = shifted & (-1L >>> (64 - biomeBits));
 							
 							String biomeName = ((TAG_String) tagBiomePalette.elements[(int) biomePid]).value;
 							NamespaceID biome = NamespaceID.fromString(biomeName);
@@ -536,7 +536,7 @@ public class Chunk {
 		if (yMinMax != null && yMinMax.length == 2) {
 			return yMinMax;
 		}
-		if(is_anvil) {
+		if (is_anvil) {
 			TAG_List sections;
 			if (chunkVer >= 2844) {
 				sections = (TAG_List) root.getElement("sections");
@@ -563,11 +563,10 @@ public class Chunk {
 			ymin=ymin*16;
 			ymax=(ymax+1)*16;
 			yMinMax = new int[] {ymin, ymax};
-			return yMinMax;
 		} else {
 			yMinMax = new int[] {0, 128};
-			return yMinMax;
 		}
+		return yMinMax;
 	}
 
 	/**
