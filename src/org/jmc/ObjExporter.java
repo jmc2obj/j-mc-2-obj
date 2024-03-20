@@ -133,6 +133,8 @@ public class ObjExporter {
 			WriterRunnable writeRunner = new WriterRunnable(outputQueue, obj_writer, progress, chunksToDo);
 			writeRunner.setOffset(oxs, oys, ozs);
 			writeRunner.setScale(Options.scale);
+			
+			writeCommonMcObjHeader(obj_writer);
 
 			obj_writer.println("mtllib " + mtlfile.getName());
 			obj_writer.println();
@@ -398,7 +400,28 @@ public class ObjExporter {
 			System.gc();
 		}
 	}
-
+	
+	private static void writeCommonMcObjHeader(PrintWriter objWriter) {
+		objWriter.println("# COMMON_MC_OBJ_START");
+		objWriter.println("# version: 0");
+		objWriter.println("# exporter: jmc2obj");  // Name of the exporter, all lowercase, with spaces substituted by underscores
+		objWriter.println("#");
+		objWriter.println("# world_name: " + Options.worldDir.getName());  // Name of the source world
+		objWriter.println("# world_path: " + Options.worldDir.toString());  // Path of the source world
+		objWriter.println("#");
+		objWriter.println("# exported_bounds_min: " +  String.format("%d, %d, %d", Options.minX, Options.minY, Options.minZ));  // The lowest block coordinate exported in the obj file
+		objWriter.println("# exported_bounds_max: " + String.format("%d, %d, %d", Options.maxX, Options.maxY, Options.maxZ));  // The highest block coordinate exported in the obj file
+		objWriter.println("#");
+		objWriter.println("# is_centered: " + ((Options.offsetType == OffsetType.CENTER) ? "true" : "false"));  // true if centered, false if not
+		objWriter.println("# z_up: false");  // true if the Z axis is up instead of Y, false is not
+		objWriter.println("# texture_type: INDIVIDUAL_TILES");  // ATLAS or INDIVIDUAL_TILES
+		objWriter.println("# has_biomes: " + (Options.renderBiomes ? "true" : "false"));  // true if biome information is exported, false if not
+		objWriter.println("# has_split_blocks: " + (Options.objectPerBlock ? "true" : "false"));  // true if blocks have been split, false if not
+		objWriter.println("#");
+		objWriter.println("# COMMON_MC_OBJ_END");
+		objWriter.println();
+	}
+	
 	private static void resetErrors() {
 		Banner.resetReadError();
 		Log.resetSingles();
