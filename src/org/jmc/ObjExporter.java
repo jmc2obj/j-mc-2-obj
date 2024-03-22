@@ -419,6 +419,7 @@ public class ObjExporter {
 		objWriter.println("#");
 		objWriter.println("# exported_bounds_min: " +  String.format("(%d, %d, %d)", Options.minX, Options.minY, Options.minZ));  // The lowest block coordinate exported in the obj file
 		objWriter.println("# exported_bounds_max: " + String.format("(%d, %d, %d)", Options.maxX-1, Options.maxY-1, Options.maxZ-1));  // The highest block coordinate exported in the obj file
+		objWriter.println("# block_scale: " + Options.scale); // Scale of each block
 		objWriter.println("#");
 		objWriter.println("# is_centered: " + ((Options.offsetType == OffsetType.CENTER) ? "true" : "false"));  // true if centered, false if not
 		objWriter.println("# z_up: false");  // true if the Z axis is up instead of Y, false is not
