@@ -413,19 +413,15 @@ public class ObjExporter {
 		objWriter.println("# COMMON_MC_OBJ_START");
 		objWriter.println("# version: 1");
 		objWriter.println("# exporter: jmc2obj");  // Name of the exporter, all lowercase, with spaces substituted by underscores
-		objWriter.println("#");
 		objWriter.println("# world_name: " + Options.worldDir.getName());  // Name of the source world
 		objWriter.println("# world_path: " + Options.worldDir.toString());  // Path of the source world
-		objWriter.println("#");
 		objWriter.println("# exported_bounds_min: " +  String.format("(%d, %d, %d)", Options.minX, Options.minY, Options.minZ));  // The lowest block coordinate exported in the obj file
 		objWriter.println("# exported_bounds_max: " + String.format("(%d, %d, %d)", Options.maxX-1, Options.maxY-1, Options.maxZ-1));  // The highest block coordinate exported in the obj file
 		objWriter.println("# block_scale: " + Options.scale); // Scale of each block
-		objWriter.println("#");
 		objWriter.println("# is_centered: " + ((Options.offsetType == OffsetType.CENTER) ? "true" : "false"));  // true if centered, false if not
 		objWriter.println("# z_up: false");  // true if the Z axis is up instead of Y, false is not
 		objWriter.println("# texture_type: INDIVIDUAL_TILES");  // ATLAS or INDIVIDUAL_TILES
 		objWriter.println("# has_split_blocks: " + (Options.objectPerBlock ? "true" : "false"));  // true if blocks have been split, false if not
-		objWriter.println("#");
 		objWriter.println("# COMMON_MC_OBJ_END");
 		objWriter.println();
 	}
