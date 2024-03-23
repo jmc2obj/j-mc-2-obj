@@ -9,11 +9,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.CheckForNull;
 
 import org.jmc.Options.OffsetType;
+import org.jmc.geom.Vertex;
 import org.jmc.models.Banner;
 import org.jmc.registry.Registries;
 import org.jmc.threading.ReaderRunnable;
@@ -134,7 +136,7 @@ public class ObjExporter {
 			writeRunner.setOffset(oxs, oys, ozs);
 			writeRunner.setScale(Options.scale);
 			
-			writeCommonMcObjHeader(obj_writer);
+			writeCommonMcObjHeader(obj_writer, new Vertex(oxs, oys, ozs));
 
 			obj_writer.println("mtllib " + mtlfile.getName());
 			obj_writer.println();
@@ -409,7 +411,7 @@ public class ObjExporter {
 	 * @param objWriter
 	 *      The writer that's writing the OBJ file
 	 */
-	private static void writeCommonMcObjHeader(PrintWriter objWriter) {
+	private static void writeCommonMcObjHeader(PrintWriter objWriter, Vertex offsetVec) {
 		objWriter.println("# COMMON_MC_OBJ_START");
 		objWriter.println("# version: 1");
 		objWriter.println("# exporter: jmc2obj");  // Name of the exporter, all lowercase, with spaces substituted by underscores
@@ -417,12 +419,12 @@ public class ObjExporter {
 		objWriter.println("# world_path: " + Options.worldDir.toString());  // Path of the source world
 		objWriter.println("# export_bounds_min: " +  String.format("(%d, %d, %d)", Options.minX, Options.minY, Options.minZ));  // The lowest block coordinate exported in the obj file
 		objWriter.println("# export_bounds_max: " + String.format("(%d, %d, %d)", Options.maxX-1, Options.maxY-1, Options.maxZ-1));  // The highest block coordinate exported in the obj file
-		objWriter.println("# export_offset: " + String.format("(%d, 0, %d)", Options.offsetX, Options.offsetZ));
-		objWriter.println("# block_scale: " + Options.scale); // Scale of each block
-		objWriter.println("# is_centered: " + ((Options.offsetType == OffsetType.CENTER) ? "true" : "false"));  // true if centered, false if not
+		objWriter.println("# export_offset: " + String.format(Locale.US, "(%f, %f, %f)", offsetVec.x, offsetVec.y, offsetVec.z)); // The offset vector the model was exported with
+		objWriter.println("# block_scale: " + String.format(Locale.US, "%f", Options.scale)); // Scale of each block
+		objWriter.println("# block_origin_offset: (-0.5, -0.5, -0.5)"); // The offset vector of the block model origins
 		objWriter.println("# z_up: false");  // true if the Z axis is up instead of Y, false is not
-		objWriter.println("# texture_type: INDIVIDUAL_TILES");  // ATLAS or INDIVIDUAL_TILES
-		objWriter.println("# has_split_blocks: " + (Options.objectPerBlock ? "true" : "false"));  // true if blocks have been split, false if not
+		objWriter.println("# texture_type: " + (Options.singleMaterial ? "ATLAS" : "INDIVIDUAL_TILES"));  // ATLAS or INDIVIDUAL_TILES
+		objWriter.println("# has_split_blocks: " + (Options.objectPerMaterial ? "true" : "false"));  // true if blocks have been split, false if not
 		objWriter.println("# COMMON_MC_OBJ_END");
 		objWriter.println();
 	}
