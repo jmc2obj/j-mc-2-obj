@@ -20,8 +20,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -51,6 +53,7 @@ import org.jmc.LevelDat;
 import org.jmc.Options;
 import org.jmc.NBT.TAG_Double;
 import org.jmc.NBT.TAG_List;
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
@@ -509,7 +512,7 @@ public class MainPanel extends JPanel {
 					Options.worldDir = null;
 					return;
 				}
-				Options.dimension = (Integer) cbDimension.getSelectedItem();
+				Options.dimension = (NamespaceID) cbDimension.getSelectedItem();
 				
 				Log.info("Loading " + Options.worldDir.getName() + "...");
 
@@ -647,18 +650,23 @@ public class MainPanel extends JPanel {
 
 		cbDimension.removeAllItems();
 
-		cbDimension.addItem(0);
-		for (File f : save_dir.listFiles()) {
-			if (f.isDirectory()) {
-				String dirname = f.getName();
-				if (dirname.startsWith("DIM")) {
-					try {
-						int dim_id = Integer.parseInt(dirname.substring(3));
-						cbDimension.addItem(dim_id);
-					} catch (NumberFormatException ex) {
-						Log.info("Error parsing dimension \"" + dirname.substring(3) + "\"! Skipping...");
-					}
-				}
+		cbDimension.addItem(new NamespaceID("minecraft", "overworld"));
+		cbDimension.addItem(new NamespaceID("minecraft", "the_nether"));
+		cbDimension.addItem(new NamespaceID("minecraft", "the_end"));
+		File dimDir = new File(save_dir, "dimensions");
+		if (dimDir.isDirectory()) {
+			File[] namespaceDirectories = dimDir.listFiles(File::isDirectory);
+			if (namespaceDirectories != null) {
+				Arrays.stream(namespaceDirectories)
+						.flatMap(namespaceDir -> {
+							File[] pathDirectories = namespaceDir.listFiles(File::isDirectory);
+							return (pathDirectories != null) ? Arrays.stream(pathDirectories) : Stream.empty();
+						})
+						.forEach(pathDir -> {
+							String namespace = pathDir.getParentFile().getName();
+							String path = pathDir.getName();
+							cbDimension.addItem(new NamespaceID(namespace, path));
+						});
 			}
 		}
 	}
@@ -675,10 +683,7 @@ public class MainPanel extends JPanel {
 	}
 
 	public void updateSelectionOptions() {
-		Integer dim = (Integer) cbDimension.getSelectedItem();
-		if (dim == null)
-			return;
-		Options.dimension = dim;
+		Options.dimension = (NamespaceID) cbDimension.getSelectedItem();
 
 		Rectangle rect = preview.getSelectionBounds();
 		if (rect.width == 0 || rect.height == 0) {

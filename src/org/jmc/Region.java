@@ -21,6 +21,7 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.jmc.registry.NamespaceID;
 import org.jmc.util.Log;
 
 /**
@@ -101,17 +102,21 @@ public class Region implements Iterable<Chunk> {
 	 * @return region file object
 	 * @throws IOException of error occurs
 	 */
-	public static Region findRegion(File saveFolder, int dimension, Point regionCoord) throws IOException
-	{
+	public static Region findRegion(File saveFolder, NamespaceID dimension, Point regionCoord) throws IOException {
 		File dir;
-		if(dimension == 0)
-			dir=new File(saveFolder.getAbsolutePath(), "region");
-		else
-			dir=new File(saveFolder.getAbsolutePath(), "DIM"+dimension+"/region");
+		if(dimension.equals(new NamespaceID("minecraft", "overworld"))) {
+			dir = new File(saveFolder.getAbsolutePath(), "region");
+		} else if (dimension.equals(new NamespaceID("minecraft", "the_nether"))) {
+			dir = new File(saveFolder.getAbsolutePath(), "DIM-1/region");
+		} else if (dimension.equals(new NamespaceID("minecraft", "the_end"))) {
+			dir = new File(saveFolder.getAbsolutePath(), "DIM1/region");
+		} else {
+			dir = new File(saveFolder.getAbsolutePath(), String.format("dimensions/%s/%s/region", dimension.namespace, dimension.path));
+		}
 		
-		File file= new File(dir, "/r."+regionCoord.x+"."+regionCoord.y+".mca");
+		File file = new File(dir, "/r."+regionCoord.x+"."+regionCoord.y+".mca");
 		if(!file.exists())
-			file= new File(dir, "/r."+regionCoord.x+"."+regionCoord.y+".mcr");
+			file = new File(dir, "/r."+regionCoord.x+"."+regionCoord.y+".mcr");
 		
 		return new Region(file);
 	}

@@ -153,7 +153,7 @@ public class CmdLineParser {
 				Options.maxY = Integer.parseInt(parts[1]);
 			}
 			if (checkOption(cmdLine, optDimension)) {
-				Options.dimension = Integer.parseInt(cmdLine.getOptionValue(optDimension));
+				Options.dimension = NamespaceID.fromString(cmdLine.getOptionValue(optDimension));
 			}
 			if (checkOption(cmdLine, optTexExport)) {
 				Options.exportTex = true;

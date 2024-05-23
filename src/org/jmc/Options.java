@@ -125,7 +125,7 @@ public class Options
 	/**
 	 * Id of the world dimension to export.
 	 */
-	public static int dimension = 0;
+	public static NamespaceID dimension = new NamespaceID("minecraft", "overworld");
 
 	/**
 	 * Lower bound of the volume to export.

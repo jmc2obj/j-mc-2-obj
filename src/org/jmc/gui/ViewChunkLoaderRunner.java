@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jmc.*;
 import org.jmc.gui.PreviewPanel.ChunkImage;
+import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.util.Hilbert.HilbertComparator;
 
@@ -44,7 +45,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	/**
 	 * Dimension id
 	 */
-	private final int dimension;
+	private final NamespaceID dimension;
 	/**
 	 * Collection of chunk images from the preview panel.
 	 */
