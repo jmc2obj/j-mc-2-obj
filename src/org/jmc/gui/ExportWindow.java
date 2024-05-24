@@ -581,9 +581,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					@Override
 					public void approveSelection() {
 						File f = getSelectedFile();
-						if (!f.toString().substring(f.toString().length() - 4).contentEquals(".obj")
-								|| f.toString().length() < 4)
+						if (!f.toString().toLowerCase().endsWith(".obj")) {
 							setSelectedFile(new File(f.toString() + ".obj"));
+						}
 						f = getSelectedFile();
 
 						if (f.exists()) {
@@ -606,6 +606,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 						super.approveSelection();
 					}
 				};
+				jfc.setSelectedFile(new File("coulds.obj"));
 				jfc.setFileHidingEnabled(false);
 				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
 				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
@@ -631,9 +632,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					@Override
 					public void approveSelection() {
 						File f = getSelectedFile();
-						if (!f.toString().substring(f.toString().length() - 4).contentEquals(".obj")
-								|| f.toString().length() < 4)
+						if (!f.toString().toLowerCase().endsWith(".obj")) {
 							setSelectedFile(new File(f.toString() + ".obj"));
+						}
 						f = getSelectedFile();
 
 						if (f.exists()) {
@@ -676,9 +677,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					@Override
 					public void approveSelection() {
 						File f = getSelectedFile();
-						if (!f.toString().substring(f.toString().length() - 4).contentEquals(".obj")
-								|| f.toString().length() < 4)
+						if (!f.toString().toLowerCase().endsWith(".obj")) {
 							setSelectedFile(new File(f.toString() + ".obj"));
+						}
 						f = getSelectedFile();
 						File f2 = new File(f.toString().replace(".obj", ".mtl"));
 
@@ -745,6 +746,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 				};
 
+				jfc.setSelectedFile(new File("default.obj"));
 				jfc.setFileHidingEnabled(false);
 
 				if (Options.useLastSaveLoc && !prefs.get("LAST_EXPORT_PATH", "not here").equals("not here")
