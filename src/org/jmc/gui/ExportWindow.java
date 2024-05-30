@@ -746,7 +746,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 				};
 
-				jfc.setSelectedFile(new File("default.obj"));
+				jfc.setSelectedFile(new File("minecraft.obj"));
 				jfc.setFileHidingEnabled(false);
 
 				if (Options.useLastSaveLoc && !prefs.get("LAST_EXPORT_PATH", "not here").equals("not here")
