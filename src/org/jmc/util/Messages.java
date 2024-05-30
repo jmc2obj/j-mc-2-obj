@@ -12,7 +12,6 @@ public class Messages {
     private static final String BUNDLE_NAME = "messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            //.getBundle(BUNDLE_NAME, new UTF8Control());
             .getBundle(BUNDLE_NAME, new UTF8Control());
 
     private Messages() {
@@ -30,7 +29,10 @@ public class Messages {
         @Override
         public ResourceBundle newBundle(String baseName, java.util.Locale locale, String format, ClassLoader loader, boolean reload)
                 throws java.io.IOException {
-            String bundleName = toBundleName(baseName, locale);
+            String bundleName = baseName;
+            if (!locale.getLanguage().equals("en")) {
+                bundleName = toBundleName(baseName, locale);
+            }
             String resourceName = toResourceName(bundleName, "properties");
             ResourceBundle bundle = null;
             try (BufferedReader reader = new BufferedReader(
@@ -39,7 +41,7 @@ public class Messages {
                             StandardCharsets.UTF_8))) {
                 bundle = new PropertyResourceBundle(reader);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw e;
             }
             return bundle;
         }
