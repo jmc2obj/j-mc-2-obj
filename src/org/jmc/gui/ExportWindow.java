@@ -606,7 +606,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 						super.approveSelection();
 					}
 				};
-				jfc.setSelectedFile(new File("coulds.obj"));
+				jfc.setSelectedFile(new File("clouds.obj"));
 				jfc.setFileHidingEnabled(false);
 				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
 				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
