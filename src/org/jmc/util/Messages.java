@@ -29,21 +29,17 @@ public class Messages {
         @Override
         public ResourceBundle newBundle(String baseName, java.util.Locale locale, String format, ClassLoader loader, boolean reload)
                 throws java.io.IOException {
-            String bundleName = baseName;
-            if (!locale.getLanguage().equals("en")) {
-                bundleName = toBundleName(baseName, locale);
-            }
+            String bundleName = toBundleName(baseName, locale);
             String resourceName = toResourceName(bundleName, "properties");
-            ResourceBundle bundle = null;
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            loader.getResourceAsStream(resourceName),
-                            StandardCharsets.UTF_8))) {
-                bundle = new PropertyResourceBundle(reader);
-            } catch (Exception e) {
-                throw e;
+            try (InputStream resourceStream = loader.getResourceAsStream(resourceName)) {
+                if (resourceStream != null) {
+                    return new PropertyResourceBundle(
+                        new BufferedReader(
+                            new InputStreamReader(resourceStream, StandardCharsets.UTF_8)
+                    ));
+                }
             }
-            return bundle;
+            return null;
         }
     }
 }
