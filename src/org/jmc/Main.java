@@ -1,9 +1,13 @@
 package org.jmc;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.Font;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
 import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import org.jmc.Options.UIMode;
 import org.jmc.gui.MainWindow;
@@ -56,7 +60,19 @@ public class Main
 	private static void runGUI()
 	{
 		try {
+			System.setProperty("awt.useSystemAAFontSettings","on");
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Main.class.getClassLoader().getResourceAsStream("fonts/NotoSansCombined-Regular.ttf")));
+			Font fontDefault = new Font("Noto Sans", Font.PLAIN, 11);
+			Enumeration<Object> keys = UIManager.getDefaults().keys();
+			while (keys.hasMoreElements()) {
+				Object key = keys.nextElement();
+				Object value = UIManager.get (key);
+				if (value instanceof FontUIResource) {
+					UIManager.put(key, fontDefault);
+				}
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
