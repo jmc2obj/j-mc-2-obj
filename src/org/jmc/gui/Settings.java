@@ -52,6 +52,7 @@ import org.jmc.util.Filesystem;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
+import javax.swing.border.EmptyBorder;
 
 public class Settings extends JmcFrame implements WindowListener, ChangeListener {
 
@@ -92,6 +93,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pMove.setLayout(new BoxLayout(pMove, BoxLayout.LINE_AXIS));
 		JLabel lMove = new JLabel(Messages.getString("Settings.DRAG"));
+		lMove.setBorder(new EmptyBorder(0, 0, 0, 4));
 		cbMove = new JComboBox<>(actions);
 		pMove.add(lMove);
 		pMove.add(cbMove);
@@ -100,6 +102,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pSelect.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pSelect.setLayout(new BoxLayout(pSelect, BoxLayout.LINE_AXIS));
 		JLabel lSelect = new JLabel(Messages.getString("Settings.SELECT"));
+		lSelect.setBorder(new EmptyBorder(0, 0, 0, 4));
 		cbSelect = new JComboBox<>(actions);
 		pSelect.add(lSelect);
 		pSelect.add(cbSelect);
@@ -108,6 +111,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pLang.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pLang.setLayout(new BoxLayout(pLang, BoxLayout.LINE_AXIS));
 		JLabel lLang = new JLabel(Messages.getString("Settings.LANGUAGE"));
+		lLang.setBorder(new EmptyBorder(0, 0, 0, 4));
 		cbLang = new JComboBox<>(languages);
 		pLang.add(lLang);
 		pLang.add(cbLang);
@@ -221,6 +225,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPrevThreads.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		
 		JLabel lPrevThreads = new JLabel(Messages.getString("Settings.PREVIEW_THREADS"));
+		lPrevThreads.setBorder(new EmptyBorder(0, 0, 0, 4));
 		pPrevThreads.add(lPrevThreads);
 		
 		spPrevThreads = new JSpinner();

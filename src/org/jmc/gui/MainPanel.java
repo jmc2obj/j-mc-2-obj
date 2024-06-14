@@ -295,6 +295,7 @@ public class MainPanel extends JPanel {
 		holderMinY.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
 
 		JLabel lblMinY = new JLabel(Messages.getString("PreviewPanel.FLOOR"));
+		lblMinY.setBorder(new EmptyBorder(0, 8, 0, 4));
 		final SpinnerModel minYModel = new SpinnerNumberModel(-64, -2048, 2048, 1);
 		minYSpinner = new JSpinner(minYModel);
 		minYSpinner.setPreferredSize(new Dimension(70, 22));
@@ -308,6 +309,7 @@ public class MainPanel extends JPanel {
 		holderMaxY.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
 
 		JLabel lblMaxY = new JLabel(Messages.getString("PreviewPanel.CEILING"));
+		lblMaxY.setBorder(new EmptyBorder(0, 0, 0, 4));
 		final SpinnerModel maxYModel = new SpinnerNumberModel(320, -2048, 2048, 1);
 		maxYSpinner = new JSpinner(maxYModel);
 		maxYSpinner.setPreferredSize(new Dimension(70, 22));
@@ -324,7 +326,8 @@ public class MainPanel extends JPanel {
 		holderPos1.setBorder(BorderFactory.createTitledBorder(holderPos1.getBorder(),
 				Messages.getString("MainPanel.POSITION") + " 1", TitledBorder.CENTER, TitledBorder.TOP));
 
-		JLabel lblPos1X = new JLabel("X: ");
+		JLabel lblPos1X = new JLabel("X:");
+		lblPos1X.setBorder(new EmptyBorder(0, 0, 0, 4));
 		modelPos1X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos1X = new JSpinner(modelPos1X);
 		spinnerPos1X.setPreferredSize(new Dimension(75, spinnerPos1X.getPreferredSize().height));
@@ -336,7 +339,8 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		JLabel lblPos1Z = new JLabel("    Z: ");
+		JLabel lblPos1Z = new JLabel("Z:");
+		lblPos1Z.setBorder(new EmptyBorder(0, 8, 0, 4));
 		modelPos1Z = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos1Z = new JSpinner(modelPos1Z);
 		spinnerPos1Z.setPreferredSize(new Dimension(75, spinnerPos1Z.getPreferredSize().height));
@@ -359,7 +363,8 @@ public class MainPanel extends JPanel {
 		holderPos2.setBorder(BorderFactory.createTitledBorder(holderPos2.getBorder(),
 				Messages.getString("MainPanel.POSITION") + " 2", TitledBorder.CENTER, TitledBorder.TOP));
 
-		JLabel lblPos2X = new JLabel("X: ");
+		JLabel lblPos2X = new JLabel("X:");
+		lblPos2X.setBorder(new EmptyBorder(0, 0, 0, 4));
 		modelPos2X = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos2X = new JSpinner(modelPos2X);
 		spinnerPos2X.setPreferredSize(new Dimension(75, spinnerPos2X.getPreferredSize().height));
@@ -371,7 +376,8 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		JLabel lblPos2Z = new JLabel("    Z: ");
+		JLabel lblPos2Z = new JLabel("Z:");
+		lblPos2Z.setBorder(new EmptyBorder(0, 8, 0, 4));
 		modelPos2Z = new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
 		final JSpinner spinnerPos2Z = new JSpinner(modelPos2Z);
 		spinnerPos2Z.setPreferredSize(new Dimension(75, spinnerPos2Z.getPreferredSize().height));

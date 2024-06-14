@@ -241,6 +241,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderPreScale.setLayout(new BoxLayout(holderPreScale, BoxLayout.X_AXIS));
 
 		JLabel lblPrescaleTextures = new JLabel(Messages.getString("TexsplitDialog.PRESCALE"));
+		lblPrescaleTextures.setBorder(new EmptyBorder(0, 0, 0, 4));
 		holderPreScale.add(lblPrescaleTextures);
 
 		cboxTexScale = new JComboBox<String>();

@@ -135,8 +135,8 @@ public class BlockListWindow extends JmcFrame {
 		for (int i = 1; i < 6; i++) {
 			final int presetnum = i;
 			JPanel tempPanel = new JPanel();
-			JButton loadButton = new JButton(Messages.getString("BlockListWindow.LOAD_PRESET") + i);
-			JButton saveButton = new JButton(Messages.getString("BlockListWindow.SAVE_PRESET") + i);
+			JButton loadButton = new JButton(Messages.getString("BlockListWindow.LOAD_PRESET") + " " + i);
+			JButton saveButton = new JButton(Messages.getString("BlockListWindow.SAVE_PRESET") + " " + i);
 
 			tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.Y_AXIS));
 
