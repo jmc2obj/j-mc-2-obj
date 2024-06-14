@@ -233,7 +233,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPrevThreads.add(spPrevThreads);
 		
 		JPanel pResourcePacks = new JPanel();
-		pResourcePacks.setBorder(new TitledBorder(null, "Resource Packs", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		pResourcePacks.setBorder(new TitledBorder(null, Messages.getString("Settings.PACK_HEADER"), TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		mp.add(pResourcePacks);
 		pResourcePacks.setLayout(new BoxLayout(pResourcePacks, BoxLayout.Y_AXIS));
 		
