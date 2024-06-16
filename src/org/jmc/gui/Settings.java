@@ -243,7 +243,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		
 		JScrollPane scrollListPacks = new JScrollPane();
 		pPackList.add(scrollListPacks);
-		scrollListPacks.setAlignmentY(Component.TOP_ALIGNMENT);
 		scrollListPacks.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		listPacks = new JmcPackList();
@@ -286,7 +285,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		
 		JPanel pPackListButtons = new JPanel();
 		pPackList.add(pPackListButtons);
-		pPackListButtons.setAlignmentY(Component.TOP_ALIGNMENT);
 		pPackListButtons.setLayout(new BoxLayout(pPackListButtons, BoxLayout.Y_AXIS));
 		
 		
@@ -302,6 +300,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		}
 		
 		JButton btnPackAdd = new JButton(iconPackAdd);
+		btnPackAdd.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnPackAdd.setToolTipText(Messages.getString("Settings.ResourcePack.ADD"));
 		btnPackAdd.setMargin(new Insets(2, 2, 2, 2));
 		btnPackAdd.addActionListener(new ActionListener() {
@@ -338,6 +337,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackAdd);
 		
 		JButton btnPackRemove = new JButton(iconPackRemove);
+		btnPackRemove.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnPackRemove.setToolTipText(Messages.getString("Settings.ResourcePack.REMOVE"));
 		btnPackRemove.setMargin(new Insets(2, 2, 2, 2));
 		btnPackRemove.addActionListener(new ActionListener() {
@@ -351,6 +351,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackRemove);
 		
 		JButton btnPackUp = new JButton(iconPackUp);
+		btnPackUp.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnPackUp.setToolTipText(Messages.getString("Settings.ResourcePack.UP"));
 		btnPackUp.setMargin(new Insets(2, 2, 2, 2));
 		btnPackUp.addActionListener(new ActionListener() {
@@ -364,6 +365,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackUp);
 		
 		JButton btnPackDown = new JButton(iconPackDown);
+		btnPackDown.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnPackDown.setToolTipText(Messages.getString("Settings.ResourcePack.DOWN"));
 		btnPackDown.setMargin(new Insets(2, 2, 2, 2));
 		btnPackDown.addActionListener(new ActionListener() {
@@ -377,6 +379,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackDown);
 		
 		chckbxUsePackDefault = new JCheckBox(Messages.getString("Settings.ResourcePack.USE_DEFAULT"));
+		chckbxUsePackDefault.setAlignmentX(Component.CENTER_ALIGNMENT);
 		chckbxUsePackDefault.setSelected(true);
 		chckbxUsePackDefault.addActionListener(new ActionListener() {
 			@Override
@@ -388,11 +391,13 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pResourcePacks.add(chckbxUsePackDefault);
 		
 		
-		mp.add(Box.createVerticalGlue());
 		mp.add(pRestart);
 		mp.add(pButtons);
 
 		mp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		pack();
+		setMinimumSize(getSize());
 
 		loadSettings();
 		updateResourcePacks(false);

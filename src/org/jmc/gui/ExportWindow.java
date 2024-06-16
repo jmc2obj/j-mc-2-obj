@@ -127,8 +127,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	 */
 	public ExportWindow() {
 
-
-		setBounds(100, 100, 500, 500);
 		super(Messages.getString("ExportOptions.WIN_TITLE"));
 
 		contentPane = new JPanel();
@@ -523,7 +521,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		addActionListenersToAll();
 
 		pack();
-
+		setMinimumSize(getSize());
 	}
 
 	private void addActionListenersToAll() {
