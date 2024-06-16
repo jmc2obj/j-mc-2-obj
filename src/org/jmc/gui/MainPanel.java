@@ -287,7 +287,7 @@ public class MainPanel extends JPanel {
 		JPanel holderFloorCeil = new JPanel();
 		holderFloorCeil.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		holderFloorCeil.setBorder(BorderFactory.createTitledBorder(holderFloorCeil.getBorder(),
-				Messages.getString("MainPanel.ALT"), TitledBorder.CENTER, TitledBorder.TOP));
+				Messages.getString("MainPanel.FLOOR_CEIL"), TitledBorder.CENTER, TitledBorder.TOP));
 
 		// Floor Panel
 		JPanel holderMinY = new JPanel();
@@ -492,7 +492,7 @@ public class MainPanel extends JPanel {
 				jfc.setFileHidingEnabled(false);
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				if (jfc.showDialog(MainPanel.this,
-						Messages.getString("MainPanel.CHOOSE_SAVE_FOLDER")) == JFileChooser.APPROVE_OPTION) {
+						Messages.getString("MainPanel.CHOOSE_WORLD_FOLDER")) == JFileChooser.APPROVE_OPTION) {
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					addPathToList(path);
 					MainWindow.settings.setLastVisitedDir(path);

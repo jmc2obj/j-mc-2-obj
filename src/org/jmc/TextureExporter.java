@@ -149,7 +149,7 @@ public class TextureExporter {
 	 */
 	public static void exportTextures(Set<TextureEntry> textures, ProgressCallback progress) throws IOException {
 		if (progress != null)
-			progress.setMessage(Messages.getString("Progress.TEX"));
+			progress.setMessage(Messages.getString("ExportOptions.Progress.TEX"));
 		int count = 0;
 		for (TextureEntry texture : textures) {
 			File file = new File(Options.outputDir, texture.getExportFilePath());
@@ -213,7 +213,7 @@ public class TextureExporter {
 	 */
 	public static void mergeTextures(Set<TextureEntry> textures, ProgressCallback progress) throws Exception {
 		if (progress != null)
-			progress.setMessage(Messages.getString("Progress.TEX"));
+			progress.setMessage(Messages.getString("ExportOptions.Progress.TEX"));
 		Map<NamespaceID, Rectangle> ret = new HashMap<>();
 		
 		// calculate maxwidth so to keep the size of the final file more or less

@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.jmc.gui;
 
+import org.jmc.util.Messages;
+
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
@@ -15,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Memory monitor panel and thread.
@@ -27,8 +30,8 @@ import javax.swing.border.BevelBorder;
 public class MemoryMonitor extends JPanel implements Runnable {
 
 	//UI elements (not described)
-	JLabel label;
-	JProgressBar bar1,bar2;
+	JLabel lblTextStats;
+	JProgressBar barUsed, barMax;
 	
 	/**
 	 * Main constructor.
@@ -37,22 +40,28 @@ public class MemoryMonitor extends JPanel implements Runnable {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
 		
-		label=new JLabel("MEM: ?");
-		bar1=new JProgressBar();
-		bar2=new JProgressBar();
+		lblTextStats =new JLabel("MEM: ?");
+		barUsed =new JProgressBar();
+		barMax =new JProgressBar();
 		
-		bar1.setStringPainted(true);
-		bar2.setStringPainted(true);
+		barUsed.setStringPainted(true);
+		barMax.setStringPainted(true);
 		
-		label.setPreferredSize(new Dimension(150, 20));
-		label.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		lblTextStats.setPreferredSize(new Dimension(150, 20));
+		lblTextStats.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
-		add(new JLabel(" Memory: "));
-		add(label);
-		add(new JLabel(" Total used: "));
-		add(bar1);
-		add(new JLabel(" Max used: "));
-		add(bar2);
+		JLabel lblMem = new JLabel(Messages.getString("MemoryMonitor.MEMORY"));
+		lblMem.setBorder(new EmptyBorder(0, 4, 0, 4));
+		add(lblMem);
+		add(lblTextStats);
+		JLabel lblUsed = new JLabel(Messages.getString("MemoryMonitor.TOTAL_USED"));
+		lblUsed.setBorder(new EmptyBorder(0, 4, 0, 4));
+		add(lblUsed);
+		add(barUsed);
+		JLabel lblMax = new JLabel(Messages.getString("MemoryMonitor.MAX_USED"));
+		lblMax.setBorder(new EmptyBorder(0, 4, 0, 4));
+		add(lblMax);
+		add(barMax);
 	}
 	
 	/**
@@ -68,14 +77,14 @@ public class MemoryMonitor extends JPanel implements Runnable {
 			{
 				if(mem>=1070596096)
 				{
-					return (mem/1070596096)+"G";			
+					return (mem/1070596096)+"G";
 				}
 				return (mem/1045504)+"M";
 			}
-			return (mem/1024)+"K";	
-		}		
+			return (mem/1024)+"K";
+		}
 		
-		return ""+mem;		
+		return ""+mem;
 	}
 	
 	private int scaleLong(long val, long max) {
@@ -88,24 +97,24 @@ public class MemoryMonitor extends JPanel implements Runnable {
 	 */
 	@Override
 	public void run() {
-		
-		while(true)
-		{
+		while(true) {
 			long total=Runtime.getRuntime().totalMemory();
 			long free=Runtime.getRuntime().freeMemory();
 			long max=Runtime.getRuntime().maxMemory();
 			
-			label.setText("T:"+toSize(total)+" F:"+toSize(free)+" M:"+toSize(max));
+			lblTextStats.setText("T:"+toSize(total)+" F:"+toSize(free)+" M:"+toSize(max));
 			
-			bar1.setMaximum(scaleLong(total, total));
-			bar1.setValue(scaleLong(total-free, total));
+			barUsed.setMaximum(scaleLong(total, total));
+			barUsed.setValue(scaleLong(total-free, total));
 			
-			bar2.setMaximum(scaleLong(max, max));
-			bar2.setValue(scaleLong(total, max));
+			barMax.setMaximum(scaleLong(max, max));
+			barMax.setValue(scaleLong(total, max));
 			
 			try {
 				Thread.sleep(500);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 
 	}

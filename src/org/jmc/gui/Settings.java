@@ -71,7 +71,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	public Settings() {
 		prefs = Preferences.userNodeForPackage(getClass());
 
-		setTitle(Messages.getString("Settings.SETTINGS"));
+		setTitle(Messages.getString("Settings.WIN_TITLE"));
 
 		setSize(400, 400);
 
@@ -80,9 +80,9 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 
 		mp.setLayout(new BoxLayout(mp, BoxLayout.PAGE_AXIS));
 
-		String actions[] = { Messages.getString("Settings.LMB"), Messages.getString("Settings.RMB"),
-				Messages.getString("Settings.MMB"), Messages.getString("Settings.SLMB"),
-				Messages.getString("Settings.SRMB"), Messages.getString("Settings.SMMB") };
+		String actions[] = { Messages.getString("Settings.Control.LMB"), Messages.getString("Settings.Control.RMB"),
+				Messages.getString("Settings.Control.MMB"), Messages.getString("Settings.Control.SLMB"),
+				Messages.getString("Settings.Control.SRMB"), Messages.getString("Settings.Control.SMMB") };
 
 		String languages[] = new String[Options.availableLocales.length];
 		for (int i = 0; i < languages.length; i++) {
@@ -92,7 +92,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		JPanel pMove = new JPanel();
 		pMove.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pMove.setLayout(new BoxLayout(pMove, BoxLayout.LINE_AXIS));
-		JLabel lMove = new JLabel(Messages.getString("Settings.DRAG"));
+		JLabel lMove = new JLabel(Messages.getString("Settings.Control.DRAG"));
 		lMove.setBorder(new EmptyBorder(0, 0, 0, 4));
 		cbMove = new JComboBox<>(actions);
 		pMove.add(lMove);
@@ -101,7 +101,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		JPanel pSelect = new JPanel();
 		pSelect.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
 		pSelect.setLayout(new BoxLayout(pSelect, BoxLayout.LINE_AXIS));
-		JLabel lSelect = new JLabel(Messages.getString("Settings.SELECT"));
+		JLabel lSelect = new JLabel(Messages.getString("Settings.Control.SELECT"));
 		lSelect.setBorder(new EmptyBorder(0, 0, 0, 4));
 		cbSelect = new JComboBox<>(actions);
 		pSelect.add(lSelect);
@@ -214,7 +214,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		mp.add(pUseSystemBrowser);
 		pUseSystemBrowser.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		
-		chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USESYSBROWSER"));
+		chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USE_SYS_BROWSER"));
 		chckbxUseSystemBrowser.setAlignmentX(Component.CENTER_ALIGNMENT);
 		pUseSystemBrowser.add(chckbxUseSystemBrowser);
 		chckbxUseSystemBrowser.addActionListener(saveAction);
@@ -233,7 +233,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPrevThreads.add(spPrevThreads);
 		
 		JPanel pResourcePacks = new JPanel();
-		pResourcePacks.setBorder(new TitledBorder(null, Messages.getString("Settings.PACK_HEADER"), TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		pResourcePacks.setBorder(new TitledBorder(null, Messages.getString("Settings.ResourcePack.HEADER"), TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		mp.add(pResourcePacks);
 		pResourcePacks.setLayout(new BoxLayout(pResourcePacks, BoxLayout.Y_AXIS));
 		
@@ -302,7 +302,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		}
 		
 		JButton btnPackAdd = new JButton(iconPackAdd);
-		btnPackAdd.setToolTipText(Messages.getString("Settings.PACK_ADD"));
+		btnPackAdd.setToolTipText(Messages.getString("Settings.ResourcePack.ADD"));
 		btnPackAdd.setMargin(new Insets(2, 2, 2, 2));
 		btnPackAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -317,7 +317,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				});
 				jfc.setFileFilter(new FileNameExtensionFilter("Zip & Jar files", "zip", "ZIP", "Zip", "jar", "JAR", "Jar"));
 				jfc.setCurrentDirectory(Filesystem.getMinecraftDir());
-				jfc.showDialog(Settings.this, Messages.getString("TexsplitDialog.SEL_RP"));
+				jfc.showDialog(Settings.this, Messages.getString("ExportOptions.Textures.SEL_RP"));
 
 				DefaultListModel<File> listPacksModel = listPacks.getModel();
 				File[] selectedFiles = jfc.getSelectedFiles();
@@ -338,7 +338,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackAdd);
 		
 		JButton btnPackRemove = new JButton(iconPackRemove);
-		btnPackRemove.setToolTipText(Messages.getString("Settings.PACK_REMOVE"));
+		btnPackRemove.setToolTipText(Messages.getString("Settings.ResourcePack.REMOVE"));
 		btnPackRemove.setMargin(new Insets(2, 2, 2, 2));
 		btnPackRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -351,7 +351,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackRemove);
 		
 		JButton btnPackUp = new JButton(iconPackUp);
-		btnPackUp.setToolTipText(Messages.getString("Settings.PACK_UP"));
+		btnPackUp.setToolTipText(Messages.getString("Settings.ResourcePack.UP"));
 		btnPackUp.setMargin(new Insets(2, 2, 2, 2));
 		btnPackUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -364,7 +364,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pPackListButtons.add(btnPackUp);
 		
 		JButton btnPackDown = new JButton(iconPackDown);
-		btnPackDown.setToolTipText(Messages.getString("Settings.PACK_DOWN"));
+		btnPackDown.setToolTipText(Messages.getString("Settings.ResourcePack.DOWN"));
 		btnPackDown.setMargin(new Insets(2, 2, 2, 2));
 		btnPackDown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -376,7 +376,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		});
 		pPackListButtons.add(btnPackDown);
 		
-		chckbxUsePackDefault = new JCheckBox(Messages.getString("Settings.PACK_USE_DEFAULT"));
+		chckbxUsePackDefault = new JCheckBox(Messages.getString("Settings.ResourcePack.USE_DEFAULT"));
 		chckbxUsePackDefault.setSelected(true);
 		chckbxUsePackDefault.addActionListener(new ActionListener() {
 			@Override

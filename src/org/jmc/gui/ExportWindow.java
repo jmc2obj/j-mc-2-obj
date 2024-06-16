@@ -127,9 +127,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	 */
 	public ExportWindow() {
 
-		super("Export...");
 
 		setBounds(100, 100, 500, 500);
+		super(Messages.getString("ExportOptions.WIN_TITLE"));
 
 		contentPane = new JPanel();
 		prefs = MainWindow.settings.getPreferences();
@@ -155,7 +155,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pMapExportOffset.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderLeft.add(pMapExportOffset);
 		pMapExportOffset.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
-				Messages.getString("OBJExportOptions.OFFSET"), TitledBorder.CENTER, TitledBorder.TOP, null,
+				Messages.getString("ExportOptions.Offset.OFFSET"), TitledBorder.CENTER, TitledBorder.TOP, null,
 				new Color(0, 0, 0)));
 
 		ButtonGroup gOffset = new ButtonGroup();
@@ -165,7 +165,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pMapExportOffset.add(holderMapScale);
 		holderMapScale.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel lblMapScale = new JLabel(Messages.getString("OBJExportOptions.MAP_SCALE"));
+		JLabel lblMapScale = new JLabel(Messages.getString("ExportOptions.MAP_SCALE"));
 		holderMapScale.add(lblMapScale);
 
 		textFieldMapScale = new JTextField();
@@ -178,14 +178,14 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		JPanel holderOffsetBtns = new JPanel();
 		holderOffset.add(holderOffsetBtns);
 
-		rdbtnNone = new JRadioButton(Messages.getString("OBJExportOptions.NONE"));
+		rdbtnNone = new JRadioButton(Messages.getString("ExportOptions.Offset.NONE"));
 		rdbtnNone.setSelected(true);
 		gOffset.add(rdbtnNone);
 
-		rdbtnCenter = new JRadioButton(Messages.getString("OBJExportOptions.CENTER"));
+		rdbtnCenter = new JRadioButton(Messages.getString("ExportOptions.Offset.CENTER"));
 		gOffset.add(rdbtnCenter);
 
-		rdbtnCustom = new JRadioButton(Messages.getString("OBJExportOptions.CUSTOM"));
+		rdbtnCustom = new JRadioButton(Messages.getString("ExportOptions.Offset.CUSTOM"));
 		gOffset.add(rdbtnCustom);
 		holderOffsetBtns.setLayout(new BoxLayout(holderOffsetBtns, BoxLayout.Y_AXIS));
 		holderOffsetBtns.add(rdbtnNone);
@@ -231,7 +231,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pTextureOptions.setAlignmentX(Component.LEFT_ALIGNMENT);
 		holderLeft.add(pTextureOptions);
 		pTextureOptions.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
-				Messages.getString("TexsplitDialog.WIN_TITLE"), TitledBorder.CENTER, TitledBorder.TOP, null, null));
+				Messages.getString("ExportOptions.Textures.HEADER"), TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		pTextureOptions.setLayout(new BoxLayout(pTextureOptions, BoxLayout.Y_AXIS));
 
 		holderPreScale = new JPanel();
@@ -240,7 +240,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pTextureOptions.add(holderPreScale);
 		holderPreScale.setLayout(new BoxLayout(holderPreScale, BoxLayout.X_AXIS));
 
-		JLabel lblPrescaleTextures = new JLabel(Messages.getString("TexsplitDialog.PRESCALE"));
+		JLabel lblPrescaleTextures = new JLabel(Messages.getString("ExportOptions.Textures.PRESCALE"));
 		lblPrescaleTextures.setBorder(new EmptyBorder(0, 0, 0, 4));
 		holderPreScale.add(lblPrescaleTextures);
 
@@ -256,10 +256,10 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pTextureOptions.add(holderTexExport);
 		holderTexExport.setLayout(new BoxLayout(holderTexExport, BoxLayout.Y_AXIS));
 		
-		chckbxExportTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_TEXTURES"));
+		chckbxExportTextures = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_TEXTURES"));
 		holderTexExport.add(chckbxExportTextures);
 
-		chckbxSeparateAlphaTexture = new JCheckBox(Messages.getString("TexsplitDialog.EXP_ALPHA"));
+		chckbxSeparateAlphaTexture = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_ALPHA"));
 		holderTexExport.add(chckbxSeparateAlphaTexture);
 		
 		//##########################################################################################################
@@ -272,13 +272,13 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//holderTexExport.add(holderSingleTexOpts);// TODO fix single tex export
 		holderSingleTexOpts.setLayout(new BoxLayout(holderSingleTexOpts, BoxLayout.Y_AXIS));
 
-		chckbxCombineAllTextures = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SINGLE"));
+		chckbxCombineAllTextures = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_SINGLE"));
 		holderSingleTexOpts.add(chckbxCombineAllTextures);
 
-		chckbxExportSeparateLight = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SEPERATE_LIGHT"));
+		chckbxExportSeparateLight = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_SEPERATE_LIGHT"));
 		holderSingleTexOpts.add(chckbxExportSeparateLight);
 		
-		chckbxSingleMat = new JCheckBox(Messages.getString("OBJExportOptions.SINGLE_MTL"));
+		chckbxSingleMat = new JCheckBox(Messages.getString("ExportOptions.SINGLE_MTL"));
 		holderSingleTexOpts.add(chckbxSingleMat);
 		
 		holderExtraMaps = new JPanel();
@@ -293,13 +293,13 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		fl_holderExtraMapsText.setVgap(2);
 		holderExtraMaps.add(holderExtraMapsText);
 		
-		lblExtraMaps = new JLabel(Messages.getString("TexsplitDialog.EXP_MAPS"));
+		lblExtraMaps = new JLabel(Messages.getString("ExportOptions.Textures.EXP_MAPS"));
 		holderExtraMapsText.add(lblExtraMaps);
 		lblExtraMaps.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		lblExtraMapsHelp = new JLabel("???");
 		holderExtraMapsText.add(lblExtraMapsHelp);
-		lblExtraMapsHelp.setToolTipText(Messages.getString("TexsplitDialog.EXP_MAPS_HELP"));
+		lblExtraMapsHelp.setToolTipText(Messages.getString("ExportOptions.Textures.EXP_MAPS_HELP"));
 		lblExtraMapsHelp.setForeground(Color.RED);
 		lblExtraMapsHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
 		
@@ -310,10 +310,10 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		fl_holderExtraMapsChks.setHgap(0);
 		holderExtraMaps.add(holderExtraMapsChks);
 		
-		chckbxExportNormalMaps = new JCheckBox(Messages.getString("TexsplitDialog.EXP_NORMAL"));
+		chckbxExportNormalMaps = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_NORMAL"));
 		holderExtraMapsChks.add(chckbxExportNormalMaps);
 		
-		chckbxExportSpecularMaps = new JCheckBox(Messages.getString("TexsplitDialog.EXP_SPECULAR"));
+		chckbxExportSpecularMaps = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_SPECULAR"));
 		holderExtraMapsChks.add(chckbxExportSpecularMaps);
 
 		//##########################################################################################################
@@ -330,16 +330,16 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pCloudExport.add(holderCloudExports);
 		holderCloudExports.setLayout(new BoxLayout(holderCloudExports, BoxLayout.Y_AXIS));
 
-		JLabel lblExportCloudsObj = new JLabel(Messages.getString("TexsplitDialog.EXP_CLOUDS"));
+		JLabel lblExportCloudsObj = new JLabel(Messages.getString("ExportOptions.Textures.Cloud.EXPORT"));
 		lblExportCloudsObj.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderCloudExports.add(lblExportCloudsObj);
 		lblExportCloudsObj.setHorizontalAlignment(SwingConstants.CENTER);
 
-		btnMinecraftTextures = new JButton(Messages.getString("TexsplitDialog.MINECRAFT"));
+		btnMinecraftTextures = new JButton(Messages.getString("ExportOptions.Textures.Cloud.MINECRAFT"));
 		btnMinecraftTextures.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderCloudExports.add(btnMinecraftTextures);
 
-		btnFromResourcePack = new JButton(Messages.getString("TexsplitDialog.CUSTOM"));
+		btnFromResourcePack = new JButton(Messages.getString("ExportOptions.Textures.Cloud.CUSTOM"));
 		btnFromResourcePack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderCloudExports.add(btnFromResourcePack);
 
@@ -349,38 +349,38 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		JPanel pExportOptions = new JPanel();
 		holderTop.add(pExportOptions);
 		pExportOptions.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
-				Messages.getString("OBJExportPanel.WIN_TITLE"), TitledBorder.CENTER, TitledBorder.TOP, null, null));
+				Messages.getString("ExportOptions.HEADER"), TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		pExportOptions.setLayout(new BoxLayout(pExportOptions, BoxLayout.Y_AXIS));
 
-		btnBlocksToExport = new JButton(Messages.getString("OBJExportOptions.BLOCKS"));
+		btnBlocksToExport = new JButton(Messages.getString("ExportOptions.BLOCK_SEL"));
 		pExportOptions.add(btnBlocksToExport);
 
-		chckbxRenderUnknownBlocks = new JCheckBox(Messages.getString("OBJExportOptions.R_UNKNOWN"));
+		chckbxRenderUnknownBlocks = new JCheckBox(Messages.getString("ExportOptions.R_UNKNOWN"));
 		pExportOptions.add(chckbxRenderUnknownBlocks);
 
-		chckbxRenderWorldSides = new JCheckBox(Messages.getString("OBJExportOptions.R_SIDES"));
+		chckbxRenderWorldSides = new JCheckBox(Messages.getString("ExportOptions.R_SIDES"));
 		pExportOptions.add(chckbxRenderWorldSides);
 
-		chckbxRenderBiomes = new JCheckBox(Messages.getString("OBJExportOptions.R_BIOMES"));
+		chckbxRenderBiomes = new JCheckBox(Messages.getString("ExportOptions.R_BIOMES"));
 		pExportOptions.add(chckbxRenderBiomes);
 
-		chckbxRenderEntities = new JCheckBox(Messages.getString("OBJExportOptions.R_ENTITIES"));
+		chckbxRenderEntities = new JCheckBox(Messages.getString("ExportOptions.R_ENTITIES"));
 		pExportOptions.add(chckbxRenderEntities);
 
-		chckbxConvertOreTo = new JCheckBox(Messages.getString("OBJExportOptions.CONVERTORES"));
+		chckbxConvertOreTo = new JCheckBox(Messages.getString("ExportOptions.CONVERT_ORES"));
 		pExportOptions.add(chckbxConvertOreTo);
 		
 		JSeparator separator = new JSeparator();
 		pExportOptions.add(separator);
 
-		chckbxSeparateMat = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_MTL"));
+		chckbxSeparateMat = new JCheckBox(Messages.getString("ExportOptions.SEP_OBJ_MTL"));
 		pExportOptions.add(chckbxSeparateMat);
 
-		chckbxSeparateMatOccl = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_MTL_OCCL"));
+		chckbxSeparateMatOccl = new JCheckBox(Messages.getString("ExportOptions.SEP_OBJ_MTL_OCCL"));
 		chckbxSeparateMatOccl.setMargin(new Insets(2, 12, 2, 2));
 		pExportOptions.add(chckbxSeparateMatOccl);
 
-		chckbxSeparateChunk = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_CHUNK"));
+		chckbxSeparateChunk = new JCheckBox(Messages.getString("ExportOptions.SEP_OBJ_CHUNK"));
 		pExportOptions.add(chckbxSeparateChunk);
 
 		//##########################################################################################################
@@ -391,16 +391,16 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pExportOptions.add(holderSepBlock);
 		holderSepBlock.setLayout(new BoxLayout(holderSepBlock, BoxLayout.X_AXIS));
 
-		chckbxSeparateBlock = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK"));
+		chckbxSeparateBlock = new JCheckBox(Messages.getString("ExportOptions.SEP_OBJ_BLOCK"));
 		holderSepBlock.add(chckbxSeparateBlock);
 
 		JLabel lblSepBlockWarn = new JLabel("!!!");
 		holderSepBlock.add(lblSepBlockWarn);
 		lblSepBlockWarn.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblSepBlockWarn.setToolTipText(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK_WARNING"));
+		lblSepBlockWarn.setToolTipText(Messages.getString("ExportOptions.SEP_OBJ_BLOCK_WARNING"));
 		lblSepBlockWarn.setForeground(Color.RED);
 		
-		chckbxSeparateBlockOccl = new JCheckBox(Messages.getString("OBJExportOptions.SEP_OBJ_BLOCK_OCCL"));
+		chckbxSeparateBlockOccl = new JCheckBox(Messages.getString("ExportOptions.SEP_OBJ_BLOCK_OCCL"));
 		chckbxSeparateBlockOccl.setMargin(new Insets(2, 12, 2, 2));
 		pExportOptions.add(chckbxSeparateBlockOccl);
 		
@@ -410,25 +410,25 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		//##########################################################################################################
 		//RandBlockVariation
 		//##########################################################################################################
-		chckbxRandBlockVariation = new JCheckBox(Messages.getString("OBJExportOptions.RANDBLOCKVARIATION"));
+		chckbxRandBlockVariation = new JCheckBox(Messages.getString("ExportOptions.RAND_BLOCK_VARIATION"));
 		pExportOptions.add(chckbxRandBlockVariation);
 
 		//##########################################################################################################
 		//DoubleSidedFaces
 		//##########################################################################################################
-		chckbxDoubleSidedFaces = new JCheckBox(Messages.getString("OBJExportOptions.DOUBLE_SIDED_FACES"));
+		chckbxDoubleSidedFaces = new JCheckBox(Messages.getString("ExportOptions.DOUBLE_SIDED_FACES"));
 		pExportOptions.add(chckbxDoubleSidedFaces);
 
 		//##########################################################################################################
 		//OptimizeGeo
 		//##########################################################################################################
-		chckbxOptimiseGeo = new JCheckBox(Messages.getString("OBJExportOptions.OPTIMIZE_MESH"));
+		chckbxOptimiseGeo = new JCheckBox(Messages.getString("ExportOptions.OPTIMIZE_MESH"));
 		pExportOptions.add(chckbxOptimiseGeo);
 
 		//##########################################################################################################
 		//MergeVerts
 		//##########################################################################################################
-		chckbxMergeVerticies = new JCheckBox(Messages.getString("OBJExportOptions.DUPL_VERT"));
+		chckbxMergeVerticies = new JCheckBox(Messages.getString("ExportOptions.DUPL_VERT"));
 		pExportOptions.add(chckbxMergeVerticies);
 
 		//##########################################################################################################
@@ -445,18 +445,18 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		spinnerThreads = new JSpinner(threadSpinnerModel);
 		holderThreads.add(spinnerThreads);
 		
-		JLabel lblThreadsText = new JLabel(Messages.getString("OBJExportOptions.EXPORT_THREADS"));
+		JLabel lblThreadsText = new JLabel(Messages.getString("ExportOptions.EXPORT_THREADS"));
 		holderThreads.add(lblThreadsText);
 
 		JLabel lblThreadsHelp = new JLabel("???");
 		holderThreads.add(lblThreadsHelp);
-		lblThreadsHelp.setToolTipText(Messages.getString("OBJExportOptions.EXPORT_THREADS_HELP"));
+		lblThreadsHelp.setToolTipText(Messages.getString("ExportOptions.EXPORT_THREADS_HELP"));
 		lblThreadsHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblThreadsHelp.setForeground(Color.RED);
 
 		JLabel lblThreadsWarn = new JLabel("!!!");
 		holderThreads.add(lblThreadsWarn);
-		lblThreadsWarn.setToolTipText(Messages.getString("OBJExportOptions.EXPORT_THREADS_WARN"));
+		lblThreadsWarn.setToolTipText(Messages.getString("ExportOptions.EXPORT_THREADS_WARN"));
 		lblThreadsWarn.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblThreadsWarn.setForeground(Color.RED);
 		
@@ -470,12 +470,12 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderObjUseGroup.setAlignmentX(Component.LEFT_ALIGNMENT);
 		pExportOptions.add(holderObjUseGroup);
 		holderObjUseGroup.setLayout(new BoxLayout(holderObjUseGroup, BoxLayout.X_AXIS));
-		chckbxObjUseGroup = new JCheckBox(Messages.getString("OBJExportOptions.OBJ_USE_GROUP"));
+		chckbxObjUseGroup = new JCheckBox(Messages.getString("ExportOptions.OBJ_USE_GROUP"));
 		holderObjUseGroup.add(chckbxObjUseGroup);
 		
 		JLabel lblObjUseGroupHelp = new JLabel("???");
 		holderObjUseGroup.add(lblObjUseGroupHelp);
-		lblObjUseGroupHelp.setToolTipText("<html>" + Messages.getString("OBJExportOptions.OBJ_USE_GROUP_HELP").replace("\n", "<br/>") + "</html>");
+		lblObjUseGroupHelp.setToolTipText("<html>" + Messages.getString("ExportOptions.OBJ_USE_GROUP_HELP").replace("\n", "<br/>") + "</html>");
 		lblObjUseGroupHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblObjUseGroupHelp.setForeground(Color.RED);
 
@@ -487,13 +487,13 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		pExportOptions.add(holderExportPanel);
 		holderExportPanel.setLayout(new BoxLayout(holderExportPanel, BoxLayout.Y_AXIS));
 
-		chckbxUseLastSaveLoc = new JCheckBox(Messages.getString("OBJExportOptions.USE_LAST_SAVE_LOC"));
+		chckbxUseLastSaveLoc = new JCheckBox(Messages.getString("ExportOptions.USE_LAST_SAVE_LOC"));
 		chckbxUseLastSaveLoc.setAlignmentX(Component.CENTER_ALIGNMENT);
 		holderExportPanel.add(chckbxUseLastSaveLoc);
 
 		holderExportBtns = new JPanel();
 		holderExportPanel.add(holderExportBtns);
-		btnStartExport = new JButton(Messages.getString("OBJExportPanel.EXPORT_BTN"));
+		btnStartExport = new JButton(Messages.getString("ExportOptions.EXPORT_BTN"));
 
 		if (Options.worldDir == null) {
 			btnStartExport.setEnabled(false);
@@ -501,7 +501,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		holderExportBtns.add(btnStartExport);
 
-		btnForceStop = new JButton(Messages.getString("OBJExportPanel.STOP_BTN"));
+		btnForceStop = new JButton(Messages.getString("ExportOptions.STOP_BTN"));
 		holderExportBtns.add(btnForceStop);
 		btnForceStop.setEnabled(false);
 
@@ -589,8 +589,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 						if (f.exists()) {
 							int result = JOptionPane.showConfirmDialog(this,
-									Messages.getString("OBJExportPanel.OBJ_ERR"),
-									Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
+									Messages.getString("ExportOptions.OBJ_EXISTS"),
+									Messages.getString("ExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
 							switch (result) {
 							case JOptionPane.YES_OPTION:
 								super.approveSelection();
@@ -610,7 +610,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 				jfc.setSelectedFile(new File("clouds.obj"));
 				jfc.setFileHidingEnabled(false);
 				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
-				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+				int retval = jfc.showDialog(ExportWindow.this, Messages.getString("ExportOptions.Textures.SEL_EXPORT_DEST"));
 				if (retval != JFileChooser.APPROVE_OPTION)
 					return;
 				ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(), null);
@@ -625,7 +625,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 				JFileChooser jfcRP = new JFileChooser(MainWindow.settings.getLastExportPath());
 				jfcRP.setFileHidingEnabled(false);
 				jfcRP.setFileFilter(new FileNameExtensionFilter("Zip files", "zip", "ZIP", "Zip"));
-				int retval = jfcRP.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_RP"));
+				int retval = jfcRP.showDialog(ExportWindow.this, Messages.getString("ExportOptions.Textures.SEL_RP"));
 				if (retval != JFileChooser.APPROVE_OPTION)
 					return;
 
@@ -640,8 +640,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 						if (f.exists()) {
 							int result = JOptionPane.showConfirmDialog(this,
-									Messages.getString("OBJExportPanel.OBJ_ERR"),
-									Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
+									Messages.getString("ExportOptions.OBJ_EXISTS"),
+									Messages.getString("ExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
 							switch (result) {
 							case JOptionPane.YES_OPTION:
 								super.approveSelection();
@@ -661,7 +661,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 				jfc.setFileHidingEnabled(false);
 				jfc.setFileFilter(new FileNameExtensionFilter("Obj files", "obj", "OBJ", "Obj"));
-				retval = jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+				retval = jfc.showDialog(ExportWindow.this, Messages.getString("ExportOptions.Textures.SEL_EXPORT_DEST"));
 				if (retval != JFileChooser.APPROVE_OPTION)
 					return;
 				ExportCloudsOBJ(new File(jfc.getCurrentDirectory().toString()), jfc.getSelectedFile(),
@@ -686,15 +686,15 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 						if (f.exists()) {
 							int result = JOptionPane.showConfirmDialog(this,
-									Messages.getString("OBJExportPanel.OBJ_ERR"),
-									Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
+									Messages.getString("ExportOptions.OBJ_EXISTS"),
+									Messages.getString("ExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
 							switch (result) {
 							case JOptionPane.YES_OPTION:
 
 								if (f2.exists()) {
 									int result2 = JOptionPane.showConfirmDialog(this,
-											Messages.getString("OBJExportPanel.MTL_ERR"),
-											Messages.getString("OBJExportOptions.OVER_MTL"),
+											Messages.getString("ExportOptions.MTL_EXISTS"),
+											Messages.getString("ExportOptions.OVER_MTL"),
 											JOptionPane.YES_NO_CANCEL_OPTION);
 									switch (result2) {
 									case JOptionPane.YES_OPTION:
@@ -759,8 +759,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					boolean fileExists = false;
 
 					if (new File(Options.outputDir, Options.objFileName).exists()) {
-						int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("OBJExportPanel.OBJ_ERR"),
-								Messages.getString("OBJExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
+						int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("ExportOptions.OBJ_EXISTS"),
+								Messages.getString("ExportOptions.OVER_OBJ"), JOptionPane.YES_NO_CANCEL_OPTION);
 						switch (result2) {
 						case JOptionPane.YES_OPTION:
 							break;
@@ -776,8 +776,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					}
 
 					if (!fileExists && new File(Options.outputDir, Options.mtlFileName).exists()) {
-						int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("OBJExportPanel.MTL_ERR"),
-								Messages.getString("OBJExportOptions.OVER_MTL"), JOptionPane.YES_NO_CANCEL_OPTION);
+						int result2 = JOptionPane.showConfirmDialog(jfc, Messages.getString("ExportOptions.MTL_EXISTS"),
+								Messages.getString("ExportOptions.OVER_MTL"), JOptionPane.YES_NO_CANCEL_OPTION);
 						switch (result2) {
 						case JOptionPane.YES_OPTION:
 							break;
@@ -795,7 +795,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 					while (fileExists) {
 
 						fileExists = false;
-						jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+						jfc.showDialog(ExportWindow.this, Messages.getString("ExportOptions.Textures.SEL_EXPORT_DEST"));
 
 					}
 
@@ -804,7 +804,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 				} else {
 
-					jfc.showDialog(ExportWindow.this, Messages.getString("TexsplitDialog.SEL_EXPORT_DEST"));
+					jfc.showDialog(ExportWindow.this, Messages.getString("ExportOptions.Textures.SEL_EXPORT_DEST"));
 
 				}
 			}
@@ -1068,7 +1068,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		try {
 			Options.scale = Float.parseFloat(textFieldMapScale.getText());
 		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(this, Messages.getString("OBJExportOptions.SCALE_NUM_ERR"));
+			JOptionPane.showMessageDialog(this, Messages.getString("ExportOptions.SCALE_NUM_ERR"));
 			Options.scale = 1.0f;
 		}
 
@@ -1115,7 +1115,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			try {
 				Options.textureScale = Double.parseDouble(txt);
 			} catch (NumberFormatException e) {
-				Log.error(Messages.getString("TexsplitDialog.ERR_SCALE"), e, false);
+				Log.error(Messages.getString("ExportOptions.Textures.ERR_SCALE"), e, false);
 			}
 		}
 
@@ -1139,7 +1139,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 				try {
 					CloudsExporter.exportClouds(destination, texturepack, file.getName());
 				} catch (Exception e) {
-					Log.error(Messages.getString("TexsplitDialog.ERR_EXP"), e);
+					Log.error(Messages.getString("ExportOptions.Textures.ERR_EXP"), e);
 				}
 			}
 		}).start();
