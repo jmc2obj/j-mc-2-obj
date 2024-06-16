@@ -318,7 +318,10 @@ public class CmdLineParser {
 			Log.info("No resource pack specified, attempting to find & use latest minecraft .jar");
 			File jar = Filesystem.getMinecraftJar();
 			if (jar != null) {
+				Log.info("Using minecraft %s as default resource pack.");
 				Options.resourcePacks.add(jar);
+			} else {
+				Log.info("No minecraft .jar found to use as default resource pack!");
 			}
 		}
 	}

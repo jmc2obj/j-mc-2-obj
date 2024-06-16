@@ -20,26 +20,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.TransferHandler;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -66,6 +47,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	JSpinner spPrevThreads;
 	JmcPackList listPacks;
 	JCheckBox chckbxUsePackDefault;
+	JLabel lblMinecraftVersion;
 
 	@SuppressWarnings("serial")
 	public Settings() {
@@ -179,6 +161,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				MainWindow.main.stopPreviewLoader();
 				IDConvert.initialize();
 				Registries.reloadResourcePacks();
+				updateMinecraftVerLbl();
 				if (MainWindow.main != null) {
 					MainWindow.main.reloadPreviewLoader();
 				}
@@ -378,6 +361,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		});
 		pPackListButtons.add(btnPackDown);
 		
+		JPanel pUsePackDefault = new JPanel();
+		pResourcePacks.add(pUsePackDefault);
+		pUsePackDefault.setLayout(new BoxLayout(pUsePackDefault, BoxLayout.X_AXIS));
+		
 		chckbxUsePackDefault = new JCheckBox(Messages.getString("Settings.ResourcePack.USE_DEFAULT"));
 		chckbxUsePackDefault.setAlignmentX(Component.CENTER_ALIGNMENT);
 		chckbxUsePackDefault.setSelected(true);
@@ -388,7 +375,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				updateResourcePacks(true);
 			}
 		});
-		pResourcePacks.add(chckbxUsePackDefault);
+		pUsePackDefault.add(chckbxUsePackDefault);
+		pUsePackDefault.add(new JSeparator(SwingConstants.VERTICAL)).setMaximumSize(new Dimension(6, 16));
+		lblMinecraftVersion = new JLabel(Messages.getString("Settings.ResourcePack.NO_MC_VERSION"));
+		pUsePackDefault.add(lblMinecraftVersion);
 		
 		
 		mp.add(pRestart);
@@ -519,15 +509,27 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 				if (mc != null) {
 					Log.info(String.format("Using minecraft %s as default resource pack.", mc.getName()));
 					resPacks.add(mc);
+				} else {
+					Log.info("No minecraft .jar found to use as default resource pack!");
 				}
 			}
 		}
+		updateMinecraftVerLbl();
 		if (reloadRegistries) {
 			Registries.reloadResourcePacks();
 			if (MainWindow.main != null) {
 				MainWindow.main.reloadPreviewLoader();
 			}
 		}
+	}
+	
+	private void updateMinecraftVerLbl() {
+		File mcJar = Filesystem.getMinecraftJar();
+		String mcVer = Messages.getString("Settings.ResourcePack.NO_MC_VERSION");
+		if (mcJar != null) {
+			mcVer = mcJar.getName().toLowerCase().replace(".jar", "");
+		}
+		lblMinecraftVersion.setText(mcVer);
 	}
 
 	@Override

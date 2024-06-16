@@ -104,7 +104,6 @@ public class Filesystem {
 				}
 			}
 			if (best != null) {
-				Log.debug("Found version: " + best.getName());
 				return new File(best, best.getName() + ".jar");
 			}
 		}
@@ -112,7 +111,6 @@ public class Filesystem {
 		File jar = new File(mcdir, "bin/minecraft.jar");
 		
 		if (!jar.exists()) {
-			Log.debug("No minecraft jar found");
 			return null;
 		}
 
