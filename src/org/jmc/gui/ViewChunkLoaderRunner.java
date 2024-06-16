@@ -81,10 +81,10 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	 * Main constructor.
 	 * @param preview reference to the preview panel
 	 */
-	public ViewChunkLoaderRunner(PreviewPanel preview) {
+	public ViewChunkLoaderRunner(PreviewPanel preview, File worldPath, NamespaceID dimension) {
 		this.preview = preview;
-		this.worldPath = Options.worldDir;
-		this.dimension = Options.dimension;
+		this.worldPath = worldPath;
+		this.dimension = dimension;
 		
 		chunkImages = preview.getChunkImages();
 		

@@ -731,7 +731,12 @@ public class MainPanel extends JPanel {
 		stopPreviewLoader();
 		preview.clearChunks();
 		
-		chunk_loader = new ViewChunkLoaderRunner(preview);
+		File worldPath = Options.worldDir;
+		NamespaceID dimension = Options.dimension;
+		if (worldPath == null || dimension == null) {
+			return;
+		}
+		chunk_loader = new ViewChunkLoaderRunner(preview, Options.worldDir, Options.dimension);
 		chunk_loader.setYBounds((int) minYSpinner.getValue(), (int) maxYSpinner.getValue());
 		chunk_loader_thread = new Thread(chunk_loader, "ViewChunkLoader");
 		chunk_loader_thread.start();
