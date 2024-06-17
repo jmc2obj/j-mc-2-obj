@@ -169,10 +169,12 @@ public class Registry extends BlockModel {
 		Arrays.fill(array, NamespaceID.UNKNOWN);
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
 			String tex = faceEntry.getValue().texture;
-			if (tex != null && tex.startsWith("#")) {
-				tex = textures.get(tex.substring(1));
-			}
 			if (tex == null) break;
+			if (tex.startsWith("#")) {
+				tex = textures.get(tex.substring(1));
+			} else if (textures.containsKey(tex)) {
+				tex = textures.get(tex);
+			}
 			NamespaceID texNs = NamespaceID.fromString(tex);
 			
 			switch (faceEntry.getKey()) {
