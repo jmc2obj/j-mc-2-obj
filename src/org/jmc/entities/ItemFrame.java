@@ -98,32 +98,7 @@ public class ItemFrame extends Entity
 		switch (item_id)
 		{
 			case "minecraft:filled_map":
-				TAG_Compound itemTag = (TAG_Compound) item.getElement("tag");
-				int map_id = ((TAG_Int)itemTag.getElement("map")).value;
-				// Log.info("Found map with id: '" + map_id+ "'");
-				NamespaceID mapTexID = new NamespaceID("jmc2obj", "map/" + map_id);
-				materials.put(new NamespaceID[]{mapTexID});
-				
-				
-				FilledMapDat map_data = new FilledMapDat(Options.worldDir);
-				if (!map_data.open(String.valueOf(map_id))) {
-					// Log.info("'map_" + map_id+ ".dat' not found");
-					return;
-				} else {
-					synchronized (exportedMaps) {
-						// already exported material?
-						if (!exportedMaps.contains(mapTexID)) {
-							// Log.info("export map: "+mapName);
-							try {
-								map_data.writePngTexture(mapTexID);
-								exportedMaps.add(mapTexID);
-							} catch (IOException e) {
-								Log.error("Cant write map", e, true);
-							}
-						}
-					}
-				}
-				break;
+				if (processMap(item, materials)) break;
 			default:
 				// Log.info("Unsupported FrameItem: '" + item_id + "'");
 				NamespaceID[] matname1={baseTexture};
@@ -131,12 +106,44 @@ public class ItemFrame extends Entity
 				break;
 		}
 		model.setMaterials(materials);
-		model.addEntity(obj, rt);			
-	
-		
-			
+		model.addEntity(obj, rt);
 	}
-
+	
+	private static boolean processMap(TAG_Compound item, BlockMaterial materials) {
+		int map_id;
+		TAG_Compound itemTag = (TAG_Compound) item.getElement("components");
+		if (itemTag != null) {
+			map_id = ((TAG_Int) itemTag.getElement("minecraft:map_id")).value;
+		} else { // old tag format
+			itemTag = (TAG_Compound) item.getElement("tag");
+			map_id = ((TAG_Int) itemTag.getElement("map")).value;
+		}
+		// Log.info("Found map with id: '" + map_id+ "'");
+		NamespaceID mapTexID = new NamespaceID("jmc2obj", "map/" + map_id);
+		materials.put(new NamespaceID[]{mapTexID});
+		
+		
+		FilledMapDat map_data = new FilledMapDat(Options.worldDir);
+		if (!map_data.open(String.valueOf(map_id))) {
+			Log.debugOnce("'map_" + map_id+ ".dat' not found");
+			return false;
+		} else {
+			synchronized (exportedMaps) {
+				// already exported material?
+				if (!exportedMaps.contains(mapTexID)) {
+					// Log.info("export map: "+mapName);
+					try {
+						map_data.writePngTexture(mapTexID);
+						exportedMaps.add(mapTexID);
+					} catch (IOException e) {
+						Log.error("Cant write map", e, true);
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	private BlockPos getBlockPosition(TAG_Compound entity) {
 		int x=((TAG_Int)entity.getElement("TileX")).value;
 		int y=((TAG_Int)entity.getElement("TileY")).value;
