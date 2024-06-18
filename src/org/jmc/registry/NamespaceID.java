@@ -67,7 +67,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(namespace, path);
+		return 31 * path.hashCode() + namespace.hashCode();
 	}
 
 	@Override
@@ -79,7 +79,9 @@ public class NamespaceID implements Comparable<NamespaceID> {
 		if (getClass() != obj.getClass())
 			return false;
 		NamespaceID other = (NamespaceID) obj;
-		return Objects.equals(namespace, other.namespace) && Objects.equals(path, other.path);
+		// because of our string pool, we know equal strings are the same object
+		//noinspection StringEquality
+		return path == other.path && namespace == other.namespace;
 	}
 	
 	public String getExportSafeString() {
