@@ -716,7 +716,7 @@ public class MainPanel extends JPanel {
 		if (chunk_loader_thread != null) {
 			chunk_loader_thread.interrupt();
 			try {
-				chunk_loader_thread.join();
+				chunk_loader_thread.join(5000);
 			} catch (InterruptedException e) {
 				Log.error("Interrupted waiting for preview chunk loader to stop!", e);
 				Thread.currentThread().interrupt();

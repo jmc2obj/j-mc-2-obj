@@ -104,6 +104,7 @@ public class Registries {
 		return models.get(id);
 	}
 
+	@CheckForNull
 	public static TextureEntry getTexture(NamespaceID id) {
 		return textures.get(id);
 	}

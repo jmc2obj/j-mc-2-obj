@@ -136,6 +136,9 @@ public class BlockInfo
 		} else {
 			te = Registries.getTexture(mtlNames[0]);
 		}
+		if (te == null) {
+			return Color.MAGENTA;
+		}
 		try {
 			return te.getAverageColour();
 		} catch (IOException e) {

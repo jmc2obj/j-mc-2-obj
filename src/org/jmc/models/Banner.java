@@ -241,6 +241,8 @@ public class Banner extends BlockModel {
             Log.error("Cant read banner base image!", e, showReadErrorPopup());
             return false;
         }
+		if (backgroundImage == null) return false;
+		
         // todo - do something with the basecolor here...
         // Log.info(" - Base Color: " + baseColorIndex);
 
@@ -257,6 +259,7 @@ public class Banner extends BlockModel {
             BufferedImage patternSource;
             try {
             	TextureEntry te = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + bp.getPattern()));
+				if (te == null) return false;
             	patternSource = te.getImage();
             } catch (IOException e) {
             	Log.error("Cant read banner pattern " + bp.getPattern(), e, showReadErrorPopup());
@@ -306,6 +309,7 @@ public class Banner extends BlockModel {
         }
         
         TextureEntry texEntry = Registries.getTexture(materialImageName);
+		if (texEntry == null) return false;
         texEntry.setImage(combined);
         return true;
     }

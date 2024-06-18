@@ -221,7 +221,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 				t.interrupt();
 				try {
 					t.join();
-				} catch (InterruptedException e) {}
+				} catch (InterruptedException ignored) {}
 			}
 			imagerThreads.clear();
 		}

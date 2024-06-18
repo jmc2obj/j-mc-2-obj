@@ -220,6 +220,9 @@ public class Head extends BlockModel
 				texture = expandedTex;
 			}
 			TextureEntry texEntry = Registries.getTexture(texId);
+			if (texEntry == null) {
+				return false;
+			}
 			texEntry.setImage(texture);
 			return true;
 		} catch (IOException e) {
