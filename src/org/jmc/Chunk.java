@@ -15,6 +15,7 @@ import org.jmc.registry.NamespaceID;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -152,8 +153,7 @@ public class Chunk {
 	 * @author danijel
 	 *
 	 */
-	public class Blocks
-	{
+	public static class Blocks {
 		/**
 		 * Main constructor.
 		 * @param ymin minimum y level
@@ -194,7 +194,7 @@ public class Chunk {
 		/**
 		 * Biome IDSs.
 		 */
-		public NamespaceID[] biome;
+		private NamespaceID[] biome;
 		
 		public NamespaceID getBiome(int x, int y, int z) {
 			int index = getIndex(x, y, z);
@@ -235,8 +235,7 @@ public class Chunk {
 	{
 		Blocks ret=null;
 		
-		if(is_anvil)
-		{
+		if(is_anvil) {
 			TAG_List sections;
 			if (chunkVer >= 2844) {// >= 21w43a
 				sections = (TAG_List) root.getElement("sections");
@@ -248,172 +247,21 @@ public class Chunk {
 				return new Blocks(0, 256);
 			}
 			
-			int ymin=getYMin();
-			int ymax=getYMax();
+			int ymin = getYMin();
+			int ymax = getYMax();
 			
-			ret=new Blocks(ymin, ymax);
+			ret = new Blocks(ymin, ymax);
 			
-			for(NBT_Tag section: sections.elements)
-			{
-				TAG_Compound c_section = (TAG_Compound) section;
-				TAG_Byte yval = (TAG_Byte) c_section.getElement("Y");
+			for(NBT_Tag section_t: sections.elements) {
+				TAG_Compound section = (TAG_Compound) section_t;
+				TAG_Byte yval = (TAG_Byte) section.getElement("Y");
 				
 				int base=((yval.value*16)-ymin)*16*16;
 				
-				if (chunkVer >= 1451) {// >= 1.13/17w47a
-					TAG_List tagBlockPalette;
-					TAG_Long_Array tagBlockStates;
-					if (chunkVer >= 2834) {// >= 21w37a
-						TAG_Compound tagBlockStatesComp = (TAG_Compound) c_section.getElement("block_states");
-						if (tagBlockStatesComp == null) {
-							continue;
-						}
-						tagBlockPalette = (TAG_List) tagBlockStatesComp.getElement("palette");
-						tagBlockStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
-					} else {
-						tagBlockPalette = (TAG_List) c_section.getElement("Palette");
-						tagBlockStates = (TAG_Long_Array) c_section.getElement("BlockStates");
-					}
-					
-					if (tagBlockPalette == null) {
-						continue;
-					}
-					if (tagBlockStates == null) {
-						if (tagBlockPalette.elements.length >= 1) {
-							TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[0];
-							String blockName = ((TAG_String)blockTag.getElement("Name")).value;
-							if (blockName == null) {
-								Log.debug("No block name!");
-								continue;
-							}
-							
-							BlockData block = new BlockData(NamespaceID.fromString(blockName));
-							for (int i = 0; i < 4096; i++) {
-								ret.data[base+i] = block;
-							}
-						}
-						continue;
-					}
-					
-					int blockBits = Math.max(bitsForInt(tagBlockPalette.elements.length - 1), 4); // Minimum of 4 bits.
-					for (int i = 0; i < 4096; i++) {
-						long blockPid;
-						if (chunkVer >= 2529) {// >= 20w17a
-							int perLong = 64/blockBits;
-							int longInd = i/perLong;
-							int longSubInd = i%perLong;
-							long lvalue = tagBlockStates.data[longInd];
-							long shifted = lvalue >>> (longSubInd * blockBits);
-							blockPid = shifted & (-1L >>> (64 - blockBits));
-						}
-						else {
-							BitSet blockBitArr = BitSet.valueOf(tagBlockStates.data).get(i*blockBits, (i+1)*blockBits);
-							if (blockBitArr.isEmpty()) {
-								blockPid = 0;
-							} else {
-								blockPid = blockBitArr.toLongArray()[0];
-							}
-						}
-						
-						TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[(int)blockPid];
-						String blockName = ((TAG_String)blockTag.getElement("Name")).value;
-						if (blockName == null) {
-							Log.debug("No block name!");
-							continue;
-						}
-						
-						BlockData block = new BlockData(NamespaceID.fromString(blockName));
-						TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
-						if (propertiesTag != null) {
-							for (NBT_Tag tag : propertiesTag.elements) {
-								TAG_String propTag = (TAG_String)tag;
-								block.state.put(propTag.getName(), propTag.value);
-							}
-						}
-						
-						if (BlockTypes.get(block).getActWaterlogged()) {
-							block.state.putIfAbsent("waterlogged", "true");
-							//Log.debug("added waterlogged to: "+blockName.value);
-						}
-						
-						ret.data[base+i] = block;
-					}
-					
-					if (chunkVer >= 2834) {// >= 21w37a Biomes changed format
-						TAG_Compound tagBlockStatesComp = (TAG_Compound) c_section.getElement("biomes");
-						if (tagBlockStatesComp == null) {
-							continue;
-						}
-						TAG_List tagBiomePalette = (TAG_List) tagBlockStatesComp.getElement("palette");
-						TAG_Long_Array tagBiomeStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
-						if (tagBiomePalette == null) {
-							continue;
-						}
-						if (tagBiomeStates == null) {
-							if (tagBiomePalette.elements.length >= 1) {
-								String biomeName = ((TAG_String) tagBiomePalette.elements[0]).value;
-								NamespaceID biome = NamespaceID.fromString(biomeName);
-								for (int i = 0; i < 4096; i++) {
-									ret.biome[base+i] = biome;
-								}
-							}
-							continue;
-						}
-						int biomeBits = bitsForInt(tagBiomePalette.elements.length - 1);
-						for (int i = 0; i < 64; i++) {
-							int perLong = 64 / biomeBits;
-							int longInd = i / perLong;
-							int longSubInd = i % perLong;
-							long lvalue = tagBiomeStates.data[longInd];
-							long shifted = lvalue >>> (longSubInd * biomeBits);
-							long biomePid = shifted & (-1L >>> (64 - biomeBits));
-							
-							String biomeName = ((TAG_String) tagBiomePalette.elements[(int) biomePid]).value;
-							NamespaceID biome = NamespaceID.fromString(biomeName);
-							//Copy biome into 4x4x4 cube
-							for (int x = 0; x < 4; x++) {
-								for (int y = 0; y < 4; y++) {
-									for (int z = 0; z< 4; z++) {
-										int baseInd = base + ((i%4)*4) + ((i/4)*16*4)%(16*16) + ((i/(4*4))*16*16*4);
-										int index = baseInd + (x + z*16 + y*16*16);
-										ret.biome[index] = biome;
-									}
-								}
-							}
-						}
-					}
-				} else {// <= 1.12
-					short[] oldIDs = new short[4096];
-					byte[] oldData = new byte[4096];
-					TAG_Byte_Array tagData = (TAG_Byte_Array) c_section.getElement("Data");
-					TAG_Byte_Array tagBlocks = (TAG_Byte_Array) c_section.getElement("Blocks");
-					TAG_Byte_Array tagAdd = (TAG_Byte_Array) c_section.getElement("Add");
-					for(int i=0; i<tagBlocks.data.length; i++)
-						oldIDs[i] = (short) Byte.toUnsignedInt(tagBlocks.data[i]);
-					
-					if(tagAdd!=null)
-					{
-						for(int i=0; i<tagAdd.data.length; i++)
-						{
-							int val = Byte.toUnsignedInt(tagAdd.data[i]);
-							short add1 = (short)(val&0x0f);
-							short add2 = (short)(val>>>4);
-							oldIDs[2*i] += (add1<<8);
-							oldIDs[2*i+1] += (add2<<8);
-						}
-					}
-					
-					for(int i=0; i<tagData.data.length; i++)
-					{
-						int val = Byte.toUnsignedInt(tagData.data[i]);
-						byte add1=(byte)(val&0x0f);
-						byte add2=(byte)(val>>>4);
-						oldData[2*i]=add1;
-						oldData[2*i+1]=add2;
-					}
-					for (int i = 0; i < 4096; i++) {
-						ret.data[base + i] = IDConvert.convertBlock(oldIDs[i], oldData[i]);
-					}
+				SectionBlocks secBlocks = getSectionBlocks(section);
+				if (secBlocks != null) {
+					System.arraycopy(secBlocks.data, 0, ret.data, base, secBlocks.data.length);
+					System.arraycopy(secBlocks.biomes, 0, ret.biome, base, secBlocks.biomes.length);
 				}
 			}
 			
@@ -447,14 +295,12 @@ public class Chunk {
 					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			TAG_Compound level = (TAG_Compound) root.getElement("Level");
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
-			ret=new Blocks(0, 128);
+			ret= new Blocks(0, 128);
 			short[] oldIDs = new short[ret.size];
 			byte[] oldData = new byte[ret.size];
 			
@@ -515,13 +361,213 @@ public class Chunk {
 		return ret;
 	}
 	
-	private int bitsForInt(int value) {
-		int bits = 0;
-		while (value > 0) {
-			bits++;
-			value = value >> 1;
+	@CheckForNull
+	SectionBlocks getSectionBlocks(TAG_Compound section) {
+		SectionBlocks sectionBlocks = new SectionBlocks();
+		boolean hasData = false;
+		if (chunkVer >= 1451) {// >= 1.13/17w47a
+			hasData |= sectionBlocks.fillBlocks(section);
+			
+			if (chunkVer >= 2834) {// >= 21w37a Biomes changed format
+				hasData |= sectionBlocks.fillBiomes(section);
+			}
+		} else {// <= 1.12
+			hasData |= sectionBlocks.fillBlocksPre1451(section);
 		}
-		return bits;
+		return hasData ? sectionBlocks : null;
+	}
+	
+	class SectionBlocks {
+		final BlockData[] data;
+		final NamespaceID[] biomes;
+		
+		SectionBlocks() {
+			int size = 16 * 16 * 16;
+			data = new BlockData[size];
+			biomes = new NamespaceID[size];
+			Arrays.fill(biomes, new NamespaceID("minecraft", "plains"));//default to plains
+		}
+		
+		private long calculatePaletteIndex(int index, int bitCount, long[] dataArray) {
+			long blockPid;
+			int perLong = 64 / bitCount;
+			int longInd = index / perLong;
+			int longSubInd = index % perLong;
+			long lvalue = dataArray[longInd];
+			long shifted = lvalue >>> (longSubInd * bitCount);
+			blockPid = shifted & (-1L >>> (64 - bitCount));
+			return blockPid;
+		}
+		
+		private int bitsForInt(int value) {
+			int bits = 0;
+			while (value > 0) {
+				bits++;
+				value = value >> 1;
+			}
+			return bits;
+		}
+		
+		/**
+		 * Fills in the data array with block data
+		 * @return false if this was not completed */
+		boolean fillBlocks(TAG_Compound section) {
+			TAG_List tagBlockPalette;
+			TAG_Long_Array tagBlockStates;
+			if (chunkVer >= 2834) {// >= 21w37a
+				TAG_Compound tagBlockStatesComp = (TAG_Compound) section.getElement("block_states");
+				if (tagBlockStatesComp == null) {
+					return false;
+				}
+				tagBlockPalette = (TAG_List) tagBlockStatesComp.getElement("palette");
+				tagBlockStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
+			} else {
+				tagBlockPalette = (TAG_List) section.getElement("Palette");
+				tagBlockStates = (TAG_Long_Array) section.getElement("BlockStates");
+			}
+			
+			if (tagBlockPalette == null) {
+				// palette is null, section must be empty
+				return false;
+			}
+			if (tagBlockStates == null) {
+				if (tagBlockPalette.elements.length >= 1) {
+					// no state list but a palette indicates the whole section is filled with a single block
+					TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[0];
+					String blockName = ((TAG_String)blockTag.getElement("Name")).value;
+					if (blockName == null) {
+						Log.debug("No block name in section palette tag!");
+						return false;
+					}
+					
+					BlockData block = new BlockData(NamespaceID.fromString(blockName));
+					for (int i = 0; i < 4096; i++) {
+						data[i] = block;
+					}
+					return true;
+				}
+				return false;
+			}
+			
+			int blockBits = Math.max(bitsForInt(tagBlockPalette.elements.length - 1), 4); // Minimum of 4 bits.
+			for (int i = 0; i < 4096; i++) {
+				long blockPid;
+				if (chunkVer >= 2529) {// >= 20w17a
+					blockPid = calculatePaletteIndex(i, blockBits, tagBlockStates.data);
+				}
+				else {
+					BitSet blockBitArr = BitSet.valueOf(tagBlockStates.data).get(i*blockBits, (i+1)*blockBits);
+					if (blockBitArr.isEmpty()) {
+						blockPid = 0;
+					} else {
+						blockPid = blockBitArr.toLongArray()[0];
+					}
+				}
+				
+				TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[(int)blockPid];
+				String blockName = ((TAG_String)blockTag.getElement("Name")).value;
+				if (blockName == null) {
+					Log.debug("No block name!");
+					continue;
+				}
+				
+				BlockData block = new BlockData(NamespaceID.fromString(blockName));
+				TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
+				if (propertiesTag != null) {
+					for (NBT_Tag tag : propertiesTag.elements) {
+						TAG_String propTag = (TAG_String)tag;
+						block.state.put(propTag.getName(), propTag.value);
+					}
+				}
+				
+				if (BlockTypes.get(block).getActWaterlogged()) {
+					block.state.putIfAbsent("waterlogged", "true");
+					//Log.debug("added waterlogged to: "+blockName.value);
+				}
+				
+				data[i] = block;
+			}
+			return true;
+		}
+		
+		/**
+		 * Fills in the biome array with biome data
+		 * @return false if this was not completed */
+		boolean fillBiomes(TAG_Compound section) {
+			TAG_Compound tagBlockStatesComp = (TAG_Compound) section.getElement("biomes");
+			if (tagBlockStatesComp == null) {
+				return false;
+			}
+			TAG_List tagBiomePalette = (TAG_List) tagBlockStatesComp.getElement("palette");
+			TAG_Long_Array tagBiomeStates = (TAG_Long_Array) tagBlockStatesComp.getElement("data");
+			if (tagBiomePalette == null) {
+				return false;
+			}
+			if (tagBiomeStates == null) {
+				if (tagBiomePalette.elements.length >= 1) {
+					String biomeName = ((TAG_String) tagBiomePalette.elements[0]).value;
+					NamespaceID biome = NamespaceID.fromString(biomeName);
+					for (int i = 0; i < 4096; i++) {
+						biomes[i] = biome;
+					}
+					return true;
+				}
+				return false;
+			}
+			int biomeBits = bitsForInt(tagBiomePalette.elements.length - 1);
+			for (int i = 0; i < 64; i++) {
+				long biomePid = calculatePaletteIndex(i, biomeBits, tagBiomeStates.data);
+				
+				String biomeName = ((TAG_String) tagBiomePalette.elements[(int) biomePid]).value;
+				NamespaceID biome = NamespaceID.fromString(biomeName);
+				//Copy biome into 4x4x4 cube
+				for (int x = 0; x < 4; x++) {
+					for (int y = 0; y < 4; y++) {
+						for (int z = 0; z< 4; z++) {
+							int baseInd = ((i%4)*4) + ((i/4)*16*4)%(16*16) + ((i/(4*4))*16*16*4);
+							int index = baseInd + (x + z*16 + y*16*16);
+							biomes[index] = biome;
+						}
+					}
+				}
+			}
+			return true;
+		}
+		
+		/**
+		 * Fills in the data array with block data
+		 * @return false if this was not completed */
+		boolean fillBlocksPre1451(TAG_Compound section) {
+			short[] oldIDs = new short[4096];
+			byte[] oldData = new byte[4096];
+			TAG_Byte_Array tagData = (TAG_Byte_Array) section.getElement("Data");
+			TAG_Byte_Array tagBlocks = (TAG_Byte_Array) section.getElement("Blocks");
+			TAG_Byte_Array tagAdd = (TAG_Byte_Array) section.getElement("Add");
+			for(int i=0; i<tagBlocks.data.length; i++)
+				oldIDs[i] = (short) Byte.toUnsignedInt(tagBlocks.data[i]);
+			
+			if (tagAdd != null) {
+				for(int i = 0; i < tagAdd.data.length; i++) {
+					int val = Byte.toUnsignedInt(tagAdd.data[i]);
+					short add1 = (short) (val&0x0f);
+					short add2 = (short) (val>>>4);
+					oldIDs[2*i] += (short) (add1<<8);
+					oldIDs[2*i+1] += (short) (add2<<8);
+				}
+			}
+			
+			for (int i = 0; i < tagData.data.length; i++) {
+				int val = Byte.toUnsignedInt(tagData.data[i]);
+				byte add1=(byte)(val&0x0f);
+				byte add2=(byte)(val>>>4);
+				oldData[2*i]=add1;
+				oldData[2*i+1]=add2;
+			}
+			for (int i = 0; i < 4096; i++) {
+				data[i] = IDConvert.convertBlock(oldIDs[i], oldData[i]);
+			}
+			return true;
+		}
 	}
 	
 	public int getYMin() {
