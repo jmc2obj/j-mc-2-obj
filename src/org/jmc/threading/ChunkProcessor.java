@@ -199,13 +199,13 @@ public class ChunkProcessor
 					if(Options.isBlockExcluded(block.id))
 						continue;
 					
-					BlockInfo blockInfo = BlockTypes.get(block);
+					BlockInfo blockInfo = block.getInfo();
 					
 					if(Options.convertOres) {
 						NamespaceID oreBase = blockInfo.getOreBase();
 						if (oreBase != null) {
 							block.id = oreBase;
-							blockInfo = BlockTypes.get(block);
+							blockInfo = block.getInfo();
 						}
 					}
 					
@@ -215,7 +215,7 @@ public class ChunkProcessor
 					try {
 						blockInfo.getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						if (Boolean.parseBoolean(block.state.get("waterlogged"))) {
-							BlockTypes.get(new BlockData(new NamespaceID("minecraft", "water"))).getModel().addModel(this, chunk, x, y, z, block, blockBiome);
+							new BlockData(new NamespaceID("minecraft", "water")).getInfo().getModel().addModel(this, chunk, x, y, z, block, blockBiome);
 						}
 					} catch (Exception ex) {
 						Log.errorOnce(String.format("Error rendering block '%s', skipping.", block.id), ex, true);

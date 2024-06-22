@@ -113,7 +113,7 @@ public abstract class EntityModel
 		if (neighbour.id.path.endsWith("air"))
 			return true;
 		
-		switch(BlockTypes.get(neighbour).getOcclusion())
+		switch(neighbour.getInfo().getOcclusion())
 		{
 			case FULL:
 				return false;

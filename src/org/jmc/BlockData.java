@@ -40,12 +40,22 @@ public class BlockData {
 		}
 		this.id = other.id;
 		this.state = (Blockstate) other.state.clone();
+		this.info = other.info;
 	}
 	
 	@Nonnull
 	public NamespaceID id;
 	@Nonnull
 	public Blockstate state;
+	
+	private BlockInfo info;
+	
+	public BlockInfo getInfo() {
+		if (info == null || !id.equals(info.id)) {
+			info = BlockTypes.get(this);
+		}
+		return info;
+	}
 	
 	@Override
 	public boolean equals(@CheckForNull Object o) {

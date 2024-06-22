@@ -480,7 +480,7 @@ public class Chunk {
 					}
 				}
 				
-				if (BlockTypes.get(block).getActWaterlogged()) {
+				if (block.getInfo().getActWaterlogged()) {
 					block.state.putIfAbsent("waterlogged", "true");
 					//Log.debug("added waterlogged to: "+blockName.value);
 				}
@@ -666,8 +666,7 @@ public class Chunk {
 					NamespaceID blockBiome = bd.getBiome(x, y, z);
 					BlockData blockData = bd.getBlockData(x, y, z);
 					
-					if(blockData != null && !BlockTypes.get(blockData).getOcclusion().equals(Occlusion.NONE))
-					{
+					if(blockData != null && !blockData.getInfo().getOcclusion().equals(Occlusion.NONE)) {
 						topBlocks[z*16+x] = new BlockDataPos(new BlockPos((this.pos_x*16) + x, y, (this.pos_z*16) + z), blockData, blockBiome);
 						himage[z*16+x]=y;
 					}
@@ -686,7 +685,7 @@ public class Chunk {
 				BlockDataPos block = topBlocks[z*16+x];
 				
 				if(block != null) {
-					BlockInfo type = BlockTypes.get(block.data);
+					BlockInfo type = block.data.getInfo();
 					if (type.getModel().getClass() != None.class) {
 						gb.setColor(type.getPreviewColor(block.data,block.biome));
 						gb.fillRect(x*4, z*4, 4, 4);

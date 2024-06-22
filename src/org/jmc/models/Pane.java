@@ -25,7 +25,7 @@ public class Pane extends BlockModel
 			return false;
 		if (other.id.equals(new NamespaceID("minecraft", "iron_bars")) || other.id.path.endsWith("glass_pane") || other.id.path.endsWith("glass"))
 			return true;
-		return BlockTypes.get(other).getOcclusion() == BlockInfo.Occlusion.FULL;
+		return other.getInfo().getOcclusion() == BlockInfo.Occlusion.FULL;
 	}
 
 	@Override

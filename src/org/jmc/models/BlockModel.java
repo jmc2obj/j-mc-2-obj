@@ -151,12 +151,12 @@ public abstract class BlockModel {
 			return true;
 
 		if (Options.objectPerMaterial && !Options.objectPerMaterialOcclusion && (!neighbourData.id.equals(data.id))) {
-			NamespaceID neighbourOre = BlockTypes.get(neighbourData).getOreBase();
+			NamespaceID neighbourOre = neighbourData.getInfo().getOreBase();
 			if (!(Options.convertOres && neighbourOre != null && neighbourOre.equals(data.id)))
 				return true;
 		}
 
-		switch (BlockTypes.get(neighbourData).getOcclusion()) {
+		switch (neighbourData.getInfo().getOcclusion()) {
 		case FULL:
 			return false;
 		case NONE:
@@ -167,7 +167,7 @@ public abstract class BlockModel {
 		case BOTTOM:
 			return side != Direction.UP;
 		case CUSTOM:
-			return !BlockTypes.get(neighbourData).getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
+			return !neighbourData.getInfo().getModel().getCustomOcclusion(side.getOpposite(), data, neighbourData);
 		default:
 			return false;
 		}

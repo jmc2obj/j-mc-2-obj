@@ -486,8 +486,7 @@ public class BlockTypes
 	 * @param block Block data
 	 * @return BlockInfo structure
 	 */
-	public static BlockInfo get(BlockData block)
-	{
+	public static BlockInfo get(BlockData block) {
 		if (block == null)
 			return nullBlock;
 		if (block.id == NamespaceID.NULL || unknownBlockIds.contains(block.id)) {
