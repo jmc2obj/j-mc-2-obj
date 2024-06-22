@@ -64,7 +64,7 @@ public class Main
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Main.class.getClassLoader().getResourceAsStream("fonts/NotoSansCombined-Regular.ttf")));
-			Font fontDefault = new Font("Noto Sans", Font.PLAIN, 11);
+			Font fontDefault = new Font("Noto Sans JMC Combined", Font.PLAIN, 11);
 			Enumeration<Object> keys = UIManager.getDefaults().keys();
 			while (keys.hasMoreElements()) {
 				Object key = keys.nextElement();
