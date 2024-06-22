@@ -16,6 +16,6 @@ public class BlockDataPos {
 	
 	@Override
 	public String toString() {
-		return String.format("%s = %s; biome = %s", pos.toString(), data.toString(), biome.toString());
+		return String.format("%s = %s; biome = %s", pos, data.toString(), biome.toString());
 	}
 }

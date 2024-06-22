@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import org.jmc.BlockDataPos;
+import org.jmc.geom.BlockPos;
 import org.jmc.util.Log;
 import org.jmc.util.Messages;
 
@@ -367,7 +368,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		chunk.x=x;
 		chunk.y=y;
 		chunk.blocks = topBlocks;
-		synchronized (chunks) {			
+		synchronized (chunks) {
 			chunks.add(chunk);
 		}
 		redrawChunk(chunk, true, null);
@@ -605,10 +606,12 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				int index = posx - (chunkx*16);
 				index += 16 * (posz - (chunkz*16));
 				BlockDataPos block = clickedChunk.blocks[index];
-				if (block == null)
+				if (block == null) {
 					Log.info("No block at location");
-				else
+				}else {
+					block.pos = new BlockPos(posx, block.pos.y, posz);
 					Log.info(block.toString());
+				}
 			} else {
 				Log.info("No chunk found!");
 			}

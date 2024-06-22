@@ -612,7 +612,6 @@ public class Chunk {
 
 
 		BlockDataPos[] topBlocks = new BlockDataPos[16*16];
-		//NamespaceID[] biome = new NamespaceID[16*16];
 		int[] himage = new int[16*16];
 		
 		Arrays.fill(himage, drawYMin);
@@ -631,7 +630,7 @@ public class Chunk {
 					BlockData blockData = bd.getBlockData(x, y, z);
 					
 					if(blockData != null && !blockData.getInfo().getOcclusion().equals(Occlusion.NONE)) {
-						topBlocks[z*16+x] = new BlockDataPos(null, blockData, blockBiome);
+						topBlocks[z*16+x] = new BlockDataPos(new BlockPos(x, y, z), blockData, blockBiome);
 						himage[z*16+x]=y;
 					}
 				}
