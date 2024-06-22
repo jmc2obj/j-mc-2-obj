@@ -67,7 +67,7 @@ public class NamespaceID implements Comparable<NamespaceID> {
 	
 	@Override
 	public int hashCode() {
-		return 31 * path.hashCode() + namespace.hashCode();
+		return (31 * path.hashCode()) ^ namespace.hashCode();
 	}
 
 	@Override
