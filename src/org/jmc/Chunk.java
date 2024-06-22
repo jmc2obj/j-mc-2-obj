@@ -43,11 +43,6 @@ public class Chunk {
 	private int[] yMinMax = null;
 
 	/**
-	 * Position of chunk.
-	 */
-	private final int pos_x,pos_z;
-
-	/**
 	 * Is the chunk type new Anvil or not.
 	 * Used to determine how to properly analyze the data.
 	 */
@@ -94,40 +89,9 @@ public class Chunk {
 		} else {
 			chunkVer = 0;
 		}
-
-		TAG_Int xPos, zPos;
-		if (chunkVer >= 2844) {// >= 21w43a
-			xPos=(TAG_Int) root.getElement("xPos");
-			zPos=(TAG_Int) root.getElement("zPos");
-		} else {
-			TAG_Compound level = (TAG_Compound) root.getElement("Level");
-			xPos=(TAG_Int) level.getElement("xPos");
-			zPos=(TAG_Int) level.getElement("zPos");
-		}
-
-		pos_x = xPos.value;
-		pos_z = zPos.value;
 		
 		block_image=null;
 		height_image=null;
-	}
-
-	/**
-	 * Gets X position of chunk.
-	 * @return position in X coordinate
-	 */
-	public int getPosX()
-	{
-		return pos_x;
-	}
-
-	/**
-	 * Gets Z position of chunk.
-	 * @return position in Z coordinate
-	 */
-	public int getPosZ()
-	{
-		return pos_z;
 	}
 
 	/**
@@ -503,7 +467,7 @@ public class Chunk {
 			if (tagBiomePalette == null) {
 				return false;
 			}
-			if (tagBiomeStates == null) {
+			if (tagBiomePalette.elements.length == 1 || tagBiomeStates == null || tagBiomeStates.data.length <= 1) {
 				if (tagBiomePalette.elements.length >= 1) {
 					String biomeName = ((TAG_String) tagBiomePalette.elements[0]).value;
 					NamespaceID biome = NamespaceID.fromString(biomeName);
@@ -667,7 +631,7 @@ public class Chunk {
 					BlockData blockData = bd.getBlockData(x, y, z);
 					
 					if(blockData != null && !blockData.getInfo().getOcclusion().equals(Occlusion.NONE)) {
-						topBlocks[z*16+x] = new BlockDataPos(new BlockPos((this.pos_x*16) + x, y, (this.pos_z*16) + z), blockData, blockBiome);
+						topBlocks[z*16+x] = new BlockDataPos(null, blockData, blockBiome);
 						himage[z*16+x]=y;
 					}
 				}

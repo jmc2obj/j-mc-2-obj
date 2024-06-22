@@ -2,11 +2,11 @@ package org.jmc;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.jmc.Chunk.Blocks;
 import org.jmc.util.CachedGetter;
+import org.jmc.util.Log;
 
 public class ChunkDataBuffer {
 
@@ -75,6 +75,7 @@ public class ChunkDataBuffer {
 			if (chunk == null)
 				return null;
 		} catch (Exception e) {
+			Log.errorOnce("Error reading from chunk", e, false);
 			return null;
 		}
 		return chunk.getBlocks();

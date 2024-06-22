@@ -16,13 +16,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.jmc.registry.NamespaceID;
-import org.jmc.util.Log;
+
+import javax.annotation.CheckForNull;
 
 /**
  * Region file class.
@@ -31,20 +31,20 @@ import org.jmc.util.Log;
  * @author danijel
  *
  */
-public class Region implements Iterable<Chunk> {
+public class Region {
 
 	/**
 	 * Path to the file.
 	 */
-	private File region_file;
+	private final File region_file;
 	/**
 	 * Path to the entities file.
 	 */
-	private File region_entity_file;
+	private final File region_entity_file;
 	/**
 	 * Buffer of offsets of individual chunks.
 	 */
-	private ByteBuffer offset;
+	private final ByteBuffer offset;
 	/**
 	 * Buffer of offsets of individual in the entiy file chunks.
 	 */
@@ -155,7 +155,7 @@ public class Region implements Iterable<Chunk> {
 			String name=f.getName();
 			if(name.matches("r\\.[0-9[-]]+\\.[0-9[-]]+\\.mca"))
 			{
-				ret.add(new Region(f));				
+				ret.add(new Region(f));
 			}
 		}
 		
@@ -166,7 +166,7 @@ public class Region implements Iterable<Chunk> {
 				String name=f.getName();
 				if(name.matches("r\\.[0-9[-]]+\\.[0-9[-]]+\\.mcr"))
 				{
-					ret.add(new Region(f));				
+					ret.add(new Region(f));
 				}
 			}
 		}
@@ -181,41 +181,24 @@ public class Region implements Iterable<Chunk> {
 	 * @return chunk object
 	 * @throws Exception if error occurs while reading the chunk
 	 */
-	public Chunk getChunk(int x, int z) throws Exception
-	{			
-		int cx=x%32;
-		int cz=z%32;
-		if(cz<0) 
-			cz=32+cz;
-		if(cx<0) 
-			cx=32+cx;
-		int loc = cx + cz * 32;		
-		Chunk chunk = getChunk(loc);
+	@CheckForNull
+	public Chunk getChunk(int x, int z) throws Exception {
+		int cx = Math.floorMod(x, 32);
+		int cz = Math.floorMod(z, 32);
+		int idx = cx + cz * 32;
 		
-		if(chunk!=null && (chunk.getPosX()!=x || chunk.getPosZ()!=z))
-		{
-			throw new Exception("Chunk coord don't match!");
+		InputStream chunkIs = getChunkStream(region_file, offset, idx);
+		if (chunkIs == null) {
+			return null;
 		}
-		 
-		return chunk;
-	}
-
-
-	/**
-	 * Get the Nth chunk in this file.
-	 * @param idx index of the chunk
-	 * @return chunk object
-	 * @throws Exception if error occurs while reading the chunk
-	 */
-	public Chunk getChunk(int idx) throws Exception
-	{
 		if (region_entity_file.exists()) {
-			return new Chunk(getChunkStream(region_file, offset, idx), getChunkStream(region_entity_file, entity_offset, idx),is_anvil);
+			return new Chunk(chunkIs, getChunkStream(region_entity_file, entity_offset, idx), is_anvil);
 		} else {
-			return new Chunk(getChunkStream(region_file, offset, idx),null,is_anvil);
+			return new Chunk(chunkIs,null, is_anvil);
 		}
 	}
 	
+	@CheckForNull
 	private InputStream getChunkStream(File file, ByteBuffer offset, int idx) throws Exception {
 		int off = offset.getInt(idx*4);
 		int sec = off >> 8;
@@ -258,91 +241,5 @@ public class Region implements Iterable<Chunk> {
 					System.out.println("{"+x+","+z+"} -> "+(off>>8)+"/"+(off&0xff));
 				}
 			}
-	}
-
-	/**
-	 * Small internal class for iterating chunks in the region file.
-	 * @author danijel
-	 *
-	 */
-	class ChunkIterator implements Iterator<Chunk>
-	{
-
-		/**
-		 * Reference to the region file.
-		 */
-		Region region;
-		/**
-		 * Position of the iterator within the file.
-		 */
-		int pos;
-
-		/**
-		 * Main constructor.
-		 * @param region reference to the region file
-		 */
-		public ChunkIterator(Region region) {
-			this.region=region;
-			pos=0;
-		}
-
-		/**
-		 * Interface override.
-		 */
-		@Override
-		public boolean hasNext() {
-			for(int x=pos+1;x<1024;x++)
-				if(region.offset.getInt(x*4)!=0)
-					return true;
-
-			return false;
-		}
-
-		/**
-		 * Interface override.
-		 */
-		@Override
-		public Chunk next() {
-
-			Chunk ret=null;
-
-			while(offset.getInt(pos*4)==0)
-			{				
-				pos++;
-			}
-
-			try {
-				ret=getChunk(pos);
-			} catch (Exception e) {
-				Log.error("Error getting chunk "+pos, e, false);
-			}
-			
-			pos++;
-
-			return ret;
-		}
-
-		/**
-		 * Interface override. Not implemented!
-		 */
-		@Override
-		public void remove() {
-
-			//TODO: not yet supported
-			
-		}
-
-	}
-
-	/**
-	 * Returns the chunk iterator for the given file.
-	 * It allows to iterate the chunks within the file in the following manner:
-	 * <pre>for(Chunk chunk:region) {} </pre>
-	 */
-	@Override
-	public Iterator<Chunk> iterator() 
-	{
-		Iterator<Chunk> ret=new ChunkIterator(this);
-		return ret;
 	}
 }

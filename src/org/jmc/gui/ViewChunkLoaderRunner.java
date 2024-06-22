@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import org.jmc.gui.PreviewPanel.ChunkImage;
 import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.util.Hilbert.HilbertComparator;
+import org.jmc.util.Log;
 
 /**
  * Chunk loader that loads only the chunks visible on the screen and
@@ -61,9 +63,6 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	 */
 	Set<Point> loadedChunks;
 	
-	// Chunks that we checked do not exist in this world.
-	Set<Point> emptyChunks;
-	
 	private final ThreadInputQueue chunkQueue;
 	private AtomicInteger chunksToDo;
 
@@ -89,7 +88,6 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 		chunkImages = preview.getChunkImages();
 		
 		loadedChunks = Collections.synchronizedSet(new HashSet<Point>());
-		emptyChunks = Collections.synchronizedSet(new HashSet<Point>());
 		chunkQueue = new ThreadInputQueue();
 		chunksToDo = new AtomicInteger();
 		
@@ -107,7 +105,6 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 		Rectangle prevBounds = new Rectangle();
 
 		loadedChunks.clear();
-		emptyChunks.clear();
 		
 		int threads = MainWindow.settings.getPreferences().getInt("PREVIEW_THREADS", 8);
 		for (int i = 0; i < threads; i++) {
@@ -193,7 +190,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 					{
 						Point p = new Point(cx, cz);
 						
-						if (loadedChunks.contains(p) || emptyChunks.contains(p))
+						if (loadedChunks.contains(p))
 							continue;
 						chunkList.add(p);
 					}
@@ -283,17 +280,15 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 				if (p == null)
 					break;
 				loadedChunks.add(p);
-				Chunk chunk;
-				Region region;
+				Chunk chunk = null;
 				try {
-					region = Region.findRegion(worldPath, dimension, Region.getRegionCoord(p));
+					Region region = Region.findRegion(worldPath, dimension, Region.getRegionCoord(p));
 					chunk = region.getChunk(p.x, p.y);
+				} catch (FileNotFoundException ignored) {
 				} catch (Exception e) {
-					emptyChunks.add(p);
-					ctd.addAndGet(-1);
-					continue;
+					Log.errorOnce("Error loading chunk", e, false);
 				}
-			
+				
 				if (chunk == null) {
 					ctd.addAndGet(-1);
 					continue;
