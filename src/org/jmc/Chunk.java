@@ -7,10 +7,7 @@
  ******************************************************************************/
 package org.jmc;
 
-import org.jmc.BlockInfo.Occlusion;
 import org.jmc.NBT.*;
-import org.jmc.geom.BlockPos;
-import org.jmc.models.None;
 import org.jmc.registry.NamespaceID;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
@@ -18,7 +15,6 @@ import org.jmc.util.Log;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -47,15 +43,6 @@ public class Chunk {
 	 * Used to determine how to properly analyze the data.
 	 */
 	private final boolean is_anvil;
-
-	/**
-	 * 64x64 color image of topmost blocks in chunk.  
-	 */
-	private BufferedImage block_image;
-	/**
-	 * 64x64 grey-scale image of height of topmost blocks.
-	 */
-	private BufferedImage height_image;
 
 	/**
 	 * Main constructor of chunks. 
@@ -89,9 +76,6 @@ public class Chunk {
 		} else {
 			chunkVer = 0;
 		}
-		
-		block_image=null;
-		height_image=null;
 	}
 
 	/**
@@ -577,120 +561,5 @@ public class Chunk {
 			yMinMax = new int[] {0, 128};
 		}
 		return yMinMax;
-	}
-
-	/**
-	 * Renders the block and height images.
-	 * @param floor floor boundary
-	 * @param ceiling ceiling boundary
-	 */
-	public BlockDataPos[] renderImages(int floor, int ceiling, boolean fastmode)
-	{
-		int width = 4 * 16;
-		int height = 4 * 16;
-		block_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		height_image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-
-		Graphics2D gb = block_image.createGraphics();
-		gb.setColor(Color.black);
-		gb.fillRect(0, 0, width, height);
-
-		Graphics2D gh = height_image.createGraphics();
-		gh.setColor(Color.black);
-		gh.fillRect(0, 0, width, height);
-
-		Blocks bd=getBlocks();
-
-		int drawYMax = ceiling;
-		int drawYMin = floor;
-		if(floor>bd.ymax)
-			return null;
-		if(ceiling>bd.ymax)
-			ceiling=bd.ymax;
-		if(floor>=ceiling)
-			floor=ceiling-1;
-
-
-		BlockDataPos[] topBlocks = new BlockDataPos[16*16];
-		int[] himage = new int[16*16];
-		
-		Arrays.fill(himage, drawYMin);
-		
-		int x,y,z;
-		for(z = 0; z < 16; z++)
-		{
-			for(x = 0; x < 16; x++)
-			{
-				for(y = floor; y < ceiling; y++)
-				{
-					if (Thread.currentThread().isInterrupted())
-						return null;
-					
-					NamespaceID blockBiome = bd.getBiome(x, y, z);
-					BlockData blockData = bd.getBlockData(x, y, z);
-					
-					if(blockData != null && !blockData.getInfo().getOcclusion().equals(Occlusion.NONE)) {
-						topBlocks[z*16+x] = new BlockDataPos(new BlockPos(x, y, z), blockData, blockBiome);
-						himage[z*16+x]=y;
-					}
-				}
-			}
-		}
-
-
-		for(z = 0; z < 16; z++)
-		{
-			for(x = 0; x < 16; x++)
-			{
-				if (Thread.currentThread().isInterrupted())
-					return null;
-				
-				BlockDataPos block = topBlocks[z*16+x];
-				
-				if(block != null) {
-					BlockInfo type = block.data.getInfo();
-					if (type.getModel().getClass() != None.class) {
-						gb.setColor(type.getPreviewColor(block.data,block.biome));
-						gb.fillRect(x*4, z*4, 4, 4);
-					}
-				}
-			}
-		}
-
-		if(!fastmode){
-			for(z = 0; z < 16; z++)
-			{
-				for(x = 0; x < 16; x++)
-				{
-					if (Thread.currentThread().isInterrupted())
-						return null;
-					
-					float a = himage[z*16+x] - drawYMin;
-					float b = drawYMax - drawYMin;
-					float r = Math.max(0, Math.min(1, a / b));
-					gh.setColor(new Color(r,r,r));
-					gh.fillRect(x*4, z*4, 4, 4);
-				}
-			}
-		}
-		return topBlocks;
-	}
-
-	/**
-	 * Retrieves block image. Must run renderImages first!
-	 * @return image of topmost blocks
-	 */
-	public BufferedImage getBlockImage()
-	{
-		return block_image;
-	}
-
-	/**
-	 * Retrieves height image. Must run renderImages first!
-	 * @return image of topmost block heights
-	 */
-	public BufferedImage getHeightImage()
-	{
-		return height_image;
 	}
 }

@@ -8,6 +8,8 @@ import org.jmc.Chunk.Blocks;
 import org.jmc.util.CachedGetter;
 import org.jmc.util.Log;
 
+import javax.annotation.CheckForNull;
+
 public class ChunkDataBuffer {
 
 	private final Rectangle xzBoundaries;
@@ -63,22 +65,24 @@ public class ChunkDataBuffer {
 		}
 	}
 	
-	private Blocks makeBlocks(Point p) {
-		Chunk chunk;
+	@CheckForNull
+	public Chunk getChunk(Point p) {
 		try {// if chunk exists
 			Point regionCoord = Region.getRegionCoord(p);
 			Region region = regions.get(regionCoord);
 			if (region == null)
 				return null;
 			
-			chunk = region.getChunk(p.x, p.y);
-			if (chunk == null)
-				return null;
+			return region.getChunk(p.x, p.y);
 		} catch (Exception e) {
 			Log.errorOnce("Error reading from chunk", e, false);
 			return null;
 		}
-		return chunk.getBlocks();
+	}
+	
+	private Blocks makeBlocks(Point p) {
+		Chunk chunk = getChunk(p);
+		return chunk == null ? null : chunk.getBlocks();
 	}
 	
 	public Rectangle getXZBoundaries()

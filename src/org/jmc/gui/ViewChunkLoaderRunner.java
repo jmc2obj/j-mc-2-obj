@@ -7,26 +7,20 @@
  ******************************************************************************/
 package org.jmc.gui;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jmc.*;
+import org.jmc.geom.BlockPos;
 import org.jmc.gui.PreviewPanel.ChunkImage;
+import org.jmc.models.None;
 import org.jmc.registry.NamespaceID;
 import org.jmc.threading.ThreadInputQueue;
 import org.jmc.util.Hilbert.HilbertComparator;
-import org.jmc.util.Log;
 
 /**
  * Chunk loader that loads only the chunks visible on the screen and
@@ -71,10 +65,12 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	/**
 	 * Variables defining the Y-axis boundaries of the current preview. 
 	 */
-	private int floor, ceiling;
+	private int viewFloor, viewCeiling;
 	private boolean yBoundsChanged;
 	
 	private final ArrayList<Thread> imagerThreads = new ArrayList<Thread>();
+	
+	private final ChunkDataBuffer chunkBuffer = new ChunkDataBuffer(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
 	/**
 	 * Main constructor.
@@ -91,8 +87,8 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 		chunkQueue = new ThreadInputQueue();
 		chunksToDo = new AtomicInteger();
 		
-		floor = 0;
-		ceiling = Integer.MAX_VALUE;
+		viewFloor = Integer.MIN_VALUE;
+		viewCeiling = Integer.MAX_VALUE;
 		yBoundsChanged = false;
 	}
 
@@ -233,9 +229,9 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 	@Override
 	public void setYBounds(int floor, int ceiling)
 	{
-		this.floor=floor;
-		this.ceiling=ceiling;
-		yBoundsChanged=true;
+		this.viewFloor = floor;
+		this.viewCeiling = ceiling;
+		yBoundsChanged = true;
 	}
 
 	@Override
@@ -280,31 +276,89 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 				if (p == null)
 					break;
 				loadedChunks.add(p);
-				Chunk chunk = null;
-				try {
-					Region region = Region.findRegion(worldPath, dimension, Region.getRegionCoord(p));
-					chunk = region.getChunk(p.x, p.y);
-				} catch (FileNotFoundException ignored) {
-				} catch (Exception e) {
-					Log.errorOnce("Error loading chunk", e, false);
-				}
 				
-				if (chunk == null) {
+				Chunk.Blocks blocks = chunkBuffer.getBlocks(p);
+				
+				if (blocks == null) {
 					ctd.addAndGet(-1);
 					continue;
 				}
 				
-				BlockDataPos[] topBlocks = chunk.renderImages(floor, ceiling, preview.fastrendermode);
-				BufferedImage heightImg = null;
-				if (!preview.fastrendermode)
-					heightImg=chunk.getHeightImage();
-				BufferedImage img=chunk.getBlockImage();
-			
-				preview.addImage(img, heightImg, p.x, p.y, topBlocks);
+				int width = 4 * 16;
+				int height = 4 * 16;
+				BufferedImage blockImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+				BufferedImage heightImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+				Graphics2D blockGraphics = blockImage.createGraphics();
+				blockGraphics.setColor(Color.black);
+				blockGraphics.fillRect(0, 0, width, height);
+				
+				Graphics2D heightGraphics = heightImage.createGraphics();
+				heightGraphics.setColor(Color.black);
+				heightGraphics.fillRect(0, 0, width, height);
+				
+				BlockDataPos[] topBlocks = renderImages(blocks, blockGraphics, heightGraphics);
+				if (topBlocks == null) {
+					ctd.addAndGet(-1);
+					continue;
+				}
+				
+				preview.addImage(blockImage, heightImage, p.x, p.y, topBlocks);
 				ctd.addAndGet(-1);
 			}
 		}
 		
+		/**
+		 * Renders the block and height images.
+		 */
+		private BlockDataPos[] renderImages(Chunk.Blocks bd, Graphics2D block_graphics, Graphics2D height_graphics) {
+			
+			int chunkFloor = viewFloor;
+			int chunkCeiling = viewCeiling;
+			if (chunkFloor > bd.ymax || chunkCeiling < bd.ymin)
+				return null;
+			if (chunkFloor < bd.ymin)
+				chunkFloor = bd.ymin;
+			if (chunkCeiling > bd.ymax + 1)
+				chunkCeiling = bd.ymax + 1;
+			if(chunkFloor >= chunkCeiling)
+				chunkFloor = chunkCeiling - 1;
+			
+			
+			BlockDataPos[] topBlocks = new BlockDataPos[16*16];
+			
+			for(int z = 0; z < 16; z++) {
+				for(int x = 0; x < 16; x++) {
+					for(int y = chunkCeiling; y >= chunkFloor; y--) {
+						NamespaceID blockBiome = bd.getBiome(x, y, z);
+						BlockData blockData = bd.getBlockData(x, y, z);
+						
+						if(blockData != null && !blockData.getInfo().getOcclusion().equals(BlockInfo.Occlusion.NONE)) {
+							topBlocks[z*16+x] = new BlockDataPos(new BlockPos(x, y, z), blockData, blockBiome);
+							
+							BlockInfo type = blockData.getInfo();
+							if (type.getModel().getClass() != None.class) {
+								block_graphics.setColor(type.getPreviewColor(blockData, blockBiome));
+								block_graphics.fillRect(x*4, z*4, 4, 4);
+							}
+							
+							if(!preview.fastrendermode) {
+								float a = y - viewFloor;
+								float b = viewCeiling - viewFloor;
+								float r = Math.max(0, Math.min(1, a / b));
+								height_graphics.setColor(new Color(r, r, r));
+								height_graphics.fillRect(x * 4, z * 4, 4, 4);
+							}
+							
+							break;
+						}
+					}
+					if (Thread.currentThread().isInterrupted())
+						return null;
+				}
+			}
+			
+			return topBlocks;
+		}
 	}
 
 }
