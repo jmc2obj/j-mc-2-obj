@@ -9,6 +9,7 @@ package org.jmc;
 
 import org.jmc.NBT.*;
 import org.jmc.registry.NamespaceID;
+import org.jmc.util.CachedGetter;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 
@@ -16,10 +17,9 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
+
 /**
  * Class describing a chunk. A chunk is a 16x16 group of blocks of 
  * varying heights (in Anvil) or 128 (in Region).
@@ -97,25 +97,51 @@ public class Chunk {
 	}
 
 	/**
-	 * Small internal class defining the return values of getBlocks method. 
-	 * @author danijel
-	 *
+	 * Small internal class defining the return values of getBlocks method.
 	 */
-	public static class Blocks {
+	public abstract static class Blocks {
+		/**
+		 * Gets the block data at the given local chunk coordianes
+		 * @param x
+		 * @param y
+		 * @param z
+		 * @return The block at that location or null
+		 */
+		public abstract BlockData getBlockData(int x, int y, int z);
+		
+		@Nonnull
+		public abstract NamespaceID getBiome(int x, int y, int z);
+		
+		public abstract int getYMin();
+		public abstract int getYMax();
+		
+		/**
+		 * Entities.
+		 */
+		public List<TAG_Compound> entities = new LinkedList<>();
+		
+		/**
+		 * Tile entities.
+		 */
+		public List<TAG_Compound> tile_entities = new LinkedList<>();
+	}
+	
+	/**
+	 * Block data for a chunk that's been loaded all at once
+	 */
+	private static class BlocksContiguous extends Blocks {
 		/**
 		 * Main constructor.
 		 * @param ymin minimum y level
 		 * @param ymax maximum y level
 		 */
-		public Blocks(int ymin, int ymax)
+		public BlocksContiguous(int ymin, int ymax)
 		{
 			int block_num = 16*16*Math.abs(ymax - ymin);
 			size = block_num;
 			data=new BlockData[block_num];
 			biome=new NamespaceID[block_num];
 			Arrays.fill(biome, new NamespaceID("minecraft", "plains"));//default to plains
-			entities=new LinkedList<TAG_Compound>();
-			tile_entities=new LinkedList<TAG_Compound>();
 			this.ymin = ymin;
 			this.ymax = ymax;
 		}
@@ -142,8 +168,9 @@ public class Chunk {
 		/**
 		 * Biome IDSs.
 		 */
-		private NamespaceID[] biome;
+		private final NamespaceID[] biome;
 		
+		@Nonnull
 		public NamespaceID getBiome(int x, int y, int z) {
 			int index = getIndex(x, y, z);
 			if (index == -1) {
@@ -153,6 +180,16 @@ public class Chunk {
 			}
 		}
 		
+		@Override
+		public int getYMin() {
+			return ymin;
+		}
+		
+		@Override
+		public int getYMax() {
+			return ymax;
+		}
+		
 		private int getIndex(int x, int y, int z) {
 			if (x < 0 || x > 15 || z < 0 || z > 15) {
 				throw new IllegalArgumentException("Invalid relative chunk coordinate");
@@ -160,19 +197,68 @@ public class Chunk {
 			if (y < ymin || y >= ymax) {
 				return -1;
 			} else {
-				return x + (z * 16) + ((y - ymin) * 16) * 16;
+				return x + (z * 16) + ((y - ymin) * 16 * 16);
 			}
 		}
-
-		/**
-		 * Entities.
-		 */
-		public List<TAG_Compound> entities;
-
-		/**
-		 * Tile entities.
-		 */
-		public List<TAG_Compound> tile_entities;
+	}
+	
+	/**
+	 * Block data for a chunk divided into sections
+	 * Each section is not loaded until it is first requested
+	 */
+	private class BlocksSections extends Blocks {
+		private final CachedGetter<Integer, SectionBlocks> sections = new CachedGetter<Integer, SectionBlocks>() {
+			@Override
+			public SectionBlocks make(Integer key) {
+				return getSectionBlocks(sectionTags.get(key));
+			}
+		};
+		private final HashMap<Integer, TAG_Compound> sectionTags = new HashMap<>();
+		
+		@Override
+		public BlockData getBlockData(int x, int y, int z) {
+			int sectionIndex = getSectionIndex(y);
+			SectionBlocks section = sections.get(sectionIndex);
+			if (section == null) {
+				return null;
+			}
+			// y-section*16 to get the modulo but saves on doing division again
+			return section.getBlockData(x, y - sectionIndex * 16, z);
+		}
+		
+		@Nonnull
+		@Override
+		public NamespaceID getBiome(int x, int y, int z) {
+			int sectionIndex = getSectionIndex(y);
+			SectionBlocks section = sections.get(sectionIndex);
+			if (section == null) {
+				return NamespaceID.NULL;
+			}
+			return section.getBiome(x, y - sectionIndex * 16, z);
+		}
+		
+		@Override
+		public int getYMin() {
+			OptionalInt minSection = sectionTags.keySet().stream().mapToInt(v -> v).min();
+			if (!minSection.isPresent()) {
+				return -64;
+			}
+			return minSection.getAsInt() * 16;
+		}
+		
+		@Override
+		public int getYMax() {
+			OptionalInt maxSection = sectionTags.keySet().stream().mapToInt(v -> v).max();
+			if (!maxSection.isPresent()) {
+				return 320;
+			}
+			// each section is 16 blocks high so add that on to the base y val
+			return (maxSection.getAsInt() * 16) + 15;
+		}
+		
+		private int getSectionIndex(int y) {
+			return Math.floorDiv(y, 16);
+		}
 	}
 
 	/**
@@ -181,9 +267,9 @@ public class Chunk {
 	 */
 	public Blocks getBlocks()
 	{
-		Blocks ret=null;
+		Blocks ret;
 		
-		if(is_anvil) {
+		if (is_anvil) {
 			TAG_List sections;
 			if (chunkVer >= 2844) {// >= 21w43a
 				sections = (TAG_List) root.getElement("sections");
@@ -192,25 +278,16 @@ public class Chunk {
 				sections = (TAG_List) level.getElement("Sections");
 			}
 			if (sections == null) {
-				return new Blocks(0, 256);
+				return new BlocksContiguous(0, 256);
 			}
 			
-			int ymin = getYMin();
-			int ymax = getYMax();
-			
-			ret = new Blocks(ymin, ymax);
+			BlocksSections sectionsBlocks = new BlocksSections();
+			ret = sectionsBlocks;
 			
 			for(NBT_Tag section_t: sections.elements) {
 				TAG_Compound section = (TAG_Compound) section_t;
 				TAG_Byte yval = (TAG_Byte) section.getElement("Y");
-				
-				int base=((yval.value*16)-ymin)*16*16;
-				
-				SectionBlocks secBlocks = getSectionBlocks(section);
-				if (secBlocks != null) {
-					System.arraycopy(secBlocks.data, 0, ret.data, base, secBlocks.data.length);
-					System.arraycopy(secBlocks.biomes, 0, ret.biome, base, secBlocks.biomes.length);
-				}
+				sectionsBlocks.sectionTags.put((int) yval.value, section);
 			}
 			
 			if (chunkVer < 2834) {// < 21w37a newer biomes are in pallet format same as blocks
@@ -228,6 +305,8 @@ public class Chunk {
 				}
 				
 				if(tagBiomes!=null && tagBiomes.data.length > 0) {
+					int ymin = getYMin();
+					int ymax = getYMax();
 					for(int x = 0; x < 16; x++) {
 						for (int z = 0; z < 16; z++) {
 							for (int y = 0; y < ymax - ymin; y++) {
@@ -237,7 +316,10 @@ public class Chunk {
 								} else {
 									biome = tagBiomes.data[x+z*16];
 								}
-								ret.biome[ret.getIndex(x, y+ymin, z)] = IDConvert.convertBiome(biome);
+								int sectionIdx = sectionsBlocks.getSectionIndex(y);
+								SectionBlocks section = sectionsBlocks.sections.get(sectionIdx);
+								if (section == null) continue;
+								section.biomes[section.getIndex(x, y - sectionIdx * 16, z)] = IDConvert.convertBiome(biome);
 							}
 						}
 					}
@@ -248,9 +330,10 @@ public class Chunk {
 			TAG_Byte_Array blocks = (TAG_Byte_Array) level.getElement("Blocks");
 			TAG_Byte_Array data = (TAG_Byte_Array) level.getElement("Data");
 			
-			ret= new Blocks(0, 128);
-			short[] oldIDs = new short[ret.size];
-			byte[] oldData = new byte[ret.size];
+			BlocksContiguous contBlocks = new BlocksContiguous(0, 128);
+			ret = contBlocks;
+			short[] oldIDs = new short[contBlocks.size];
+			byte[] oldData = new byte[contBlocks.size];
 			
 			for(int i=0; i<blocks.data.length; i++)
 				oldIDs[i] = (short) Byte.toUnsignedInt(blocks.data[i]);
@@ -268,8 +351,8 @@ public class Chunk {
 				for (int z = 0; z < 16; z++) {
 					for (int y = 0; y < 128; y++) {
 						int oldInd = y+z*128+x*128*16;
-						int newInd = ret.getIndex(x, y, z);
-						ret.data[newInd] = IDConvert.convertBlock(oldIDs[oldInd], oldData[oldInd]);
+						int newInd = contBlocks.getIndex(x, y, z);
+						contBlocks.data[newInd] = IDConvert.convertBlock(oldIDs[oldInd], oldData[oldInd]);
 					}
 				}
 			}
@@ -310,7 +393,8 @@ public class Chunk {
 	}
 	
 	@CheckForNull
-	SectionBlocks getSectionBlocks(TAG_Compound section) {
+	private SectionBlocks getSectionBlocks(TAG_Compound section) {
+		if (section == null) return null;
 		SectionBlocks sectionBlocks = new SectionBlocks();
 		boolean hasData = false;
 		if (chunkVer >= 1451) {// >= 1.13/17w47a
@@ -334,6 +418,21 @@ public class Chunk {
 			data = new BlockData[size];
 			biomes = new NamespaceID[size];
 			Arrays.fill(biomes, new NamespaceID("minecraft", "plains"));//default to plains
+		}
+		
+		public BlockData getBlockData(int x, int y, int z) {
+			return data[getIndex(x, y, z)];
+		}
+		
+		public NamespaceID getBiome(int x, int y, int z) {
+			return biomes[getIndex(x, y, z)];
+		}
+		
+		private int getIndex(int x, int y, int z) {
+			if (x < 0 || x > 15 || z < 0 || z > 15 || y < 0 || y > 15) {
+				throw new IllegalArgumentException("Invalid relative section coordinate");
+			}
+			return x + (z * 16) + (y * 16 * 16);
 		}
 		
 		private long calculatePaletteIndex(int index, int bitCount, long[] dataArray) {

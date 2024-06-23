@@ -314,12 +314,14 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 			
 			int chunkFloor = viewFloor;
 			int chunkCeiling = viewCeiling;
-			if (chunkFloor > bd.ymax || chunkCeiling < bd.ymin)
+			int chunkMax = bd.getYMax();
+			int chunkMin = bd.getYMin();
+			if (chunkFloor > chunkMax || chunkCeiling < chunkMin)
 				return null;
-			if (chunkFloor < bd.ymin)
-				chunkFloor = bd.ymin;
-			if (chunkCeiling > bd.ymax + 1)
-				chunkCeiling = bd.ymax + 1;
+			if (chunkFloor < chunkMin)
+				chunkFloor = chunkMin;
+			if (chunkCeiling > chunkMax + 1)
+				chunkCeiling = chunkMax + 1;
 			if(chunkFloor >= chunkCeiling)
 				chunkFloor = chunkCeiling - 1;
 			
