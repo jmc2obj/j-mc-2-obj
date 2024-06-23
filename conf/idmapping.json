@@ -2,6 +2,7 @@
   "blocks": {
     "0": "minecraft:air",
     "1": {
+      "id": "minecraft:stone",
       "dataValues": {
         "0": "minecraft:stone",
         "1": "minecraft:granite",
