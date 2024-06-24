@@ -9,19 +9,13 @@ import org.jmc.threading.ThreadOutputQueue.ChunkOutput;
 import org.jmc.util.Log;
 
 public class ReaderRunnable implements Runnable {
-	private ChunkDataBuffer chunkBuffer;
-	private ThreadChunkDeligate chunkDeligate;
-	private Point chunkStart;
-	private Point chunkEnd;
-	private ThreadInputQueue inputQueue;
-	private ThreadOutputQueue outputQueue;
+	private final ThreadChunkDeligate chunkDeligate;
+	private final ThreadInputQueue inputQueue;
+	private final ThreadOutputQueue outputQueue;
 	
-	public ReaderRunnable(ChunkDataBuffer chunk_buffer, Point chunkStart, Point chunkEnd, ThreadInputQueue inQueue, ThreadOutputQueue outQueue) {
+	public ReaderRunnable(ChunkDataBuffer chunk_buffer, ThreadInputQueue inQueue, ThreadOutputQueue outQueue) {
 		super();
-		this.chunkBuffer = chunk_buffer;
 		this.chunkDeligate = new ThreadChunkDeligate(chunk_buffer);
-		this.chunkStart = chunkStart;
-		this.chunkEnd = chunkEnd;
 		this.inputQueue = inQueue;
 		this.outputQueue = outQueue;
 	}

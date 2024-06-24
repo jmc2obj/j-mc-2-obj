@@ -154,7 +154,7 @@ public class ObjExporter {
 			Log.info("Processing chunks...");
 			
 			for (int i = 0; i < Options.exportThreads; i++) {
-				Thread thread = new Thread(new ReaderRunnable(chunk_buffer, cs, ce, inputQueue, outputQueue));
+				Thread thread = new Thread(new ReaderRunnable(chunk_buffer, inputQueue, outputQueue));
 				thread.setName("ReadThread-" + i);
 				thread.setPriority(Thread.NORM_PRIORITY - 1);
 				threads.add(thread);
