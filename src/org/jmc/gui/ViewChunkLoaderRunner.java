@@ -120,7 +120,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 					if (Thread.interrupted()) {
 						return;
 					}
-					if (chunksToDo.get() == 0 && !drawn) {
+					if (chunksToDo.get() == 0 && !drawn || preview.chunksDirty) {
 						preview.redraw(preview.fastrendermode);
 						drawn = true;
 					}
@@ -331,8 +331,8 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 			for(int z = 0; z < 16; z++) {
 				for(int x = 0; x < 16; x++) {
 					for(int y = chunkCeiling; y >= chunkFloor; y--) {
-						NamespaceID blockBiome = bd.getBiome(x, y, z);
 						BlockData blockData = bd.getBlockData(x, y, z);
+						NamespaceID blockBiome = bd.getBiome(x, y, z);
 						
 						if(blockData != null && !blockData.getInfo().getOcclusion().equals(BlockInfo.Occlusion.NONE)) {
 							topBlocks[z*16+x] = new BlockDataPos(new BlockPos(x, y, z), blockData, blockBiome);

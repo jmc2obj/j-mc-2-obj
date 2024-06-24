@@ -75,7 +75,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Back buffers used for drawing the preview.
 	 */
-	private BufferedImage main_img,height_img;
+	private final BufferedImage main_img, height_img;
 
 	/**
 	 * Font used in the preview.
@@ -104,8 +104,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * @author danijel
 	 *
 	 */
-	class ChunkImage
-	{
+	static class ChunkImage {
 		public BufferedImage image;
 		public BufferedImage height_map;
 		public int x, y;
@@ -117,8 +116,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * @author danijel
 	 *
 	 */
-	class MapMarker
-	{
+	static class MapMarker {
 		int x, z;
 		Color color;
 	}
@@ -126,11 +124,12 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Collection of chunks.
 	 */
-	private Vector<ChunkImage> chunks;
+	private final Vector<ChunkImage> chunks;
+	public volatile boolean chunksDirty = true;
 	/**
 	 * Collection of markers.
 	 */
-	private Vector<MapMarker> markers;
+	private final Vector<MapMarker> markers;
 
 	/**
 	 * Main constructor.
@@ -156,7 +155,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		gui_font=new Font("Verdana",Font.BOLD,10); 
 		gui_color=Color.white;
 		gui_bg_color=Color.black;
-		gui_bg_alpha=0.3f;		
+		gui_bg_alpha=0.3f;
 		gui_text=new Vector<String>();
 
 	}
@@ -274,6 +273,12 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		int win_w=getWidth();
 		int win_h=getHeight();
 		
+		Vector<ChunkImage> chunksSnapshot;
+		synchronized (chunks) {
+			chunksSnapshot = (Vector<ChunkImage>)chunks.clone();
+			chunksDirty = false;
+		}
+		
 		synchronized (main_img) {
 			Graphics2D mg=main_img.createGraphics();
 			if(!fast)
@@ -288,23 +293,19 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 				hg.setColor(Color.black);
 				hg.clearRect(0, 0, win_w, win_h);
 			}
+			
 			BufferedImage ckln=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D cklng = ckln.createGraphics();
+			
+			for (ChunkImage chunk : chunksSnapshot) {
+				redrawChunk(chunk, fast, cklng);
+			}
 
-			synchronized (chunks) {
-				for(ChunkImage chunk:chunks)
-				{
-					redrawChunk(chunk, fast, cklng);
-				}		
-			}					
-
-			if(!fast)
-			{
+			if(!fast) {
 				WritableRaster height_raster = height_img.getRaster();
 				int h,oh;
-				for(int x=0; x<win_w; x++)
-					for(int y=0; y<win_h; y++)
-					{
+				for(int x=0; x<win_w; x++) {
+					for(int y=0; y<win_h; y++) {
 						h=height_raster.getSample(x, y, 0);
 						if(x<(win_w-1) && y<(win_h-1)) oh=height_raster.getSample(x+1, y+1, 0);
 						else oh=h;
@@ -315,10 +316,11 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 						height_raster.setSample(x, y, 0, h);
 					}
+				}
 				mg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
 				mg.drawImage(height_img,0,0,null);
 			}
-			if(showchunks)
+			if (showchunks)
 				mg.drawImage(ckln, 0, 0, null);
 
 		}
@@ -327,8 +329,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Draws a single chunk.
 	 */
-	private void redrawChunk(ChunkImage chunk, boolean fast, Graphics2D cklng)
-	{
+	private void redrawChunk(ChunkImage chunk, boolean fast, Graphics2D cklng) {
 		int win_w=getWidth();
 		int win_h=getHeight();
 
@@ -360,9 +361,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 * @param x x location of the chunk on the screen
 	 * @param y y location of the chunk on the screen
 	 */
-	public void addImage(BufferedImage img, BufferedImage height, int x, int y, BlockDataPos[] topBlocks)
-	{		
-		ChunkImage chunk=new ChunkImage();
+	public void addImage(BufferedImage img, BufferedImage height, int x, int y, BlockDataPos[] topBlocks) {
+		ChunkImage chunk= new ChunkImage();
 		chunk.image=img;
 		chunk.height_map=height;
 		chunk.x=x;
@@ -371,7 +371,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		synchronized (chunks) {
 			chunks.add(chunk);
 		}
-		redrawChunk(chunk, true, null);
+		chunksDirty = true;
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	 */
 	public void addMarker(int x, int z, Color color)
 	{
-		MapMarker marker=new MapMarker();
+		MapMarker marker= new MapMarker();
 		marker.x=x;
 		marker.z=z;
 		marker.color=color;
@@ -471,12 +471,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		float ratio=zoom_level/old_zoom_level;
 
 		shift_x-=(x-x/ratio)/old_zoom_level;
-		shift_y-=(y-y/ratio)/old_zoom_level;			
-
-		if(!fastrendermode)
-			redraw(false);
-		else
-			redraw(true);
+		shift_y-=(y-y/ratio)/old_zoom_level;
+		
+		redraw(fastrendermode);
 		repaint();
 
 	}
