@@ -75,7 +75,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	/**
 	 * Back buffers used for drawing the preview.
 	 */
-	private final BufferedImage main_img, height_img;
+	private BufferedImage main_img;
 
 	/**
 	 * Font used in the preview.
@@ -137,7 +137,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	public PreviewPanel() {
 
 		main_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
-		height_img=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
 
 		setMaximumSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
 
@@ -152,7 +151,7 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
 
-		gui_font=new Font("Verdana",Font.BOLD,10); 
+		gui_font=new Font("Noto Sans JMC Combined",Font.BOLD,10);
 		gui_color=Color.white;
 		gui_bg_color=Color.black;
 		gui_bg_alpha=0.3f;
@@ -168,10 +167,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setFont(gui_font);
-
-		synchronized (main_img) {
-			g2d.drawImage(main_img, 0, 0, null);
-		}		
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		
+		g2d.drawImage(main_img, 0, 0, null);
 
 		for(MapMarker marker:markers)
 		{
@@ -234,7 +232,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			screen_ez=-1;
 		}
 
-
 		g2d.setComposite(AlphaComposite.getInstance (AlphaComposite.SRC_OVER,gui_bg_alpha));
 		gui_text.clear();
 		gui_text.add(zoom_level+"x"); 
@@ -242,12 +239,6 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 		gui_text.add(Messages.getString("PreviewPanel.SELECTION")); 
 		gui_text.add("("+selection_start_x+","+selection_start_z+")");  //$NON-NLS-2$ //$NON-NLS-3$
 		gui_text.add("("+selection_end_x+","+selection_end_z+")");  //$NON-NLS-2$ //$NON-NLS-3$
-		
-		//Commented these out because this information is now in a JSpinner on MainPanel
-		//gui_text.add(Messages.getString("PreviewPanel.FLOOR")+alt_floor); 
-		//gui_text.add(Messages.getString("PreviewPanel.CEILING")+alt_ceil); 
-
-
 
 		g2d.setColor(gui_bg_color);
 		g2d.fillRect(0, 0, 100, 130+gui_text.size()*(fh+5));
@@ -272,6 +263,8 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 	{
 		int win_w=getWidth();
 		int win_h=getHeight();
+		BufferedImage new_main_img = new BufferedImage(win_w, win_h, BufferedImage.TYPE_INT_RGB);
+		BufferedImage height_img = new BufferedImage(win_w, win_h, BufferedImage.TYPE_BYTE_GRAY);
 		
 		Vector<ChunkImage> chunksSnapshot;
 		synchronized (chunks) {
@@ -279,57 +272,60 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			chunksDirty = false;
 		}
 		
-		synchronized (main_img) {
-			Graphics2D mg=main_img.createGraphics();
-			if(!fast)
-				mg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			mg.setColor(Color.black);
-			mg.clearRect(0, 0, win_w, win_h);
+		Graphics2D mg=new_main_img.createGraphics();
+		if(!fast)
+			mg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		mg.setColor(Color.black);
+		mg.clearRect(0, 0, win_w, win_h);
 
-			Graphics2D hg=height_img.createGraphics();
-			if(!fast)
-			{
-				hg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-				hg.setColor(Color.black);
-				hg.clearRect(0, 0, win_w, win_h);
-			}
-			
-			BufferedImage ckln=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D cklng = ckln.createGraphics();
-			
-			for (ChunkImage chunk : chunksSnapshot) {
-				redrawChunk(chunk, fast, cklng);
-			}
-
-			if(!fast) {
-				WritableRaster height_raster = height_img.getRaster();
-				int h,oh;
-				for(int x=0; x<win_w; x++) {
-					for(int y=0; y<win_h; y++) {
-						h=height_raster.getSample(x, y, 0);
-						if(x<(win_w-1) && y<(win_h-1)) oh=height_raster.getSample(x+1, y+1, 0);
-						else oh=h;
-
-						h=h+50+(oh-h)*20;
-						if(h<0) h=0;
-						if (h>255) h=255;
-
-						height_raster.setSample(x, y, 0, h);
-					}
-				}
-				mg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-				mg.drawImage(height_img,0,0,null);
-			}
-			if (showchunks)
-				mg.drawImage(ckln, 0, 0, null);
-
+		Graphics2D hg=height_img.createGraphics();
+		if(!fast)
+		{
+			hg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			hg.setColor(Color.black);
+			hg.clearRect(0, 0, win_w, win_h);
 		}
+		
+		BufferedImage ckln=new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D cklng = ckln.createGraphics();
+		
+		for (ChunkImage chunk : chunksSnapshot) {
+			redrawChunk(chunk, fast, new_main_img, height_img, cklng);
+		}
+
+		if(!fast) {
+			WritableRaster height_raster = height_img.getRaster();
+			int h, oh;
+			for (int x = 0; x < win_w; x++) {
+				for (int y = 0; y < win_h; y++) {
+					h = height_raster.getSample(x, y, 0);
+					if (x < (win_w - 1) && y < (win_h - 1)) {
+						oh = height_raster.getSample(x + 1, y + 1, 0);
+					} else {
+						oh = h;
+					}
+
+					h = h + 50 + (oh - h) * 20;
+					if (h < 0) h = 0;
+					if (h > 255) h = 255;
+
+					height_raster.setSample(x, y, 0, h);
+				}
+			}
+			mg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+			mg.drawImage(height_img,0,0,null);
+		}
+		if (showchunks)
+			mg.drawImage(ckln, 0, 0, null);
+		
+		main_img = new_main_img;
+		
 	}
 
 	/**
 	 * Draws a single chunk.
 	 */
-	private void redrawChunk(ChunkImage chunk, boolean fast, Graphics2D cklng) {
+	private void redrawChunk(ChunkImage chunk, boolean fast, BufferedImage color_img, BufferedImage height_img, Graphics2D cklng) {
 		int win_w=getWidth();
 		int win_h=getHeight();
 
@@ -346,12 +342,9 @@ public class PreviewPanel extends JPanel implements MouseMotionListener, MouseWh
 			cklng.drawLine(x+w, y, x+w, y+h);
 		}
 
-		synchronized (main_img) {
-			Graphics2D mg=main_img.createGraphics();
-			mg.drawImage(chunk.image, x, y, w, h, null);
-			if(!fast)
-				height_img.createGraphics().drawImage(chunk.height_map, x, y, w, h, null);
-		}
+		color_img.createGraphics().drawImage(chunk.image, x, y, w, h, null);
+		if(!fast)
+			height_img.createGraphics().drawImage(chunk.height_map, x, y, w, h, null);
 	}
 	
 	/**

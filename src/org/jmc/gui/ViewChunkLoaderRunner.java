@@ -175,7 +175,7 @@ public class ViewChunkLoaderRunner implements ChunkLoaderRunner {
 					}
 				}
 				
-				preview.redraw(true);
+				preview.redraw(preview.fastrendermode);
 				preview.repaint();
 				
 				
