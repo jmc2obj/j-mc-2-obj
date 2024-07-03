@@ -33,7 +33,7 @@ public class Banner extends BlockModel {
      * Pattern Layer List
      * */
 
-    private static Set<NamespaceID> exportedMaterials = new HashSet<>();
+    private static final Set<NamespaceID> exportedMaterials = new HashSet<>();
 
 	private static boolean firstReadError = true;
     /**
@@ -41,27 +41,27 @@ public class Banner extends BlockModel {
      */
     public static class BannerPattern {
 
-        private int color = 0;
-        private String pattern = "";
+        private String color = "white";
+        private NamespaceID pattern = NamespaceID.fromString("base");
 
-        public int getColor() {
+        public String getColor() {
             return color;
         }
 
-        public void setColor(int color) {
+        public void setColor(String color) {
             this.color = color;
         }
 
-        public String getPattern() {
+        public NamespaceID getPattern() {
             return pattern;
         }
 
-        public void setPattern(String pattern) {
+        public void setPattern(NamespaceID pattern) {
             this.pattern = pattern;
         }
 
         public String toString() {
-            return this.pattern + this.color;
+            return this.pattern.path + "_" + this.color;
         }
     }
 
@@ -69,23 +69,20 @@ public class Banner extends BlockModel {
      * Creates a uniq string for combination of patterns
      * @return
      */
-    private String createPatternHash(int baseColorIndex, ArrayList<BannerPattern> patternList) {
-        String hashSource = "";// + baseColorIndex + "";
+    private String createPatternHash(ArrayList<BannerPattern> patternList) {
+        StringBuilder hashSource = new StringBuilder();
         int count = 0;
         for (BannerPattern bp : patternList) {
             if (count++ != 0) {
-                hashSource += "-";
+                hashSource.append("-");
             }
-            hashSource += bp.toString();
+            hashSource.append(bp.toString());
         }
-        return hashSource;
+        return hashSource.toString();
     }
 
     @Override
     public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
-
-        //Log.info("Banner ***************************");
-
 
         // get banner type from block config
         String bannerType = getConfigNodeValue("bannertype", 0);
@@ -142,70 +139,63 @@ public class Banner extends BlockModel {
                 }
         };
 
-        int baseColorIndex = -1;
         ArrayList<BannerPattern> patternList = new ArrayList<BannerPattern>();
-        
-    	String bid = data.id.path;
-    	if (bid.startsWith("white"))
-    		baseColorIndex = 0;
-    	else if (bid.startsWith("orange"))
-    		baseColorIndex = 1;
-    	else if (bid.startsWith("magenta"))
-    		baseColorIndex = 2;
-    	else if (bid.startsWith("light_blue"))
-    		baseColorIndex = 3;
-    	else if (bid.startsWith("yellow"))
-    		baseColorIndex = 4;
-    	else if (bid.startsWith("lime"))
-    		baseColorIndex = 5;
-    	else if (bid.startsWith("pink"))
-    		baseColorIndex = 6;
-    	else if (bid.startsWith("gray"))
-    		baseColorIndex = 7;
-    	else if (bid.startsWith("light_gray"))
-    		baseColorIndex = 8;
-    	else if (bid.startsWith("cyan"))
-    		baseColorIndex = 9;
-    	else if (bid.startsWith("purple"))
-    		baseColorIndex = 10;
-    	else if (bid.startsWith("blue"))
-    		baseColorIndex = 11;
-    	else if (bid.startsWith("brown"))
-    		baseColorIndex = 12;
-    	else if (bid.startsWith("green"))
-    		baseColorIndex = 13;
-    	else if (bid.startsWith("red"))
-    		baseColorIndex = 14;
-    	else if (bid.startsWith("black"))
-    		baseColorIndex = 15;
-
-        // base Color
+		
+		String baseColor;
+		String bid = data.id.path;
+		if (bid.endsWith("_standing_banner")) {
+			baseColor = bid.replace("_standing_banner", "");
+		} else if (bid.endsWith("_wall_banner")) {
+			baseColor = bid.replace("_wall_banner", "");
+		} else if (bid.endsWith("_banner")) {
+			baseColor = bid.replace("_banner", "");
+		} else {
+			Log.debugOnce("Unable to get base banner color from id! " + bid);
+			baseColor = "white";
+		}
+		
+		// base Color
         BannerPattern bpBase = new BannerPattern();
-        bpBase.setColor(baseColorIndex);
-        bpBase.setPattern("base");
+        bpBase.setColor(baseColor);
+        bpBase.setPattern(NamespaceID.fromString("base"));
         patternList.add(bpBase);
 
         // get banner layer information
         TAG_Compound tag = chunks.getTileEntity(x, y, z);
-	    if (tag != null) {
-            TAG_List patternsTag = (TAG_List) tag.getElement("Patterns");
-
-            if (patternsTag != null) {
-                for (NBT_Tag pattern : patternsTag.elements) {
-                    TAG_Compound c_pattern = (TAG_Compound) pattern;
-                    BannerPattern bp = new BannerPattern();
-                    bp.setColor((int) ((TAG_Int) c_pattern.getElement("Color")).value);
-                    bp.setPattern((String) ((TAG_String) c_pattern.getElement("Pattern")).value);
-                    patternList.add(bp);
-                }
-            }
-        }
+		if (tag != null) {
+			TAG_List patternsTag = (TAG_List) tag.getElement("patterns");
+			if (patternsTag == null) {
+				patternsTag = (TAG_List) tag.getElement("Patterns");
+			}
+			if (patternsTag != null) {
+				for (NBT_Tag pattern : patternsTag.elements) {
+					TAG_Compound c_pattern = (TAG_Compound) pattern;
+					BannerPattern bp = new BannerPattern();
+					
+					NBT_Tag colorTag = c_pattern.getElement("color");
+					if (colorTag != null) {
+						bp.setColor(((TAG_String) colorTag).value);
+					} else {
+						int colorId = ((TAG_Int) c_pattern.getElement("Color")).value;
+						bp.setColor(colorIdToName(colorId));
+					}
+					
+					TAG_String patternTag = (TAG_String) c_pattern.getElement("pattern");
+					if (patternTag != null) {
+						bp.setPattern(NamespaceID.fromString(patternTag.value));
+					} else {
+						patternTag = (TAG_String) c_pattern.getElement("Pattern");
+						// put old name patterns under jmc to be picked up later
+						bp.setPattern(new NamespaceID("jmc2obj", patternTag.value));
+					}
+					
+					patternList.add(bp);
+				}
+			}
+		}
 
         // use material hash (to generate unique material name and images)
-        String bannerTexName = "banner_";
-        if (baseColorIndex > -1) {
-            bannerTexName+= createPatternHash(baseColorIndex, patternList);
-        }
+        String bannerTexName = "banner_" + createPatternHash(patternList);
         NamespaceID bannerTexId = new NamespaceID("jmc2obj", "banner/" + bannerTexName);
 
 
@@ -242,9 +232,6 @@ public class Banner extends BlockModel {
             return false;
         }
 		if (backgroundImage == null) return false;
-		
-        // todo - do something with the basecolor here...
-        // Log.info(" - Base Color: " + baseColorIndex);
 
         // create a new image (this one is the target!)
         BufferedImage combined = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -258,7 +245,14 @@ public class Banner extends BlockModel {
             // pattern source image
             BufferedImage patternSource;
             try {
-            	TextureEntry te = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + bp.getPattern()));
+				TextureEntry te;
+				NamespaceID patternName = bp.getPattern();
+				if (patternName.namespace.equals("jmc2obj")) {
+					// old style pattern names get found by textures.json source id override
+					te = Registries.getTexture(new NamespaceID("jmc2obj", "banner/pattern_" + patternName.path));
+				} else {
+					te = Registries.getTexture(new NamespaceID("minecraft", "entity/banner/" + patternName.path));
+				}
 				if (te == null) return false;
             	patternSource = te.getImage();
             } catch (IOException e) {
@@ -270,7 +264,7 @@ public class Banner extends BlockModel {
             BufferedImage patternImage = new BufferedImage(patternSource.getWidth(), patternSource.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
             // draw into layer..
-            Color layerColor = getColorById(bp.getColor());
+            Color layerColor = getColorByName(bp.getColor());
             float layerComps[] = layerColor.getComponents(null);
             
             for(int x=0; x<patternSource.getWidth(); x++) {
@@ -315,33 +309,62 @@ public class Banner extends BlockModel {
     }
 
     /**
-     * Banner Pattern colorId to rgb
-     * @param colorId
-     * @return
+     * Banner Pattern colorName to rgb
+     * @param colorName
+     * @return the Color for the color name
      */
-    private Color getColorById(int colorId) {
-        Color mappedColor = new Color(0, 0, 0);
-
-        switch(colorId) {
-			case 0: mappedColor = new Color(255, 255, 255); break;//White
-			case 1: mappedColor = new Color(216, 127, 51); break;//Orange
-			case 2: mappedColor = new Color(178, 76, 216); break;//Magenta
-			case 3: mappedColor = new Color(80, 153, 216); break;//Light Blue
-			case 4: mappedColor = new Color(229, 200, 51); break;//Yellow
-			case 5: mappedColor = new Color(120, 190, 23); break;//Lime
-			case 6: mappedColor = new Color(242, 127, 165); break;//Pink
-			case 7: mappedColor = new Color(76, 76, 76); break;//Grey
-			case 8: mappedColor = new Color(153, 153, 153); break;//Light Grey
-			case 9: mappedColor = new Color(76, 127, 153); break;//Cyan
-			case 10: mappedColor = new Color(127, 63, 178); break;//Purple
-			case 11: mappedColor = new Color(51, 76, 178); break;//Blue
-			case 12: mappedColor = new Color(102, 76, 51); break;//Brown
-			case 13: mappedColor = new Color(102, 127, 51); break;//Green
-			case 14: mappedColor = new Color(153, 51, 51); break;//Red
-			case 15: mappedColor = new Color(0, 0, 0); break;//Blacke
-        }
-        return mappedColor;
-    }
+    private Color getColorByName(String colorName) {
+        switch(colorName) {
+			case "white": return new Color(255, 255, 255);
+			case "orange": return new Color(216, 127, 51);
+			case "magenta": return new Color(178, 76, 216);
+			case "light_blue": return new Color(80, 153, 216);
+			case "yellow": return new Color(229, 200, 51);
+			case "lime": return new Color(120, 190, 23);
+			case "pink": return new Color(242, 127, 165);
+			case "gray": return new Color(76, 76, 76);
+			case "light_gray": return new Color(153, 153, 153);
+			case "cyan": return new Color(76, 127, 153);
+			case "purple": return new Color(127, 63, 178);
+			case "blue": return new Color(51, 76, 178);
+			case "brown": return new Color(102, 76, 51);
+			case "green": return new Color(102, 127, 51);
+			case "red": return new Color(153, 51, 51);
+			case "black": return new Color(0, 0, 0);
+			default:
+				Log.errorOnce("Unknown banner color " + colorName, null, false);
+				return new Color(255, 0, 0);
+		}
+	}
+	
+	/**
+	 * Banner Pattern colorId to name
+	 * @param colorId
+	 * @return name of the color id
+	 */
+	private String colorIdToName(int colorId) {
+		switch(colorId) {
+			case 0: return "white";
+			case 1: return "orange";
+			case 2: return "magenta";
+			case 3: return "light_blue";
+			case 4: return "yellow";
+			case 5: return "lime";
+			case 6: return "pink";
+			case 7: return "gray";
+			case 8: return "light_gray";
+			case 9: return "cyan";
+			case 10: return "purple";
+			case 11: return "blue";
+			case 12: return "brown";
+			case 13: return "green";
+			case 14: return "red";
+			case 15: return "black";
+			default:
+				Log.errorOnce("Unknown banner colorID " + colorId, null, false);
+				return "black";
+		}
+	}
 
     /**
      * Add Banner to Outputfile
