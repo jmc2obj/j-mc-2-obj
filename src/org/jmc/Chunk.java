@@ -307,19 +307,20 @@ public class Chunk {
 				if(tagBiomes!=null && tagBiomes.data.length > 0) {
 					int ymin = getYMin();
 					int ymax = getYMax();
-					for(int x = 0; x < 16; x++) {
+					for(int y = 0; y < ymax - ymin; y++) {
+						int sectionIdx = sectionsBlocks.getSectionIndex(y);
+						SectionBlocks section = sectionsBlocks.sections.get(sectionIdx);
+						if (section == null) continue;
+						int yInSection = y - sectionIdx * 16;
 						for (int z = 0; z < 16; z++) {
-							for (int y = 0; y < ymax - ymin; y++) {
+							for (int x = 0; x < 16; x++) {
 								int biome;
 								if (chunkVer >= 2203) {// >= 19w36a
 									biome = tagBiomes.data[x/4 + (z/4)*4 + (y/4)*4*4];
 								} else {
 									biome = tagBiomes.data[x+z*16];
 								}
-								int sectionIdx = sectionsBlocks.getSectionIndex(y);
-								SectionBlocks section = sectionsBlocks.sections.get(sectionIdx);
-								if (section == null) continue;
-								section.biomes[section.getIndex(x, y - sectionIdx * 16, z)] = IDConvert.convertBiome(biome);
+								section.biomes[section.getIndex(x, yInSection, z)] = IDConvert.convertBiome(biome);
 							}
 						}
 					}
@@ -567,12 +568,14 @@ public class Chunk {
 				
 				String biomeName = ((TAG_String) tagBiomePalette.elements[(int) biomePid]).value;
 				NamespaceID biome = NamespaceID.fromString(biomeName);
+				int baseInd = ((i%4)*4) + ((i/4)*16*4)%(16*16) + ((i/(4*4))*16*16*4);
 				//Copy biome into 4x4x4 cube
-				for (int x = 0; x < 4; x++) {
-					for (int y = 0; y < 4; y++) {
-						for (int z = 0; z< 4; z++) {
-							int baseInd = ((i%4)*4) + ((i/4)*16*4)%(16*16) + ((i/(4*4))*16*16*4);
-							int index = baseInd + (x + z*16 + y*16*16);
+				for (int y = 0; y < 4; y++) {
+					int yOffset = y * 16 * 16;
+					for (int z = 0; z < 4; z++) {
+						int zOffset = z * 16;
+						for (int x = 0; x < 4; x++) {
+							int index = baseInd + x + zOffset + yOffset;
 							biomes[index] = biome;
 						}
 					}
