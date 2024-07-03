@@ -1,5 +1,6 @@
 package org.jmc.models;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 
@@ -125,11 +127,8 @@ public class Head extends BlockModel
 		TAG_Compound te = chunks.getTileEntity(x, y, z);
 		
 		if (te != null) {
-			NBT_Tag skullOwnerNbt = te.getElement("SkullOwner");
-			if (skullOwnerNbt instanceof TAG_Compound) {
-				addPlayerHead(obj, rt, (TAG_Compound)skullOwnerNbt, mtlSides[0]);
-				return;
-			}
+			addPlayerHead(obj, rt, te, mtlSides[0]);
+			return;
 		}
 		String headType = getConfigNodeValue("headtype", 0);
 		if (headType != null && headType.equals("MobHalfTex")) {
@@ -146,32 +145,54 @@ public class Head extends BlockModel
 			addHead(obj, rt, mtlSides[0]);
 		}
 	}
-
+	
 	@ParametersAreNonnullByDefault
-	public static void addPlayerHead(ChunkProcessor obj, Transform rt, TAG_Compound skullOwnerTag, @CheckForNull NamespaceID texID) {
+	public static void addPlayerHead(ChunkProcessor obj, Transform rt, @CheckForNull TAG_Compound headNbt, @CheckForNull NamespaceID texID) {
 		if (texID == null) {
 			texID = NamespaceID.fromString("entity/player/wide/steve");
 		}
-		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
-		if (textureB64 != null) {
-			NBT_Tag nameNbt = skullOwnerTag.getElement("Name");
-			String name;
-			if (nameNbt != null) {
-				name = ((TAG_String)nameNbt).value;
-			} else {
-				String url = extractSkullOwnerTextureUrl(textureB64);
-				name = url.substring(url.lastIndexOf('/') + 1);
-			}
-			texID = new NamespaceID("jmc2obj", "head/player_" + name);
-			synchronized (addedMaterials) {
-				if (!addedMaterials.contains(texID)) {
-					Log.info("Downloading new player head texture: " + texID);
-					if (exportSkullOwnerTexture(skullOwnerTag, texID))
-						addedMaterials.add(texID);
+		if (headNbt != null) {
+			String texDataB64 = null;
+			String name = null;
+			NBT_Tag skullOwnerNbt = headNbt.getElement("SkullOwner");
+			NBT_Tag profileNbt = headNbt.getElement("profile");
+			if (skullOwnerNbt instanceof TAG_Compound) {
+				TAG_Compound skullOwner = (TAG_Compound) skullOwnerNbt;
+				texDataB64 = getSkullOwnerTexDataValue(skullOwner);
+				NBT_Tag nameNbt = skullOwner.getElement("Name");
+				if (nameNbt != null) {
+					name = ((TAG_String) nameNbt).value;
 				}
+			} else if (profileNbt instanceof TAG_Compound) {
+				TAG_Compound profile = (TAG_Compound) profileNbt;
+				texDataB64 = getProfileTexDataValue(profile);
+				NBT_Tag nameNbt = profile.getElement("name");
+				if (nameNbt != null) {
+					name = ((TAG_String) nameNbt).value;
+				}
+			}
+			if (texDataB64 != null) {
+				texID = getPlayerTexture(texDataB64, name);
 			}
 		}
 		addHead(obj, rt, texID);
+	}
+	
+	private static @Nonnull NamespaceID getPlayerTexture(String texDataB64, @CheckForNull String name) {
+		NamespaceID texID;
+		String url = extractPlayerTextureUrl(texDataB64);
+		if (name == null) {
+			name = url.substring(url.lastIndexOf('/') + 1);
+		}
+		texID = new NamespaceID("jmc2obj", "head/player_" + name);
+		synchronized (addedMaterials) {
+			if (!addedMaterials.contains(texID)) {
+				Log.info("Downloading new player head texture: " + texID);
+				if (exportPlayerTexture(url, texID))
+					addedMaterials.add(texID);
+			}
+		}
+		return texID;
 	}
 	
 	public static void addHead(ChunkProcessor obj, Transform t, NamespaceID texID) {
@@ -190,7 +211,7 @@ public class Head extends BlockModel
 		objFile.addObjectToOutput(myObjGroup, t, obj, false);
 	}
 
-	private static String extractSkullOwnerTextureUrl(String textureB64) {
+	private static String extractPlayerTextureUrl(String textureB64) {
 		String textureStr = new String(Base64.getDecoder().decode(textureB64));
 		try {
 			JsonElement textureJson = JsonParser.parseString(textureStr);
@@ -199,22 +220,13 @@ public class Head extends BlockModel
 			Log.error("Couldn't read head SkullOwner texture JSON", e, false);
 			return "";
 		}
-
 	}
 
-	private static boolean exportSkullOwnerTexture(TAG_Compound skullOwnerTag, NamespaceID texId) {
-		String textureB64 = getSkullOwnerTextureValue(skullOwnerTag);
-		if (textureB64 == null) {
-			Log.error("Couldn't read SkullOwner properties!", null, false);
-			return false;
-		}
-
-		String textureUrl = extractSkullOwnerTextureUrl(textureB64);
-
+	private static boolean exportPlayerTexture(String textureUrl, NamespaceID texId) {
 		try (InputStream inputStream = new URL(textureUrl).openStream()) {
 			BufferedImage texture = ImageIO.read(inputStream);
 			if (texture.getHeight() == 32) { // Expand old 32px high player textures to new 64px size
-				Log.debug("Expanding "+texId+" from 32px to 64px");
+				Log.debug("Expanding "+texId+" height from 32px to 64px");
 				BufferedImage expandedTex = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
 				expandedTex.getGraphics().drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
 				texture = expandedTex;
@@ -231,7 +243,21 @@ public class Head extends BlockModel
 		}
 	}
 	
-	private static String getSkullOwnerTextureValue(TAG_Compound skullOwnerTag) {
+	private static String getProfileTexDataValue(TAG_Compound profileTag) {
+		NBT_Tag propertiesNbt = profileTag.getElement("properties");
+		if (propertiesNbt instanceof TAG_List) {
+			NBT_Tag propertyNbt = ((TAG_List)propertiesNbt).getElement(0);
+			if (propertyNbt instanceof TAG_Compound) {
+				NBT_Tag valueNbt = ((TAG_Compound) propertyNbt).getElement("value");
+				if (valueNbt instanceof TAG_String) {
+					return ((TAG_String)valueNbt).value;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static String getSkullOwnerTexDataValue(TAG_Compound skullOwnerTag) {
 		NBT_Tag propertiesNbt = skullOwnerTag.getElement("Properties");
 		if (propertiesNbt instanceof TAG_Compound) {
 			NBT_Tag texturesNbt = ((TAG_Compound)propertiesNbt).getElement("textures");

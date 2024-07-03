@@ -109,17 +109,9 @@ public class ArmorStand extends Entity {
 			};
 			
 			if (item_id.equals(new NamespaceID("minecraft", "player_head"))) {
-				NBT_Tag skullOwnerNbt;
-				if (tag != null) {
-					skullOwnerNbt = tag.getElement("SkullOwner");
-				} else {
-					skullOwnerNbt = new TAG_Compound("SkullOwner");
-				}
-				if (skullOwnerNbt instanceof TAG_Compound) {
-					Transform t = getTranslate(entity, 0, 1.64f, 0, 1).multiply(getRotate(entity, 180));
-					Head.addPlayerHead(obj, t, (TAG_Compound)skullOwnerNbt, null);
-					continue;
-				}
+				Transform t = getTranslate(entity, 0, 1.64f, 0, 1).multiply(getRotate(entity, 180));
+				Head.addPlayerHead(obj, t, tag, null);
+				continue;
 			}
 			
 			// base material
