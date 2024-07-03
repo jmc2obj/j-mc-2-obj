@@ -228,7 +228,26 @@ public class Head extends BlockModel
 			if (texture.getHeight() == 32) { // Expand old 32px high player textures to new 64px size
 				Log.debug("Expanding "+texId+" height from 32px to 64px");
 				BufferedImage expandedTex = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-				expandedTex.getGraphics().drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
+				Graphics2D expandedGraphics = expandedTex.createGraphics();
+				expandedGraphics.drawImage(texture, 0, 0, 64, 32, 0, 0, 64, 32, null);
+				
+				// Fix old skins that have opaque black pixels in the hat area (Notch)
+				boolean blackHat = true;
+				for (int x = 32; x < 64 && blackHat; x++) {
+					for (int y = 0; y < 16; y++) {
+						Color pixel = new Color(texture.getRGB(x, y), true);
+						if (pixel.getRed() != 0 || pixel.getGreen() != 0 || pixel.getBlue() != 0 || pixel.getAlpha() != 255) {
+							blackHat = false;
+							break;
+						}
+					}
+				}
+				if (blackHat) {
+					expandedGraphics.setColor(new Color(0,0,0,0));
+					expandedGraphics.setComposite(AlphaComposite.Src);
+					expandedGraphics.fillRect(32, 0, 32, 16);
+				}
+				
 				texture = expandedTex;
 			}
 			TextureEntry texEntry = Registries.getTexture(texId);
