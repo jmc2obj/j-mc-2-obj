@@ -181,8 +181,11 @@ public class Head extends BlockModel
 	private static @Nonnull NamespaceID getPlayerTexture(String texDataB64, @CheckForNull String name) {
 		NamespaceID texID;
 		String url = extractPlayerTextureUrl(texDataB64);
-		if (name == null) {
-			name = url.substring(url.lastIndexOf('/') + 1);
+		String skinID = url.substring(url.lastIndexOf('/') + 1);
+		if (name == null || name.isEmpty()) {
+			name = skinID;
+		} else {
+			name += "_" + skinID;
 		}
 		texID = new NamespaceID("jmc2obj", "head/player_" + name);
 		synchronized (addedMaterials) {
