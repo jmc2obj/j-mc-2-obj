@@ -43,7 +43,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 
 	JComboBox<String> cbMove, cbSelect, cbLang;
 	JTextArea taRestart;
-	JCheckBox chckbxUseSystemBrowser;
 	JSpinner spPrevThreads;
 	JmcPackList listPacks;
 	JCheckBox chckbxUsePackDefault;
@@ -191,16 +190,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		mp.add(pMove);
 		mp.add(pSelect);
 		mp.add(pLang);
-		
-		JPanel pUseSystemBrowser = new JPanel();
-		pUseSystemBrowser.setMaximumSize(new Dimension(32767, 50));
-		mp.add(pUseSystemBrowser);
-		pUseSystemBrowser.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		
-		chckbxUseSystemBrowser = new JCheckBox(Messages.getString("Settings.USE_SYS_BROWSER"));
-		chckbxUseSystemBrowser.setAlignmentX(Component.CENTER_ALIGNMENT);
-		pUseSystemBrowser.add(chckbxUseSystemBrowser);
-		chckbxUseSystemBrowser.addActionListener(saveAction);
 		
 		JPanel pPrevThreads = new JPanel();
 		pPrevThreads.setMaximumSize(new Dimension(32767, 50));
@@ -452,7 +441,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
 			cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
 			cbLang.setSelectedIndex(prefs.getInt("LANGUAGE", 0));
-			chckbxUseSystemBrowser.setSelected(prefs.getBoolean("USE_SYSTEM_BROWSER", true));
 			spPrevThreads.setValue(prefs.getInt("PREVIEW_THREADS", 8));
 			listPacks.loadPrefString(prefs.get("RESOURCE_PACKS", "[]"));
 			chckbxUsePackDefault.setSelected(prefs.getBoolean("USE_DEFAULT_RESOURCE_PACK", true));
@@ -467,7 +455,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 
 		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex());
 		prefs.putInt("SELECT_ACTION", cbSelect.getSelectedIndex());
-		prefs.putBoolean("USE_SYSTEM_BROWSER", chckbxUseSystemBrowser.isSelected());
 		prefs.putInt("PREVIEW_THREADS", (Integer) spPrevThreads.getValue());
 		int l = prefs.getInt("LANGUAGE", 0);
 		if (cbLang.getSelectedIndex() != l) {
@@ -488,7 +475,6 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			cbMove.setSelectedIndex(1);
 			cbSelect.setSelectedIndex(0);
 			cbLang.setSelectedIndex(0);
-			chckbxUseSystemBrowser.setSelected(true);
 			spPrevThreads.setValue(8);
 			listPacks.reset();
 			chckbxUsePackDefault.setSelected(true);
