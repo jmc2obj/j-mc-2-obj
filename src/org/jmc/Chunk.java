@@ -478,7 +478,7 @@ public class Chunk {
 				// palette is null, section must be empty
 				return false;
 			}
-			if (tagBlockStates == null) {
+			if (tagBlockPalette.elements.length == 1 || tagBlockStates == null || tagBlockStates.data.length <= 1) {
 				if (tagBlockPalette.elements.length >= 1) {
 					// no state list but a palette indicates the whole section is filled with a single block
 					TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[0];
@@ -489,9 +489,7 @@ public class Chunk {
 					}
 					
 					BlockData block = new BlockData(NamespaceID.fromString(blockName));
-					for (int i = 0; i < 4096; i++) {
-						data[i] = block;
-					}
+					Arrays.fill(data, block);
 					return true;
 				}
 				return false;
@@ -555,9 +553,7 @@ public class Chunk {
 				if (tagBiomePalette.elements.length >= 1) {
 					String biomeName = ((TAG_String) tagBiomePalette.elements[0]).value;
 					NamespaceID biome = NamespaceID.fromString(biomeName);
-					for (int i = 0; i < 4096; i++) {
-						biomes[i] = biome;
-					}
+					Arrays.fill(biomes, biome);
 					return true;
 				}
 				return false;
