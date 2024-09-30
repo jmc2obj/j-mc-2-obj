@@ -175,7 +175,13 @@ public class Registry extends BlockModel {
 			} else if (textures.containsKey(tex)) {
 				tex = textures.get(tex);
 			}
-			NamespaceID texNs = NamespaceID.fromString(tex);
+			NamespaceID texNs;
+			if (tex != null) {
+				texNs = NamespaceID.fromString(tex);
+			} else {
+				Log.debugOnce(String.format("Model for %s referenced an undefined texture: '%s'", blockId, faceEntry.getValue().texture));
+				texNs = NamespaceID.UNKNOWN;
+			}
 			
 			switch (faceEntry.getKey()) {
 			case "up":
