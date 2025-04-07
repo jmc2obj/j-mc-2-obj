@@ -60,7 +60,12 @@ public class Filesystem {
 
 		if (osname.contains("solaris") || osname.contains("sunos") || osname.contains("linux")
 				|| osname.contains("unix")) {
-			return new File(default_home, "." + minecraft);
+			File mcDir = new File(default_home, "." + minecraft);
+			if (mcDir.isDirectory()) {
+				return mcDir;
+			} else {
+				return new File(default_home, ".var/app/com.mojang.Minecraft/." + minecraft);
+			}
 		}
 
 		if (osname.contains("win")) {
