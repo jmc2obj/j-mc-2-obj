@@ -73,7 +73,11 @@ public class Painting extends Entity
 		NBT_Tag variantTag = entity.getElement("variant");
 		String motiv = null;
 		if (variantTag != null) {
-			motiv = ((TAG_String) variantTag).value;
+			if (variantTag instanceof TAG_String) {
+				motiv = ((TAG_String) variantTag).value;
+			} else if (variantTag instanceof TAG_Compound) {
+				motiv = ((TAG_Compound) variantTag).getElement("asset_id").toString();
+			}
 		} else {
 			motiv = ((TAG_String) entity.getElement("Motive")).value;
 		}
@@ -116,9 +120,17 @@ public class Painting extends Entity
 	}
 
 	private BlockPos getBlockPosition(TAG_Compound entity) {
-		int x=((TAG_Int)entity.getElement("TileX")).value;
-		int y=((TAG_Int)entity.getElement("TileY")).value;
-		int z=((TAG_Int)entity.getElement("TileZ")).value;
+		int x, y, z;
+		TAG_Int_Array blockPosList = (TAG_Int_Array) entity.getElement("block_pos");
+		if (blockPosList != null) {
+			x = blockPosList.data[0];
+			y = blockPosList.data[1];
+			z = blockPosList.data[2];
+		} else {
+			x = ((TAG_Int) entity.getElement("TileX")).value;
+			y = ((TAG_Int) entity.getElement("TileY")).value;
+			z = ((TAG_Int) entity.getElement("TileZ")).value;
+		}
 		return new BlockPos(x, y, z);
 	}
 
