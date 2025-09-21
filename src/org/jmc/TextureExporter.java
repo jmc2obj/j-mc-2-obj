@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ImagingOpException;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
@@ -123,19 +124,11 @@ public class TextureExporter {
 	 * @return An empty {@link BufferedImage} with matching type
 	 */
 	public static BufferedImage cloneImageType(BufferedImage img, int width, int height) {
-		BufferedImage result;
-		if ((img.getType() == BufferedImage.TYPE_BYTE_INDEXED || img.getType() == BufferedImage.TYPE_BYTE_BINARY) && img.getColorModel() instanceof IndexColorModel) {
-			result = new BufferedImage(width, height, img.getType(), (IndexColorModel) img.getColorModel());
-		} else {
-			if (img.getType() == 0) {
-				result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			} else {
-				result = new BufferedImage(width, height, img.getType());
-			}
-		}
-		return result;
+        ColorModel colorModel = img.getColorModel();
+        WritableRaster raster = img.getRaster().createWritableChild(0, 0, width, height, 0, 0, null);
+        return new BufferedImage(colorModel, raster, img.isAlphaPremultiplied(), null);
 	}
-	
+
 	/**
 	 * Exports all the textures 
 	 *
