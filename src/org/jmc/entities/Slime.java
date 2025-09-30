@@ -34,13 +34,4 @@ public class Slime extends Entity {
 		model.addEntity(obj, translate.multiply(scale.multiply(offset.multiply(rotate))));
 		
 	}
-	
-	@Override
-	public Vertex getPosition(TAG_Compound entity) {
-		TAG_List pos = (TAG_List) entity.getElement("Pos");
-		double ex=((TAG_Double)pos.getElement(0)).value-0.5d;
-		double ey=((TAG_Double)pos.getElement(1)).value-0.5d;
-		double ez=((TAG_Double)pos.getElement(2)).value-0.5d;
-		return new Vertex(ex, ey, ez);
-	}
 }
