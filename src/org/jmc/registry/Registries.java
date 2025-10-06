@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.annotation.CheckForNull;
 
 import org.jmc.BlockTypes;
+import org.jmc.EntityTypes;
 import org.jmc.entities.ItemFrame;
 import org.jmc.models.Banner;
 import org.jmc.models.Head;
@@ -163,6 +164,11 @@ public class Registries {
 		} catch (Exception e) {
 			Log.error("Couldn't reload resource packs.", e);
 		}
+        try {
+            EntityTypes.initialize();
+        } catch (Exception e) {
+            Log.error("Couldn't reload entity config.", e);
+        }
 		Banner.clearExported();
 		Head.clearExported();
 		ItemFrame.clearExported();
