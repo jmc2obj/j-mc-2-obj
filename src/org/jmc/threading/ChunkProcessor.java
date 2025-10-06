@@ -13,13 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.jmc.*;
+import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
+import org.jmc.NBT.TAG_List;
 import org.jmc.entities.Entity;
-import org.jmc.geom.FaceUtils;
+import org.jmc.geom.*;
 import org.jmc.geom.FaceUtils.Face;
-import org.jmc.geom.Transform;
-import org.jmc.geom.UV;
-import org.jmc.geom.Vertex;
 import org.jmc.registry.NamespaceID;
 import org.jmc.util.Log;
 
@@ -158,37 +157,31 @@ public class ChunkProcessor
 	/**
 	 * Returns all blocks from the given chunk buffer into the output.
 	 * @param chunk
-	 * @param chunk_x
-	 * @param chunk_z
+	 * @param chunkX
+	 * @param chunkZ
 	 */
-	public ArrayList<Face> process(ThreadChunkDeligate chunk, int chunk_x, int chunk_z)
-	{
-		int xmin,xmax,ymin,ymax,zmin,zmax;
+	public ArrayList<Face> process(ThreadChunkDeligate chunk, int chunkX, int chunkZ) {
 		Rectangle xy,xz;
 		xy=chunk.getXYBoundaries();
 		xz=chunk.getXZBoundaries();
-		xmin=xy.x;
-		xmax=xmin+xy.width;
-		ymin=xy.y;
-		ymax=ymin+xy.height;
-		zmin=xz.y;
-		zmax=zmin+xz.height;
+		BlockPos min = new BlockPos(xy.x, xy.y, xz.y);
+        BlockPos max = new BlockPos(min.x + xy.width, min.y + xy.height, min.z + xz.height);
 
-		int xs=chunk_x*16;
-		int zs=chunk_z*16;
-		int xe=xs+16;
-		int ze=zs+16;
+		int xStart = chunkX * 16;
+		int zStart = chunkZ * 16;
+		int xEnd = xStart + 16;
+		int zEnd = zStart + 16;
 
-		if(xs<xmin) xs=xmin;
-		if(xe>xmax) xe=xmax;
-		if(zs<zmin) zs=zmin;
-		if(ze>zmax) ze=zmax;
+		if(xStart<min.x) xStart = min.x;
+		if(xEnd>max.x) xEnd = max.x;
+		if(zStart<min.z) zStart = min.z;
+		if(zEnd>max.z) zEnd = max.z;
 
-		for(int z = zs; z < ze; z++)
+		for(int z = zStart; z < zEnd; z++)
 		{
-			for(int x = xs; x < xe; x++)
+			for(int x = xStart; x < xEnd; x++)
 			{
-				for(int y = ymin; y < ymax; y++)
+				for(int y = min.y; y < max.y; y++)
 				{
 					BlockData block=chunk.getBlockData(x, y, z);
 					NamespaceID blockBiome=chunk.getBlockBiome(x, y, z);
@@ -224,7 +217,7 @@ public class ChunkProcessor
 			}
 		}
 		
-		if (Options.optimiseGeometry ) {
+		if (Options.optimiseGeometry) {
 			HashMap<String, ArrayList<Face>> faceAxisArray = new HashMap<String, ArrayList<Face>>();
 			for (Face f : optimisedFaces){
 				int planar = f.getPlanarAxis();
@@ -263,39 +256,12 @@ public class ChunkProcessor
 		}
 		
 		if (Options.renderEntities) {
-			for (TAG_Compound entity:chunk.getEntities(chunk_x, chunk_z)) {
-				if (entity == null) continue;
-				Entity handler=EntityTypes.getEntity(entity);
-				if (handler!=null) {
-					try {
-						Vertex pos = handler.getPosition(entity);
-						if (pos.x > xmin && pos.y > ymin && pos.z > zmin && pos.x < xmax && pos.y < ymax && pos.z < zmax) {
-							if(Options.objectPerBlock)
-								chunk_idx_count++;
-							handler.addEntity(this, entity);
-						}
-					} catch (Exception ex) {
-						Log.error(String.format("Error rendering entity %s, skipping.", handler.id), ex);
-					}
-				}
-			}
+			for (TAG_Compound entity : chunk.getEntities(chunkX, chunkZ)) {
+                renderEntity(entity, min, max);
+            }
 			
-			for (TAG_Compound entity:chunk.getTileEntities(chunk_x, chunk_z)) {
-				if (entity == null) continue;
-				Entity handler=EntityTypes.getEntity(entity);
-				if(handler!=null) {
-					try {
-						Vertex pos = handler.getPosition(entity);
-						if (pos.x > xmin && pos.y > ymin && pos.z > zmin && pos.x < xmax && pos.y < ymax && pos.z < zmax) {
-							if(Options.objectPerBlock)
-								chunk_idx_count++;
-							handler.addEntity(this, entity);
-						}
-					}
-					catch (Exception ex) {
-						Log.error("Error rendering tile entity, skipping.", ex);
-					}
-				}
+			for (TAG_Compound entity : chunk.getTileEntities(chunkX, chunkZ)) {
+				renderEntity(entity, min, max);
 			}
 		}
 		
@@ -303,8 +269,31 @@ public class ChunkProcessor
 		optimisedFaces.clear();
 		return faces;
 	}
-	
-	/**
+
+    private void renderEntity(TAG_Compound entity, BlockPos min, BlockPos max) {
+        if (entity == null) return;
+        Entity handler=EntityTypes.getEntity(entity);
+        if (handler != null) {
+            try {
+                Vertex pos = handler.getPosition(entity);
+                if (pos.x > min.x && pos.y > min.y && pos.z > min.z && pos.x < max.x && pos.y < max.y && pos.z < max.z) {
+                    if(Options.objectPerBlock)
+                        chunk_idx_count++;
+                    handler.addEntity(this, entity);
+                }
+            } catch (Exception ex) {
+                Log.error(String.format("Error rendering entity %s, skipping.", handler.id), ex);
+            }
+        }
+        TAG_List passengers = (TAG_List) entity.getElement("Passengers");
+        if (passengers != null) {
+            for (NBT_Tag passengerTag : passengers.elements) {
+                renderEntity((TAG_Compound) passengerTag, min, max);
+            }
+        }
+    }
+
+    /**
 	 * Attempts to join all faces in faces along axis
 	 * @param faceList The faces to combine
 	 * @param axis The axis to combine across 
