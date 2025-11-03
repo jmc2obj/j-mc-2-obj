@@ -137,7 +137,7 @@ public class Registry extends BlockModel {
 		}
 		float scale = 1;
 		if (rot.rescale) {
-			scale = (float) (0.5-Math.abs(Math.cos(Math.toRadians(2*rot.angle)))*0.5+1);
+			scale = (float) (1f / Math.cos(Math.toRadians(Math.abs(rot.angle))));
 		}
 		switch (rot.axis) {
 		case "x":
