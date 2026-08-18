@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -225,9 +226,16 @@ public class Banner extends BlockModel {
 
         // get the base material texture
         BufferedImage backgroundImage;
-        try {
-        	backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner_base")).getImage();
-        } catch (IOException e) {
+		try {
+			backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner/banner_base")).getImage();
+		} catch (FileNotFoundException e) {
+			try {
+				backgroundImage = Registries.getTexture(NamespaceID.fromString("entity/banner_base")).getImage();
+			} catch (IOException ex) {
+				Log.error("Cant read banner base image!", e, showReadErrorPopup());
+				return false;
+			}
+		} catch (IOException e) {
             Log.error("Cant read banner base image!", e, showReadErrorPopup());
             return false;
         }
