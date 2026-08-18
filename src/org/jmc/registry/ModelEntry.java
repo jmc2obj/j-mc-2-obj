@@ -132,6 +132,9 @@ public class ModelEntry extends RegistryEntry {
 				public String axis;
 				public float angle = 0;
 				public boolean rescale = false;
+				public float x = 0;
+				public float y = 0;
+				public float z = 0;
 				@Override
 				public String toString() {
 					return new Gson().toJson(this);

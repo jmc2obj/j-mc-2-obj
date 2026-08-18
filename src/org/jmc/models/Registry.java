@@ -135,26 +135,41 @@ public class Registry extends BlockModel {
 		if (rot.origin != null) {
 			t = Transform.translation(-rot.origin.x/16, -rot.origin.y/16, -rot.origin.z/16).multiply(t);
 		}
-		float scale = 1;
-		if (rot.rescale) {
-			scale = (float) (1f / Math.cos(Math.toRadians(Math.abs(rot.angle))));
-		}
-		switch (rot.axis) {
-		case "x":
-			t = Transform.rotation(rot.angle, 0, 0).multiply(t);
-			t = rot.rescale ? Transform.scale(1, scale, scale).multiply(t) : t;
-			break;
-		case "y":
-			t = Transform.rotation(0, -rot.angle, 0).multiply(t);
-			t = rot.rescale ? Transform.scale(scale, 1, scale).multiply(t) : t;
-			break;
-		case "z":
-			t = Transform.rotation(0, 0, rot.angle).multiply(t);
-			t = rot.rescale ? Transform.scale(scale, scale, 1).multiply(t) : t;
-			break;
-		default:
-			Log.debugOnce(String.format("Model for %s had invalid rotation axis!", blockId));
-			break;
+		if (rot.axis != null) {
+			float scale = rot.rescale ? (float) (1f / Math.cos(Math.toRadians(Math.abs(rot.angle)))) : 1f;
+			switch (rot.axis) {
+				case "x":
+					t = Transform.rotation(rot.angle, 0, 0).multiply(t);
+					t = rot.rescale ? Transform.scale(1, scale, scale).multiply(t) : t;
+					break;
+				case "y":
+					t = Transform.rotation(0, -rot.angle, 0).multiply(t);
+					t = rot.rescale ? Transform.scale(scale, 1, scale).multiply(t) : t;
+					break;
+				case "z":
+					t = Transform.rotation(0, 0, rot.angle).multiply(t);
+					t = rot.rescale ? Transform.scale(scale, scale, 1).multiply(t) : t;
+					break;
+				default:
+					Log.debugOnce(String.format("Model for %s had invalid rotation axis!", blockId));
+					break;
+			}
+		} else {
+			if (rot.x != 0) {
+				float scale = rot.rescale ? (float) (1f / Math.cos(Math.toRadians(Math.abs(rot.x)))) : 1f;
+				t = Transform.rotation(rot.x, 0, 0).multiply(t);
+				t = rot.rescale ? Transform.scale(1, scale, scale).multiply(t) : t;
+			}
+			if (rot.y != 0) {
+				float scale = rot.rescale ? (float) (1f / Math.cos(Math.toRadians(Math.abs(rot.y)))) : 1f;
+				t = Transform.rotation(0, -rot.y, 0).multiply(t);
+				t = rot.rescale ? Transform.scale(scale, 1, scale).multiply(t) : t;
+			}
+			if (rot.z != 0) {
+				float scale = rot.rescale ? (float) (1f / Math.cos(Math.toRadians(Math.abs(rot.z)))) : 1f;
+				t = Transform.rotation(0, 0, rot.z).multiply(t);
+				t = rot.rescale ? Transform.scale(scale, scale, 1).multiply(t) : t;
+			}
 		}
 		if (rot.origin != null) {
 			t = Transform.translation(rot.origin.x/16, rot.origin.y/16, rot.origin.z/16).multiply(t);
