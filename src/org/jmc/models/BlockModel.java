@@ -145,7 +145,7 @@ public abstract class BlockModel {
 			return true;
 
 		if (neighbourData.id == NamespaceID.EXPORTEDGE)
-			return Options.renderSides;
+			return Options.exportEdgeMode == Options.ExportEdgeMode.EDGES;
 
 		if (neighbourData.id.path.endsWith("air") || Options.isBlockExcluded(neighbourData.id))
 			return true;
