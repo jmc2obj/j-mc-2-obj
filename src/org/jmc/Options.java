@@ -39,6 +39,13 @@ public class Options
 		NEVER
 	}
 
+	public enum ExportEdgeMode
+	{
+		NONE,
+		EDGES,
+		WORLD
+	}
+
 	/**
 	 * A list of available locales in the program.
 	 */	
@@ -211,9 +218,11 @@ public class Options
 	public static boolean optimiseGeometry = false;
 
 	/**
-	 * If true, sides and bottom of the model are rendered as well.
+	 * How faces at the export edge (selection boundary) are rendered.
+	 * NONE: cull edge faces. EDGES: render edge faces. WORLD: cull only edge faces
+	 * occluded by the actual blocks outside the selection.
 	 */
-	public static boolean renderSides = false;	
+	public static ExportEdgeMode exportEdgeMode = ExportEdgeMode.NONE;
 
 	/**
 	 * If true, entities are rendered in the model. 

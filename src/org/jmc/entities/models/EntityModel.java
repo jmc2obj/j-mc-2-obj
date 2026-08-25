@@ -108,7 +108,7 @@ public abstract class EntityModel
 	protected boolean drawSide(Direction side, BlockData neighbour)
 	{
 		if (neighbour.id == NamespaceID.NULL)
-			return Options.renderSides;
+			return Options.exportEdgeMode == Options.ExportEdgeMode.EDGES;
 		
 		if (neighbour.id.path.endsWith("air"))
 			return true;

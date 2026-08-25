@@ -15,11 +15,13 @@ import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -43,6 +45,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jmc.CloudsExporter;
 import org.jmc.ObjExporter;
 import org.jmc.Options;
+import org.jmc.Options.ExportEdgeMode;
 import org.jmc.Options.OffsetType;
 import org.jmc.ProgressCallback;
 import org.jmc.util.Log;
@@ -63,7 +66,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JTextField txtX;
 	private JTextField txtZ;
 
-	private JCheckBox chckbxRenderWorldSides;
+	private JComboBox<ExportEdgeMode> cboxExportEdges;
 	private JCheckBox chckbxRenderBiomes;
 	private JCheckBox chckbxRenderEntities;
 	private JCheckBox chckbxRenderUnknownBlocks;
@@ -356,8 +359,28 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxRenderUnknownBlocks = new JCheckBox(Messages.getString("ExportOptions.R_UNKNOWN"));
 		pExportOptions.add(chckbxRenderUnknownBlocks);
 
-		chckbxRenderWorldSides = new JCheckBox(Messages.getString("ExportOptions.R_SIDES"));
-		pExportOptions.add(chckbxRenderWorldSides);
+		JPanel holderExportEdges = new JPanel();
+		holderExportEdges.setAlignmentX(Component.LEFT_ALIGNMENT);
+		pExportOptions.add(holderExportEdges);
+		FlowLayout fl_holderExportEdges = new FlowLayout(FlowLayout.LEFT);
+		fl_holderExportEdges.setVgap(1);
+		holderExportEdges.setLayout(fl_holderExportEdges);
+
+		JLabel lblExportEdges = new JLabel(Messages.getString("ExportOptions.EDGE_MODE"));
+		holderExportEdges.add(lblExportEdges);
+
+		cboxExportEdges = new JComboBox<ExportEdgeMode>(ExportEdgeMode.values());
+		holderExportEdges.add(cboxExportEdges);
+		cboxExportEdges.setRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+					boolean isSelected, boolean cellHasFocus) {
+				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				if (value instanceof ExportEdgeMode)
+					setText(Messages.getString("ExportOptions.EDGE_MODE_" + ((ExportEdgeMode) value).name()));
+				return this;
+			}
+		});
 
 		chckbxRenderBiomes = new JCheckBox(Messages.getString("ExportOptions.R_BIOMES"));
 		pExportOptions.add(chckbxRenderBiomes);
@@ -826,7 +849,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		chckbxRenderUnknownBlocks.addActionListener(genericSaveAction);
 
-		chckbxRenderWorldSides.addActionListener(genericSaveAction);
+		cboxExportEdges.addActionListener(genericSaveAction);
 		chckbxRenderBiomes.addActionListener(genericSaveAction);
 		chckbxRenderEntities.addActionListener(genericSaveAction);
 
@@ -919,7 +942,14 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		txtZ.setText("" + prefs.getInt("OFFSET_Z", 0));
 
 		chckbxRenderUnknownBlocks.setSelected(prefs.getBoolean("RENDER_UNKNOWN", true));
-		chckbxRenderWorldSides.setSelected(prefs.getBoolean("RENDER_SIDES", false));
+		ExportEdgeMode edgeMode;
+		try {
+			edgeMode = ExportEdgeMode.valueOf(prefs.get("EXPORT_EDGE_MODE", "NONE"));
+		} catch (IllegalArgumentException e) {
+			// not a valid mode name; fall back to the pre-edge-mode RENDER_SIDES setting
+			edgeMode = prefs.getBoolean("RENDER_SIDES", false) ? ExportEdgeMode.EDGES : ExportEdgeMode.NONE;
+		}
+		cboxExportEdges.setSelectedItem(edgeMode);
 		chckbxRenderBiomes.setSelected(prefs.getBoolean("RENDER_BIOMES", true));
 		chckbxRenderEntities.setSelected(prefs.getBoolean("RENDER_ENTITIES", true));
 		chckbxConvertOreTo.setSelected(prefs.getBoolean("CONVERT_ORES", true));
@@ -1002,7 +1032,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 			break;
 		}
 
-		prefs.putBoolean("RENDER_SIDES", Options.renderSides);
+		prefs.put("EXPORT_EDGE_MODE", Options.exportEdgeMode.name());
 		prefs.putBoolean("RENDER_BIOMES", Options.renderBiomes);
 		prefs.putBoolean("RENDER_ENTITIES", Options.renderEntities);
 		prefs.putBoolean("RENDER_UNKNOWN", Options.renderUnknown);
@@ -1089,7 +1119,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		else
 			Options.offsetType = OffsetType.NONE;
 
-		Options.renderSides = chckbxRenderWorldSides.isSelected();
+		Options.exportEdgeMode = (ExportEdgeMode) cboxExportEdges.getSelectedItem();
 		Options.renderBiomes = chckbxRenderBiomes.isSelected();
 		Options.renderEntities = chckbxRenderEntities.isSelected();
 		Options.renderUnknown = chckbxRenderUnknownBlocks.isSelected();

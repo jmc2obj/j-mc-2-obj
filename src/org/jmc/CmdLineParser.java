@@ -50,7 +50,10 @@ public class CmdLineParser {
 	private static final Option optOffset = Option.builder().longOpt("offset")
 			.numberOfArgs(1).valueSeparator(',').argName("none|center|X,Z")
 			.desc("How to offset the coordinates of the exported geometry: none - no offset; center - place the center of the exported area at the origin; X,Z - apply the given offset. Default is none.").build();
-	private static final Option optRenderSides = new Option("s", "render-sides", false, "Render world sides and bottom.");
+	private static final Option optExportEdges = Option.builder().longOpt("export-edges").hasArg().argName("none|edges|world")
+			.desc("How to render faces at the edge of the export area: none - cull faces at the export edge; edges - render faces at the export edge; world - cull only faces that would be occluded by the blocks around the export area, as if the rest of the world was still there. Default is none.").build();
+	// TODO: Remove deprecated alias for --export-edges=edges.
+	private static final Option optRenderSides = new Option("s", "render-sides", false, "Render world sides and bottom. DEPRECATED: use --export-edges=edges instead.");
 	private static final Option optRenderEntities = new Option(null, "render-entities", false, "Render entities.");
 	private static final Option optIncludeUnknown = new Option(null, "include-unknown", false, "Include unknown blocks in the exported geometry.");
 	private static final Option optBlacklistBlocks = Option.builder().longOpt("blacklist").hasArg().argName("BLOCK IDS").desc("Specify a comma separated list of block id's to exclude from the export.").build();
@@ -86,6 +89,7 @@ public class CmdLineParser {
 		options.addOption(optMtlFile);
 		options.addOption(optScale);
 		options.addOption(optOffset);
+		options.addOption(optExportEdges);
 		options.addOption(optRenderSides);
 		options.addOption(optRenderEntities);
 		options.addOption(optIncludeUnknown);
@@ -218,7 +222,24 @@ public class CmdLineParser {
 				}
 			}
 			if (checkOption(cmdLine, optRenderSides)) {
-				Options.renderSides = true;
+				Log.info("Option -s/--render-sides is deprecated. Use --export-edges=edges instead.");
+				Options.exportEdgeMode = Options.ExportEdgeMode.EDGES;
+			}
+			if (checkOption(cmdLine, optExportEdges)) {
+				String arg = cmdLine.getOptionValue(optExportEdges);
+				switch (arg) {
+					case "none":
+						Options.exportEdgeMode = Options.ExportEdgeMode.NONE;
+						break;
+					case "edges":
+						Options.exportEdgeMode = Options.ExportEdgeMode.EDGES;
+						break;
+					case "world":
+						Options.exportEdgeMode = Options.ExportEdgeMode.WORLD;
+						break;
+					default:
+						throw new CmdLineException("Invalid argument to option --export-edges: " + arg);
+				}
 			}
 			if (checkOption(cmdLine, optIncludeUnknown)) {
 				Options.renderUnknown = true;

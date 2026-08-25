@@ -12,6 +12,7 @@ import org.jmc.BlockData;
 import org.jmc.Chunk;
 import org.jmc.Chunk.Blocks;
 import org.jmc.ChunkDataBuffer;
+import org.jmc.Options;
 import org.jmc.NBT.NBT_Tag;
 import org.jmc.NBT.TAG_Compound;
 import org.jmc.NBT.TAG_Int;
@@ -74,7 +75,7 @@ public class ThreadChunkDeligate {
 	@CheckForNull
 	public BlockData getBlockData(int x, int y, int z)
 	{
-		if (!isInBounds(x, y, z)) {
+		if (!isInBounds(x, y, z) && Options.exportEdgeMode != Options.ExportEdgeMode.WORLD) {
 			return new BlockData(NamespaceID.EXPORTEDGE);
 		}
 		Point chunk_p=Chunk.getChunkPos(x, z);
