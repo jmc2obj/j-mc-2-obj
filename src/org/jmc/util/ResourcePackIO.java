@@ -167,6 +167,9 @@ public class ResourcePackIO {
 		if (path.equals("assets/minecraft/textures/entity/end_portal.png")) {
 			return "assets/minecraft/textures/entity/end_portal/end_portal.png";
 		}
+		if (path.equals("assets/minecraft/textures/entity/end_portal/end_portal.png")) {
+			return "assets/minecraft/textures/entity/end_portal.png";
+		}
 		if (path.equals("assets/minecraft/textures/entity/banner_base.png")) {
 			return "assets/minecraft/textures/entity/banner/banner_base.png";
 		}
