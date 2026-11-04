@@ -81,7 +81,9 @@ public abstract class BlockstateEntry extends RegistryEntry {
 			for (ModelInfo object : models) {
 				maxWeight += object.weight;
 			}
-			float randVal = pos.getRandom().nextFloat()*maxWeight;
+			long seed = (long)(pos.x * 3129871) ^ (long)pos.z * 116129781L ^ (long)pos.y;
+			seed = (seed * seed * 42317861L + seed * 11L) >> 16;
+			int randVal = new java.util.Random(seed).nextInt(maxWeight);
 			for (ModelInfo object : models) {
 				if (randVal < object.weight) {
 					return object;

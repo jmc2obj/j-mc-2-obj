@@ -17,6 +17,7 @@ import org.jmc.geom.Transform;
 import org.jmc.geom.Vertex;
 import org.jmc.models.*;
 import org.jmc.registry.BlockstateEntry;
+import org.jmc.registry.ModelEntry;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
 import org.jmc.registry.RegistryBlockMaterial;
@@ -24,6 +25,7 @@ import org.jmc.util.CachedGetter;
 import org.jmc.util.Filesystem;
 import org.jmc.util.Filesystem.JmcConfFile;
 import org.jmc.util.Log;
+import org.jmc.util.ResourcePackIO;
 import org.jmc.util.Xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -97,6 +99,8 @@ public class BlockTypes
 				modelName = aux;
 			}
 			
+			boolean useResourceModel = hasResourceEntityBlockModel(id, modelName);
+			if (useResourceModel) modelName = "Registry";
 			BlockModel model;
 			try {
 				Class<?> modelClass = Class.forName("org.jmc.models." + modelName);
@@ -183,7 +187,9 @@ public class BlockTypes
 				hasMtl = true;
 			}
 			
-			if (!hasMtl)
+			if (useResourceModel) {
+				materials = new RegistryBlockMaterial(id);
+			} else if (!hasMtl)
 			{
 				if (model instanceof Registry) {
 					materials = new RegistryBlockMaterial(id);
@@ -258,6 +264,36 @@ public class BlockTypes
 			}
 			blockTable.put(id, new BlockInfo(id, name, materials, occlusion, model, waterlogged, oreBase));
 		}
+	}
+
+	/** Beds and signs in newer packs provide real block geometry instead of
+	 * the empty placeholders used by older entity renderers. */
+	private static boolean hasResourceEntityBlockModel(NamespaceID id, String legacyModel) {
+		String template;
+		switch (legacyModel) {
+		case "Bed": template = "template_bed_head"; break;
+		case "SignPost": case "SignBoard": template = "template_sign_rot_0"; break;
+		case "SignHanging": case "SignHangingWall": template = "template_hanging_sign_rot_0"; break;
+		default: return false;
+		}
+		try (java.io.Reader ignored = ResourcePackIO.loadText("assets/minecraft/models/block/" + template + ".json")) {
+			Blockstate state = new Blockstate();
+			state.put("facing", "north");
+			state.put("part", "head");
+			state.put("rotation", "0");
+			state.put("attached", "false");
+			BlockstateEntry blockstate = Registries.getBlockstate(id);
+			if (blockstate == null) return false;
+			for (BlockstateEntry.ModelListWeighted part : blockstate.getModelsFor(state)) {
+				ModelEntry model = Registries.getModel(part.getRandomModel(new org.jmc.geom.BlockPos(0, 0, 0)).id);
+				if (model != null && model.generateModel().elements != null && !model.generateModel().elements.isEmpty()) {
+					return true;
+				}
+			}
+		} catch (java.io.IOException missingTemplate) {
+			// Old resource packs continue to use the original entity handlers.
+		}
+		return false;
 	}
 
 	private static void parseAttributes(Node meshNode, Mesh mesh) throws RuntimeException

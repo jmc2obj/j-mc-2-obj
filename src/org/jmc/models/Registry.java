@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.awt.Color;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -25,6 +26,8 @@ import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementFace;
 import org.jmc.registry.ModelEntry.RegistryModel.ModelElement.ElementRotation;
 import org.jmc.registry.NamespaceID;
 import org.jmc.registry.Registries;
+import org.jmc.registry.BiomeColors;
+import org.jmc.registry.ModelTextures;
 import org.jmc.threading.ChunkProcessor;
 import org.jmc.threading.ThreadChunkDeligate;
 import org.jmc.util.Log;
@@ -35,6 +38,8 @@ public class Registry extends BlockModel {
 	@Override
 	public void addModel(ChunkProcessor obj, ThreadChunkDeligate chunks, int x, int y, int z, BlockData data, NamespaceID biome) {
 		BlockPos pos = new BlockPos(x, y, z);
+		BlockPos variantPos = "upper".equals(data.state.get("half")) ? new BlockPos(x, y-1, z) : pos;
+		Color tint = BiomeColors.forBlock(data, pos, chunks, biome);
 		boolean[] ds = drawSides(chunks, pos.x, pos.y, pos.z, data);
 
 		BlockstateEntry bsEntry = Registries.getBlockstate(data.id);
@@ -47,9 +52,22 @@ public class Registry extends BlockModel {
 		List<ComputedElem> addedElems = new ArrayList<>();
 
 		Transform baseTrans = pos.getTransform();
+		if (data.id.namespace.equals("minecraft")) {
+			String name = data.id.path;
+			boolean shortPlant = name.equals("grass") || name.equals("short_grass") || name.equals("fern");
+			boolean tallPlant = name.equals("tall_grass") || name.equals("large_fern");
+			if (shortPlant || tallPlant) {
+				long seed = (long)(x * 3129871) ^ (long)z * 116129781L;
+				seed = (seed * seed * 42317861L + seed * 11L) >> 16;
+				double dx = (((float)(seed & 15) / 15) - 0.5) * 0.5;
+				double dz = (((float)((seed >> 8) & 15) / 15) - 0.5) * 0.5;
+				double dy = shortPlant ? (((float)((seed >> 4) & 15) / 15) - 1) * 0.2f : 0;
+				baseTrans = baseTrans.multiply(Transform.translation(dx, dy, dz));
+			}
+		}
 
 		for (ModelListWeighted modelList : modelParts) {
-			ModelInfo modelInfo = modelList.getRandomModel(pos);
+			ModelInfo modelInfo = modelList.getRandomModel(variantPos);
 			ModelEntry modelEntry = Registries.getModel(modelInfo.id);
 			if (modelEntry == null) {
 				Log.debugOnce(String.format("Couldn't get model %s to export %s", modelInfo.id, bsEntry.id));
@@ -59,7 +77,7 @@ public class Registry extends BlockModel {
 			if (model.elements != null) {
 				for (ModelElement element : model.elements) {
 					if (element != null)
-						addElement(obj, baseTrans, ds, modelInfo, model, element, addedElems);
+						addElement(obj, baseTrans, ds, modelInfo, model, element, addedElems, tint);
 				}
 			}
 		}
@@ -88,28 +106,22 @@ public class Registry extends BlockModel {
 	}
 
 	// Add the element
-	private void addElement(ChunkProcessor obj, Transform baseTrans, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<ComputedElem> prevElems) {
+	private void addElement(ChunkProcessor obj, Transform baseTrans, boolean[] drawSides, ModelInfo modelInfo, RegistryModel model, ModelElement element, List<ComputedElem> prevElems, Color tint) {
 		Transform stateTrans = getStateTrans(modelInfo);
-		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures);
+		NamespaceID[] textures = getFaceTextureArray(element.faces, model.textures, tint);
 		UV[][] uvs = getFaceUvs(element, modelInfo);
 		boolean[] elemDrawSides = getSidesCulling(drawSides, element.faces, stateTrans);
 		Transform elementTrans = getElemTrans(element);
 
 		// If element in the same position was added before then don't add another on top (grass_block overlay)
 		ComputedElem elem = new ComputedElem(stateTrans, elementTrans, element, elemDrawSides, textures, uvs);
-		boolean add = true;
 		for (@Nonnull ComputedElem prevElem : prevElems) {
 			if (elem.matches(prevElem)) {
-				if (elem.hasNewSides(prevElem)) {// same elem but new faces that weren't added before
-					prevElem.addSides(elem);
-					add = false;
-				} else {
-					//Log.debug(String.format("Skipping double element on %s", data.id));
-					return;
-				}
+				prevElem.addSides(elem);
+				return;
 			}
 		}
-		if (add) prevElems.add(elem);
+		prevElems.add(elem);
 	}
 	
 	// Get the transform for the blockstate
@@ -179,7 +191,7 @@ public class Registry extends BlockModel {
 	
 	// Get the textures for each face of the cuboid
 	@Nonnull
-	private NamespaceID[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures) {
+	private NamespaceID[] getFaceTextureArray(Map<String, ElementFace> faces, Map<String, String> textures, Color tint) {
 		NamespaceID[] array = new NamespaceID[6];
 		Arrays.fill(array, NamespaceID.UNKNOWN);
 		for (Entry<String, ElementFace> faceEntry : faces.entrySet()) {
@@ -193,6 +205,7 @@ public class Registry extends BlockModel {
 			NamespaceID texNs;
 			if (tex != null) {
 				texNs = NamespaceID.fromString(tex);
+				texNs = ModelTextures.forFace(texNs, tint, faceEntry.getValue().tintindex >= 0);
 			} else {
 				Log.debugOnce(String.format("Model for %s referenced an undefined texture: '%s'", blockId, faceEntry.getValue().texture));
 				texNs = NamespaceID.UNKNOWN;
@@ -492,8 +505,18 @@ public class Registry extends BlockModel {
 					textures[i] = elem.textures[i];
 					uvs[i] = elem.uvs[i];
 					drawSides[i] = true;
+				} else if (drawSides[i] && elem.drawSides[i] &&
+						(!textures[i].equals(elem.textures[i]) || !sameUvs(uvs[i], elem.uvs[i]))) {
+					textures[i] = ModelTextures.overlay(textures[i], elem.textures[i], uvs[i], elem.uvs[i]);
 				}
 			}
+		}
+
+		private static boolean sameUvs(UV[] a, UV[] b) {
+			if (a == b) return true;
+			if (a == null || b == null || a.length != b.length) return false;
+			for (int i = 0; i < a.length; i++) if (!a[i].similar(b[i])) return false;
+			return true;
 		}
 
 		public ArrayList<Face> getFaces(Transform baseTrans) {

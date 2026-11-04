@@ -13,6 +13,7 @@ import org.jmc.geom.Vertex;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 public class ModelEntry extends RegistryEntry {
 	public RegistryModel model;
@@ -71,6 +72,9 @@ public class ModelEntry extends RegistryEntry {
 			if (newModel.parentEntry != null) {
 				newModel.parentEntry.propagateToChild(newModel);
 			}
+			for (String key : new ArrayList<>(newModel.textures.keySet())) {
+				newModel.textures.put(key, newModel.resolveTexture("#" + key));
+			}
 			generatedModel = newModel;
 			return generatedModel;
 		}
@@ -81,14 +85,7 @@ public class ModelEntry extends RegistryEntry {
 			childModel.elements = model.elements;
 		}
 		for (Entry<String, String> textureEntry : model.textures.entrySet()) {
-			if (textureEntry.getValue().startsWith("#")) {
-				String refName = textureEntry.getValue().substring(1);
-				String refTex = childModel.textures.get(refName);
-				assert refTex != null;
-				childModel.textures.putIfAbsent(textureEntry.getKey(), refTex);
-			} else {
-				childModel.textures.putIfAbsent(textureEntry.getKey(), textureEntry.getValue());
-			}
+			childModel.textures.putIfAbsent(textureEntry.getKey(), textureEntry.getValue());
 		}
 		if (model.parentEntry != null) {
 			model.parentEntry.propagateToChild(childModel);
@@ -106,6 +103,15 @@ public class ModelEntry extends RegistryEntry {
 		@Nonnull
 		public Map<String, String> textures = new HashMap<>();
 		public List<ModelElement> elements;
+
+		public String resolveTexture(String reference) {
+			java.util.HashSet<String> visited = new java.util.HashSet<>();
+			while (reference != null && reference.startsWith("#")) {
+				if (!visited.add(reference)) return null;
+				reference = textures.get(reference.substring(1));
+			}
+			return reference;
+		}
 		
 		private RegistryModel() {
 		}
@@ -146,7 +152,7 @@ public class ModelEntry extends RegistryEntry {
 				public String texture;
 				public String cullface;
 				public int rotation;
-				public float tintindex;
+				public int tintindex = -1;
 				@Override
 				public String toString() {
 					return new Gson().toJson(this);

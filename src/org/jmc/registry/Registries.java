@@ -110,6 +110,10 @@ public class Registries {
 		return textures.get(id);
 	}
 
+	public static void registerTexture(TextureEntry entry) {
+		textures.put(entry.id, entry);
+	}
+
 	public static String getFilePath(NamespaceID id, RegType model) {
 		switch (model) {
 		case BLOCKSTATE:
@@ -124,6 +128,8 @@ public class Registries {
 	}
 
 	public static void initialize() {
+		ModelTextures.clear();
+		BiomeColors.clear();
 		blockstates.clear();
 		models.clear();
 		textures.clear();
