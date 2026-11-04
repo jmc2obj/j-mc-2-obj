@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.security.CodeSource;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -71,18 +69,20 @@ public class Configuration
 
 				if(name.endsWith("/"))
 				{
-					File dir=new File(name);
+					File dir=new File(Filesystem.getDatafilesDir(), name);
 					if(!dir.exists() || !dir.isDirectory())
 					{
 						if(dir.exists()) throw new RuntimeException("Cannot create directory: "+dir+"! File is in the way!");
-						if(!dir.mkdir()) throw new RuntimeException("Cannot create directory: "+dir+"!");
+						if(!dir.mkdirs() && !dir.isDirectory()) throw new RuntimeException("Cannot create directory: "+dir+"!");
 					}
 					continue;
 				}
 				
 				String path=f.getName();
-				InputStream istr=Configuration.class.getClassLoader().getResourceAsStream(path);
-				String newhash=Filesystem.getHash(istr);
+				String newhash;
+				try (InputStream istr=Configuration.class.getClassLoader().getResourceAsStream(path)) {
+					newhash=Filesystem.getHash(istr);
+				}
 				newhashmap.put(path, newhash);
 				
 				String localhash=localhashmap.get(name);
@@ -116,7 +116,7 @@ public class Configuration
 
 		if( src != null ) 
 		{			
-			ZipInputStream zip = new ZipInputStream(src.getLocation().openStream());
+			try (ZipInputStream zip = new ZipInputStream(src.getLocation().openStream())) {
 			ZipEntry ze = null;
 			while( ( ze = zip.getNextEntry() ) != null ) 
 			{
@@ -125,6 +125,7 @@ public class Configuration
 				{
 					ret.add(ze);
 				}
+			}
 			}
 		}
 
@@ -142,7 +143,7 @@ public class Configuration
 	private static void checkFile(ZipEntry entry, String disthash, String newhash) throws IOException
 	{		
 		String path=entry.getName();
-		File dest=new File(path);
+		File dest=new File(Filesystem.getDatafilesDir(), path);
 		if(dest.exists())
 		{	
 			if(!newhash.equals(disthash))
@@ -187,12 +188,15 @@ public class Configuration
 	 */
 	private static void createFile(File dest, String path, int size) throws IOException
 	{
-		InputStream src = Configuration.class.getClassLoader().getResourceAsStream(path);		
-		ReadableByteChannel input = Channels.newChannel(src);
-
-		FileOutputStream output = new FileOutputStream(dest);
-		output.getChannel().transferFrom(input, 0, size);
-		output.close();
+		File parent = dest.getParentFile();
+		if (!parent.isDirectory() && !parent.mkdirs() && !parent.isDirectory()) {
+			throw new IOException("Cannot create directory: " + parent);
+		}
+		try (InputStream src = Configuration.class.getClassLoader().getResourceAsStream(path);
+				FileOutputStream output = new FileOutputStream(dest)) {
+			if (src == null) throw new IOException("Missing bundled configuration: " + path);
+			Filesystem.copyStream(src, output);
+		}
 	}
 
 
@@ -256,7 +260,7 @@ public class Configuration
 			}
 
 
-			Xml.saveDocument(doc, new File(file));
+			Xml.saveDocument(doc, new File(Filesystem.getDatafilesDir(), file));
 
 		} catch (Exception e) {
 			Log.error("Cannot save hash file", e);
