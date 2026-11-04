@@ -16,6 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.ParseException;
+import com.google.gson.Gson;
+import org.jmc.gui.SettingsPresetStore.Snapshot;
+import org.jmc.gui.SettingsPresetStore.Preset;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -40,6 +44,18 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	private static final long serialVersionUID = -5546934145954405065L;
 
 	private Preferences prefs;
+    private final SettingsPresetStore presetStore;
+    private List<Preset> savedPresets = new ArrayList<>();
+    JComboBox<PresetItem> cbPreset;
+    JButton btnSavePreset;
+    private boolean loadingSettings, refreshingPresets;
+    private String lastPresetError;
+    static final class PresetItem {
+        private final String label;
+        PresetItem(String label) { this.label = label; }
+        @Override public String toString() { return label; }
+    }
+
 
 	JComboBox<String> cbMove, cbSelect, cbLang;
 	JTextArea taRestart;
@@ -50,7 +66,12 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 
 	@SuppressWarnings("serial")
 	public Settings() {
-		prefs = Preferences.userNodeForPackage(getClass());
+        this(Preferences.userNodeForPackage(Settings.class), SettingsPresetStore.forUser());
+    }
+
+    Settings(Preferences preferences, SettingsPresetStore store) {
+        prefs = preferences;
+        presetStore = store;
 
 		setTitle(Messages.getString("Settings.WIN_TITLE"));
 
@@ -170,6 +191,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		AbstractAction saveAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                if (loadingSettings) return;
 				if (cbMove.getSelectedIndex() == cbSelect.getSelectedIndex()) {
 					if (e.getSource().equals(cbMove)) {
 						if (cbMove.getSelectedIndex() == 0)
@@ -187,6 +209,24 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			}
 		};
 
+        JPanel pPresets = new JPanel();
+        pPresets.setLayout(new BoxLayout(pPresets, BoxLayout.LINE_AXIS));
+        pPresets.setMaximumSize(new Dimension(Short.MAX_VALUE, 32));
+        pPresets.setBorder(new EmptyBorder(0, 0, 6, 0));
+        JLabel presetLabel = new JLabel(Messages.getString("Settings.Preset.LABEL"));
+        presetLabel.setBorder(new EmptyBorder(0, 0, 0, 4));
+        pPresets.add(presetLabel);
+        cbPreset = new JComboBox<>();
+        cbPreset.setName("settingsPresets");
+        cbPreset.setPrototypeDisplayValue(new PresetItem("MMpilot — resource packs"));
+        cbPreset.setToolTipText(Messages.getString("Settings.Preset.SELECT_HINT"));
+        pPresets.add(cbPreset);
+        pPresets.add(Box.createHorizontalStrut(6));
+        btnSavePreset = new JButton(Messages.getString("Settings.Preset.SAVE"));
+        btnSavePreset.setName("saveSettingsPreset");
+        btnSavePreset.setMargin(new Insets(2, 8, 2, 8));
+        pPresets.add(btnSavePreset);
+        mp.add(pPresets);
 		mp.add(pMove);
 		mp.add(pSelect);
 		mp.add(pLang);
@@ -378,7 +418,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		pack();
 		setMinimumSize(getSize());
 
+        cbPreset.addActionListener(e -> applySelectedPreset());
+        btnSavePreset.addActionListener(e -> savePresetDialog());
 		loadSettings();
+        refreshPresets(prefs.get("SETTINGS_PRESET", ""));
 		updateResourcePacks(false);
 
 		addWindowListener(this);
@@ -388,11 +431,97 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 		spPrevThreads.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
+                if (loadingSettings) return;
 				saveSettings();
-				MainWindow.main.reloadPreviewLoader();
+				if (MainWindow.main != null) MainWindow.main.reloadPreviewLoader();
 			}
 		});
 	}
+
+
+    private Snapshot captureSettings() {
+        String[] packs = listPacks.getList().stream().map(File::getAbsolutePath).toArray(String[]::new);
+        return new Snapshot(cbMove.getSelectedIndex(), cbSelect.getSelectedIndex(), cbLang.getSelectedIndex(),
+                (Integer)spPrevThreads.getValue(), packs, chckbxUsePackDefault.isSelected());
+    }
+
+    private void showPresetError(Exception error) {
+        String message = Messages.getString("Settings.Preset.ERROR") + "\n" + presetStore.getFile();
+        Log.error(message, error, false);
+        if (!message.equals(lastPresetError)) {
+            JOptionPane.showMessageDialog(this, message, Messages.getString("Settings.Preset.LABEL"), JOptionPane.ERROR_MESSAGE);
+            lastPresetError = message;
+        }
+    }
+
+    private void refreshPresets(String selectedName) {
+        try { savedPresets = presetStore.load(); lastPresetError = null; }
+        catch (IOException error) { showPresetError(error); return; }
+        refreshingPresets = true;
+        try {
+            cbPreset.removeAllItems();
+            cbPreset.addItem(new PresetItem(Messages.getString("Settings.Preset.CURRENT")));
+            int index = 0;
+            for (int i = 0; i < savedPresets.size(); i++) {
+                Preset preset = savedPresets.get(i);
+                cbPreset.addItem(new PresetItem(preset.name));
+                if (preset.name.equals(selectedName) && preset.settings.equals(captureSettings())) index = i + 1;
+            }
+            cbPreset.setSelectedIndex(index);
+            if (index == 0) prefs.remove("SETTINGS_PRESET");
+        } finally { refreshingPresets = false; }
+    }
+
+    private void savePresetDialog() {
+        try { spPrevThreads.commitEdit(); }
+        catch (ParseException invalid) {
+            JOptionPane.showMessageDialog(this, Messages.getString("Settings.Preset.INVALID_THREADS"));
+            return;
+        }
+        String initial = cbPreset.getSelectedIndex() > 0 ? cbPreset.getSelectedItem().toString() : "";
+        String name = (String)JOptionPane.showInputDialog(this, Messages.getString("Settings.Preset.NAME"),
+                Messages.getString("Settings.Preset.SAVE"), JOptionPane.PLAIN_MESSAGE, null, null, initial);
+        if (name == null) return;
+        name = name.trim();
+        if (name.isEmpty() || name.length() > 100) {
+            JOptionPane.showMessageDialog(this, Messages.getString("Settings.Preset.INVALID_NAME"));
+            return;
+        }
+        try {
+            for (Preset preset : presetStore.load()) {
+                if (preset.name.equalsIgnoreCase(name) && JOptionPane.showConfirmDialog(this,
+                        Messages.getString("Settings.Preset.OVERWRITE") + "\n" + preset.name,
+                        Messages.getString("Settings.Preset.SAVE"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
+            }
+            savePreset(name);
+        } catch (IOException error) { showPresetError(error); }
+    }
+
+    void savePreset(String name) throws IOException {
+        presetStore.save(name, captureSettings());
+        prefs.put("SETTINGS_PRESET", name);
+        refreshPresets(name);
+    }
+
+    private void applySelectedPreset() {
+        if (loadingSettings || refreshingPresets) return;
+        int index = cbPreset.getSelectedIndex() - 1;
+        if (index < 0 || index >= savedPresets.size()) { prefs.remove("SETTINGS_PRESET"); return; }
+        Preset preset = savedPresets.get(index);
+        Snapshot settings = preset.settings;
+        loadingSettings = true;
+        try {
+            cbMove.setSelectedIndex(settings.moveAction);
+            cbSelect.setSelectedIndex(settings.selectAction);
+            cbLang.setSelectedIndex(settings.language);
+            spPrevThreads.setValue(settings.previewThreads);
+            listPacks.loadPrefString(new Gson().toJson(settings.resourcePacks));
+            chckbxUsePackDefault.setSelected(settings.useDefaultResourcePack);
+        } finally { loadingSettings = false; }
+        saveSettings();
+        prefs.put("SETTINGS_PRESET", preset.name);
+        updateResourcePacks(true);
+    }
 
 	public Preferences getPreferences() {
 		return prefs;
@@ -437,6 +566,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	}
 
 	private void loadSettings() {
+        loadingSettings = true;
 		try {
 			cbMove.setSelectedIndex(prefs.getInt("MOVE_ACTION", 1));
 			cbSelect.setSelectedIndex(prefs.getInt("SELECT_ACTION", 0));
@@ -446,11 +576,13 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			chckbxUsePackDefault.setSelected(prefs.getBoolean("USE_DEFAULT_RESOURCE_PACK", true));
 		} catch (IllegalArgumentException e) {
 			Log.error("Error loading settings! Resetting...", e);
+            loadingSettings = false;
 			resetSettings();
-		}
+		} finally { loadingSettings = false; }
 	}
 
 	private void saveSettings() {
+        if (loadingSettings) return;
 		taRestart.setVisible(false);
 
 		prefs.putInt("MOVE_ACTION", cbMove.getSelectedIndex());
@@ -467,9 +599,18 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			Log.error("Resource pack list could not be saved!", e);
 		}
 		prefs.putBoolean("USE_DEFAULT_RESOURCE_PACK", chckbxUsePackDefault.isSelected());
+        if (!refreshingPresets && cbPreset != null && cbPreset.getSelectedIndex() > 0) {
+            Preset selected = savedPresets.get(cbPreset.getSelectedIndex() - 1);
+            if (!selected.settings.equals(captureSettings())) {
+                refreshingPresets = true;
+                try { cbPreset.setSelectedIndex(0); } finally { refreshingPresets = false; }
+                prefs.remove("SETTINGS_PRESET");
+            } else prefs.put("SETTINGS_PRESET", selected.name);
+        }
 	}
 
 	private void resetSettings() {
+        loadingSettings = true;
 		try {
 			prefs.clear();
 			cbMove.setSelectedIndex(1);
@@ -479,8 +620,10 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 			listPacks.reset();
 			chckbxUsePackDefault.setSelected(true);
 		} catch (BackingStoreException e) {
-		}
+		} finally { loadingSettings = false; }
+        refreshPresets("");
 		saveSettings();
+        updateResourcePacks(true);
 	}
 	
 	private void updateResourcePacks(boolean reloadRegistries) {
@@ -521,6 +664,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
 	@Override
 	public void windowActivated(WindowEvent e) {
 		loadSettings();
+        refreshPresets(prefs.get("SETTINGS_PRESET", ""));
 	}
 
 	@Override
