@@ -9,6 +9,16 @@ used to render them in software like Blender, 3D Studio Max, Maya or Cinema 4D, 
 
 This render was brought to you by http://www.reddit.com/user/thepixelartist
 
+## Animated textures in Blender
+
+The exporter writes full texture spritesheets and any accompanying animation
+metadata. OBJ UVs stay available for a separate animation tool.
+
+For transparent materials, install `conf/contrib/mmpilot_single_rgba.py` as a
+Blender add-on and enable it before importing the OBJ. The add-on links the
+color texture's Alpha output to Principled BSDF Alpha. For a scene that is
+already imported, run **MMpilot: Use PNG Alpha** from Blender's F3 menu.
+
 ## Links
 
 This repository is still very much a work in progress. For now, you can find more information under these links:

@@ -38,11 +38,19 @@ public class RegressionHarness {
     for(String tex:g.textures.values())if(tex!=null&&!tex.startsWith("#"))check(Registries.getTexture(NamespaceID.fromString(tex)).getImage()!=null,"missing model texture "+tex);
    }
    check(Registries.getBlockstate(NamespaceID.fromString("chain"))!=null,"missing legacy chain blockstate");
-   BufferedImage portal=Registries.getTexture(NamespaceID.fromString("entity/end_portal")).getImage();
+   BufferedImage portal=Registries.getTexture(NamespaceID.fromString("entity/end_portal/end_portal")).getImage();
    String portalPath="assets/minecraft/textures/entity/"+(pack.contains("mc-26.")?"end_portal/end_portal":"end_portal")+".png";
    BufferedImage exactPortal=javax.imageio.ImageIO.read(new ByteArrayInputStream(ResourcePackIO.loadResource(new File(pack),portalPath)));
    check(portal.getWidth()==exactPortal.getWidth()&&portal.getHeight()==exactPortal.getHeight(),"portal dimensions changed");
-   check(Arrays.equals(portal.getRGB(0,0,portal.getWidth(),portal.getHeight(),null,0,portal.getWidth()),exactPortal.getRGB(0,0,exactPortal.getWidth(),exactPortal.getHeight(),null,0,exactPortal.getWidth())),"portal pixels changed");
+   for (int y = 0; y < portal.getHeight(); y++) {
+    for (int x = 0; x < portal.getWidth(); x++) {
+     // Compare the original PNG samples. ImageIO.getRGB gamma-converts grayscale pixels.
+     int expected = exactPortal.getType() == BufferedImage.TYPE_BYTE_GRAY
+         ? 0xff000000 | exactPortal.getRaster().getSample(x, y, 0) * 0x010101
+         : exactPortal.getRGB(x, y);
+     check(portal.getRGB(x, y) == expected, "portal pixels changed at " + x + "," + y);
+    }
+   }
    BufferedImage bannerBase=Registries.getTexture(NamespaceID.fromString("entity/banner_base")).getImage();
    check(bannerBase.getWidth()>0,"missing banner base");
    ArrayList<BannerPattern> patterns=new ArrayList<>();
@@ -62,4 +70,3 @@ public class RegressionHarness {
   }
  }
 }
-

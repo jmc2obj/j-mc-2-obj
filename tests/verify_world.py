@@ -1,6 +1,12 @@
 from pathlib import Path
+from argparse import ArgumentParser
 import gzip,struct,io,zlib,json
-root=Path('work/sprites-v6');world=root/'Мир отладки'
+parser = ArgumentParser(description="Validate the generated Minecraft debug save.")
+parser.add_argument("block_report", type=Path, help="Minecraft-generated reports/blocks.json")
+parser.add_argument("output", type=Path, help="Output directory used by create_debug_world.py")
+args = parser.parse_args()
+root = args.output
+world = root / 'Мир отладки'
 def parse(b):
  f=io.BytesIO(b)
  def num(fmt):return struct.unpack(fmt,f.read(struct.calcsize(fmt)))[0]
@@ -22,7 +28,7 @@ def parse(b):
  t=num('>B');name=st();return val(t)
 level=parse(gzip.decompress((world/'level.dat').read_bytes()))['Data'];assert level['LevelName']=='Мир отладки' and level['WorldGenSettings']['dimensions']['minecraft:overworld']['generator']['type']=='minecraft:debug'
 def key(s):return s['Name'],tuple(sorted(s.get('Properties',{}).items()))
-expected=json.loads((root/'minecraft-reports/reports/blocks.json').read_text());states=set()
+expected=json.loads(args.block_report.read_text(encoding='utf-8'));states=set()
 for name,data in expected.items():
  for s in data['states']:states.add((name,tuple(sorted(s.get('properties',{}).items()))))
 observed=set();r=(world/'region/r.0.0.mca').read_bytes();chunks=0

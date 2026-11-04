@@ -56,7 +56,7 @@ public class Materials
 							// Transparency comes from the same RGBA spritesheet as color.
 							alphaTex = textureEntry.getExportFilePath();
 						}
-						writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), alphaTex);
+						writeMaterial(matBuffer, textureEntry.getMatName(), null, null, textureEntry.getExportFilePath(), alphaTex);
 					} catch (IOException e) {
 						Log.error("Error writing material definition " + textureEntry.id, e);
 					}

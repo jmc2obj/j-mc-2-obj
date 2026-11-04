@@ -41,7 +41,7 @@ public class CmdLineParser {
 	private static final Option optDimension = Option.builder("d").longOpt("dimension").hasArg().argName("ID").desc("World dimension to export. Dimension ids are: 0 - Overworld; -1 - Nether; 1 - The End. Mods may add more dimensions. Default is 0.").build();
 	private static final Option optTexExport = Option.builder().longOpt("tex-export")
 			.numberOfArgs(4).valueSeparator(',').argName("base[,alpha][,norm][,spec]").optionalArg(true)
-			.desc("What textures to export (any combination is valid): base - base textures; alpha - separate alphas; norm - normal maps. Default is base.").build();
+			.desc("What textures to export: base - RGBA textures; norm - normal maps; spec - specular maps. The legacy alpha option is an alias for base. Default is base.").build();
 	private static final Option optResourcePack = Option.builder("r").longOpt("resource-pack").hasArg().argName("FILE").desc("Resource pack to use for textures and models. Can be specified multiple times. If omitted, will attempt to use the default Minecraft pack.").build();
 	private static final Option optTexScale = Option.builder().longOpt("texturescale").hasArg().argName("SCALE").desc("When exporting textures, scale the images by this factor. Default is 1 (no scaling).").build();
 	private static final Option optObjFile = Option.builder().longOpt("objfile").hasArg().argName("NAME").desc("Name of geometry file to export. Default is minecraft.obj.").build();

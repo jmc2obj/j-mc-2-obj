@@ -81,7 +81,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 	private JCheckBox chckbxMergeVerticies;
 
 	private JComboBox<String> cboxTexScale;
-	private JCheckBox chckbxSeparateAlphaTexture;
 	private JCheckBox chckbxCombineAllTextures;
 	private JCheckBox chckbxSingleMat;
 
@@ -260,9 +259,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxExportTextures = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_TEXTURES"));
 		holderTexExport.add(chckbxExportTextures);
 
-		chckbxSeparateAlphaTexture = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_ALPHA"));
-		chckbxSeparateAlphaTexture.setSelected(false);
-		chckbxSeparateAlphaTexture.setEnabled(false);
 		
 		//##########################################################################################################
 		//SingleTexFile
@@ -887,7 +883,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		cboxTexScale.addActionListener(genericSaveAction);
 
 		chckbxExportTextures.addActionListener(genericSaveAction);
-		chckbxSeparateAlphaTexture.addActionListener(genericSaveAction);
 		chckbxExportNormalMaps.addActionListener(genericSaveAction);
 		chckbxExportSpecularMaps.addActionListener(genericSaveAction);
 		chckbxCombineAllTextures.addActionListener(genericSaveAction);
@@ -970,7 +965,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		
 		cboxTexScale.setSelectedItem("" + prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
 		chckbxExportTextures.setSelected(prefs.getBoolean("TEXTURE_EXPORT", true));
-		chckbxSeparateAlphaTexture.setSelected(false);
 		chckbxExportNormalMaps.setSelected(prefs.getBoolean("TEXTURE_NORMAL", false));
 		chckbxExportSpecularMaps.setSelected(prefs.getBoolean("TEXTURE_SPECULAR", false));
 		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
@@ -1054,7 +1048,6 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 
 		prefs.putDouble("TEXTURE_SCALE_ID", Options.textureScale);
 		prefs.putBoolean("TEXTURE_EXPORT", Options.exportTex);
-		prefs.putBoolean("TEXTURE_ALPHA", Options.textureAlpha);
 		prefs.putBoolean("TEXTURE_NORMAL", Options.textureNormal);
 		prefs.putBoolean("TEXTURE_SPECULAR", Options.textureSpecular);
 		prefs.putBoolean("TEXTURE_LIGHT", Options.textureLight);

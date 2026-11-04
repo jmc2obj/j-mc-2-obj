@@ -1,6 +1,14 @@
 from pathlib import Path
-import struct,gzip,json,math,time,zlib
-root=Path('work/sprites-v6');world=root/'Мир отладки';(world/'region').mkdir(parents=True,exist_ok=True)
+from argparse import ArgumentParser
+import struct,gzip,json,math,time,zipfile,zlib
+parser = ArgumentParser(description="Create a Minecraft 1.21.11 debug save from its generated block report.")
+parser.add_argument("block_report", type=Path, help="Minecraft-generated reports/blocks.json")
+parser.add_argument("client_jar", type=Path, help="Vanilla Minecraft 1.21.11 client JAR")
+parser.add_argument("output", type=Path, help="Directory for the save and its block position index")
+args = parser.parse_args()
+root = args.output
+world = root / 'Мир отладки'
+(world / 'region').mkdir(parents=True, exist_ok=False)
 def tag(t,v):return (t,v)
 def string(s):
  b=s.encode('utf-8');return struct.pack('>H',len(b))+b
@@ -15,7 +23,7 @@ def payload(t,v):
 def nbt(d):return b'\x0a\x00\x00'+payload(10,d)
 def packed(values,bits):
  per=64//bits;return [sum(v<<(i*bits) for i,v in enumerate(values[a:a+per])) for a in range(0,len(values),per)]
-blocks=json.loads((root/'minecraft-reports/reports/blocks.json').read_text());states=[None]*sum(len(b['states']) for b in blocks.values())
+blocks=json.loads(args.block_report.read_text(encoding='utf-8'));states=[None]*sum(len(b['states']) for b in blocks.values())
 for name,b in blocks.items():
  for s in b['states']:states[s['id']]={'Name':tag(8,name),**({'Properties':tag(10,{k:tag(8,v) for k,v in s['properties'].items()})} if s.get('properties') else {})}
 assert all(states);gw=math.ceil(math.sqrt(len(states)));gh=math.ceil(len(states)/gw)
@@ -46,7 +54,7 @@ for cz in range(22):
   compressed=zlib.compress(nbt(chunk));body=struct.pack('>I',len(compressed)+1)+b'\x02'+compressed;nsec=math.ceil(len(body)/4096);idx=cx+cz*32
   region[idx*4:idx*4+4]=((sector<<8)|nsec).to_bytes(4,'big');region[4096+idx*4:4100+idx*4]=int(time.time()).to_bytes(4,'big');region.extend(body+b'\0'*(nsec*4096-len(body)));sector+=nsec;chunks+=1
 (world/'region/r.0.0.mca').write_bytes(region)
-with __import__('zipfile').ZipFile('work/grass-packs/minecraft.jar') as z:dimension=json.loads(z.read('data/minecraft/worldgen/world_preset/debug_all_block_states.json'))['dimensions']
+with zipfile.ZipFile(args.client_jar) as z:dimension=json.loads(z.read('data/minecraft/worldgen/world_preset/debug_all_block_states.json'))['dimensions']
 def convert(v):
  if isinstance(v,dict):return tag(10,{k:convert(x) for k,x in v.items()})
  if isinstance(v,bool):return tag(1,int(v))
