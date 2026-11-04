@@ -218,7 +218,7 @@ public class Settings extends JmcFrame implements WindowListener, ChangeListener
         pPresets.add(presetLabel);
         cbPreset = new JComboBox<>();
         cbPreset.setName("settingsPresets");
-        cbPreset.setPrototypeDisplayValue(new PresetItem("MMpilot — resource packs"));
+        cbPreset.setPrototypeDisplayValue(new PresetItem("Example resource pack preset"));
         cbPreset.setToolTipText(Messages.getString("Settings.Preset.SELECT_HINT"));
         pPresets.add(cbPreset);
         pPresets.add(Box.createHorizontalStrut(6));

@@ -1,5 +1,5 @@
 """Keep JMC2OBJ color and opacity on one Image Texture node."""
-bl_info = {'name': 'MMpilot — Single RGBA Texture', 'author': 'MMpilot', 'version': (1, 0, 0), 'blender': (3, 6, 0), 'location': 'Automatic after OBJ import; F3: MMpilot: Use PNG Alpha', 'description': 'Connect Alpha from the color spritesheet and remove the redundant opacity node', 'category': 'Import-Export'}
+bl_info = {'name': 'JMC2OBJ — Single RGBA Texture', 'author': 'Flok-mk', 'version': (1, 0, 0), 'blender': (3, 6, 0), 'location': 'Automatic after OBJ import; F3: JMC2OBJ: Use PNG Alpha', 'description': 'Connect Alpha from the color spritesheet and remove the redundant opacity node', 'category': 'Import-Export'}
 
 import os
 import bpy
@@ -62,19 +62,19 @@ def _initial_fix():
     _after_import()
     return None
 
-class MMPILOT_OT_use_png_alpha(bpy.types.Operator):
-    bl_idname = 'mmpilot.use_png_alpha'
-    bl_label = 'MMpilot: Use PNG Alpha'
+class JMC2OBJ_OT_use_png_alpha(bpy.types.Operator):
+    bl_idname = 'jmc2obj.use_png_alpha'
+    bl_label = 'JMC2OBJ: Use PNG Alpha'
     bl_description = 'Use Alpha from the color spritesheet in Minecraft materials'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         count = sum(fix_material(mat) for mat in bpy.data.materials)
-        self.report({'INFO'}, 'MMpilot: fixed %d material connections' % count)
+        self.report({'INFO'}, 'JMC2OBJ: fixed %d material connections' % count)
         return {'FINISHED'}
 
 def register():
-    bpy.utils.register_class(MMPILOT_OT_use_png_alpha)
+    bpy.utils.register_class(JMC2OBJ_OT_use_png_alpha)
     if _after_import not in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.append(_after_import)
     if _after_import not in bpy.app.handlers.load_post:
@@ -88,7 +88,7 @@ def unregister():
     for handlers in (bpy.app.handlers.depsgraph_update_post, bpy.app.handlers.load_post):
         if _after_import in handlers:
             handlers.remove(_after_import)
-    bpy.utils.unregister_class(MMPILOT_OT_use_png_alpha)
+    bpy.utils.unregister_class(JMC2OBJ_OT_use_png_alpha)
 
 if __name__ == '__main__':
     register()

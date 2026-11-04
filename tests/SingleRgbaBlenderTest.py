@@ -1,7 +1,7 @@
 import bpy,sys,json,importlib.util
 from pathlib import Path
 root=Path(sys.argv[sys.argv.index('--')+1]);folder=root/'debug-export'
-addon=Path(__file__).resolve().parents[1]/'conf/contrib/mmpilot_single_rgba.py'
+addon=Path(__file__).resolve().parents[1]/'conf/contrib/jmc2obj_single_rgba.py'
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.wm.obj_import(filepath=str(folder/'minecraft.obj'))
 def report():
@@ -16,7 +16,7 @@ def report():
     result.append({'material':mat.name,'image_nodes':sum(n.type=='TEX_IMAGE' for n in mat.node_tree.nodes),'same_node':c.from_node==a.from_node,'color_socket':c.from_socket.name,'alpha_socket':a.from_socket.name})
  return result
 before=report();assert before and any(not r['same_node'] for r in before)
-spec=importlib.util.spec_from_file_location('mmpilot_single_rgba',addon);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);module.register()
+spec=importlib.util.spec_from_file_location('jmc2obj_single_rgba',addon);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);module.register()
 after=report();assert len(after)==len(before) and all(r['same_node'] and r['image_nodes']==1 and r['alpha_socket']=='Alpha' for r in after)
 # Animate only the color node's UV input. Both color and opacity must stay on it.
 mat=next(m for m in bpy.data.materials if 'seagrass' in m.name);shader=next(n for n in mat.node_tree.nodes if n.type=='BSDF_PRINCIPLED');image=shader.inputs['Base Color'].links[0].from_node

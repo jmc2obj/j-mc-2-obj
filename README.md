@@ -14,10 +14,10 @@ This render was brought to you by http://www.reddit.com/user/thepixelartist
 The exporter writes full texture spritesheets and any accompanying animation
 metadata. OBJ UVs stay available for a separate animation tool.
 
-For transparent materials, install `conf/contrib/mmpilot_single_rgba.py` as a
+For transparent materials, install `conf/contrib/jmc2obj_single_rgba.py` as a
 Blender add-on and enable it before importing the OBJ. The add-on links the
 color texture's Alpha output to Principled BSDF Alpha. For a scene that is
-already imported, run **MMpilot: Use PNG Alpha** from Blender's F3 menu.
+already imported, run **JMC2OBJ: Use PNG Alpha** from Blender's F3 menu.
 
 ## Links
 
