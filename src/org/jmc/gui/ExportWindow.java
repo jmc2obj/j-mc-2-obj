@@ -261,7 +261,8 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		holderTexExport.add(chckbxExportTextures);
 
 		chckbxSeparateAlphaTexture = new JCheckBox(Messages.getString("ExportOptions.Textures.EXP_ALPHA"));
-		holderTexExport.add(chckbxSeparateAlphaTexture);
+		chckbxSeparateAlphaTexture.setSelected(false);
+		chckbxSeparateAlphaTexture.setEnabled(false);
 		
 		//##########################################################################################################
 		//SingleTexFile
@@ -958,7 +959,9 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		chckbxSeparateChunk.setSelected(prefs.getBoolean("OBJ_PER_CHUNK", false));
 		chckbxSeparateBlock.setSelected(prefs.getBoolean("OBJ_PER_BLOCK", false));
 		chckbxSeparateBlockOccl.setSelected(prefs.getBoolean("OBJ_PER_BLOCK_OCCL", false));
-		chckbxRandBlockVariation.setSelected(prefs.getBoolean("RAND_BLOCK_VARIATION", false));
+		// Start the corrected resource-pack variant selection enabled; subsequent
+		// user changes retain their own preference instead of the old false default.
+		chckbxRandBlockVariation.setSelected(prefs.getBoolean("RESOURCE_PACK_MODEL_VARIATION", true));
 		chckbxDoubleSidedFaces.setSelected(prefs.getBoolean("DOUBLE_SINGLE_FACES", false));
 		chckbxOptimiseGeo.setSelected(prefs.getBoolean("OPTIMISE_GEO", true));
 		chckbxMergeVerticies.setSelected(prefs.getBoolean("REMOVE_DUPLICATES", false));
@@ -967,7 +970,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		
 		cboxTexScale.setSelectedItem("" + prefs.getDouble("TEXTURE_SCALE_ID", 1.0));
 		chckbxExportTextures.setSelected(prefs.getBoolean("TEXTURE_EXPORT", true));
-		chckbxSeparateAlphaTexture.setSelected(prefs.getBoolean("TEXTURE_ALPHA", false));
+		chckbxSeparateAlphaTexture.setSelected(false);
 		chckbxExportNormalMaps.setSelected(prefs.getBoolean("TEXTURE_NORMAL", false));
 		chckbxExportSpecularMaps.setSelected(prefs.getBoolean("TEXTURE_SPECULAR", false));
 		chckbxExportSeparateLight.setSelected(prefs.getBoolean("TEXTURE_LIGHT", false));
@@ -1041,6 +1044,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		prefs.putBoolean("OBJ_PER_CHUNK", chckbxSeparateChunk.isSelected());
 		prefs.putBoolean("OBJ_PER_BLOCK", Options.objectPerBlock);
 		prefs.putBoolean("RAND_BLOCK_VARIATION", Options.randBlockVariations);
+		prefs.putBoolean("RESOURCE_PACK_MODEL_VARIATION", Options.randBlockVariations);
 		prefs.putBoolean("DOUBLE_SINGLE_FACES", Options.doubleSidedFaces);
 		prefs.putBoolean("OPTIMISE_GEO", chckbxOptimiseGeo.isSelected());
 		prefs.putBoolean("CONVERT_ORES", Options.convertOres);
@@ -1148,7 +1152,7 @@ public class ExportWindow extends JmcFrame implements ProgressCallback {
 		}
 
 		Options.exportTex = chckbxExportTextures.isSelected();
-		Options.textureAlpha = chckbxSeparateAlphaTexture.isSelected();
+		Options.textureAlpha = false;
 		Options.textureNormal = chckbxExportNormalMaps.isSelected();
 		Options.textureSpecular = chckbxExportSpecularMaps.isSelected();
 		Options.textureMerge = chckbxCombineAllTextures.isSelected();

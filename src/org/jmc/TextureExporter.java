@@ -10,6 +10,10 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -125,7 +129,7 @@ public class TextureExporter {
 	 */
 	public static BufferedImage cloneImageType(BufferedImage img, int width, int height) {
         ColorModel colorModel = img.getColorModel();
-        WritableRaster raster = img.getRaster().createWritableChild(0, 0, width, height, 0, 0, null);
+        WritableRaster raster = colorModel.createCompatibleWritableRaster(width, height);
         return new BufferedImage(colorModel, raster, img.isAlphaPremultiplied(), null);
 	}
 
@@ -146,23 +150,14 @@ public class TextureExporter {
 		int count = 0;
 		for (TextureEntry texture : textures) {
 			File file = new File(Options.outputDir, texture.getExportFilePath());
-			if (Options.textureDiffuse && (Options.textureOverwrite || !file.exists())) {
+			// Legacy callers requesting "alpha" also receive the RGBA image.
+			if ((Options.textureDiffuse || Options.textureAlpha) && (Options.textureOverwrite || !file.exists())) {
 				file.getParentFile().mkdirs();
 				try {
 					ImageIO.write(scaleImage(texture.getImage(), Options.textureScale), "png", file);
+					writeMetadata(texture, file);
 				} catch (IOException e) {
 					Log.error("Couldn't export texture " + texture.id.toString(), e);
-				}
-			}
-			if (Options.textureAlpha) {
-				File alphaFile = new File(Options.outputDir, texture.getExportFilePathAlpha());
-				if (Options.textureOverwrite || !alphaFile.exists()) {
-					alphaFile.getParentFile().mkdirs();
-					try {
-						ImageIO.write(scaleImage(convertToAlpha(texture.getImage()), Options.textureScale), "png", alphaFile);
-					} catch (IOException e) {
-						Log.debug(String.format("Couldn't export alpha texture for '%s' error: %s", texture.id.toString(), e.getMessage()));
-					}
 				}
 			}
 			if (Options.textureNormal) {
@@ -192,6 +187,23 @@ public class TextureExporter {
 		}
 	}
 	
+	private static void writeMetadata(TextureEntry texture, File imageFile) throws IOException {
+		JsonObject meta = texture.getMetadata();
+		File file = new File(imageFile.getPath() + ".mcmeta");
+		if (meta == null) {
+			// An overwritten static PNG must not retain an old animation sidecar.
+			Files.deleteIfExists(file.toPath());
+			return;
+		}
+		if (meta.has("animation") && meta.get("animation").isJsonObject()) {
+			JsonObject animation = meta.getAsJsonObject("animation");
+			for (String key : new String[] {"width", "height"}) {
+				if (animation.has(key)) animation.addProperty(key, Math.max(1, (int)(animation.get(key).getAsInt() * Options.textureScale)));
+			}
+		}
+		Files.write(file.toPath(), new GsonBuilder().setPrettyPrinting().create().toJson(meta).getBytes(StandardCharsets.UTF_8));
+	}
+
 	/**
 	 * Reads a Minecraft texture pack and splits the individual block textures
 	 * into separate images then merges them into a single file containing all
@@ -317,13 +329,6 @@ public class TextureExporter {
 		if(Options.textureLight)
 			ImageIO.write(lumaimage, "png", new File(Options.outputDir, "tex/texture_luma.png"));
 		
-		if (Options.textureAlpha) {
-			try {
-				ImageIO.write(convertToAlpha(textureimage), "png", new File(Options.outputDir, "tex/texture_a.png"));
-			} catch (Exception e) {
-				Log.info("Cannot save alpha (" + e.getMessage() + ")");
-			}
-		}
 	}
 
 }

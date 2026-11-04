@@ -53,11 +53,8 @@ public class Materials
 					try {
 						String alphaTex = null;
 						if (textureEntry.hasAlpha()) {
-							if (Options.textureAlpha) {
-								alphaTex = textureEntry.getExportFilePathAlpha();
-							} else {
-								alphaTex = textureEntry.getExportFilePath();
-							}
+							// Transparency comes from the same RGBA spritesheet as color.
+							alphaTex = textureEntry.getExportFilePath();
 						}
 						writeMaterial(matBuffer, textureEntry.getMatName(), textureEntry.getAverageColour(), null, textureEntry.getExportFilePath(), alphaTex);
 					} catch (IOException e) {
@@ -77,14 +74,16 @@ public class Materials
 		if (spec == null)
 			spec = Color.BLACK;
 		
-		float[] colorComps = color.getRGBComponents(null);
+		// map_Kd is multiplied by Kd in MTL readers. The exported PNG already
+		// contains the model tint; multiplying by its average colors it twice.
+		float[] colorComps = (diffTex == null ? color : Color.WHITE).getRGBComponents(null);
 		float[] specComps = spec.getRGBComponents(null);
 		
 		PrintWriter out = new PrintWriter(matBuffer);
 		out.println();
 		out.printf("newmtl %s", matName).println();
-		out.printf("Kd %.4f %.4f %.4f", colorComps[0], colorComps[1], colorComps[2]).println();
-		out.printf("Ks %.4f %.4f %.4f", specComps[0], specComps[1], specComps[2]).println();
+		out.printf(java.util.Locale.US, "Kd %.4f %.4f %.4f", colorComps[0], colorComps[1], colorComps[2]).println();
+		out.printf(java.util.Locale.US, "Ks %.4f %.4f %.4f", specComps[0], specComps[1], specComps[2]).println();
 		if (diffTex != null) {
 			out.printf("map_Kd %s", diffTex).println();
 		}
