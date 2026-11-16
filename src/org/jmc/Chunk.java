@@ -10,6 +10,7 @@ package org.jmc;
 import org.jmc.NBT.*;
 import org.jmc.registry.NamespaceID;
 import org.jmc.util.CachedGetter;
+import org.jmc.util.DefaultStates;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 
@@ -460,16 +461,18 @@ public class Chunk {
 		 * One block state from a section palette. Before 26.3 every entry is {Name, Properties}.
 		 * Since 26.3 (snapshot 7) entries are {id, properties}, properties are left out for a
 		 * default state, and such a block may be just its id: a string, or {"": id} in a list
-		 * that mixes both forms.
+		 * that mixes both forms. The properties left out are filled in from {@link DefaultStates}.
 		 * @return null if the entry names no block */
 		private BlockData paletteBlock(NBT_Tag entry) {
 			String blockName = null;
 			TAG_Compound propertiesTag = null;
+			boolean newFormat = true;
 			if (entry instanceof TAG_String) {
 				blockName = ((TAG_String)entry).value;
 			} else if (entry instanceof TAG_Compound) {
 				TAG_Compound blockTag = (TAG_Compound)entry;
 				NBT_Tag nameTag = blockTag.getElement("Name");
+				newFormat = nameTag == null;
 				if (nameTag == null) nameTag = blockTag.getElement("id");
 				if (nameTag == null) nameTag = blockTag.getElement("");
 				if (nameTag instanceof TAG_String) blockName = ((TAG_String)nameTag).value;
@@ -488,6 +491,9 @@ public class Chunk {
 						block.state.put(tag.getName(), ((TAG_String)tag).value);
 					}
 				}
+			}
+			if (newFormat) {
+				DefaultStates.fill(block);
 			}
 			return block;
 		}
