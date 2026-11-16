@@ -10,6 +10,7 @@ package org.jmc;
 import org.jmc.NBT.*;
 import org.jmc.registry.NamespaceID;
 import org.jmc.util.CachedGetter;
+import org.jmc.util.DefaultStates;
 import org.jmc.util.IDConvert;
 import org.jmc.util.Log;
 
@@ -457,6 +458,47 @@ public class Chunk {
 		}
 		
 		/**
+		 * One block state from a section palette. Before 26.3 every entry is {Name, Properties}.
+		 * Since 26.3 (snapshot 7) entries are {id, properties}, properties are left out for a
+		 * default state, and such a block may be just its id: a string, or {"": id} in a list
+		 * that mixes both forms. The properties left out are filled in from {@link DefaultStates}.
+		 * @return null if the entry names no block */
+		private BlockData paletteBlock(NBT_Tag entry) {
+			String blockName = null;
+			TAG_Compound propertiesTag = null;
+			boolean newFormat = true;
+			if (entry instanceof TAG_String) {
+				blockName = ((TAG_String)entry).value;
+			} else if (entry instanceof TAG_Compound) {
+				TAG_Compound blockTag = (TAG_Compound)entry;
+				NBT_Tag nameTag = blockTag.getElement("Name");
+				newFormat = nameTag == null;
+				if (nameTag == null) nameTag = blockTag.getElement("id");
+				if (nameTag == null) nameTag = blockTag.getElement("");
+				if (nameTag instanceof TAG_String) blockName = ((TAG_String)nameTag).value;
+				NBT_Tag propsTag = blockTag.getElement("Properties");
+				if (propsTag == null) propsTag = blockTag.getElement("properties");
+				if (propsTag instanceof TAG_Compound) propertiesTag = (TAG_Compound)propsTag;
+			}
+			if (blockName == null) {
+				return null;
+			}
+			
+			BlockData block = new BlockData(NamespaceID.fromString(blockName));
+			if (propertiesTag != null) {
+				for (NBT_Tag tag : propertiesTag.elements) {
+					if (tag instanceof TAG_String) {
+						block.state.put(tag.getName(), ((TAG_String)tag).value);
+					}
+				}
+			}
+			if (newFormat) {
+				DefaultStates.fill(block);
+			}
+			return block;
+		}
+		
+		/**
 		 * Fills in the data array with block data
 		 * @return false if this was not completed */
 		boolean fillBlocks(TAG_Compound section) {
@@ -481,14 +523,12 @@ public class Chunk {
 			if (tagBlockPalette.elements.length == 1 || tagBlockStates == null || tagBlockStates.data.length <= 1) {
 				if (tagBlockPalette.elements.length >= 1) {
 					// no state list but a palette indicates the whole section is filled with a single block
-					TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[0];
-					String blockName = ((TAG_String)blockTag.getElement("Name")).value;
-					if (blockName == null) {
+					BlockData block = paletteBlock(tagBlockPalette.elements[0]);
+					if (block == null) {
 						Log.debug("No block name in section palette tag!");
 						return false;
 					}
 					
-					BlockData block = new BlockData(NamespaceID.fromString(blockName));
 					Arrays.fill(data, block);
 					return true;
 				}
@@ -510,20 +550,10 @@ public class Chunk {
 					}
 				}
 				
-				TAG_Compound blockTag = (TAG_Compound)tagBlockPalette.elements[(int)blockPid];
-				String blockName = ((TAG_String)blockTag.getElement("Name")).value;
-				if (blockName == null) {
+				BlockData block = paletteBlock(tagBlockPalette.elements[(int)blockPid]);
+				if (block == null) {
 					Log.debug("No block name!");
 					continue;
-				}
-				
-				BlockData block = new BlockData(NamespaceID.fromString(blockName));
-				TAG_Compound propertiesTag = (TAG_Compound)blockTag.getElement("Properties");
-				if (propertiesTag != null) {
-					for (NBT_Tag tag : propertiesTag.elements) {
-						TAG_String propTag = (TAG_String)tag;
-						block.state.put(propTag.getName(), propTag.value);
-					}
 				}
 				
 				if (block.getInfo().getActWaterlogged()) {
